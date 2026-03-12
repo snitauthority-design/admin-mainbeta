@@ -1,0 +1,202 @@
+/* Hero Section Styles */
+.hero-section {
+    padding-bottom: 0 !important;
+      margin-bottom: 0 !important;
+      line-height: 0;
+      /* Inline gap remove korar jonno */
+}
+
+/* Carousel container */
+.hero-carousel {
+    position: relative;
+      width: 100%;
+      border-radius: 0.625rem;
+      overflow: hidden;
+    background: #ffffff;
+      /* Desktop aspect ratio - change to 16/4.5 or 16/4 to reduce height */
+      aspect-ratio: 16 / 4.8;
+      max-height: 500px;
+}
+
+/* Maintain aspect ratio */
+.hero-carousel-desktop {
+    aspect-ratio: 16 / 4.8;
+}
+
+.hero-carousel-mobile {
+    aspect-ratio: 16 / 7;
+}
+
+/* Individual slide */
+.hero-slide {
+    position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+      z-index: 1;
+}
+
+.hero-slide-active {
+    opacity: 1;
+      visibility: visible;
+      z-index: 10;
+}
+
+/* Slide image – COVER use korle extra space thakbe na */
+.hero-slide-image {
+    width: 100%;
+      height: 100%;
+    object-fit: cover;
+      /* Contain er poriborte Cover e gap thake na */
+      object-position: center;
+      display: block;
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hero-slide:hover .hero-slide-image {
+    transform: scale(1.02);
+}
+
+/* Shine effect */
+.hero-slide::before {
+    content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(90deg,
+            transparent,
+          rgba(255, 224, 147, 0.46),
+            transparent);
+            z-index: 15;
+            pointer-events: none;
+            transition: left 0.6s ease;
+}
+
+.hero-slide-active:hover::before {
+    left: 100%;
+}
+
+/* Navigation buttons */
+/* .hero-nav-button {
+    position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+        height: 20px;
+      border-radius: 50%;
+      background: rgb(255, 255, 255);
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #374151;
+        transition: all 0.25s ease;
+        opacity: 0;
+        z-index: 20;
+      box-shadow: 0 2px 8px rgb(255, 255, 255);
+}
+
+*/
+
+.hero-carousel:hover .hero-nav-button {
+    opacity: 1;
+}
+
+.hero-nav-button:hover {
+    background: white;
+    color: #f97316;
+      transform: translateY(-50%) scale(1.1);
+}
+
+/* .hero-nav-prev {
+  left: 0.50rem;
+}
+
+.hero-nav-next {
+  right: 0.50rem;
+  }
+    */
+
+/* Dots indicator */
+.hero-dot {
+    width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.5);
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      padding: 0;
+}
+
+.hero-dot-active {
+    background: white;
+      width: 20px;
+      border-radius: 4px;
+}
+
+/* Gradient overlays */
+.hero-gradient-left,
+.hero-gradient-right {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 60px;
+  pointer-events: none;
+  z-index: 15;
+  opacity: 0;
+}
+
+.hero-carousel:hover .hero-gradient-left,
+.hero-carousel:hover .hero-gradient-right {
+    opacity: 1;
+}
+
+.hero-gradient-left {
+  left: 0;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.1), transparent);
+}
+
+.hero-gradient-right {
+  right: 0;
+  background: linear-gradient(to left, rgba(0, 0, 0, 0.1), transparent);
+}
+
+/* Campaign cards */
+.campaign-card {
+    display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      background: white;
+      border-radius: 0.5rem;
+      border: 1px solid #ffffff;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .hero-carousel {
+        aspect-ratio: 20 / 6;
+        max-height: 220px;
+          border-radius: 0.375rem;
+        }
+
+        .hero-nav-button {
+          width: 28px;
+          height: 28px;
+        opacity: 0.85;
+        }
+        
+        
+        .hero-carousel:hover .hero-nav-button,
+        .hero-carousel .hero-nav-button {
+          opacity: 0.85;
+        }
+}

@@ -1,0 +1,142 @@
+// @ts-nocheck — Vite SSR entry, not used by Next.js
+import { createRoot } from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
+import { initializeStorageCleanup } from './utils/storageCleanup';
+import { initializeSafeFetch } from './utils/safeFetch';
+
+// Initialize storage cleanup to handle IndexedDB quota exceeded errors
+initializeStorageCleanup();
+initializeSafeFetch();
+
+// Prefetch bootstrap data BEFORE React loads - critical for fast initial render
+// This runs in parallel with module loading, so data is ready when React needs it
+const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
+
+// Get tenant scope from subdomain or cached value
+const KNOWN_BASE_DOMAINS = ['allinbangla.com', 'cartnget.shop', 'localhost'];
+
+const getTenantScope = (): string => {
+  if (typeof window === 'undefined') return 'public';
+  const hostname = window.location.hostname;
+  // Skip for admin/superadmin subdomains
+  if (hostname.startsWith('admin.') || hostname.startsWith('superadmin.')) return '';
+  
+  // Check if this is a custom domain (not a subdomain of known base domains)
+  const isKnownBaseDomain = KNOWN_BASE_DOMAINS.some(base => 
+    hostname === base || hostname.endsWith('.' + base) || hostname.endsWith('.' + base.split(':')[0])
+  );
+  
+  // If not a known base domain, check if we have cached custom domain resolution
+  if (!isKnownBaseDomain && !hostname.includes('localhost')) {
+    try {
+      const cachedCustomDomain = localStorage.getItem(`custom_domain_${hostname}`);
+      if (cachedCustomDomain) return cachedCustomDomain;
+      // Mark for async resolution - will be handled by App.tsx
+      (window as any).__CUSTOM_DOMAIN__ = hostname;
+      return ''; // Will be resolved by App.tsx via API
+    } catch {}
+  }
+  
+  // Extract subdomain
+  const parts = hostname.split('.');
+  
+  // Handle localhost development: tenant.localhost or tenant.localhost:port
+  // Also handle: tenant.local, tenant.test, tenant.dev
+  if (parts.length === 2 && ['localhost', 'local', 'test', 'dev'].includes(parts[1].split(':')[0])) {
+    const subdomain = parts[0].toLowerCase().replace(/[^a-z0-9-]/g, '');
+    if (subdomain && subdomain !== 'www') {
+      try {
+        const cached = localStorage.getItem(`tenant_id_${subdomain}`);
+        if (cached) return cached;
+      } catch {}
+      return subdomain; // Use subdomain directly for localhost
+    }
+  }
+  
+  if (parts.length >= 3 && parts[0] !== 'www') {
+    const subdomain = parts[0].toLowerCase().replace(/[^a-z0-9-]/g, '');
+    // Check cached tenant ID for this subdomain
+    try {
+      const cached = localStorage.getItem(`tenant_id_${subdomain}`);
+      if (cached) return cached;
+    } catch {}
+    return ''; // Will be resolved by App.tsx
+  }
+  // Check active tenant from localStorage
+  try {
+    const stored = localStorage.getItem('activeTenant');
+    if (stored) return stored;
+    const session = localStorage.getItem('user_session');
+    if (session) {
+      const parsed = JSON.parse(session);
+      return parsed?.tenantId || parsed?.tenant?.id || 'public';
+    }
+  } catch {}
+  return 'public';
+};
+
+// Reuse bootstrap data already prefetched by index.html inline script
+// Only fetch if index.html didn't already start the prefetch
+const tenantScope = getTenantScope();
+if (typeof window !== 'undefined' && tenantScope) {
+  // index.html sets __BOOTSTRAP_DATA__ / __BOOTSTRAP_READY__ synchronously from cache
+  // or fires an XHR that sets them async. Only fetch if neither exists.
+  if (!(window as any).__BOOTSTRAP_READY__ && !(window as any).__PREFETCHED_BOOTSTRAP__) {
+    (window as any).__PREFETCHED_BOOTSTRAP__ = fetch(`${API_BASE}/api/tenant-data/${tenantScope}/bootstrap`, {
+      credentials: 'include',
+      headers: { 'Accept': 'application/json' }
+    }).then(r => r.ok ? r.json() : null).catch(() => null);
+  }
+  // Only fetch secondary if not already started by index.html
+  if (!(window as any).__SECONDARY_DATA__ && !(window as any).__PREFETCHED_SECONDARY__) {
+    (window as any).__PREFETCHED_SECONDARY__ = fetch(`${API_BASE}/api/tenant-data/${tenantScope}/secondary`, {
+      credentials: 'include',
+      headers: { 'Accept': 'application/json' }
+    }).then(r => r.ok ? r.json() : null).catch(() => null);
+  }
+}
+
+const container = document.getElementById('root')!;
+
+// Load CSS and App in PARALLEL (not sequential) for faster startup
+// CSS is non-blocking, React can render while CSS loads
+const cssPromise = Promise.all([import('./styles/tailwind.css'), import('./styles/mobile-enhancements.css')]);
+const appPromise = import('./App');
+
+// Global function to hide preload skeleton - called by App.tsx when data is ready
+if (typeof window !== 'undefined') {
+  (window as any).__hidePreloadSkeleton__ = () => {
+    // Wait for next frame to ensure React content is painted
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const skeleton = document.getElementById('preload-skeleton');
+        if (skeleton) {
+          skeleton.classList.add('done');
+          // Wait for the opacity transition to finish before removing
+          setTimeout(() => skeleton.remove(), 300);
+        }
+      });
+    });
+  };
+}
+//updated for mismatches with Cloudflare
+// Start rendering as soon as App loads - don't wait for CSS
+appPromise.then(({ default: App }) => {
+  // Always use createRoot to avoid hydration mismatches with Cloudflare
+  // Clear any server-rendered or skeleton content
+  if (container.hasChildNodes()) {
+    container.innerHTML = '';
+  }
+  createRoot(container).render(<BrowserRouter><App /></BrowserRouter>);
+  
+  // Fallback: hide skeleton after 5 seconds if App.tsx doesn't call it
+  // This prevents infinite skeleton if something goes wrong
+  setTimeout(() => {
+    if (typeof (window as any).__hidePreloadSkeleton__ === 'function') {
+      (window as any).__hidePreloadSkeleton__();
+    }
+  }, 5000);
+});
+
+// Ensure CSS is loaded (for error handling)
+cssPromise.catch(e => console.warn('CSS load failed:', e));
