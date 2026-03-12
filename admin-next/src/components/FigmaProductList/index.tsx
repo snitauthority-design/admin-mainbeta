@@ -126,7 +126,7 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
 
   // ── Helpers ───────────────────────────────────────────────────────────────
   const getProductKey = useCallback(
-    (product: Product, idx: number): string => (product as any)._id || `${product.id}-${idx}`,
+    (product: Product, idx: number): string => product._id || `${product.id}-${idx}`,
     []
   );
 

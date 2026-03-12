@@ -22,6 +22,7 @@ export interface Product {
   salePrice?: number;
   tag?: string;
   rating?: number;
+  /** MongoDB / Firestore document ID (string form) */
   _id?: string;
   [key: string]: any;
 }

@@ -20,17 +20,21 @@ export const isDarazFormat = (headers: string[]): boolean => {
   return hasAdvanced || hasBasic || (hasProductName && hasImageOrSku);
 };
 
-/** Strip HTML tags to get plain text */
+/** Strip HTML tags to get plain text (uses DOMParser to avoid innerHTML XSS risks) */
 export const stripHtmlTags = (html: string): string => {
   if (!html) return '';
-  const tmp = document.createElement('div');
-  tmp.innerHTML = html;
-  return tmp.textContent || tmp.innerText || '';
+  try {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    return doc.body.textContent || '';
+  } catch {
+    return html.replace(/<[^>]*>/g, '');
+  }
 };
 
-/** Get the store front URL for a given subdomain */
+/** Get the store front URL for a given subdomain (SSR-safe) */
 export const getStoreUrl = (subdomain?: string): string => {
   if (!subdomain) return '';
+  if (typeof window === 'undefined') return `https://${subdomain}.allinbangla.com`;
   const isLocalhost = window.location.hostname.includes('localhost');
   if (isLocalhost) return `http://${subdomain}.localhost:3000`;
   return `https://${subdomain}.allinbangla.com`;

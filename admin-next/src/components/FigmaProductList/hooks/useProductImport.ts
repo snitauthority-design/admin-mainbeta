@@ -20,10 +20,21 @@ interface UseProductImportReturn {
 /** Generate a numeric ID that doesn't collide with existingIds */
 const generateUniqueId = (existingIds: Set<number>): number => {
   let id = Date.now() + Math.floor(Math.random() * 10000);
-  while (existingIds.has(id)) {
-    id = Date.now() + Math.floor(Math.random() * 10000);
+  let attempts = 0;
+  while (existingIds.has(id) && attempts < 1000) {
+    id = Date.now() + Math.floor(Math.random() * 1_000_000);
+    attempts++;
   }
   return id;
+};
+
+/** Get the first truthy value for a list of row keys */
+const getRowValue = (row: any, keys: string[]): string => {
+  for (const key of keys) {
+    const value = row[key];
+    if (value !== undefined && value !== null && value !== '') return String(value);
+  }
+  return '';
 };
 
 /** Parse a single Daraz/Lazada-format CSV row into a Product */
@@ -51,10 +62,10 @@ const parseDarazProduct = (row: any, existingIds: Set<number>): Product => {
     }
   });
 
-  const productName = row['*Product Name(English)'] || row['Product Name(English)'] || row['*Product Name'] || row['Product Name'] || row['Name'] || '';
-  const productNameBengali = row['Product Name(Bengali)'] || '';
-  const mainDescription = row['Main Description'] || row['*Short Description'] || row['Short Description'] || row['Description'] || row['Product Description'] || '';
-  const highlights = row['Highlights'] || row['*Highlights'] || '';
+  const productName = getRowValue(row, ['*Product Name(English)', 'Product Name(English)', '*Product Name', 'Product Name', 'Name']);
+  const productNameBengali = getRowValue(row, ['Product Name(Bengali)']);
+  const mainDescription = getRowValue(row, ['Main Description', '*Short Description', 'Short Description', 'Description', 'Product Description']);
+  const highlights = getRowValue(row, ['Highlights', '*Highlights']);
 
   let fullDescription = mainDescription;
   if (productNameBengali) {
@@ -64,9 +75,9 @@ const parseDarazProduct = (row: any, existingIds: Set<number>): Product => {
     fullDescription = `${fullDescription}<div class="highlights"><h4>Highlights</h4>${highlights}</div>`;
   }
 
-  const warranty = row['Warranty'] || '';
-  const warrantyType = row['Warranty Type'] || '';
-  const warrantyPolicy = row['Warranty Policy'] || '';
+  const warranty = getRowValue(row, ['Warranty']);
+  const warrantyType = getRowValue(row, ['Warranty Type']);
+  const warrantyPolicy = getRowValue(row, ['Warranty Policy']);
   if (warranty || warrantyType || warrantyPolicy) {
     const warrantyText = [warranty, warrantyType, warrantyPolicy].filter(Boolean).join(' - ');
     fullDescription = `${fullDescription}<p><strong>Warranty:</strong> ${warrantyText}</p>`;
@@ -81,18 +92,18 @@ const parseDarazProduct = (row: any, existingIds: Set<number>): Product => {
   return {
     id: newId,
     name: productName || 'Unnamed Product',
-    price: parseFloat(row['Price'] || row['*Price'] || row['Sale Price'] || row['*Sale Price'] || row['Special Price'] || row['*Special Price'] || '0') || 0,
-    originalPrice: parseFloat(row['Original Price'] || row['Regular Price'] || row['Price'] || row['*Price'] || '0') || 0,
+    price: parseFloat(getRowValue(row, ['Price', '*Price', 'Sale Price', '*Sale Price', 'Special Price', '*Special Price']) || '0') || 0,
+    originalPrice: parseFloat(getRowValue(row, ['Original Price', 'Regular Price', 'Price', '*Price']) || '0') || 0,
     costPrice: 0,
     image: galleryImages[0] || '',
     galleryImages,
     description: fullDescription,
-    category: row['Category'] || row['*Category'] || '',
-    subCategory: row['Sub Category'] || '',
-    childCategory: row['Child Category'] || '',
-    brand: row['Brand'] || row['*Brand'] || row['Brand Name'] || '',
-    sku: row['SellerSKU'] || row['*SellerSKU'] || row['Seller SKU'] || row['*Seller SKU'] || row['SKU'] || row['Product ID'] || `SKU-${newId}`,
-    stock: parseInt(row['Stock'] || row['Quantity'] || row['*Quantity'] || row['Available Stock'] || '0') || 0,
+    category: getRowValue(row, ['Category', '*Category']),
+    subCategory: getRowValue(row, ['Sub Category']),
+    childCategory: getRowValue(row, ['Child Category']),
+    brand: getRowValue(row, ['Brand', '*Brand', 'Brand Name']),
+    sku: getRowValue(row, ['SellerSKU', '*SellerSKU', 'Seller SKU', '*Seller SKU', 'SKU', 'Product ID']) || `SKU-${newId}`,
+    stock: parseInt(getRowValue(row, ['Stock', 'Quantity', '*Quantity', 'Available Stock']) || '0') || 0,
     status: 'Active' as const,
     tags: [],
     slug: slug || `product-${newId}`,
