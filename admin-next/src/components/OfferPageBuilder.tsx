@@ -75,7 +75,7 @@ export const OfferPageBuilder: React.FC<OfferPageBuilderProps> = ({
       formDataUpload.append('file', file);
       formDataUpload.append('tenantId', tenantId || 'default');
       
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+      const API_BASE_URL = (import.meta as unknown as { env: { VITE_API_BASE_URL?: string } }).env.VITE_API_BASE_URL || '';
       const response = await fetch(`${API_BASE_URL}/api/upload`, {
         method: 'POST',
         body: formDataUpload

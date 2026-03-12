@@ -97,8 +97,10 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 // Use canonical tenant resolution from appHelpers (supports all domains)
 const getTenantSubdomain = (): string | null => getHostTenantSlug();
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
-  ? String(import.meta.env.VITE_API_BASE_URL)
+const API_BASE_URL = typeof window !== 'undefined' && (window as any).__ENV__?.NEXT_PUBLIC_API_BASE_URL
+  ? String((window as any).__ENV__.NEXT_PUBLIC_API_BASE_URL)
+  : (import.meta as any).env?.NEXT_PUBLIC_API_BASE_URL
+  ? String((import.meta as any).env.NEXT_PUBLIC_API_BASE_URL)
   : 'https://allinbangla.com';
 
 const TOKEN_KEY = 'admin_auth_token';

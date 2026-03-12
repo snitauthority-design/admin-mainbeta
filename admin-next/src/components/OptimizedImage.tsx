@@ -32,7 +32,7 @@ const supportsWebP = (() => {
   // Vitest runs in JSDOM where canvas.toDataURL may be unimplemented/noisy.
   // WebP support detection is a runtime optimization only; disable in tests.
   try {
-    if (import.meta.env.MODE === 'test') return false;
+    if (typeof process !== 'undefined' && process.env.NODE_ENV === 'test') return false;
   } catch {
     // ignore
   }

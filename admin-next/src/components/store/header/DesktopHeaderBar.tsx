@@ -3,6 +3,7 @@ import { ShoppingCart, User, LogOut, ChevronDown, Truck, UserCircle, Menu, Phone
 import { normalizeImageUrl } from '../../../utils/imageUrlHelper';
 import type { HeaderSearchProps } from './headerTypes';
 import { DesktopSearchBar } from './HeaderSearchBar';
+import { SearchSuggestions } from './SearchBar';
 import type { User as UserType, WebsiteConfig } from '../../../types';
 import HeaderStyle6Desktop from './HeaderStyle6';
 import MenuHome from './MenuHome';
@@ -119,6 +120,15 @@ const HeaderStyle1 = memo<DesktopHeaderBarProps>(({
             >
               Search
             </button>
+            {/* Search suggestions dropdown */}
+            {searchProps.isSuggestionsOpen && searchProps.suggestions && searchProps.suggestions.length > 0 && (
+              <div className="absolute left-0 right-0 top-full mt-1 z-50">
+                <SearchSuggestions
+                  suggestions={searchProps.suggestions}
+                  onSuggestionClick={searchProps.onSuggestionClick}
+                />
+              </div>
+            )}
           </div>
         </div>
 

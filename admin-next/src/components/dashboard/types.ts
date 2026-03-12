@@ -27,12 +27,12 @@ export interface DashboardHeaderProps {
   onNotificationClick?: () => void;
   notifications?: Array<{
     _id: string;
-    type: string;
+    type?: string;
     title: string;
     message: string;
     isRead: boolean;
-    createdAt: string;
-    data?: Record<string, any>;
+    createdAt: string | Date;
+    data?: Record<string, any | undefined>;
   }>;
   onMarkNotificationRead?: (ids?: string[]) => void;
   onOrderNotificationClick?: (orderId: string) => void;

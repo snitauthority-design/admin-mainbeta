@@ -90,7 +90,7 @@ const FigmaDashboardPage: React.FC<FigmaDashboardPageProps> = ({
 
   // Use notifications hook with tenant context
   const {
-    notifications,
+    notifications: rawNotifications,
     unreadCount,
     markAsRead
   } = useNotifications({
@@ -99,6 +99,18 @@ const FigmaDashboardPage: React.FC<FigmaDashboardPageProps> = ({
     autoConnect: true,
     pollingInterval: 30000 // Poll every 30 seconds
   });
+
+  // Normalize to the shape DashboardHeaderProps.notifications expects
+  // Hook returns { id, read } — header expects { _id, isRead }
+  const headerNotifications = rawNotifications.map(n => ({
+    _id: n.id || (n as any)._id || '',
+    type: n.type,
+    title: n.title,
+    message: n.message,
+    isRead: n.read ?? (n as any).isRead ?? false,
+    createdAt: n.createdAt,
+    data: n.data,
+  }));
 
   const handleSidebarNavigation = (page: string) => {
     setCurrentPage(page);
@@ -165,7 +177,7 @@ const FigmaDashboardPage: React.FC<FigmaDashboardPageProps> = ({
         onNavigate: handleSidebarNavigation,
         // Notification props
         notificationCount: unreadCount,
-        notifications: notifications,
+        notifications: headerNotifications,
         onMarkNotificationRead: markAsRead,
         onOrderNotificationClick: onOrderNotificationClick,
         // Chat props

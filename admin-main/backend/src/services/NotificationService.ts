@@ -3,7 +3,7 @@ import { io, Socket } from 'socket.io-client';
 export interface Notification {
   _id: string;
   tenantId: string;
-  type: 'order' | 'review' | 'customer' | 'inventory' | 'system';
+  type?: 'order' | 'review' | 'customer' | 'inventory' | 'system';
   title: string;
   message: string;
   data?: Record<string, any>;

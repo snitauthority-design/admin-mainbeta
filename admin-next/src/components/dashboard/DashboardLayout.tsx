@@ -123,8 +123,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           <div className="flex-1">
             <FigmaDashboardHeader
               {...headerProps}
-              searchQuery={headerProps.searchQuery ?? ""}
-              onSearchChange={headerProps.onSearchChange ?? (() => {})}
+              searchQuery={(headerProps as any).searchQuery ?? ""}
+              onSearchChange={(headerProps as any).onSearchChange ?? (() => {})}
             />
           </div>
         </div>
