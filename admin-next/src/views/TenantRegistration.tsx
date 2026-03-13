@@ -37,6 +37,7 @@ import {
 } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import toast from 'react-hot-toast';
+import { getPrimaryDomain, getStoreUrl } from '../utils/appHelpers';
 
 // Types
 interface FormData {
@@ -350,8 +351,8 @@ export default function TenantRegistration() {
         subdomain: formData.subdomain,
         shopName: formData.shopName,
         email: formData.email,
-        shopUrl: `https://${formData.subdomain}.allinbangla.com`,
-        adminUrl: `https://admin.allinbangla.com?tenant=${formData.subdomain}`
+        shopUrl: getStoreUrl(formData.subdomain),
+        adminUrl: `https://admin.${getPrimaryDomain()}?tenant=${formData.subdomain}`
       });
       setRegistrationSuccess(true);
     } catch (error) {
@@ -512,7 +513,7 @@ export default function TenantRegistration() {
             {/* Shop Preview with Animation */}
             <div className="mt-8 p-5 bg-gradient-to-r from-white/10 to-white/5 rounded-2xl text-center border border-white/10">
               <p className="text-white/60 text-sm mb-2">আপনার শপ:</p>
-              <p className="text-white font-bold text-xl tracking-wide">{formData.subdomain}.allinbangla.com</p>
+              <p className="text-white font-bold text-xl tracking-wide">{formData.subdomain}.{getPrimaryDomain()}</p>
               <div className="mt-3 flex items-center justify-center gap-2 text-white/50 text-sm">
                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
                 <span>লাইভ হতে প্রস্তুত</span>
@@ -727,7 +728,7 @@ export default function TenantRegistration() {
           {/* Footer */}
           <div className="text-center mt-8">
             <p className="text-slate-500 text-sm">
-              সাহায্য দরকার? <a href="mailto:support@allinbangla.com" className="text-indigo-600 hover:underline">support@allinbangla.com</a>
+              সাহায্য দরকার? <a href={`mailto:support@${getPrimaryDomain()}`} className="text-indigo-600 hover:underline">support@{getPrimaryDomain()}</a>
             </p>
           </div>
         </div>
@@ -930,7 +931,7 @@ export default function TenantRegistration() {
                           <p className="text-sm">
                             <span className="text-slate-500">আপনার শপ: </span>
                             <span className={`font-semibold ${subdomainStatus === 'available' ? 'text-green-600' : 'text-indigo-600'}`}>
-                              {formData.subdomain}.allinbangla.com
+                              {formData.subdomain}.{getPrimaryDomain()}
                             </span>
                           </p>
                         )}

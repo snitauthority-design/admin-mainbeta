@@ -53,7 +53,7 @@ class EmailService {
     }
 
     try {
-      const emailFrom = options.from || process.env.EMAIL_FROM || 'info@allinbangla.com';
+      const emailFrom = options.from || process.env.EMAIL_FROM || `info@${process.env.PRIMARY_DOMAIN || 'localhost'}`;
       const emailTo = options.to || process.env.EMAIL_TO || 'ntrmt6@gmail.com';
 
       const mailOptions = {

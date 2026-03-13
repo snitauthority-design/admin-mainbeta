@@ -199,7 +199,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
   const [resolvedSubdomain, setResolvedSubdomain] = useState<string>('');
 
   // Get subdomain from useTenant hook (hostTenantSlug is captured once from URL)
-  const { hostTenantSlug, tenants: hookTenants, activeTenantId: hookTenantId } = useTenant();
+  const { hostTenantSlug, tenants: hookTenants, activeTenantId: hookTenantId, activeTenantSubdomain: hookSubdomain } = useTenant();
   
   // Resolve subdomain from multiple sources
   useEffect(() => {
@@ -208,10 +208,12 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
       if (hostTenantSlug) return hostTenantSlug;
       // Priority 2: Prop from parent
       if (propSubdomain) return propSubdomain;
-      // Priority 3: Find from hook tenants
+      // Priority 3: useTenant hook's computed subdomain (most reliable)
+      if (hookSubdomain) return hookSubdomain;
+      // Priority 4: Find from hook tenants
       const hookTenant = hookTenants.find(t => t.id === hookTenantId || t._id === hookTenantId);
       if (hookTenant?.subdomain) return hookTenant.subdomain;
-      // Priority 4: Find from prop tenants
+      // Priority 5: Find from prop tenants
       const propTenant = tenants?.find(t => t.id === activeTenantId || t._id === activeTenantId);
       if (propTenant?.subdomain) return propTenant.subdomain;
       return '';
@@ -228,7 +230,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
         }
       }).catch(() => {});
     }
-  }, [hostTenantSlug, propSubdomain, hookTenants, hookTenantId, tenants, activeTenantId]);
+  }, [hostTenantSlug, propSubdomain, hookSubdomain, hookTenants, hookTenantId, tenants, activeTenantId]);
 
   const activeTenantSubdomain = resolvedSubdomain;
 

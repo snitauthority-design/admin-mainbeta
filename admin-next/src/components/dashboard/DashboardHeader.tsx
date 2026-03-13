@@ -9,6 +9,7 @@ import {
   X
 } from 'lucide-react';
 import { DashboardHeaderProps } from './types';
+import { getStoreUrl } from '../../utils/appHelpers';
 
 // Tutorial video URLs by page
 const TUTORIAL_VIDEOS: Record<string, string> = {
@@ -29,15 +30,7 @@ const TUTORIAL_VIDEOS: Record<string, string> = {
   'default': 'https://www.youtube.com/watch?v=59b9ptwx0Js'
 };
 
-// Get store URL for tenant
-const getStoreUrl = (tenantSubdomain?: string) => {
-  if (!tenantSubdomain) return '#';
-  const isLocalhost = window.location.hostname.includes('localhost');
-  if (isLocalhost) {
-    return `http://${tenantSubdomain}.localhost:3000`;
-  }
-  return `https://${tenantSubdomain}.allinbangla.com`;
-};
+// Get store URL for tenant (uses centralized getStoreUrl from appHelpers)
 
 const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   tenantId,

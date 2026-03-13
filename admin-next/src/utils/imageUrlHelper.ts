@@ -5,6 +5,21 @@
  */
 import { getCDNImageUrl, isCDNEnabled } from '../config/cdnConfig';
 
+// Resolve production URL from env var
+const PRIMARY_DOMAIN = (import.meta.env.VITE_PRIMARY_DOMAIN || '').replace(/^https?:\/\//, '').replace(/\/$/, '');
+
+const getProductionUrl = (): string => {
+  if (PRIMARY_DOMAIN) return `https://${PRIMARY_DOMAIN}`;
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname?.toLowerCase() || '';
+    if (hostname !== 'localhost' && !hostname.endsWith('.localhost') && !hostname.startsWith('127.')) {
+      const parts = hostname.split('.');
+      const rootDomain = parts.length > 2 ? parts.slice(-2).join('.') : hostname;
+      return `https://${rootDomain}`;
+    }
+  }
+  return '';
+};
 
 const getBaseUrl = (): string => {
   // In browser, use current origin for uploads to avoid CORS issues
@@ -16,13 +31,13 @@ const getBaseUrl = (): string => {
       return apiUrl;
     }
     // Use current origin for same-domain requests
-    return 'https://allinbangla.com';
+    return getProductionUrl() || window.location.origin;
   }
   // Fallback to production URL during SSR
-  return 'https://allinbangla.com';
+  return getProductionUrl();
 };
 
-const PRODUCTION_URL = 'https://allinbangla.com';
+const PRODUCTION_URL = getProductionUrl();
 
 // Image size presets for different use cases
 export type ImageSize = 'thumb' | 'small' | 'medium' | 'large' | 'full';
@@ -79,14 +94,16 @@ export const normalizeImageUrl = (url: string | undefined | null, options?: Norm
 
   // If CDN is enabled, prefer CDN URLs
   if (cdnAllowed && isCDNEnabled()) {
-    if (cleaned.includes('cdn.allinbangla.com') || 
-        cleaned.includes('images.allinbangla.com') || 
-        cleaned.includes('static.allinbangla.com')) {
+    // Check if already on a CDN subdomain (cdn.*, images.*, static.*)
+    if (PRIMARY_DOMAIN && (
+        cleaned.includes(`cdn.${PRIMARY_DOMAIN}`) || 
+        cleaned.includes(`images.${PRIMARY_DOMAIN}`) || 
+        cleaned.includes(`static.${PRIMARY_DOMAIN}`))) {
       return cleaned;
     }
 
     if (cleaned.startsWith('http://') || cleaned.startsWith('https://')) {
-      if (cleaned.includes('allinbangla.com') && cleaned.includes('/uploads')) {
+      if (PRIMARY_DOMAIN && cleaned.includes(PRIMARY_DOMAIN) && cleaned.includes('/uploads')) {
         return getCDNImageUrl(cleaned);
       }
       return cleaned;
@@ -98,11 +115,11 @@ export const normalizeImageUrl = (url: string | undefined | null, options?: Norm
   }
 
   // CDN disabled: fallback handling
-  if (cleaned.includes('cdn.allinbangla.com')) {
-    return cleaned.replace(/^https?:\/\/cdn\.systemnextit\.com/i, PRODUCTION_URL);
+  if (PRIMARY_DOMAIN && cleaned.includes(`cdn.${PRIMARY_DOMAIN}`)) {
+    return cleaned;
   }
 
-  if (cleaned.includes('allinbangla.com')) {
+  if (PRIMARY_DOMAIN && cleaned.includes(PRIMARY_DOMAIN)) {
     return cleaned;
   }
   

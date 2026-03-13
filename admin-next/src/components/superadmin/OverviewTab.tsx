@@ -8,6 +8,7 @@ import StatsCard from './StatsCard';
 import ServerMetric from './ServerMetric';
 import QuickActionButton from './QuickActionButton';
 import { SystemStats, TenantStats, Activity } from './types';
+import { getPrimaryDomain } from '../../utils/appHelpers';
 import { formatCurrency, getPlanBadge, getStatusBadge } from './utils';
 
 interface OverviewTabProps {
@@ -259,7 +260,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
                       </div>
                       <div className="min-w-0">
                         <p className="font-medium text-slate-900 text-sm lg:text-base truncate">{tenant.name}</p>
-                        <p className="text-xs lg:text-sm text-slate-500 truncate">{tenant.subdomain}.allinbangla.com</p>
+                        <p className="text-xs lg:text-sm text-slate-500 truncate">{tenant.subdomain}.{getPrimaryDomain()}</p>
                       </div>
                     </div>
                   </td>
@@ -322,7 +323,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="font-medium text-slate-900 text-sm truncate">{tenant.name}</p>
-                      <p className="text-xs text-slate-500 truncate">{tenant.subdomain}.allinbangla.com</p>
+                      <p className="text-xs text-slate-500 truncate">{tenant.subdomain}.{getPrimaryDomain()}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-1 ml-2">

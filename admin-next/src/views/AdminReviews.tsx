@@ -2,6 +2,7 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { MessageCircle, Star, Filter, Flag, CheckCircle, Send, Edit3, Loader2, MoreVertical, Eye, Edit } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { getAuthHeader } from '../services/authService';
+import { getApiUrl } from '../utils/appHelpers';
 
 type ReviewStatus = 'approved' | 'pending' | 'rejected';
 
@@ -25,18 +26,7 @@ type ReviewItem = {
   updatedAt: string;
 };
 
-// Get API URL
-const getApiUrl = (): string => {
-  if (typeof window === 'undefined') return 'https://allinbangla.com/api';
-  const hostname = window.location.hostname;
-  const protocol = window.location.protocol;
-  if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname.endsWith('.localhost')) {
-    return 'http://localhost:5001/api';
-  }
-  const parts = hostname.split('.');
-  const mainDomain = parts.length > 2 ? parts.slice(-2).join('.') : hostname;
-  return `${protocol}//${mainDomain}/api`;
-};
+// Get API URL (from centralized appHelpers)
 
 const AdminReviews: React.FC = () => {
   const [reviews, setReviews] = useState<ReviewItem[]>([]);

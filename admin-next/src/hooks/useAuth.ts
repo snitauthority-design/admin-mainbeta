@@ -4,7 +4,7 @@
 
 import { useCallback, Dispatch, SetStateAction } from 'react';
 import type { User, Tenant } from '../types';
-import { isAdminRole, getAuthErrorMessage, getHostTenantSlug } from '../utils/appHelpers';
+import { isAdminRole, getAuthErrorMessage, getHostTenantSlug, getApiUrl, getPrimaryDomain } from '../utils/appHelpers';
 
 import { signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider } from 'firebase/auth';
 import { auth, provider } from '../config/firebase';
@@ -12,10 +12,20 @@ import { auth, provider } from '../config/firebase';
 // Default tenant ID
 const DEFAULT_TENANT_ID = '';  // Empty to prevent data leaking to real tenant
 
-// API Base URL
+// API Base URL - derived from env var or current hostname
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
   ? String(import.meta.env.VITE_API_BASE_URL)
-  : 'https://allinbangla.com';
+  : (() => {
+    const domain = getPrimaryDomain();
+    if (domain && domain !== 'localhost') return `https://${domain}`;
+    // In browser, extract from current location; during SSR, return empty
+    if (typeof window !== 'undefined') {
+      const parts = window.location.hostname.split('.');
+      const root = parts.length > 2 ? parts.slice(-2).join('.') : window.location.hostname;
+      return `${window.location.protocol}//${root}`;
+    }
+    return '';
+  })();
 
 // Use canonical tenant resolution from appHelpers (supports all domains)
 const getTenantSubdomain = (): string | null => getHostTenantSlug();
@@ -426,11 +436,9 @@ export function useAuth({
     
     // Check if on admin.* or superadmin.* subdomain
     const isAdminSubdomain = typeof window !== 'undefined' && 
-      (window.location.hostname === 'admin.allinbangla.com' || 
-       window.location.hostname.startsWith('admin.'));
+      window.location.hostname.startsWith('admin.');
     const isSuperAdminSubdomain = typeof window !== 'undefined' && 
-      (window.location.hostname === 'superadmin.allinbangla.com' || 
-       window.location.hostname.startsWith('superadmin.'));
+      window.location.hostname.startsWith('superadmin.');
     
     if (isAdminSubdomain || isSuperAdminSubdomain) {
       // On admin/superadmin subdomain, show login page

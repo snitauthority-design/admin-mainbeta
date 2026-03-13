@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { formatCurrency } from '../utils/format';
 import { normalizeImageUrl } from '../utils/imageUrlHelper';
+import { getStoreUrl } from '../utils/appHelpers';
 
 const randomId = () => crypto?.randomUUID ? crypto.randomUUID() : `lp-${Date.now().toString(36)}-${Math.random().toString(16).slice(2)}`;
 const toSlug = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
@@ -359,7 +360,7 @@ export const LandingPageBuilder: React.FC<LandingPageBuilderProps> = ({
       seo: {
         metaTitle: `${selectedProduct.name} | Buy Now`,
         metaDescription: selectedProduct.description?.slice(0, 150) || 'Instant landing experience',
-        canonicalUrl: `https://${tenantSubdomain}.allinbangla.com/p/${slug}`,
+        canonicalUrl: `${getStoreUrl(tenantSubdomain)}/p/${slug}`,
         keywords: ['landing page', selectedProduct.name]
       },
       blocks: [
@@ -389,7 +390,7 @@ export const LandingPageBuilder: React.FC<LandingPageBuilderProps> = ({
     
     try {
       await onSave(page);
-      const pageUrl = `https://${tenantSubdomain}.allinbangla.com/p/${slug}`;
+      const pageUrl = `${getStoreUrl(tenantSubdomain)}/p/${slug}`;
       setCreatedPageUrl(pageUrl);
       setShowSuccess(true);
     } catch (error) {

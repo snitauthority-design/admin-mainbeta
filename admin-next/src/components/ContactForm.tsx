@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { getPrimaryDomain } from '../utils/appHelpers';
 
 interface ContactFormData {
   name: string;
@@ -157,8 +158,8 @@ const ContactForm: React.FC = () => {
       <div className="mt-6 text-sm text-gray-600 text-center">
         <p>
           Or email us directly at{' '}
-          <a href="mailto:info@allinbangla.com" className="text-blue-600 hover:underline">
-            info@allinbangla.com
+          <a href={`mailto:info@${getPrimaryDomain()}`} className="text-blue-600 hover:underline">
+            info@{getPrimaryDomain()}
           </a>
         </p>
       </div>

@@ -5,6 +5,7 @@ import {
   Smartphone, Monitor, Image as ImageIcon, X
 } from 'lucide-react';
 import { TenantThemeConfig } from './types';
+import { getPrimaryDomain } from '../../utils/appHelpers';
 
 interface ThemeConfigTabProps {
   defaultTheme: TenantThemeConfig;
@@ -496,7 +497,7 @@ const ThemeConfigTab: React.FC<ThemeConfigTabProps> = ({
                           />
                           <div className="min-w-0 flex-1">
                             <p className="text-xs sm:text-sm font-medium text-slate-700 truncate">{tenant.name}</p>
-                            <p className="text-xs text-slate-500 truncate">{tenant.subdomain}.allinbangla.com</p>
+                            <p className="text-xs text-slate-500 truncate">{tenant.subdomain}.{getPrimaryDomain()}</p>
                           </div>
                         </label>
                       ))}

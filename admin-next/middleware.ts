@@ -7,7 +7,12 @@ import type { NextRequest } from 'next/server';
  * Pages read the tenant from the x-tenant-id header or cookie.
  */
 
-const KNOWN_BASE_DOMAINS = ['allinbangla.com', 'cartnget.shop', 'localhost'];
+// Build known base domains from env var + defaults
+const primaryDomain = process.env.NEXT_PUBLIC_PRIMARY_DOMAIN || '';
+const KNOWN_BASE_DOMAINS = [
+  ...(primaryDomain ? [primaryDomain] : []),
+  'localhost'
+].filter(Boolean);
 const SYSTEM_SUBDOMAINS = ['admin', 'superadmin', 'www', 'api'];
 
 export function middleware(request: NextRequest) {

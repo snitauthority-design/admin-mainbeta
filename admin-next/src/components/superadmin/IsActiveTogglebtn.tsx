@@ -4,6 +4,7 @@ import {
   UserX, Ban, PlayCircle, X, ChevronRight, 
   Loader2, Store, Building2, Globe
 } from 'lucide-react';
+import { getPrimaryDomain } from '../../utils/appHelpers';
 
 // Status colors matching your main theme
 const STATUS_COLORS = {
@@ -16,7 +17,7 @@ const STATUS_COLORS = {
 
 const IsActiveTogglebtn = ({ 
   tenants = [], 
-  primaryDomain = 'allinbangla.com',
+  primaryDomain = getPrimaryDomain() || 'localhost',
   onSelectTenant, // This is the required prop from your error
   isProcessing = false 
 }) => {

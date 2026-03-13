@@ -3,6 +3,7 @@ import { Building2, CreditCard, AlertTriangle, Rocket, MessageSquare } from 'luc
 import { DataService } from '../services/DataService';
 import { SubscriptionService } from '../services/SubscriptionService';
 import { getAuthHeader } from '../services/authService';
+import { getApiUrl, getPrimaryDomain } from '../utils/appHelpers';
 import { Tenant, CreateTenantPayload, TenantStatus } from '../types';
 import { toast } from 'react-hot-toast';
 import { SuperAdminTabSkeleton } from '../components/SkeletonLoaders';
@@ -57,8 +58,8 @@ const AdminTenantManagement = React.lazy(() => import('./AdminTenantManagement')
 // Default platform configuration
 const defaultPlatformConfig: PlatformConfig = {
   platformName: 'SystemNext IT',
-  platformUrl: 'allinbangla.com',
-  supportEmail: 'support@allinbangla.com',
+  platformUrl: getPrimaryDomain() || 'localhost',
+  supportEmail: `support@${getPrimaryDomain() || 'localhost'}`,
   supportPhone: '+880 1410-050031',
   defaultCurrency: 'BDT',
   defaultLanguage: 'English',
@@ -216,18 +217,7 @@ const SuperAdminDashboard: React.FC = () => {
     }
   ]);
 
-  // Helper to get API URL - use port 5001 for backend
-  const getApiUrl = (): string => {
-    if (typeof window !== 'undefined') {
-      const hostname = window.location.hostname;
-      if (hostname === 'localhost' || hostname === '127.0.0.1') {
-        return 'http://localhost:5001/api';
-      }
-      return 'https://allinbangla.com/api';
-    }
-    return 'https://allinbangla.com/api';
-  };
-
+  // Helper to get API URL - uses centralized getApiUrl from appHelpers
   const API_URL = getApiUrl();
 
   // Load tenants on mount
@@ -793,7 +783,7 @@ const SuperAdminDashboard: React.FC = () => {
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       // For demo purposes, show what would happen
-      console.log(`Would redirect to: https://admin.allinbangla.com?tenant=${tenant.subdomain} with impersonation token`);
+      console.log(`Would redirect to: https://admin.${getPrimaryDomain()}?tenant=${tenant.subdomain} with impersonation token`);
       
       // In production: window.location.href = impersonationUrl;
     } catch (error) {

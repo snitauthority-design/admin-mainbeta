@@ -151,6 +151,59 @@ export function getCustomDomainTenant(): { tenantId: string; subdomain: string }
   return null;
 }
 
+// --- Store URL utilities ---
+
+/**
+ * Get the primary tenant domain from env or by extracting from the current hostname.
+ * Used as fallback when PRIMARY_TENANT_DOMAIN env var is not set.
+ */
+export function getPrimaryDomain(): string {
+  if (PRIMARY_TENANT_DOMAIN) return PRIMARY_TENANT_DOMAIN;
+  if (typeof window === 'undefined') return '';
+  const hostname = window.location.hostname?.toLowerCase() || '';
+  const isLocalhost = hostname === 'localhost' || hostname.endsWith('.localhost') || hostname.startsWith('127.');
+  if (isLocalhost) return 'localhost';
+  const parts = hostname.split('.');
+  return parts.length > 2 ? parts.slice(-2).join('.') : hostname;
+}
+
+/**
+ * Build a storefront URL for a given tenant subdomain.
+ * Uses PRIMARY_TENANT_DOMAIN from env, with fallback to current hostname's root domain.
+ */
+export function getStoreUrl(subdomain?: string): string {
+  if (!subdomain) return '';
+  if (typeof window === 'undefined') {
+    const domain = PRIMARY_TENANT_DOMAIN;
+    return domain ? `https://${subdomain}.${domain}` : '';
+  }
+  const hostname = window.location.hostname?.toLowerCase() || '';
+  const isLocalhost = hostname === 'localhost' || hostname.endsWith('.localhost') || hostname.startsWith('127.');
+  if (isLocalhost) return `http://${subdomain}.localhost:3000`;
+  const domain = getPrimaryDomain();
+  return domain ? `https://${subdomain}.${domain}` : '';
+}
+
+/**
+ * Get the backend API base URL.
+ * Uses VITE_API_BASE_URL env var, with fallback to deriving from the current hostname.
+ */
+export function getApiUrl(): string {
+  const envApi = import.meta.env.VITE_API_BASE_URL;
+  if (envApi && /^https?:\/\/.+/.test(envApi)) {
+    return envApi.replace(/\/$/, '');
+  }
+  if (typeof window === 'undefined') {
+    const domain = PRIMARY_TENANT_DOMAIN;
+    return domain ? `https://${domain}/api` : '/api';
+  }
+  const hostname = window.location.hostname?.toLowerCase() || '';
+  const isLocalhost = hostname === 'localhost' || hostname.endsWith('.localhost') || hostname.startsWith('127.');
+  if (isLocalhost) return 'http://localhost:5001/api';
+  const domain = getPrimaryDomain();
+  return domain ? `${window.location.protocol}//${domain}/api` : '/api';
+}
+
 // --- Color utilities ---
 export function hexToRgb(hex: string): string {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);

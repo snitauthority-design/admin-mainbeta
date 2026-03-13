@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { User, Tenant } from '../types';
 import { getAuthHeader } from '../services/authService';
+import { getApiUrl } from '../utils/appHelpers';
 import { toast } from 'react-hot-toast';
 import RichTextEditor from '../components/RichTextEditor';
 import { useDarkMode } from '../context/DarkModeContext';
@@ -51,17 +52,6 @@ interface AdminSupportProps {
 }
 
 // API URL helper
-const getApiUrl = (): string => {
-  if (typeof window === 'undefined') return 'https://allinbangla.com/api';
-  const hostname = window.location.hostname;
-  if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname.endsWith('.localhost')) {
-    return 'http://localhost:5001/api';
-  }
-  const parts = hostname.split('.');
-  const mainDomain = parts.length > 2 ? parts.slice(-2).join('.') : hostname;
-  return `${window.location.protocol}//${mainDomain}/api`;
-};
-
 const API_URL = getApiUrl();
 
 const AdminSupport: React.FC<AdminSupportProps> = ({ user, activeTenant }) => {

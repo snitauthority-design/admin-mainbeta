@@ -649,7 +649,7 @@ export const StoreChatModal: React.FC<StoreChatModalProps> = ({
                                 const isOwnMessage = normalizedUserEmail
                                     ? message.authorEmail?.toLowerCase() === normalizedUserEmail
                                     : Boolean(guestSessionId && message.sender === 'customer' && message.guestSessionId === guestSessionId);
-                                const isSuperAdminMessage = message.authorRole === 'super_admin' || message.authorEmail?.toLowerCase() === 'admin@allinbangla.com';
+                                const isSuperAdminMessage = message.authorRole === 'super_admin';
                                 const alignRight = isCustomerView ? isCustomer : isSuperAdminMessage;
                                 const rawDisplayName = isOwnMessage ? 'You' : (message.authorName || (message.sender === 'admin' ? 'Support Team' : message.customerName || 'Customer'));
                                 const displayName = !isCustomerView && isSuperAdminMessage ? 'Super Admin' : rawDisplayName;

@@ -13,6 +13,7 @@ import {
   getTenantStats
 } from '../services/tenantsService';
 import { getTenantData, setTenantData } from '../services/tenantDataService';
+import { env } from '../config/env';
 import type { CreateTenantPayload } from '../types/tenant';
 import { authenticateToken, requireAdmin, requireRole } from '../middleware/auth';
 
@@ -133,8 +134,8 @@ tenantsRouter.post('/register', async (req, res) => {
         subdomain: tenant.subdomain,
         status: 'trialing',
         trialEndsAt: trialEndDate.toISOString(),
-        shopUrl: `https://${tenant.subdomain}.allinbangla.com`,
-        adminUrl: `https://admin.allinbangla.com`
+        shopUrl: `https://${tenant.subdomain}.${env.primaryDomain || 'localhost'}`,
+        adminUrl: `https://admin.${env.primaryDomain || 'localhost'}`
       },
       message: `🎉 Your shop "${tenant.name}" has been created! 14-day free trial started.`
     });

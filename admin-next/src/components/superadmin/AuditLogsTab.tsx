@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Shield, Search, Filter, Download, RefreshCw, Eye, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
 import { getAuthHeader } from '../../services/authService';
+import { getApiUrl } from '../../utils/appHelpers';
 import { toast } from 'react-hot-toast';
 
 interface AuditLog {
@@ -38,17 +39,6 @@ const AuditLogsTab: React.FC = () => {
   const [selectedLog, setSelectedLog] = useState<AuditLog | null>(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-
-  const getApiUrl = (): string => {
-    if (typeof window !== 'undefined') {
-      const hostname = window.location.hostname;
-      if (hostname === 'localhost' || hostname === '127.0.0.1') {
-        return 'http://localhost:5001/api';
-      }
-      return 'https://allinbangla.com/api';
-    }
-    return 'https://allinbangla.com/api';
-  };
 
   const API_URL = getApiUrl();
 

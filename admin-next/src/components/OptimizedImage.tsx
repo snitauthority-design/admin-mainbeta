@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, memo } from 'react';
 import { getOptimizedImageUrl, normalizeImageUrl } from '../utils/imageUrlHelper';
+import { PRIMARY_TENANT_DOMAIN } from '../utils/appHelpers';
 
 interface Props {
   src: string;
@@ -51,7 +52,7 @@ const generateBlurPlaceholder = (s: string): string => {
   const normalized = normalizeImageUrl(s);
   if (!normalized) return EMPTY;
   if (normalized.includes('unsplash.com')) return normalized.replace(/w=\d+/, 'w=40').replace(/q=\d+/, 'q=30');
-  if (normalized.includes('allinbangla.com') || normalized.includes('/uploads/')) return `${normalized}${normalized.includes('?') ? '&' : '?'}w=40&q=30`;
+  if ((PRIMARY_TENANT_DOMAIN && normalized.includes(PRIMARY_TENANT_DOMAIN)) || normalized.includes('/uploads/')) return `${normalized}${normalized.includes('?') ? '&' : '?'}w=40&q=30`;
   return EMPTY;
 };
 

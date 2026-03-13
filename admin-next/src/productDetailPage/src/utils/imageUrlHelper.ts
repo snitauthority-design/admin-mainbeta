@@ -3,7 +3,11 @@
  * Simplified version for productDetailPage
  */
 
-const PRODUCTION_URL = 'https://allinbangla.com';
+// Derive domain from env
+const PRIMARY_DOMAIN = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_PRIMARY_DOMAIN)
+  ? import.meta.env.VITE_PRIMARY_DOMAIN.replace(/^https?:\/\//, '').replace(/\/$/, '')
+  : '';
+const PRODUCTION_URL = PRIMARY_DOMAIN ? `https://${PRIMARY_DOMAIN}` : '';
 
 const stripWrappingQuotes = (value: string): string => {
   const v = value.trim();
@@ -42,15 +46,17 @@ export const normalizeImageUrl = (url: string | undefined | null, options?: Norm
   if (cleaned.toLowerCase().startsWith('data:')) return normalizeDataUrl(cleaned);
   if (cleaned.toLowerCase().startsWith('blob:')) return cleaned;
 
-  // CDN URLs
-  if (cleaned.includes('cdn.allinbangla.com') || 
-      cleaned.includes('images.allinbangla.com') || 
-      cleaned.includes('static.allinbangla.com')) {
-    return cleaned;
-  }
+  // CDN URLs - check hostname precisely to avoid substring matching issues
+  const hasHostname = (url: string, domain: string): boolean => {
+    try {
+      const hostname = new URL(url).hostname;
+      return hostname === domain || hostname.endsWith(`.${domain}`);
+    } catch {
+      return url.includes(`//${domain}`) || url.includes(`.${domain}`);
+    }
+  };
 
-  // Already has domain
-  if (cleaned.includes('allinbangla.com')) {
+  if (hasHostname(cleaned, PRIMARY_DOMAIN)) {
     return cleaned;
   }
   
