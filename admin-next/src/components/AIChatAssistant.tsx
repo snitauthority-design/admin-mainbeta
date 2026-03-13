@@ -11,6 +11,7 @@ import {
   Package, ClipboardList, BarChart3
 } from 'lucide-react';
 import { getAuthHeader } from '../services/authService';
+import { getApiUrl } from '../utils/appHelpers';
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 // SN Intelligence Icon
@@ -98,15 +99,6 @@ const IMAGE_OPTIONS = [
   { id: 'describe', icon: Edit3, label: 'Generate description', description: 'Create a description for this image' },
   { id: 'colors', icon: Palette, label: 'Extract colors', description: 'Get color palette from image' },
 ];
-
-const getApiUrl = (): string => {
-  if (typeof window === 'undefined') return 'https://api.allinbangla.com/api';
-  const hostname = window.location.hostname;
-  if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname.endsWith('.localhost')) {
-    return 'http://localhost:5001/api';
-  }
-  return 'https://api.allinbangla.com/api';
-};
 
 const formatMessage = (content: string) => {
   const lines = content.split('\n');

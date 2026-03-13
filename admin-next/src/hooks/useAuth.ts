@@ -4,7 +4,7 @@
 
 import { useCallback, Dispatch, SetStateAction } from 'react';
 import type { User, Tenant } from '../types';
-import { isAdminRole, getAuthErrorMessage, getHostTenantSlug } from '../utils/appHelpers';
+import { isAdminRole, getAuthErrorMessage, getHostTenantSlug, getApiUrl, getPrimaryDomain } from '../utils/appHelpers';
 
 import { signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider } from 'firebase/auth';
 import { auth, provider } from '../config/firebase';
@@ -15,7 +15,10 @@ const DEFAULT_TENANT_ID = '';  // Empty to prevent data leaking to real tenant
 // API Base URL
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
   ? String(import.meta.env.VITE_API_BASE_URL)
-  : 'https://allinbangla.com';
+  : (() => {
+    const domain = getPrimaryDomain();
+    return domain && domain !== 'localhost' ? `https://${domain}` : '';
+  })();
 
 // Use canonical tenant resolution from appHelpers (supports all domains)
 const getTenantSubdomain = (): string | null => getHostTenantSlug();
@@ -426,11 +429,9 @@ export function useAuth({
     
     // Check if on admin.* or superadmin.* subdomain
     const isAdminSubdomain = typeof window !== 'undefined' && 
-      (window.location.hostname === 'admin.allinbangla.com' || 
-       window.location.hostname.startsWith('admin.'));
+      window.location.hostname.startsWith('admin.');
     const isSuperAdminSubdomain = typeof window !== 'undefined' && 
-      (window.location.hostname === 'superadmin.allinbangla.com' || 
-       window.location.hostname.startsWith('superadmin.'));
+      window.location.hostname.startsWith('superadmin.');
     
     if (isAdminSubdomain || isSuperAdminSubdomain) {
       // On admin/superadmin subdomain, show login page

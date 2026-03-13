@@ -22,19 +22,9 @@ import { Tenant } from '../types';
 import { toast } from 'react-hot-toast';
 import { getAuthHeader } from '../services/authService';
 import { useDarkMode } from '../context/DarkModeContext';
+import { getApiUrl } from '../utils/appHelpers';
 
 // API URL helper
-const getApiUrl = (): string => {
-  if (typeof window === 'undefined') return 'https://allinbangla.com/api';
-  const hostname = window.location.hostname;
-  if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname.endsWith('.localhost')) {
-    return 'http://localhost:5001/api';
-  }
-  const parts = hostname.split('.');
-  const mainDomain = parts.length > 2 ? parts.slice(-2).join('.') : hostname;
-  return `${window.location.protocol}//${mainDomain}/api`;
-};
-
 const API_URL = getApiUrl();
 
 // Figma-based inline styles

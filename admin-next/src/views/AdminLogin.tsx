@@ -6,8 +6,7 @@ import { User } from '../types';
 
 // Check if we're on the superadmin subdomain
 const isSuperAdminSubdomain = typeof window !== 'undefined' && 
-  (window.location.hostname === 'superadmin.allinbangla.com' || 
-  window.location.hostname.startsWith('superadmin.'));
+  window.location.hostname.startsWith('superadmin.');
 
 // Check if we're on the tenant login portal
 const isTenantLoginPortal = typeof window !== 'undefined' &&

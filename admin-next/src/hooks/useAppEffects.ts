@@ -16,13 +16,11 @@ import { isMainDomain, DEMO_PRODUCTS, DEMO_WEBSITE_CONFIG, DEMO_CATEGORIES, DEMO
 
 // Check if we're on the admin subdomain
 const isAdminSubdomain = typeof window !== 'undefined' && 
-  (window.location.hostname === 'admin.allinbangla.com' || 
-   window.location.hostname.startsWith('admin.'));
+  window.location.hostname.startsWith('admin.');
 
 // Check if we're on the superadmin subdomain
 const isSuperAdminSubdomain = typeof window !== 'undefined' && 
-  (window.location.hostname === 'superadmin.allinbangla.com' || 
-   window.location.hostname.startsWith('superadmin.'));
+  window.location.hostname.startsWith('superadmin.');
 
 interface UseAppEffectsProps {
   // State

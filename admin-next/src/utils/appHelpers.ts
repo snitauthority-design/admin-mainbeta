@@ -184,6 +184,26 @@ export function getStoreUrl(subdomain?: string): string {
   return domain ? `https://${subdomain}.${domain}` : '';
 }
 
+/**
+ * Get the backend API base URL.
+ * Uses VITE_API_BASE_URL env var, with fallback to deriving from the current hostname.
+ */
+export function getApiUrl(): string {
+  const envApi = import.meta.env.VITE_API_BASE_URL;
+  if (envApi && /^https?:\/\/.+/.test(envApi)) {
+    return envApi.replace(/\/$/, '');
+  }
+  if (typeof window === 'undefined') {
+    const domain = PRIMARY_TENANT_DOMAIN;
+    return domain ? `https://${domain}/api` : '/api';
+  }
+  const hostname = window.location.hostname?.toLowerCase() || '';
+  const isLocalhost = hostname === 'localhost' || hostname.endsWith('.localhost') || hostname.startsWith('127.');
+  if (isLocalhost) return 'http://localhost:5001/api';
+  const domain = getPrimaryDomain();
+  return domain ? `${window.location.protocol}//${domain}/api` : '/api';
+}
+
 // --- Color utilities ---
 export function hexToRgb(hex: string): string {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);

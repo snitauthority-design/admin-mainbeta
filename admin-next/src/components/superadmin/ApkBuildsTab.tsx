@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Smartphone, Search, RefreshCw, Eye, Trash2, Bell, Download, ExternalLink, Globe, Package } from 'lucide-react';
 import { getAuthHeader } from '../../services/authService';
+import { getApiUrl } from '../../utils/appHelpers';
 import { toast } from 'react-hot-toast';
 import { Tenant } from '../../types';
 
@@ -40,18 +41,8 @@ const ApkBuildsTab: React.FC<ApkBuildsTabProps> = ({ tenants, onSendNotification
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedBuild, setSelectedBuild] = useState<ApkBuild | null>(null);
   const [showNotificationModal, setShowNotificationModal] = useState(false);
-  const [notificationForm, setNotificationForm] = useState({ title: '', message: '', type: 'info' });
-
-  const getApiUrl = (): string => {
-    if (typeof window !== 'undefined') {
-      const hostname = window.location.hostname;
-      if (hostname === 'localhost' || hostname === '127.0.0.1') {
-        return 'http://localhost:5001/api';
-      }
-      return 'https://allinbangla.com/api';
-    }
-    return 'https://allinbangla.com/api';
-  };
+  const notificationForm_init = { title: '', message: '', type: 'info' };
+  const [notificationForm, setNotificationForm] = useState(notificationForm_init);
 
   const API_URL = getApiUrl();
 

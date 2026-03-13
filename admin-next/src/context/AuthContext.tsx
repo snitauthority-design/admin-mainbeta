@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
-import { getHostTenantSlug } from '../utils/appHelpers';
+import { getHostTenantSlug, getPrimaryDomain } from '../utils/appHelpers';
 
 // Types
 export type ResourceType = 
@@ -101,7 +101,10 @@ const API_BASE_URL = typeof window !== 'undefined' && (window as any).__ENV__?.N
   ? String((window as any).__ENV__.NEXT_PUBLIC_API_BASE_URL)
   : (import.meta as any).env?.NEXT_PUBLIC_API_BASE_URL
   ? String((import.meta as any).env.NEXT_PUBLIC_API_BASE_URL)
-  : 'https://allinbangla.com';
+  : (() => {
+    const domain = getPrimaryDomain();
+    return domain && domain !== 'localhost' ? `https://${domain}` : '';
+  })();
 
 const TOKEN_KEY = 'admin_auth_token';
 const USER_KEY = 'admin_auth_user';

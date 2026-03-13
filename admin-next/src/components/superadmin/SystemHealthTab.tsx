@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Activity, Database, Server, Zap, Clock, HardDrive, Cpu, AlertCircle, CheckCircle } from 'lucide-react';
 import { getAuthHeader } from '../../services/authService';
+import { getApiUrl } from '../../utils/appHelpers';
 
 interface SystemHealthProps {
   systemStats: {
@@ -15,17 +16,6 @@ const SystemHealthTab: React.FC<SystemHealthProps> = ({ systemStats }) => {
   const [dbStatus, setDbStatus] = useState<'connected' | 'disconnected' | 'checking'>('checking');
   const [apiResponseTime, setApiResponseTime] = useState<number>(0);
   const [errors24h, setErrors24h] = useState<number>(0);
-
-  const getApiUrl = (): string => {
-    if (typeof window !== 'undefined') {
-      const hostname = window.location.hostname;
-      if (hostname === 'localhost' || hostname === '127.0.0.1') {
-        return 'http://localhost:5001/api';
-      }
-      return 'https://allinbangla.com/api';
-    }
-    return 'https://allinbangla.com/api';
-  };
 
   const API_URL = getApiUrl();
 
