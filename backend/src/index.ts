@@ -216,9 +216,10 @@ app.use(addSubscriptionHeaders);
 // Serve static files for uploaded images
 // Use image optimization route first (handles ?w=&q= params)
 // Apply cache headers to uploads
+const uploadsDir = env.uploadDir || path.join(process.cwd(), 'uploads');
 app.use('/uploads', imageCacheHeaders, imageOptimizeRouter);
 // Fallback to static files for non-optimized requests
-app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+app.use('/uploads', express.static(uploadsDir));
 
 app.get('/', (_req, res) => {
   res.json({ name: 'seven-days-backend', version: '2.0' });

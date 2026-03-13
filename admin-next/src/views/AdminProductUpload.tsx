@@ -94,7 +94,7 @@ const AdminProductUpload: React.FC<AdminProductUploadProps> = ({
 }) => {
   const { user: authUser } = useAuth();
   const user = propsUser || authUser;
-  const tenantId = activeTenantId || user?.tenantId || 'default';
+  const tenantId = activeTenantId || user?.tenantId || '';
 
   const [formData, setFormData] = useState<FormData>({
     name: '',

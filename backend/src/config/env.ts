@@ -9,7 +9,8 @@ const envSchema = z.object({
   MONGODB_DB_NAME: z.string().min(1, 'MONGODB_DB_NAME is required'),
   ALLOWED_ORIGINS: z.string().optional().default(''),
   JWT_SECRET: z.string().optional().default('your-super-secret-jwt-key-change-in-production'),
-  JWT_EXPIRES_IN: z.string().optional().default('7d')
+  JWT_EXPIRES_IN: z.string().optional().default('7d'),
+  UPLOAD_DIR: z.string().optional().default('')
 });
 
 const parsed = envSchema.safeParse(process.env);
@@ -27,5 +28,6 @@ export const env = {
     ? parsed.data.ALLOWED_ORIGINS.split(',').map((origin) => origin.trim()).filter(Boolean)
     : [],
   jwtSecret: parsed.data.JWT_SECRET,
-  jwtExpiresIn: parsed.data.JWT_EXPIRES_IN
+  jwtExpiresIn: parsed.data.JWT_EXPIRES_IN,
+  uploadDir: parsed.data.UPLOAD_DIR || ''
 };

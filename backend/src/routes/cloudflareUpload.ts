@@ -17,6 +17,7 @@ import {
   extractKeyFromUrl,
   getPublicUrl,
 } from '../services/cloudflareR2';
+import { env } from '../config/env';
 
 const router: Router = express.Router();
 
@@ -49,7 +50,7 @@ const upload = multer({
 });
 
 // Local upload fallback directory
-const LOCAL_UPLOAD_DIR = path.join(__dirname, '../../uploads');
+const LOCAL_UPLOAD_DIR = env.uploadDir || path.join(__dirname, '../../uploads');
 
 // Ensure local upload directory exists
 if (!fs.existsSync(LOCAL_UPLOAD_DIR)) {
@@ -77,7 +78,10 @@ router.post('/upload', upload.single('file'), async (req: Request, res: Response
     }
 
     const { folder = 'uploads', tenantId } = req.body;
-    const uploadFolder = tenantId ? `tenants/${tenantId}/${folder}` : folder;
+    if (!tenantId || typeof tenantId !== 'string' || tenantId.trim() === '') {
+      return res.status(400).json({ error: 'Valid tenantId is required' });
+    }
+    const uploadFolder = `tenants/${tenantId}/${folder}`;
 
     if (isR2Configured()) {
       // Upload to Cloudflare R2
@@ -147,7 +151,10 @@ router.post('/upload-multiple', upload.array('files', 10), async (req: Request, 
     }
 
     const { folder = 'uploads', tenantId } = req.body;
-    const uploadFolder = tenantId ? `tenants/${tenantId}/${folder}` : folder;
+    if (!tenantId || typeof tenantId !== 'string' || tenantId.trim() === '') {
+      return res.status(400).json({ error: 'Valid tenantId is required' });
+    }
+    const uploadFolder = `tenants/${tenantId}/${folder}`;
 
     const results = await Promise.all(
       files.map(async (file) => {
@@ -208,7 +215,11 @@ router.post('/upload-multiple', upload.array('files', 10), async (req: Request, 
  */
 router.delete('/delete', async (req: Request, res: Response) => {
   try {
-    const { url, key } = req.body;
+    const { url, key, tenantId } = req.body;
+
+    if (!tenantId || typeof tenantId !== 'string' || tenantId.trim() === '') {
+      return res.status(400).json({ error: 'Valid tenantId is required' });
+    }
 
     if (!url && !key) {
       return res.status(400).json({ error: 'URL or key is required' });
@@ -218,6 +229,14 @@ router.delete('/delete', async (req: Request, res: Response) => {
 
     if (!fileKey) {
       return res.status(400).json({ error: 'Invalid URL or key' });
+    }
+
+    // Validate that the file belongs to the requesting tenant
+    const keySegments = fileKey.split('/').filter(Boolean);
+    const tenantsIdx = keySegments.indexOf('tenants');
+    const tenantInKey = tenantsIdx !== -1 ? keySegments[tenantsIdx + 1] : null;
+    if (tenantInKey !== tenantId) {
+      return res.status(403).json({ error: 'Tenant mismatch - cannot delete files belonging to another tenant' });
     }
 
     if (isR2Configured()) {
@@ -248,6 +267,10 @@ router.post('/presigned-url', async (req: Request, res: Response) => {
   try {
     const { filename, contentType, folder = 'uploads', tenantId } = req.body;
 
+    if (!tenantId || typeof tenantId !== 'string' || tenantId.trim() === '') {
+      return res.status(400).json({ error: 'Valid tenantId is required' });
+    }
+
     if (!filename || !contentType) {
       return res.status(400).json({ error: 'Filename and contentType are required' });
     }
@@ -258,7 +281,7 @@ router.post('/presigned-url', async (req: Request, res: Response) => {
       });
     }
 
-    const uploadFolder = tenantId ? `tenants/${tenantId}/${folder}` : folder;
+    const uploadFolder = `tenants/${tenantId}/${folder}`;
     const timestamp = Date.now();
     const ext = path.extname(filename);
     const sanitizedName = path.basename(filename, ext).replace(/[^a-zA-Z0-9-_]/g, '-');

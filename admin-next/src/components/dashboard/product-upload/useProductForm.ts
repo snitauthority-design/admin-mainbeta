@@ -27,7 +27,7 @@ export function useProductForm({
   editProduct,
 }: UseProductFormParams) {
   const { user } = useAuth();
-  const tenantId = user?.tenantId || 'default';
+  const tenantId = user?.tenantId || '';
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const unfilteredFileInputRef = useRef<HTMLInputElement>(null);

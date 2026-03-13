@@ -3,6 +3,7 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
+import { env } from '../config/env';
 
 // Try to import sharp dynamically, but make it optional
 interface SharpInstance {
@@ -20,7 +21,8 @@ try {
 }
 
 const router = Router();
-const uploadDir = path.join(process.cwd(), 'uploads', 'images');
+const baseUploadDir = env.uploadDir || path.join(process.cwd(), 'uploads');
+const uploadDir = path.join(baseUploadDir, 'images');
 const ALLOWED_FOLDERS = new Set(['carousel', 'branding', 'gallery']);
 
 // Ensure upload directory exists
@@ -165,8 +167,11 @@ router.post('/api/upload', upload.single('file'), handleMulterError, async (req:
 // DELETE /api/upload - Delete image
 router.delete('/api/upload', (req: Request, res: Response) => {
   try {
-    const { imageUrl, tenantId = 'default' } = req.body;
+    const { imageUrl, tenantId } = req.body;
     if (!imageUrl) return res.status(400).json({ success: false, error: 'Image URL is required' });
+    if (!tenantId || typeof tenantId !== 'string' || tenantId.trim() === '') {
+      return res.status(400).json({ success: false, error: 'Valid tenantId is required' });
+    }
 
     const relative = String(imageUrl).replace(/^https?:\/\/[^/]+/i, '').trim();
     if (!relative.startsWith('/uploads/images/')) return res.status(400).json({ success: false, error: 'Invalid image URL' });
@@ -222,7 +227,7 @@ router.post('/api/upload/fix-base64', express.json({ limit: '50mb' }), (req: Req
 // TRASH SYSTEM - Move to trash with 24hr retention
 // ============================================================================
 
-const trashDir = path.join(process.cwd(), 'uploads', 'trash');
+const trashDir = path.join(baseUploadDir, 'trash');
 fs.mkdirSync(trashDir, { recursive: true });
 
 // Trash metadata file
@@ -255,8 +260,11 @@ const saveTrashMeta = (items: TrashItem[]) => {
 // POST /api/upload/trash - Move image to trash
 router.post('/api/upload/trash', express.json(), (req: Request, res: Response) => {
   try {
-    const { imageUrl, tenantId = 'default' } = req.body;
+    const { imageUrl, tenantId } = req.body;
     if (!imageUrl) return res.status(400).json({ success: false, error: 'Image URL is required' });
+    if (!tenantId || typeof tenantId !== 'string' || tenantId.trim() === '') {
+      return res.status(400).json({ success: false, error: 'Valid tenantId is required' });
+    }
 
     const relative = String(imageUrl).replace(/^https?:\/\/[^/]+/i, '').trim();
     if (!relative.startsWith('/uploads/images/')) {
@@ -315,7 +323,10 @@ router.post('/api/upload/trash', express.json(), (req: Request, res: Response) =
 // GET /api/upload/trash - List trash items for tenant
 router.get('/api/upload/trash', (req: Request, res: Response) => {
   try {
-    const tenantId = String(req.query.tenantId || 'default');
+    const tenantId = req.query.tenantId;
+    if (!tenantId || typeof tenantId !== 'string' || tenantId.trim() === '') {
+      return res.status(400).json({ success: false, error: 'Valid tenantId is required' });
+    }
     const trashItems = loadTrashMeta().filter(item => item.tenantId === tenantId);
     
     // Add remaining time info
@@ -338,8 +349,11 @@ router.get('/api/upload/trash', (req: Request, res: Response) => {
 // POST /api/upload/restore - Restore image from trash
 router.post('/api/upload/restore', express.json(), (req: Request, res: Response) => {
   try {
-    const { trashPath, tenantId = 'default' } = req.body;
+    const { trashPath, tenantId } = req.body;
     if (!trashPath) return res.status(400).json({ success: false, error: 'Trash path is required' });
+    if (!tenantId || typeof tenantId !== 'string' || tenantId.trim() === '') {
+      return res.status(400).json({ success: false, error: 'Valid tenantId is required' });
+    }
 
     const trashItems = loadTrashMeta();
     const itemIndex = trashItems.findIndex(
@@ -351,7 +365,7 @@ router.post('/api/upload/restore', express.json(), (req: Request, res: Response)
     }
 
     const item = trashItems[itemIndex];
-    const trashFilePath = path.join(process.cwd(), item.trashPath);
+    const trashFilePath = path.join(baseUploadDir, item.trashPath.replace(/^\/uploads\//, ''));
 
     if (!fs.existsSync(trashFilePath)) {
       // Remove from metadata if file doesn't exist
@@ -394,7 +408,7 @@ const cleanupExpiredTrash = () => {
     for (const item of trashItems) {
       if (now - item.deletedAt >= RETENTION_MS) {
         // Delete permanently
-        const trashFilePath = path.join(process.cwd(), item.trashPath);
+        const trashFilePath = path.join(baseUploadDir, item.trashPath.replace(/^\/uploads\//, ''));
         if (fs.existsSync(trashFilePath)) {
           fs.unlinkSync(trashFilePath);
           console.log(`[Trash] Permanently deleted: ${item.originalUrl}`);
@@ -424,7 +438,10 @@ cleanupExpiredTrash();
 // GET /api/upload/folders - List folders for tenant
 router.get('/api/upload/folders', (req: Request, res: Response) => {
   try {
-    const tenantId = String(req.query.tenantId || 'default');
+    const tenantId = req.query.tenantId;
+    if (!tenantId || typeof tenantId !== 'string' || tenantId.trim() === '') {
+      return res.status(400).json({ success: false, error: 'Valid tenantId is required' });
+    }
     const galleryDir = path.join(uploadDir, 'gallery', tenantId);
     
     fs.mkdirSync(galleryDir, { recursive: true });
@@ -448,8 +465,11 @@ router.get('/api/upload/folders', (req: Request, res: Response) => {
 // POST /api/upload/folders - Create new folder
 router.post('/api/upload/folders', express.json(), (req: Request, res: Response) => {
   try {
-    const { tenantId = 'default', folderName } = req.body;
+    const { tenantId, folderName } = req.body;
     
+    if (!tenantId || typeof tenantId !== 'string' || tenantId.trim() === '') {
+      return res.status(400).json({ success: false, error: 'Valid tenantId is required' });
+    }
     if (!folderName || typeof folderName !== 'string') {
       return res.status(400).json({ success: false, error: 'Folder name is required' });
     }
@@ -487,8 +507,11 @@ router.post('/api/upload/folders', express.json(), (req: Request, res: Response)
 // PUT /api/upload/folders - Rename folder
 router.put('/api/upload/folders', express.json(), (req: Request, res: Response) => {
   try {
-    const { tenantId = 'default', oldName, newName } = req.body;
+    const { tenantId, oldName, newName } = req.body;
     
+    if (!tenantId || typeof tenantId !== 'string' || tenantId.trim() === '') {
+      return res.status(400).json({ success: false, error: 'Valid tenantId is required' });
+    }
     if (!oldName || !newName) {
       return res.status(400).json({ success: false, error: 'Old and new folder names are required' });
     }
@@ -523,8 +546,11 @@ router.put('/api/upload/folders', express.json(), (req: Request, res: Response) 
 // DELETE /api/upload/folders - Delete folder
 router.delete('/api/upload/folders', express.json(), (req: Request, res: Response) => {
   try {
-    const { tenantId = 'default', folderName } = req.body;
+    const { tenantId, folderName } = req.body;
     
+    if (!tenantId || typeof tenantId !== 'string' || tenantId.trim() === '') {
+      return res.status(400).json({ success: false, error: 'Valid tenantId is required' });
+    }
     if (!folderName) {
       return res.status(400).json({ success: false, error: 'Folder name is required' });
     }
@@ -558,8 +584,11 @@ router.delete('/api/upload/folders', express.json(), (req: Request, res: Respons
 // POST /api/upload/move - Move image to folder
 router.post('/api/upload/move', express.json(), (req: Request, res: Response) => {
   try {
-    const { imageUrl, targetFolder, tenantId = 'default' } = req.body;
+    const { imageUrl, targetFolder, tenantId } = req.body;
     
+    if (!tenantId || typeof tenantId !== 'string' || tenantId.trim() === '') {
+      return res.status(400).json({ success: false, error: 'Valid tenantId is required' });
+    }
     if (!imageUrl) {
       return res.status(400).json({ success: false, error: 'Image URL is required' });
     }
