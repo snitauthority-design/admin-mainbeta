@@ -1,123 +1,25 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { Plus, Search, SlidersHorizontal, MoreVertical, ChevronLeft, ChevronRight, X, Printer, Truck, Package2, Mail, AlertTriangle, CheckCircle2, Send, Loader2, Trash2, ShieldCheck, ShieldAlert, Copy, ZoomIn, Edit3, ArrowLeftCircle, Eye } from 'lucide-react';
-import { DonutChart } from '../modern-dashboard/OrderSummaryChart';
-import { TrendChart } from './order/TrendChart';
-import GmvStats from './order/GmvStats';
+import { Search, MoreVertical, ChevronLeft, ChevronRight, X, Printer, Truck, Package2, Mail, AlertTriangle, CheckCircle2, Send, Loader2, Trash2, ShieldCheck, ShieldAlert, Copy, ZoomIn, Edit3, ArrowLeftCircle, Eye, Plus } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { Order, CourierConfig, PathaoConfig, Product } from '../../types';
 import { CourierService, FraudCheckResult } from '../../services/CourierService';
 import { OrderService } from '../../services/OrderService';
 import { normalizeImageUrl } from '../../utils/imageUrlHelper';
 import { printInvoice } from '../InvoicePrintTemplate';
-
-// Status colors for badges
-const STATUS_COLORS: Record<Order['status'], string> = {
-  Pending: 'text-orange-600 bg-orange-50 border border-orange-200',
-  Confirmed: 'text-blue-600 bg-blue-50 border border-blue-200',
-  'On Hold': 'text-amber-600 bg-amber-50 border border-amber-200',
-  Processing: 'text-cyan-600 bg-cyan-50 border border-cyan-200',
-  Shipped: 'text-indigo-600 bg-indigo-50 border border-indigo-200',
-  'Sent to Courier': 'text-purple-600 bg-purple-50 border border-purple-200',
-  Delivered: 'text-emerald-600 bg-emerald-50 border border-emerald-200',
-  Cancelled: 'text-red-600 bg-red-50 border border-red-200',
-  Return: 'text-yellow-600 bg-yellow-50 border border-yellow-200',
-  Refund: 'text-pink-600 bg-pink-50 border border-pink-200',
-  'Returned Receive': 'text-slate-600 bg-slate-50 border border-slate-200',
-   Incomplete: 'text-gray-600 bg-blue-100 border border-gray-200', // <-- Add this line
-
-};
-
-const STATUSES: Order['status'][] = ['Pending', 'Confirmed', 'On Hold', 'Processing', 'Shipped', 'Sent to Courier', 'Delivered', 'Cancelled', 'Return', 'Refund', 'Returned Receive'];
-
-// Statuses grouped for display - normal flow vs terminal/negative statuses
-const NORMAL_STATUSES: Order['status'][] = ['Pending', 'Confirmed', 'On Hold', 'Shipped', 'Sent to Courier', 'Delivered'];
-const TERMINAL_STATUSES: Order['status'][] = ['Cancelled', 'Return', 'Refund', 'Returned Receive'];
-
-// Display labels for statuses (matching Figma design)
-const STATUS_LABELS: Record<Order['status'], string> = {
-  Pending: 'Pending',
-  Confirmed: 'Confirmed',
-  'On Hold': 'On Hold',
-  Processing: 'Shipping',
-  Shipped: 'Shipping',
-  'Sent to Courier': 'Sent To Courier',
-  Delivered: 'Delivered',
-  Cancelled: 'Cancel',
-  Return: 'Return',
-  Refund: 'Refund',
-  'Returned Receive': 'Returned Receive',
-  Incomplete: 'Incomplete', // <-- Add this line
-  
-};
-
-const formatCurrency = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'BDT', maximumFractionDigits: 0 }).format(value);
-
-const getCourierId = (order: Order) => {
-  if (order.trackingId) return order.trackingId;
-  if (order.courierMeta) {
-    return (
-      (order.courierMeta.tracking_id as string) ||
-      (order.courierMeta.trackingCode as string) ||
-      (order.courierMeta.consignment_id as string) ||
-      (order.courierMeta.invoice as string)
-    );
-  }
-  return undefined;
-};
-
-// Bangladesh location data for cascading address selection
-type Division = 'Dhaka' | 'Chattogram' | 'Rajshahi' | 'Khulna' | 'Barishal' | 'Sylhet' | 'Rangpur' | 'Mymensingh';
-
-const BD_LOCATIONS: Record<Division, Record<string, string[]>> = {
-  Dhaka: {
-    Dhaka: ['Dhanmondi', 'Gulshan', 'Mirpur', 'Mohammadpur', 'Uttara', 'Tejgaon', 'Badda', 'Banani', 'Farmgate', 'Motijheel'],
-    Gazipur: ['Gazipur Sadar', 'Kaliakoir', 'Kapasia', 'Sreepur', 'Kaliganj', 'Tongi'],
-    Narayanganj: ['Narayanganj Sadar', 'Araihazar', 'Bandar', 'Rupganj', 'Sonargaon'],
-    Tangail: ['Tangail Sadar', 'Basail', 'Bhuapur', 'Delduar', 'Ghatail', 'Gopalpur', 'Kalihati', 'Madhupur', 'Mirzapur', 'Nagarpur', 'Sakhipur', 'Dhanbari']
-  },
-  Chattogram: {
-    Chattogram: ['Panchlaish', 'Kotwali', 'Chandgaon', 'Bayezid', 'Hathazari', 'Rangunia', 'Sitakunda', 'Mirsharai'],
-    "Cox's Bazar": ["Cox's Bazar Sadar", 'Chakaria', 'Ramu', 'Ukhia', 'Teknaf', 'Maheshkhali', 'Pekua', 'Kutubdia'],
-    Comilla: ['Comilla Sadar', 'Barura', 'Brahmanparia', 'Chandina', 'Chauddagram', 'Daudkandi', 'Debidwar', 'Homna', 'Laksham', 'Muradnagar', 'Nangalkot'],
-    Feni: ['Feni Sadar', 'Chhagalnaiya', 'Daganbhuiyan', 'Fulgazi', 'Parshuram', 'Sonagazi']
-  },
-  Rajshahi: {
-    Rajshahi: ['Rajshahi Sadar', 'Bagha', 'Bagmara', 'Charghat', 'Durgapur', 'Godagari', 'Mohanpur', 'Paba', 'Puthia', 'Tanore'],
-    Bogra: ['Bogra Sadar', 'Adamdighi', 'Dhunat', 'Dhupchanchia', 'Gabtali', 'Kahaloo', 'Nandigram', 'Sariakandi', 'Shajahanpur', 'Sherpur', 'Shibganj', 'Sonatola'],
-    Pabna: ['Pabna Sadar', 'Atgharia', 'Bera', 'Bhangura', 'Chatmohar', 'Faridpur', 'Ishwardi', 'Santhia', 'Sujanagar'],
-    Natore: ['Natore Sadar', 'Bagatipara', 'Baraigram', 'Gurudaspur', 'Lalpur', 'Naldanga', 'Singra']
-  },
-  Khulna: {
-    Khulna: ['Khulna Sadar', 'Batiaghata', 'Dacope', 'Dumuria', 'Dighalia', 'Koyra', 'Paikgachha', 'Phultala', 'Rupsa', 'Terokhada'],
-    Jessore: ['Jessore Sadar', 'Abhaynagar', 'Bagherpara', 'Chaugachha', 'Jhikargachha', 'Keshabpur', 'Manirampur', 'Sharsha'],
-    Satkhira: ['Satkhira Sadar', 'Assasuni', 'Debhata', 'Kalaroa', 'Kaliganj', 'Shyamnagar', 'Tala'],
-    Bagerhat: ['Barishal Sadar', 'Chitalmari', 'Fakirhat', 'Kachua', 'Mollahat', 'Mongla', 'Morrelganj', 'Rampal', 'Sarankhola']
-  },
-  Barishal: {
-    Barishal: ['Barishal Sadar', 'Agailjhara', 'Babuganj', 'Bakerganj', 'Banaripara', 'Gaurnadi', 'Hizla', 'Mehendiganj', 'Muladi', 'Wazirpur'],
-    Patuakhali: ['Patuakhali Sadar', 'Bauphal', 'Dashmina', 'Galachipa', 'Kalapara', 'Mirzaganj', 'Dumki', 'Rangabali'],
-    Bhola: ['Bhola Sadar', 'Burhanuddin', 'Char Fasson', 'Daulatkhan', 'Lalmohan', 'Manpura', 'Tazumuddin'],
-    Jhalokati: ['Jhalokati Sadar', 'Kathalia', 'Nalchity', 'Rajapur']
-  },
-  Sylhet: {
-    Sylhet: ['Sylhet Sadar', 'Beanibazar', 'Bishwanath', 'Companiganj', 'Fenchuganj', 'Golapganj', 'Gowainghat', 'Jaintiapur', 'Kanaighat', 'Zakiganj', 'Balaganj', 'Osmani Nagar'],
-    Moulvibazar: ['Moulvibazar Sadar', 'Barlekha', 'Juri', 'Kamalganj', 'Kulaura', 'Rajnagar', 'Sreemangal'],
-    Habiganj: ['Habiganj Sadar', 'Ajmiriganj', 'Bahubal', 'Baniyachong', 'Chunarughat', 'Lakhai', 'Madhabpur', 'Nabiganj', 'Shayestaganj'],
-    Sunamganj: ['Sunamganj Sadar', 'Bishwamvarpur', 'Chhatak', 'Derai', 'Dharamapasha', 'Dowarabazar', 'Jagannathpur', 'Jamalganj', 'Sulla', 'Tahirpur']
-  },
-  Rangpur: {
-    Rangpur: ['Rangpur Sadar', 'Badarganj', 'Gangachara', 'Kaunia', 'Mithapukur', 'Pirgachha', 'Pirganj', 'Taraganj'],
-    Dinajpur: ['Dinajpur Sadar', 'Biral', 'Birampur', 'Birganj', 'Bochaganj', 'Chirirbandar', 'Fulbari', 'Ghoraghat', 'Hakimpur', 'Kaharole', 'Khansama', 'Nawabganj', 'Parbatipur'],
-    Kurigram: ['Kurigram Sadar', 'Bhurungamari', 'Char Rajibpur', 'Chilmari', 'Phulbari', 'Nageshwari', 'Rajarhat', 'Raomari', 'Ulipur'],
-    Nilphamari: ['Nilphamari Sadar', 'Dimla', 'Domar', 'Jaldhaka', 'Kishoreganj', 'Saidpur']
-  },
-  Mymensingh: {
-    Mymensingh: ['Mymensingh Sadar', 'Bhaluka', 'Dhobaura', 'Fulbaria', 'Gaffargaon', 'Gauripur', 'Haluaghat', 'Ishwarganj', 'Muktagachha', 'Nandail', 'Phulpur', 'Trishal'],
-    Jamalpur: ['Jamalpur Sadar', 'Baksiganj', 'Dewanganj', 'Islampur', 'Madarganj', 'Melandaha', 'Sarishabari'],
-    Netrokona: ['Netrokona Sadar', 'Atpara', 'Barhatta', 'Durgapur', 'Khaliajuri', 'Kalmakanda', 'Kendua', 'Madan', 'Mohanganj', 'Purbadhala'],
-    Sherpur: ['Sherpur Sadar', 'Jhenaigati', 'Nakla', 'Nalitabari', 'Sreebardi']
-  }
-};
+import {
+  STATUS_COLORS,
+  STATUS_LABELS,
+  NORMAL_STATUSES,
+  TERMINAL_STATUSES,
+  formatCurrency,
+  getCourierId,
+  BD_LOCATIONS,
+  Division,
+} from './order/constants';
+import OrderStatusBadge from './order/OrderStatusBadge';
+import OrderStats from './order/OrderStats';
+import OrderTabs from './order/OrderTabs';
+import AddOrderModal, { NewOrderFormState } from './order/AddOrderModal';
 
 
 interface FigmaOrderListProps {
@@ -171,7 +73,7 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
   // Add Order Modal state
   const [showAddOrderModal, setShowAddOrderModal] = useState(false);
   const [isCreatingOrder, setIsCreatingOrder] = useState(false);
-  const [newOrderForm, setNewOrderForm] = useState({
+  const [newOrderForm, setNewOrderForm] = useState<NewOrderFormState>({
     customer: '',
     phone: '',
     address: '',
@@ -181,10 +83,9 @@ const FigmaOrderList: React.FC<FigmaOrderListProps> = ({
     productId: '',
     quantity: 1,
     deliveryCharge: 0,
-    discountType: 'none' as 'percentage' | 'taka' | 'none',
+    discountType: 'none',
     discountValue: '',
-    notes: ''
-
+    notes: '',
   });
 
   // Product search state
@@ -895,64 +796,16 @@ const parsedDiscountValue = Number(newOrderForm.discountValue) || 0;
       </div>
 
       {/* Stats Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 xxs:gap-4 mb-4 xxs:mb-6 dark:bg-gray-800">
-        {/* Order Summary */}
-        <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-3 xxs:p-4 sm:p-5 flex flex-col h-full">
-          <h3 className="text-xs xxs:text-sm font-medium text-gray-700 mb-3 xxs:mb-4">Order Summary</h3>
-          <div className="flex flex-col xxs:flex-row items-center justify-center gap-3 xxs:gap-4 lg:gap-6 flex-1">
-            <div className="relative w-[140px] h-[140px] xxs:w-[160px] xxs:h-[160px] sm:w-[180px] sm:h-[180px] flex-shrink-0">
-              <DonutChart data={orderStatusData} total={orderSummary.total} />
-              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                <span className="text-gray-400 dark:text-gray-300 text-[8px] xxs:text-[9px] font-bold uppercase tracking-widest">Total</span>
-                <span className="text-black dark:text-white font-extrabold text-2xl xxs:text-3xl leading-none my-1">{orders.length}</span>
-                <span className="text-gray-400 dark:text-gray-300 text-[8px] xxs:text-[9px] font-bold uppercase tracking-widest">Orders</span>
-              </div>
-            </div>
-            <div className="flex flex-wrap xxs:flex-col justify-center gap-1 xxs:gap-2 text-xs xxs:text-sm">
-              {orderStatusData.map((status, index) => (
-                <div key={index} className="flex items-center gap-1 xxs:gap-2">
-                  <span className={`w-2 h-2 xxs:w-3 xxs:h-3 rounded-full ${status.bgColor}`}></span>
-                  <span className="text-slate-700 dark:text-slate-300 font-medium text-[10px] xxs:text-sm">{status.label}</span>
-                  <span style={{ color: status.color }} className="text-[10px] xxs:text-sm">({status.percentage}%)</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-3 xxs:p-4 sm:p-5 flex flex-col h-full">
-          <div className="flex items-center gap-3 xxs:gap-4 mb-2 xxs:mb-3">
-            <span className="flex items-center gap-1 text-[10px] xxs:text-xs font-semibold text-[#FF8A00]">
-              <span className="w-1.5 h-1.5 xxs:w-2 xxs:h-2 rounded-full bg-[#FF8A00]"></span>
-              Visitors
-            </span>
-            <span className="flex items-center gap-1 text-[10px] xxs:text-xs font-semibold text-[#38BDF8]">
-              <span className="w-1.5 h-1.5 xxs:w-2 xxs:h-2 rounded-full bg-[#38BDF8]"></span>
-              Orders
-            </span>
-          </div>
-          <div className="flex-1 min-h-[140px] xxs:min-h-[160px] sm:min-h-[180px]">
-            <TrendChart visitorData={visitorChartData} orderData={orderChartData} daysInMonth={currentMonthDays} />
-          </div>
-        </div>
-        
-        <GmvStats orders={orders} />
-      </div>
+      <OrderStats
+        orders={orders}
+        orderStatusData={orderStatusData}
+        visitorChartData={visitorChartData}
+        orderChartData={orderChartData}
+        currentMonthDays={currentMonthDays}
+      />
 
       {/* Tabs */}
-      <div className="flex gap-1 xxs:gap-2 mb-4 xxs:mb-6 border-b border-gray-200 overflow-x-auto -mx-2 xxs:mx-0 px-2 xxs:px-0 scrollbar-thin">
-        {tabs.map(tab => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`px-2 xxs:px-3 sm:px-4 py-2 xxs:py-3 text-xs xxs:text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
-              activeTab === tab.id ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-600 hover:text-gray-900'
-            }`}
-          >
-            {tab.label} ({tab.count})
-          </button>
-        ))}
-      </div>
+      <OrderTabs tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {/* Search */}
       <div className="flex flex-col xxs:flex-row flex-wrap gap-2 xxs:gap-3 mb-4 xxs:mb-6">
@@ -1093,9 +946,7 @@ const parsedDiscountValue = Number(newOrderForm.discountValue) || 0;
                       <path d="M4.25 3.75H13.5C14.4665 3.75 15.25 4.53351 15.25 5.5V6.88965H17.2041C17.7848 6.88978 18.3279 7.1782 18.6533 7.65918L21.1992 11.4238C21.395 11.7132 21.4999 12.0549 21.5 12.4043V17.25H22C22.1381 17.25 22.25 17.3619 22.25 17.5C22.25 17.6381 22.1381 17.75 22 17.75H19.6621L19.5869 18.1582C19.3651 19.3485 18.3198 20.2498 17.0654 20.25C15.8109 20.25 14.7657 19.3487 14.5439 18.1582L14.4678 17.75H9.91211L9.83691 18.1582C9.61515 19.3485 8.56978 20.2498 7.31543 20.25C6.06089 20.25 5.01579 19.3487 4.79395 18.1582L4.71777 17.75H4.25C3.28351 17.75 2.5 16.9665 2.5 16V5.5C2.5 4.5335 3.2835 3.75 4.25 3.75ZM7.31543 15.6201C6.17509 15.6201 5.25023 16.5443 5.25 17.6846C5.25 18.825 6.17495 19.75 7.31543 19.75C8.45571 19.7498 9.37988 18.8249 9.37988 17.6846C9.37965 16.5445 8.45557 15.6203 7.31543 15.6201ZM17.0654 15.6201C15.9251 15.6201 15.0002 16.5443 15 17.6846C15 18.825 15.925 19.75 17.0654 19.75C18.2057 19.7498 19.1299 18.8249 19.1299 17.6846C19.1297 16.5445 18.2055 15.6203 17.0654 15.6201ZM4.25 4.25C3.55965 4.25 3 4.80965 3 5.5V16C3 16.6903 3.55964 17.25 4.25 17.25H4.75977L4.87109 16.9023C5.20208 15.8679 6.17245 15.1201 7.31543 15.1201C8.45822 15.1203 9.42782 15.868 9.75879 16.9023L9.87012 17.25H14.5098L14.6211 16.9023C14.6466 16.8227 14.6762 16.7448 14.709 16.6689L14.75 16.5742V5.5C14.75 4.80964 14.1903 4.25 13.5 4.25H4.25ZM15.25 15.707L15.9648 15.3672C16.2977 15.2089 16.6707 15.1201 17.0654 15.1201C18.2082 15.1203 19.1779 15.8681 19.5088 16.9023L19.6201 17.25H21V12.1953H15.25V15.707ZM15.25 11.6953H20.7793L20.251 10.915L18.2393 7.93945C18.0068 7.5959 17.6189 7.38978 17.2041 7.38965H15.25V11.6953Z" stroke="#26007F"/>
                       <path d="M12 10C12 11.6569 10.6569 13 9 13C7.34315 13 6 11.6569 6 10C6 8.34315 7.34315 7 9 7C9.47068 7 9.91605 7.1084 10.3125 7.30159M11.4375 8.125L8.8125 10.75L8.0625 10" stroke="#26007F" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
-                    <span className={`px-1 xxs:px-2 py-0.5 xxs:py-1 rounded-full text-[9px] xxs:text-xs font-medium whitespace-nowrap ${STATUS_COLORS[order.status] || 'bg-gray-100 text-gray-600'}`}>
-                      {STATUS_LABELS[order.status] || order.status}
-                    </span>
+                    <OrderStatusBadge status={order.status} />
                   </div>
                 </td>
                 <td className="px-2 xxs:px-3 py-2 xxs:py-3 text-center relative">
@@ -1236,9 +1087,7 @@ const parsedDiscountValue = Number(newOrderForm.discountValue) || 0;
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-gray-900 truncate">{truncateToWords(order.productName)}</p>
                 <p className="text-xs text-gray-500">{order.customer} • {formatCurrency(order.amount)}</p>
-                <span className={`inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${STATUS_COLORS[order.status] || 'bg-gray-100 text-gray-600'}`}>
-                  {STATUS_LABELS[order.status] || order.status}
-                </span>
+                <OrderStatusBadge status={order.status} className="inline-block mt-1" />
               </div>
             </div>
             <div className="relative" data-dropdown>
@@ -1659,9 +1508,7 @@ const parsedDiscountValue = Number(newOrderForm.discountValue) || 0;
             <div style={{ flex: 1, overflowY: 'auto', padding: '24px' }}>
               {/* Status Badge */}
               <div style={{ marginBottom: '24px' }}>
-                <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold ${STATUS_COLORS[detailsOrder.status] || 'bg-gray-100 text-gray-600'}`}>
-                  {STATUS_LABELS[detailsOrder.status] || detailsOrder.status}
-                </span>
+                <OrderStatusBadge status={detailsOrder.status} className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-semibold" />
               </div>
 
               {/* Customer Info */}
@@ -1814,420 +1661,24 @@ const parsedDiscountValue = Number(newOrderForm.discountValue) || 0;
       )}
 
       {/* Add Order Modal */}
-      {showAddOrderModal && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" onClick={(e) => { if (e.target === e.currentTarget) setShowAddOrderModal(false); }}>
-          <div className="bg-white rounded-2xl w-full max-w-lg shadow-xl" onClick={(e) => e.stopPropagation()}>
-            {/* Header */}
-            <div className="flex items-center justify-between p-3 sm:p-4 lg:p-4 xl:p-5 border-b">
-              <h2 className="text-xl font-semibold text-gray-900">Add New Order</h2>
-              <button 
-                onClick={() => setShowAddOrderModal(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <X className="w-5 h-5 text-gray-500" />
-              </button>
-            </div>
-
-            {/* Form */}
-            <div className="p-6 space-y-4 max-h-[60vh] overflow-y-auto">
-              {/* No Products Warning */}
-              {safeProducts.length === 0 && (
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-center">
-                  <p className="text-yellow-800 font-medium">No products available</p>
-                  <p className="text-yellow-600 text-sm mt-1">Please add products first to create orders.</p>
-                </div>
-              )}
-              
-              {/* Customer Name */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Customer Name <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  value={newOrderForm.customer}
-                  onChange={(e) => setNewOrderForm(prev => ({ ...prev, customer: e.target.value }))}
-                  placeholder="Enter customer name"
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                />
-              </div>
-
-              {/* Phone */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Phone Number <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="tel"
-                  value={newOrderForm.phone}
-                  onChange={(e) => setNewOrderForm(prev => ({ ...prev, phone: e.target.value }))}
-                  placeholder="01XXXXXXXXX"
-                  maxLength={13}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                />
-              </div>
-
-              {/* Address */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Delivery Address
-                </label>
-                <input
-                  type="text"
-                  value={newOrderForm.address}
-                  onChange={(e) => setNewOrderForm(prev => ({ ...prev, address: e.target.value }))}
-                  placeholder="Full address"
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                />
-              </div>
-
-              {/* Division */}
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Division <span className="text-red-500">*</span>
-                  </label>
-                  <label className="flex items-center gap-2 text-xs text-gray-600 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={useManualAddress}
-                      onChange={(e) => setUseManualAddress(e.target.checked)}
-                      className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-                    />
-                    <span>Manual input</span>
-                  </label>
-                </div>
-                
-                {useManualAddress ? (
-                  <input
-                    type="text"
-                    value={newOrderForm.division}
-                    onChange={(e) => setNewOrderForm(prev => ({ ...prev, division: e.target.value }))}
-                    placeholder="Enter division manually"
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                  />
-                ) : (
-                  <select
-                    value={newOrderForm.division}
-                    onChange={(e) => {
-                      setNewOrderForm(prev => ({ 
-                        ...prev, 
-                        division: e.target.value,
-                        district: '', // Reset district when division changes
-                        upazila: '' // Reset upazila when division changes
-                      }));
-                    }}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
-                  >
-                    <option value="">Select Division</option>
-                    <option value="Dhaka">Dhaka</option>
-                    <option value="Chattogram">Chattogram</option>
-                    <option value="Rajshahi">Rajshahi</option>
-                    <option value="Khulna">Khulna</option>
-                    <option value="Barishal">Barishal</option>
-                    <option value="Sylhet">Sylhet</option>
-                    <option value="Rangpur">Rangpur</option>
-                    <option value="Mymensingh">Mymensingh</option>
-                  </select>
-                )}
-              </div>
-
-              {/* District - Only shows when division is selected OR manual mode */}
-              {(newOrderForm.division || useManualAddress) && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    District <span className="text-red-500">*</span>
-                  </label>
-                  
-                  {useManualAddress ? (
-                    <input
-                      type="text"
-                      value={newOrderForm.district}
-                      onChange={(e) => setNewOrderForm(prev => ({ ...prev, district: e.target.value }))}
-                      placeholder="Enter district manually"
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                    />
-                  ) : (
-                    <select
-                      value={newOrderForm.district}
-                      onChange={(e) => {
-                        setNewOrderForm(prev => ({ 
-                          ...prev, 
-                          district: e.target.value,
-                          upazila: '' // Reset upazila when district changes
-                        }));
-                      }}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
-                    >
-                      <option value="">Select District</option>
-                      {Object.keys(BD_LOCATIONS[newOrderForm.division as keyof typeof BD_LOCATIONS] || {}).map(district => (
-                        <option key={district} value={district}>{district}</option>
-                      ))}
-                    </select>
-                  )}
-                </div>
-              )}
-
-              {/* Upazila/PS - Only shows when district is selected OR manual mode */}
-              {(newOrderForm.district || useManualAddress) && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Upazila/PS <span className="text-red-500">*</span>
-                  </label>
-                  
-                  {useManualAddress ? (
-                    <input
-                      type="text"
-                      value={newOrderForm.upazila}
-                      onChange={(e) => setNewOrderForm(prev => ({ ...prev, upazila: e.target.value }))}
-                      placeholder="Enter upazila/PS manually"
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                    />
-                  ) : (
-                    <select
-                      value={newOrderForm.upazila}
-                      onChange={(e) => setNewOrderForm(prev => ({ ...prev, upazila: e.target.value }))}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
-                    >
-                      <option value="">Select Upazila/PS</option>
-                      {upazilaOptions.map((upazila: string) => (
-                        <option key={upazila} value={upazila}>{upazila}</option>
-                      ))}
-                    </select>
-                  )}
-                </div>
-              )}
-
-              {/* Product Selection - Searchable */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Product <span className="text-red-500">*</span>
-                </label>
-                <div className="relative product-search-container">
-                  <input
-                    type="text"
-                    value={selectedProductForOrder ? `${selectedProductForOrder.name} - ৳${(selectedProductForOrder.price || 0).toLocaleString()}` : productSearchTerm}
-                    onChange={(e) => {
-                      if (selectedProductForOrder) {
-                        // Clear selection if user starts typing after selection
-                        setNewOrderForm(prev => ({ ...prev, productId: '' }));
-                      }
-                      setProductSearchTerm(e.target.value);
-                      setShowProductDropdown(true);
-                    }}
-                    onFocus={() => setShowProductDropdown(true)}
-                    placeholder="Search product by name..."
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                  />
-                  <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
-                  
-                  {/* Dropdown List */}
-                  {showProductDropdown && (
-                    <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-                      {filteredProducts.length > 0 ? (
-                        filteredProducts.map((product, idx) => (
-                          <button
-                            key={`${product.id}-${idx}`}
-                            type="button"
-                            onClick={() => {
-                              setNewOrderForm(prev => ({ ...prev, productId: String(product.id) }));
-                              setProductSearchTerm('');
-                              setShowProductDropdown(false);
-                            }}
-                            className="w-full text-left px-4 py-3 hover:bg-blue-50 border-b border-gray-100 last:border-b-0 transition-colors"
-                          >
-                            <div className="flex items-center justify-between">
-                              <span className="font-medium text-gray-900">{product.name || 'Unnamed'}</span>
-                              <span className="text-blue-600 font-semibold">৳{(product.price || 0).toLocaleString()}</span>
-                            </div>
-                            {product.sku && (
-                              <div className="text-xs text-gray-500 mt-1">SKU: {product.sku}</div>
-                            )}
-                          </button>
-                        ))
-                      ) : (
-                        <div className="px-4 py-6 text-center text-gray-500 text-sm">
-                          No products found
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Selected Product Preview */}
-              {selectedProductForOrder && (
-                <div className="bg-gray-50 rounded-lg p-3 flex items-center gap-3">
-                  <img 
-                    src={selectedProductForOrder.image || '/placeholder.png'} 
-                    alt={selectedProductForOrder.name || 'Product'} 
-                    className="w-12 h-12 object-cover rounded-lg"
-                    onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.png'; }}
-                  />
-                  <div className="flex-1">
-                    <p className="font-medium text-gray-900 text-sm">{selectedProductForOrder.name || 'Unnamed'}</p>
-                    <p className="text-blue-600 font-semibold">৳{(selectedProductForOrder.price || 0).toLocaleString()}</p>
-                  </div>
-                </div>
-              )}
-
-              {/* Quantity and Delivery Charge */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Quantity
-                  </label>
-                  <input
-                    type="number"
-                    min="1"
-                    value={newOrderForm.quantity}
-                    onChange={(e) => setNewOrderForm(prev => ({ ...prev, quantity: Math.max(1, parseInt(e.target.value) || 1) }))}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Delivery Charge
-                  </label>
-                  <input
-                    type="number"
-                    min=""
-                    value={newOrderForm.deliveryCharge}
-                    onChange={(e) => setNewOrderForm(prev => ({ ...prev, deliveryCharge: Math.max(0, parseInt(e.target.value) ) }))}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                  />
-
-              {/* Discount Section */}
-              <div className="border-t pt-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Discount (Optional)
-                </label>
-                <div className="grid grid-cols-2 gap-3 mb-3">
-                  <button
-                    type="button"
-                    onClick={() => setNewOrderForm(prev => ({ ...prev, discountType: 'percentage', discountValue: prev.discountType === 'percentage' ? prev.discountValue : '' }))}
-                    className={`px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
-                      newOrderForm.discountType === 'percentage'
-                        ? 'bg-blue-500 text-white border-blue-500'
-                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-                    }`}
-                  >
-                    Percentage %
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setNewOrderForm(prev => ({ ...prev, discountType: 'taka', discountValue: prev.discountType === 'taka' ? prev.discountValue : '' }))}
-                    className={`px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
-                      newOrderForm.discountType === 'taka'
-                        ? 'bg-blue-500 text-white border-blue-500'
-                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-                    }`}
-                  >
-                    Fixed টাকা
-                  </button>
-                </div>
-                {newOrderForm.discountType !== 'none' && (
-                  <div className="relative">
-                    <input
-                      type="number"
-                      min=""
-                      max={newOrderForm.discountType === 'percentage' ? 100 : undefined}
-                      value={newOrderForm.discountValue}
-                      onChange={(e) => {
-                        const inputValue = e.target.value;
-                        if (inputValue === '') {
-                          setNewOrderForm(prev => ({ ...prev, discountValue: '' }));
-                        } else {
-                          const value = parseFloat(inputValue);
-                          const maxValue = newOrderForm.discountType === 'percentage' ? 100 : Infinity;
-                          setNewOrderForm(prev => ({ ...prev, discountValue: String(Math.min(Math.max(0, value), maxValue)) }));
-                        }
-                      }}
-                      placeholder={newOrderForm.discountType === 'percentage' ? 'Enter percentage (0-100)' : 'Enter amount in টাকা'}
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                    />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">
-                      {newOrderForm.discountType === 'percentage' ? '%' : '৳'}
-                    </span>
-                  </div>
-                )}
-                {newOrderForm.discountType === 'none' && (
-                  <p className="text-xs text-gray-500 italic">Select a discount type above to apply discount</p>
-                )}
-              </div>
-                </div>
-                </div>
-              </div>
-
-              {/* Order Summary */}
-              {selectedProductForOrder && (() => {
-                const subtotal = (selectedProductForOrder.price || 0) * newOrderForm.quantity;
-                let discountAmount = 0;
-                const numericDiscountValue = Number(newOrderForm.discountValue) || 0;
-                if (newOrderForm.discountType === 'percentage' && numericDiscountValue > 0) {
-                  discountAmount = (subtotal * numericDiscountValue) / 100;
-                } else if (newOrderForm.discountType === 'taka' && numericDiscountValue > 0) {
-                  discountAmount = numericDiscountValue;
-                }
-                const subtotalAfterDiscount = subtotal - discountAmount;
-                const total = subtotalAfterDiscount + newOrderForm.deliveryCharge;
-                
-                return (
-                  <div className="bg-blue-50 rounded-lg p-4 space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Subtotal:</span>
-                      <span className="font-medium">৳{subtotal.toLocaleString()}</span>
-                    </div>
-                    {newOrderForm.discountType !== 'none' && discountAmount > 0 && (
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">
-                          Discount ({newOrderForm.discountType === 'percentage' ? `${newOrderForm.discountValue}%` : `৳${newOrderForm.discountValue}`}):
-                        </span>
-                        <span className="font-medium text-green-600">-৳{discountAmount.toLocaleString()}</span>
-                      </div>
-                    )}
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-600">Delivery:</span>
-                      <span className="font-medium">৳{newOrderForm.deliveryCharge.toLocaleString()}</span>
-                    </div>
-                    <div className="flex justify-between text-base font-semibold border-t border-blue-100 pt-2">
-                      <span className="text-gray-900">Total:</span>
-                      <span className="text-blue-600">৳{total.toLocaleString()}</span>
-                    </div>
-                  </div>
-                );
-              })()}
-           
-
-            {/* Footer */}
-            <div className="flex justify-end gap-3 p-3 sm:p-4 lg:p-4 xl:p-5 border-t bg-gray-50 rounded-b-2xl">
-              <button
-                onClick={() => setShowAddOrderModal(false)}
-                className="px-5 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-100 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleCreateOrder}
-                disabled={isCreatingOrder || safeProducts.length === 0 || !selectedProductForOrder}
-                className="px-5 py-2.5 bg-gradient-to-r from-sky-400 to-blue-500 text-white rounded-lg font-medium hover:from-sky-500 hover:to-blue-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-              >
-                {isCreatingOrder ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    Creating...
-                  </>
-                ) : (
-                  <>
-                    <Plus className="w-4 h-4" />
-                    Create Order
-                  </>
-                )}
-              </button>
-            </div>
-             </div>
-          </div>
-     )}
+      <AddOrderModal
+        showAddOrderModal={showAddOrderModal}
+        setShowAddOrderModal={setShowAddOrderModal}
+        isCreatingOrder={isCreatingOrder}
+        newOrderForm={newOrderForm}
+        setNewOrderForm={setNewOrderForm}
+        productSearchTerm={productSearchTerm}
+        setProductSearchTerm={setProductSearchTerm}
+        showProductDropdown={showProductDropdown}
+        setShowProductDropdown={setShowProductDropdown}
+        useManualAddress={useManualAddress}
+        setUseManualAddress={setUseManualAddress}
+        upazilaOptions={upazilaOptions}
+        selectedProductForOrder={selectedProductForOrder}
+        filteredProducts={filteredProducts}
+        safeProducts={safeProducts}
+        handleCreateOrder={handleCreateOrder}
+      />
     </div>
   );
 };
