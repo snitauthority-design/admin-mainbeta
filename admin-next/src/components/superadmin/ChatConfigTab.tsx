@@ -4,6 +4,7 @@ import {
   ToggleLeft, ToggleRight, Building2, Check
 } from 'lucide-react';
 import { ChatConfig } from './types';
+import { getPrimaryDomain } from '../../utils/appHelpers';
 
 interface ChatConfigTabProps {
   chatConfig: ChatConfig;
@@ -275,7 +276,7 @@ const ChatConfigTab: React.FC<ChatConfigTabProps> = ({
                       />
                       <div>
                         <p className="text-sm font-medium text-slate-700">{tenant.name}</p>
-                        <p className="text-xs text-slate-500">{tenant.subdomain}.allinbangla.com</p>
+                        <p className="text-xs text-slate-500">{tenant.subdomain}.{getPrimaryDomain()}</p>
                       </div>
                     </label>
                   ))}

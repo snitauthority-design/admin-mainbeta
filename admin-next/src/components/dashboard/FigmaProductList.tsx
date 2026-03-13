@@ -10,6 +10,7 @@ import { SortableContext, verticalListSortingStrategy, useSortable, arrayMove } 
 import { CSS } from '@dnd-kit/utilities';
 import { Product, Category, Brand, Tag as TagType } from '../../types';
 import { normalizeImageUrl } from '../../utils/imageUrlHelper';
+import { getStoreUrl } from '../../utils/appHelpers';
 
 // Icons as SVG components
 const SearchIcon = () => (
@@ -282,14 +283,7 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
   productDisplayOrder = [],
   onProductOrderChange
 }) => {
-  // Helper to get the store URL for this tenant
-  const getStoreUrl = (subdomain?: string) => {
-    if (!subdomain) return '';
-    if (typeof window === 'undefined') return `https://${subdomain}.allinbangla.com`;
-    const isLocalhost = window.location.hostname.includes('localhost');
-    if (isLocalhost) return `http://${subdomain}.localhost:3000`;
-    return `https://${subdomain}.allinbangla.com`;
-  };
+  // Helper to get the store URL for this tenant (uses centralized getStoreUrl from appHelpers)
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Menu, Search, Bell } from 'lucide-react';
+import { getPrimaryDomain } from '../../utils/appHelpers';
 
 interface TopBarProps {
   sidebarOpen: boolean;
@@ -60,7 +61,7 @@ const TopBar: React.FC<TopBarProps> = ({
           </div>
           <div className="hidden lg:block">
             <p className="text-sm font-semibold text-slate-900">Super Admin</p>
-            <p className="text-xs text-slate-500">admin@allinbangla.com</p>
+            <p className="text-xs text-slate-500">admin@{getPrimaryDomain()}</p>
           </div>
         </div>
       </div>

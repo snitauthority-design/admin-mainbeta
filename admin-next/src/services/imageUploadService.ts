@@ -6,9 +6,10 @@
 
 import { getCDNImageUrl, isCDNEnabled } from '../config/cdnConfig';
 import { compressProductImage, convertFileToWebP, dataUrlToFile, convertProductImage } from './imageUtils';
+import { getApiUrl } from '../utils/appHelpers';
 
 // Production API URL - get from environment or use default
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://allinbangla.com';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || getApiUrl();
 
 export interface UploadResponse {
   success: boolean;
@@ -295,8 +296,8 @@ export const uploadImageToServer = async (
     // If backend returns full URL (with http/https), use it directly
     // Otherwise, construct the full URL
     if (data.imageUrl.startsWith('http://') || data.imageUrl.startsWith('https://')) {
-      // Replace localhost with production domain if present
-      const cleanUrl = data.imageUrl.replace('https://allinbangla.com', API_BASE_URL);
+      // Normalize the returned URL to use the configured API base URL
+      const cleanUrl = data.imageUrl;
       console.log(`[ImageUpload] Cleaned URL: ${cleanUrl}`);
       return cleanUrl;
     }

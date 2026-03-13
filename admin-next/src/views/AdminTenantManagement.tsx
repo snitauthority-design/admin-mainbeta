@@ -6,6 +6,7 @@ import {
   PlayCircle, LogIn, Settings
 } from 'lucide-react';
 import { CreateTenantPayload, Tenant } from '../types';
+import { getPrimaryDomain } from '../utils/appHelpers';
 
 // Reserved subdomains that cannot be used for tenants
 const RESERVED_TENANT_SLUGS = [
@@ -68,7 +69,7 @@ const getPrimaryDomain = () => {
     const parts = host.split('.');
     return parts.length > 2 ? parts.slice(1).join('.') : host;
   }
-  return 'allinbangla.com';
+  return getPrimaryDomain() || 'localhost';
 };
 
 const AdminTenantManagement: React.FC<AdminTenantManagementProps> = ({

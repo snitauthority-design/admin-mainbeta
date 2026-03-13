@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import { useDarkMode } from '../../context/DarkModeContext';
 import { DashboardHeaderProps } from './types';
-import { getStoreUrl } from '../../utils/appHelpers';
+import { getStoreUrl, getPrimaryDomain } from '../../utils/appHelpers';
 
 // Notification icon by type
 const getNotificationIcon = (type: string) => {
@@ -366,7 +366,7 @@ const FigmaDashboardHeader: React.FC<DashboardHeaderProps> = ({
                             <p className={`text-sm font-semibold truncate ${isActive ? 'text-blue-700 dark:text-blue-300' : 'text-gray-900 dark:text-white'}`}>
                               {tenant.name}
                             </p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{tenant.subdomain}.allinbangla.com</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{tenant.subdomain}.{getPrimaryDomain()}</p>
                             <div className="flex items-center gap-1.5 mt-1">
                               {tenant.plan && (
                                 <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${

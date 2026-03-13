@@ -5,6 +5,7 @@ import { Product, LandingPage, LandingPageBlock, LandingPageTemplate, LandingPag
 const LANDING_PAGE_TEMPLATES: LandingPageTemplate[] = [];
 import { Sparkles, Eye, Copy, CheckCircle, Edit3, Trash2, Layout, Plus, PenSquare, Layers, Palette, Globe, Zap, Quote, HelpCircle, Image as ImageIcon, Phone, ShoppingBag, Loader2, ExternalLink, X } from 'lucide-react';
 import { formatCurrency } from '../utils/format';
+import { getPrimaryDomain } from '../utils/appHelpers';
 
 const randomId = () => (crypto?.randomUUID ? crypto.randomUUID() : `lp-${Date.now().toString(36)}-${Math.random().toString(16).slice(2)}`);
 const toSlug = (value: string) => value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
@@ -210,7 +211,7 @@ export const ReadyLandingForm: React.FC<ReadyLandingFormProps> = ({ products, te
       seo: {
         metaTitle: `${selectedProduct.name} | Buy Now`,
         metaDescription: selectedProduct.description?.slice(0, 150) || 'Instant landing experience',
-        canonicalUrl: `https://admin.allinbangla.com/${toSlug(selectedProduct.name)}-${selectedTemplate.id}`,
+        canonicalUrl: `https://admin.${getPrimaryDomain()}/${toSlug(selectedProduct.name)}-${selectedTemplate.id}`,
         keywords: ['landing page', 'flash sale', selectedProduct.name]
       },
       blocks: [
@@ -369,7 +370,7 @@ export const CustomLandingEditor: React.FC<CustomLandingEditorProps> = ({ onSave
   const [blocks, setBlocks] = useState<LandingPageBlock[]>(defaultBlocks);
   const [selectedBlockId, setSelectedBlockId] = useState(blocks[0]?.id || '');
   const [style, setStyle] = useState<LandingPageStyle>({ primaryColor: '#7c3aed', accentColor: '#f97316', background: '#f5f3ff', buttonShape: 'pill', fontFamily: 'Space Grotesk, sans-serif' });
-  const [seo, setSeo] = useState<LandingPageSEO>({ metaTitle: 'Campaign Landing', metaDescription: 'Custom landing page crafted in the editor.', canonicalUrl: 'https://admin.allinbangla.com/campaign-landing' });
+  const [seo, setSeo] = useState<LandingPageSEO>({ metaTitle: 'Campaign Landing', metaDescription: 'Custom landing page crafted in the editor.', canonicalUrl: `https://admin.${getPrimaryDomain()}/campaign-landing` });
   const [includeCheckout, setIncludeCheckout] = useState(true);
   const [showSuccess, setShowSuccess] = useState(false);
   const [createdPageUrl, setCreatedPageUrl] = useState<string>('');
@@ -423,7 +424,7 @@ export const CustomLandingEditor: React.FC<CustomLandingEditorProps> = ({ onSave
     await Promise.resolve(onSave(landing));
     setIsSaving(false);
     if (publish) {
-      const pageUrl = seo.canonicalUrl || `https://admin.allinbangla.com/${toSlug(pageName)}`;
+      const pageUrl = seo.canonicalUrl || `https://admin.${getPrimaryDomain()}/${toSlug(pageName)}`;
       setCreatedPageUrl(pageUrl);
       setCreatedPageName(pageName);
       setShowSuccess(true);
