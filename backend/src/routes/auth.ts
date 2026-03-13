@@ -213,22 +213,26 @@ authRouter.post('/login', async (req: Request, res: Response, next: NextFunction
     // Get tenant details if assigned
     const tenantDetails = await getTenantDetails(user.tenantId);
     // Log successful login
-    await createAuditLog({
-      tenantId: user.tenantId,
-      userId: user._id.toString(),
-      userName: user.name,
-      userRole: user.role,
-      action: 'User Login',
-      actionType: 'login',
-      resourceType: 'user',
-      resourceId: user._id.toString(),
-      resourceName: user.name,
-      details: `${user.name} (${user.email}) logged in successfully`,
-      metadata: { email: user.email, role: user.role },
-      ipAddress: req.ip,
-      userAgent: req.headers['user-agent'],
-      status: 'success'
-    });
+    try {
+      await createAuditLog({
+        tenantId: user.tenantId,
+        userId: user._id.toString(),
+        userName: user.name,
+        userRole: user.role,
+        action: 'User Login',
+        actionType: 'login',
+        resourceType: 'user',
+        resourceId: user._id.toString(),
+        resourceName: user.name,
+        details: `${user.name} (${user.email}) logged in successfully`,
+        metadata: { email: user.email, role: user.role },
+        ipAddress: req.ip,
+        userAgent: req.headers['user-agent'],
+        status: 'success'
+      });
+    } catch (auditError) {
+      console.warn('[auth] Audit log failed for login:', auditError);
+    }
 
     res.json({
       message: 'Login successful',
@@ -298,23 +302,27 @@ authRouter.post('/register', async (req: Request, res: Response, next: NextFunct
 
     // Get tenant details if assigned
     const tenantDetails = await getTenantDetails(user.tenantId);
-    // Log successful login
-    await createAuditLog({
-      tenantId: user.tenantId,
-      userId: user._id.toString(),
-      userName: user.name,
-      userRole: user.role,
-      action: 'User Login',
-      actionType: 'login',
-      resourceType: 'user',
-      resourceId: user._id.toString(),
-      resourceName: user.name,
-      details: `${user.name} (${user.email}) logged in successfully`,
-      metadata: { email: user.email, role: user.role },
-      ipAddress: req.ip,
-      userAgent: req.headers['user-agent'],
-      status: 'success'
-    });
+    // Log successful registration
+    try {
+      await createAuditLog({
+        tenantId: user.tenantId,
+        userId: user._id.toString(),
+        userName: user.name,
+        userRole: user.role,
+        action: 'User Registration',
+        actionType: 'create',
+        resourceType: 'user',
+        resourceId: user._id.toString(),
+        resourceName: user.name,
+        details: `${user.name} (${user.email}) registered successfully`,
+        metadata: { email: user.email, role: user.role },
+        ipAddress: req.ip,
+        userAgent: req.headers['user-agent'],
+        status: 'success'
+      });
+    } catch (auditError) {
+      console.warn('[auth] Audit log failed for registration:', auditError);
+    }
 
     res.status(201).json({
       message: 'Registration successful',
@@ -359,7 +367,11 @@ authRouter.post('/google', async (req: Request, res: Response, next: NextFunctio
       
       // If Google tokeninfo fails, try verifying as a Firebase ID token
       // by calling Google's secure token verification endpoint
-      const firebaseVerify = await fetch(`https://www.googleapis.com/identitytoolkit/v3/relyingparty/getAccountInfo?key=AIzaSyAKHP3mQVTS4bC89758sRxYGCZcnx7jdPY`, {
+      const firebaseApiKey = process.env.FIREBASE_API_KEY || '';
+      if (!firebaseApiKey) {
+        return res.status(500).json({ error: 'Firebase API key not configured', code: 'CONFIG_ERROR' });
+      }
+      const firebaseVerify = await fetch(`https://www.googleapis.com/identitytoolkit/v3/relyingparty/getAccountInfo?key=${firebaseApiKey}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ idToken })
@@ -518,21 +530,25 @@ authRouter.post('/google', async (req: Request, res: Response, next: NextFunctio
       permissions
     });
 
-    // Create audit log
-    await createAuditLog({
-      tenantId: user.tenantId,
-      userId: user._id.toString(),
-      userName: user.name,
-      userRole: user.role,
-      action: 'Google OAuth Login',
-      actionType: 'login',
-      resourceType: 'user',
-      resourceId: user._id.toString(),
-      resourceName: user.name,
-      details: `${user.name} (${user.email}) logged in via Google OAuth`,
-      metadata: { email: user.email, provider: 'google' },
-      status: 'success'
-    });
+    // Create audit log (non-blocking)
+    try {
+      await createAuditLog({
+        tenantId: user.tenantId,
+        userId: user._id.toString(),
+        userName: user.name,
+        userRole: user.role,
+        action: 'Google OAuth Login',
+        actionType: 'login',
+        resourceType: 'user',
+        resourceId: user._id.toString(),
+        resourceName: user.name,
+        details: `${user.name} (${user.email}) logged in via Google OAuth`,
+        metadata: { email: user.email, provider: 'google' },
+        status: 'success'
+      });
+    } catch (auditError) {
+      console.warn('[auth] Audit log failed for Google OAuth:', auditError);
+    }
 
   } catch (error) {
     console.error('Google auth error:', error);
@@ -555,28 +571,15 @@ authRouter.get('/me', authenticateToken, async (req: Request, res: Response, nex
 
     let roleDetails = null;
     if (user.roleId) {
-      roleDetails = await Role.findById(user.roleId).select('-__v');
+      try {
+        roleDetails = await Role.findById(user.roleId).select('-__v');
+      } catch (roleError) {
+        console.warn('[auth] Could not fetch role details:', roleError);
+      }
     }
 
     // Get tenant details if assigned
     const tenantDetails = await getTenantDetails(user.tenantId);
-    // Log successful login
-    await createAuditLog({
-      tenantId: user.tenantId,
-      userId: user._id.toString(),
-      userName: user.name,
-      userRole: user.role,
-      action: 'User Login',
-      actionType: 'login',
-      resourceType: 'user',
-      resourceId: user._id.toString(),
-      resourceName: user.name,
-      details: `${user.name} (${user.email}) logged in successfully`,
-      metadata: { email: user.email, role: user.role },
-      ipAddress: req.ip,
-      userAgent: req.headers['user-agent'],
-      status: 'success'
-    });
 
     res.json({
       user: {
@@ -663,23 +666,27 @@ authRouter.put('/profile', authenticateToken, async (req: Request, res: Response
       });
     }
 
-    // Log profile update
-    await createAuditLog({
-      tenantId: user.tenantId,
-      userId: user._id.toString(),
-      userName: user.name,
-      userRole: user.role,
-      action: 'Profile Updated',
-      actionType: 'update',
-      resourceType: 'user',
-      resourceId: user._id.toString(),
-      resourceName: user.name,
-      details: `${user.name} updated their profile`,
-      metadata: { updatedFields: Object.keys(req.body).filter(k => req.body[k] !== undefined) },
-      ipAddress: req.ip,
-      userAgent: req.headers['user-agent'],
-      status: 'success'
-    });
+    // Log profile update (non-blocking)
+    try {
+      await createAuditLog({
+        tenantId: user.tenantId,
+        userId: user._id.toString(),
+        userName: user.name,
+        userRole: user.role,
+        action: 'Profile Updated',
+        actionType: 'update',
+        resourceType: 'user',
+        resourceId: user._id.toString(),
+        resourceName: user.name,
+        details: `${user.name} updated their profile`,
+        metadata: { updatedFields: Object.keys(req.body).filter(k => req.body[k] !== undefined) },
+        ipAddress: req.ip,
+        userAgent: req.headers['user-agent'],
+        status: 'success'
+      });
+    } catch (auditError) {
+      console.warn('[auth] Audit log failed for profile update:', auditError);
+    }
 
     res.json({
       message: 'Profile updated successfully',
@@ -744,23 +751,27 @@ authRouter.post('/change-password', authenticateToken, async (req: Request, res:
       }
     });
 
-    // Log password change
-    await createAuditLog({
-      tenantId: user.tenantId,
-      userId: user._id.toString(),
-      userName: user.name,
-      userRole: user.role,
-      action: 'Password Changed',
-      actionType: 'update',
-      resourceType: 'user',
-      resourceId: user._id.toString(),
-      resourceName: user.name,
-      details: `${user.name} changed their password`,
-      metadata: {},
-      ipAddress: req.ip,
-      userAgent: req.headers['user-agent'],
-      status: 'success'
-    });
+    // Log password change (non-blocking)
+    try {
+      await createAuditLog({
+        tenantId: user.tenantId,
+        userId: user._id.toString(),
+        userName: user.name,
+        userRole: user.role,
+        action: 'Password Changed',
+        actionType: 'update',
+        resourceType: 'user',
+        resourceId: user._id.toString(),
+        resourceName: user.name,
+        details: `${user.name} changed their password`,
+        metadata: {},
+        ipAddress: req.ip,
+        userAgent: req.headers['user-agent'],
+        status: 'success'
+      });
+    } catch (auditError) {
+      console.warn('[auth] Audit log failed for password change:', auditError);
+    }
 
     res.json({
       message: 'Password changed successfully'

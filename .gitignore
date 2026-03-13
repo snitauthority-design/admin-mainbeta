@@ -1,0 +1,4 @@
+backend/node_modules/
+backend/dist/
+admin-next/node_modules/
+admin-next/.next/

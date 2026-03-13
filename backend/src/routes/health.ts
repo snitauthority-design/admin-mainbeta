@@ -19,10 +19,14 @@ healthRouter.get('/', async (_req, res, next) => {
       }
     };
 
-    // Check MongoDB
+    // Check MongoDB (with timeout to prevent hanging)
     try {
       const db = await getDatabase();
-      await db.admin().ping();
+      const pingPromise = db.admin().ping();
+      const timeoutPromise = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('MongoDB ping timeout')), 5000)
+      );
+      await Promise.race([pingPromise, timeoutPromise]);
       health.services.mongodb = 'connected';
     } catch (error) {
       health.services.mongodb = 'disconnected';

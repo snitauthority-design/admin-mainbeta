@@ -112,6 +112,10 @@ app.set('io', io);
 io.on('connection', (socket) => {
   console.log('[Socket.IO] Client connected:', socket.id);
   
+  socket.on('error', (error) => {
+    console.error(`[Socket.IO] Socket error on ${socket.id}:`, error);
+  });
+  
   // Join tenant-specific room - validate tenantId is not empty/suspicious
   socket.on('join-tenant', (tenantId: string) => {
     // Basic validation: only allow joining if a valid tenantId is provided
@@ -309,7 +313,11 @@ const bootstrap = async () => {
     process.exit(1);
   }
 
-  await ensureTenantIndexes();
+  try {
+    await ensureTenantIndexes();
+  } catch (indexError) {
+    console.warn('[backend] Tenant index creation failed (non-fatal):', indexError);
+  }
   
   // Changed from app.listen to httpServer.listen for Socket.IO
   // Explicitly bind to 0.0.0.0 to ensure IPv4 compatibility
@@ -318,6 +326,40 @@ const bootstrap = async () => {
   });
 };
 
-bootstrap();
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('[backend] Unhandled Promise Rejection:', reason);
+});
 
-// ...existing graceful shutdown code...
+// Handle uncaught exceptions
+process.on('uncaughtException', (error) => {
+  console.error('[backend] Uncaught Exception:', error);
+  // Give time to log before exiting
+  setTimeout(() => process.exit(1), 1000);
+});
+
+// Graceful shutdown
+const gracefulShutdown = async (signal: string) => {
+  console.log(`[backend] ${signal} received, shutting down gracefully...`);
+  try {
+    httpServer.close(() => {
+      console.log('[backend] HTTP server closed');
+    });
+    await mongoose.connection.close();
+    console.log('[backend] Mongoose connection closed');
+    await disconnectMongo();
+    console.log('[backend] Native MongoDB connection closed');
+    process.exit(0);
+  } catch (err) {
+    console.error('[backend] Error during shutdown:', err);
+    process.exit(1);
+  }
+};
+
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+
+bootstrap().catch((err) => {
+  console.error('[backend] Bootstrap failed:', err);
+  process.exit(1);
+});
