@@ -39,7 +39,8 @@ applyTo: "admin-next/**"
 
 ### API Communication
 
-- Use the `VITE_API_BASE_URL` environment variable (mapped via next.config.mjs) for API base URL.
+- Environment variables in `.env` use the `NEXT_PUBLIC_` prefix (e.g., `NEXT_PUBLIC_API_BASE_URL`).
+- Source code references `process.env.VITE_API_BASE_URL` — this is a legacy Vite convention mapped automatically via `next.config.mjs` webpack defines.
 - Frontend services in `src/services/` handle API calls with dynamic URL resolution.
 - `getApiUrl()` in authService resolves the correct API URL based on environment (localhost vs production).
 - Include tenant context via `X-Tenant` headers or subdomain.

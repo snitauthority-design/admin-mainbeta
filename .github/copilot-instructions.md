@@ -66,7 +66,8 @@ There is no test suite in this project. Do not add test infrastructure unless ex
 
 - TypeScript strict mode is enabled in both backend and frontend.
 - Use Zod for request validation on the backend.
-- Environment variables use the `VITE_` prefix on the frontend (mapped via `next.config.mjs`).
+- Environment variables in `.env` files use the `NEXT_PUBLIC_` prefix (e.g., `NEXT_PUBLIC_API_BASE_URL`).
+- Source code references `process.env.VITE_*` variables — these are legacy Vite conventions mapped via `next.config.mjs` webpack defines.
 - Backend environment variables are validated via Zod in `backend/src/config/env.ts`.
 
 ### Backend
