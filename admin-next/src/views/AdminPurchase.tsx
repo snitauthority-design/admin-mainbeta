@@ -606,9 +606,13 @@ const AdminPurchase: React.FC<AdminPurchaseProps> = ({ products = [], tenantId, 
       return;
     }
     try {
+      if (!tenantId) {
+        toast.error('Tenant not loaded. Please try again.');
+        return;
+      }
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('tenantId', tenantId || 'default');
+      formData.append('tenantId', tenantId);
       const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
       const response = await fetch(`${API_BASE_URL}/api/upload`, {
         method: 'POST',

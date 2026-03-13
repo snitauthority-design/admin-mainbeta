@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import path from 'path';
 import fs from 'fs';
+import { env } from '../config/env';
 
 // Try to import sharp, but make it optional
 let sharp: any = null;
@@ -11,6 +12,7 @@ try {
 }
 
 const router = express.Router();
+const baseUploadDir = env.uploadDir || path.join(process.cwd(), 'uploads');
 
 // Cache for optimized images (in-memory for dev, use CDN in production)
 const imageCache = new Map<string, Buffer>();
@@ -24,7 +26,7 @@ const MAX_CACHE_SIZE = 100; // Max cached images
 router.get('/images/*', async (req: Request, res: Response) => {
   try {
     const imagePath = req.params[0];
-    const fullPath = path.join(process.cwd(), 'uploads', 'images', imagePath);
+    const fullPath = path.join(baseUploadDir, 'images', imagePath);
     await processImage(req, res, fullPath);
   } catch (error) {
     console.error('[ImageOptimize] Error:', error);
@@ -44,7 +46,7 @@ router.get('/*', async (req: Request, res: Response) => {
     if (imagePath.startsWith('images/')) {
       return res.status(404).json({ error: 'Use /uploads/images/ route' });
     }
-    const fullPath = path.join(process.cwd(), 'uploads', imagePath);
+    const fullPath = path.join(baseUploadDir, imagePath);
     await processImage(req, res, fullPath);
   } catch (error) {
     console.error('[ImageOptimize] Error:', error);

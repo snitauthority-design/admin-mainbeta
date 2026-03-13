@@ -71,9 +71,14 @@ export const OfferPageBuilder: React.FC<OfferPageBuilderProps> = ({
 
     setIsUploading(true);
     try {
+      if (!tenantId) {
+        alert('Tenant not loaded. Please try again.');
+        setIsUploading(false);
+        return;
+      }
       const formDataUpload = new FormData();
       formDataUpload.append('file', file);
-      formDataUpload.append('tenantId', tenantId || 'default');
+      formDataUpload.append('tenantId', tenantId);
       
       const API_BASE_URL = (import.meta as unknown as { env: { VITE_API_BASE_URL?: string } }).env.VITE_API_BASE_URL || '';
       const response = await fetch(`${API_BASE_URL}/api/upload`, {

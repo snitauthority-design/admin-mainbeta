@@ -80,7 +80,7 @@ const AdminProducts: React.FC<AdminProductsProps> = ({
   onSwitchSection,
   activeSection
 }) => {
-  const activeTenantId = tenantId || 'default';
+  const activeTenantId = tenantId || '';
   const [view, setView] = useState<'list' | 'upload'>('list');
   const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
   const [searchTerm, setSearchTerm] = useState('');
