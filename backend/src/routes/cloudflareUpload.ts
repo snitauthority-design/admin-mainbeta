@@ -232,7 +232,10 @@ router.delete('/delete', async (req: Request, res: Response) => {
     }
 
     // Validate that the file belongs to the requesting tenant
-    if (!fileKey.includes(`tenants/${tenantId}/`) && !fileKey.includes(`/${tenantId}/`)) {
+    const keySegments = fileKey.split('/').filter(Boolean);
+    const tenantsIdx = keySegments.indexOf('tenants');
+    const tenantInKey = tenantsIdx !== -1 ? keySegments[tenantsIdx + 1] : null;
+    if (tenantInKey !== tenantId) {
       return res.status(403).json({ error: 'Tenant mismatch - cannot delete files belonging to another tenant' });
     }
 

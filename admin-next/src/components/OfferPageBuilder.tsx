@@ -3,6 +3,7 @@ import {
   Save, X, Image, Calendar, Type, FileText, Gift, CreditCard,
   Plus, Trash2, MoveUp, MoveDown, Search, Loader2, Upload, Link, ArrowLeft
 } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { Product } from '../types';
 import { createOfferPage, updateOfferPage, OfferPageResponse, OfferPageData } from '../services/DataService';
 
@@ -72,7 +73,7 @@ export const OfferPageBuilder: React.FC<OfferPageBuilderProps> = ({
     setIsUploading(true);
     try {
       if (!tenantId) {
-        alert('Tenant not loaded. Please try again.');
+        toast.error('Tenant not loaded. Please try again.');
         setIsUploading(false);
         return;
       }

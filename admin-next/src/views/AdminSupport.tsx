@@ -178,7 +178,7 @@ const AdminSupport: React.FC<AdminSupportProps> = ({ user, activeTenant }) => {
       const uploadPromises = Array.from(files).map(async (file: File) => {
         const formData = new FormData();
         formData.append('file', file);
-        formData.append('tenantId', activeTenant?.id || '');
+        formData.append('tenantId', activeTenant!.id);
         formData.append('folder', 'support');
 
         const response = await fetch(`${API_URL}/upload`, {
