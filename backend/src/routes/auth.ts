@@ -367,7 +367,7 @@ authRouter.post('/google', async (req: Request, res: Response, next: NextFunctio
       
       // If Google tokeninfo fails, try verifying as a Firebase ID token
       // by calling Google's secure token verification endpoint
-      const firebaseApiKey = process.env.FIREBASE_API_KEY || '';
+      const firebaseApiKey = process.env.FIREBASE_API_KEY;
       if (!firebaseApiKey) {
         return res.status(500).json({ error: 'Firebase API key not configured', code: 'CONFIG_ERROR' });
       }
@@ -574,7 +574,7 @@ authRouter.get('/me', authenticateToken, async (req: Request, res: Response, nex
       try {
         roleDetails = await Role.findById(user.roleId).select('-__v');
       } catch (roleError) {
-        console.warn('[auth] Could not fetch role details:', roleError);
+        console.warn(`[auth] Could not fetch role details for user=${user._id} roleId=${user.roleId}:`, roleError);
       }
     }
 

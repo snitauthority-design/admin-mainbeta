@@ -82,7 +82,8 @@ export function GlobalErrorListener({ children }: { children: React.ReactNode })
       errorLog,
     ].join('\n');
 
-    const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(fullMessage.substring(0, 2000))}`;
+    const MAX_WHATSAPP_MESSAGE_LENGTH = 2000;
+    const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(fullMessage.substring(0, MAX_WHATSAPP_MESSAGE_LENGTH))}`;
     window.open(whatsappUrl, '_blank');
     setSent(true);
   };

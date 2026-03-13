@@ -334,8 +334,7 @@ process.on('unhandledRejection', (reason, promise) => {
 // Handle uncaught exceptions
 process.on('uncaughtException', (error) => {
   console.error('[backend] Uncaught Exception:', error);
-  // Give time to log before exiting
-  setTimeout(() => process.exit(1), 1000);
+  process.exit(1);
 });
 
 // Graceful shutdown
