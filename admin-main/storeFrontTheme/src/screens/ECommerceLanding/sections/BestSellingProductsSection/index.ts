@@ -1,1 +1,0 @@
-export { BestSellingProductsSection } from "./BestSellingProductsSection";
