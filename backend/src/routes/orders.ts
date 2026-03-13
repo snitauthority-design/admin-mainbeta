@@ -279,24 +279,28 @@ ordersRouter.post('/:tenantId', async (req, res, next) => {
     
     // Only create audit logs and notifications for REAL orders (not incomplete drafts)
     if (orderData.status !== 'Incomplete') {
-      // Create audit log
+      // Create audit log (non-blocking - don't let failures affect the order response)
       const user = (req as any).user;
-      await createAuditLog({
-        tenantId,
-        userId: user?._id || user?.id || 'system',
-        userName: user?.name || orderData.customer || 'Customer',
-        userRole: user?.role || 'customer',
-        action: existingIndex > -1 ? 'Order Finalized' : 'Order Created',
-        actionType: existingIndex > -1 ? 'update' : 'create',
-        resourceType: 'order',
-        resourceId: orderData.id,
-        resourceName: `Order ${orderData.id}`,
-        details: `New order ${orderData.id} created by ${orderData.customer} for ৳${orderData.amount}`,
-        metadata: { amount: orderData.amount, productName: orderData.productName, source: orderData.source },
-        ipAddress: req.ip,
-        userAgent: req.headers['user-agent'],
-        status: 'success'
-      });
+      try {
+        await createAuditLog({
+          tenantId,
+          userId: user?._id || user?.id || 'system',
+          userName: user?.name || orderData.customer || 'Customer',
+          userRole: user?.role || 'customer',
+          action: existingIndex > -1 ? 'Order Finalized' : 'Order Created',
+          actionType: existingIndex > -1 ? 'update' : 'create',
+          resourceType: 'order',
+          resourceId: orderData.id,
+          resourceName: `Order ${orderData.id}`,
+          details: `New order ${orderData.id} created by ${orderData.customer} for ৳${orderData.amount}`,
+          metadata: { amount: orderData.amount, productName: orderData.productName, source: orderData.source },
+          ipAddress: req.ip,
+          userAgent: req.headers['user-agent'],
+          status: 'success'
+        });
+      } catch (auditError) {
+        console.warn('[Orders] Audit log failed:', auditError);
+      }
       
       // Create notification for admin
       try {
@@ -377,26 +381,30 @@ ordersRouter.put('/:tenantId/:orderId', authenticateToken, requireAdmin, async (
     // Emit real-time update
     emitOrderUpdate(req, tenantId, 'order-updated', updatedOrder);
     
-    // Create audit log
+    // Create audit log (non-blocking)
     const user = (req as any).user;
-    await createAuditLog({
-      tenantId,
-      userId: user?._id || user?.id || 'system',
-      userName: user?.name || 'System',
-      userRole: user?.role || 'system',
-      action: statusChanged ? `Order Status: ${oldOrder.status} → ${updatedOrder.status}` : 'Order Updated',
-      actionType: 'update',
-      resourceType: 'order',
-      resourceId: orderId,
-      resourceName: `Order ${orderId}`,
-      details: statusChanged 
-        ? `Order ${orderId} status changed from ${oldOrder.status} to ${updatedOrder.status}`
-        : `Order ${orderId} updated`,
-      metadata: { oldStatus: oldOrder.status, newStatus: updatedOrder.status, changes: req.body },
-      ipAddress: req.ip,
-      userAgent: req.headers['user-agent'],
-      status: 'success'
-    });
+    try {
+      await createAuditLog({
+        tenantId,
+        userId: user?._id || user?.id || 'system',
+        userName: user?.name || 'System',
+        userRole: user?.role || 'system',
+        action: statusChanged ? `Order Status: ${oldOrder.status} → ${updatedOrder.status}` : 'Order Updated',
+        actionType: 'update',
+        resourceType: 'order',
+        resourceId: orderId,
+        resourceName: `Order ${orderId}`,
+        details: statusChanged 
+          ? `Order ${orderId} status changed from ${oldOrder.status} to ${updatedOrder.status}`
+          : `Order ${orderId} updated`,
+        metadata: { oldStatus: oldOrder.status, newStatus: updatedOrder.status, changes: req.body },
+        ipAddress: req.ip,
+        userAgent: req.headers['user-agent'],
+        status: 'success'
+      });
+    } catch (auditError) {
+      console.warn('[Orders] Audit log failed for PUT order update:', auditError);
+    }
     
     console.log(`[Orders] Order ${orderId} updated for tenant ${tenantId}`);
     res.json({ data: updatedOrder, success: true });
@@ -448,26 +456,30 @@ ordersRouter.patch('/:tenantId/:orderId', authenticateToken, requireAdmin, async
     // Emit real-time update
     emitOrderUpdate(req, tenantId, 'order-updated', updatedOrder);
     
-    // Create audit log
+    // Create audit log (non-blocking)
     const user = (req as any).user;
-    await createAuditLog({
-      tenantId,
-      userId: user?._id || user?.id || 'system',
-      userName: user?.name || 'System',
-      userRole: user?.role || 'system',
-      action: statusChanged ? `Order Status: ${oldOrder.status} → ${updatedOrder.status}` : 'Order Updated',
-      actionType: 'update',
-      resourceType: 'order',
-      resourceId: orderId,
-      resourceName: `Order ${orderId}`,
-      details: statusChanged 
-        ? `Order ${orderId} status changed from ${oldOrder.status} to ${updatedOrder.status}`
-        : `Order ${orderId} updated`,
-      metadata: { oldStatus: oldOrder.status, newStatus: updatedOrder.status, changes: req.body },
-      ipAddress: req.ip,
-      userAgent: req.headers['user-agent'],
-      status: 'success'
-    });
+    try {
+      await createAuditLog({
+        tenantId,
+        userId: user?._id || user?.id || 'system',
+        userName: user?.name || 'System',
+        userRole: user?.role || 'system',
+        action: statusChanged ? `Order Status: ${oldOrder.status} → ${updatedOrder.status}` : 'Order Updated',
+        actionType: 'update',
+        resourceType: 'order',
+        resourceId: orderId,
+        resourceName: `Order ${orderId}`,
+        details: statusChanged 
+          ? `Order ${orderId} status changed from ${oldOrder.status} to ${updatedOrder.status}`
+          : `Order ${orderId} updated`,
+        metadata: { oldStatus: oldOrder.status, newStatus: updatedOrder.status, changes: req.body },
+        ipAddress: req.ip,
+        userAgent: req.headers['user-agent'],
+        status: 'success'
+      });
+    } catch (auditError) {
+      console.warn('[Orders] Audit log failed for PATCH order update:', auditError);
+    }
     
     console.log(`[Orders] Order ${orderId} updated for tenant ${tenantId}`);
     res.json({ data: updatedOrder, success: true });
@@ -507,24 +519,28 @@ ordersRouter.delete('/:tenantId/:orderId', authenticateToken, requireAdmin, asyn
     // Emit real-time update
     emitOrderUpdate(req, tenantId, 'order-deleted', { orderId });
     
-    // Create audit log
+    // Create audit log (non-blocking)
     const user = (req as any).user;
-    await createAuditLog({
-      tenantId,
-      userId: user?._id || user?.id || 'system',
-      userName: user?.name || 'System',
-      userRole: user?.role || 'system',
-      action: 'Order Deleted',
-      actionType: 'delete',
-      resourceType: 'order',
-      resourceId: orderId,
-      resourceName: `Order ${orderId}`,
-      details: `Order ${orderId} (${orderToDelete?.customer || 'Unknown'}) deleted`,
-      metadata: { deletedOrder: orderToDelete },
-      ipAddress: req.ip,
-      userAgent: req.headers['user-agent'],
-      status: 'success'
-    });
+    try {
+      await createAuditLog({
+        tenantId,
+        userId: user?._id || user?.id || 'system',
+        userName: user?.name || 'System',
+        userRole: user?.role || 'system',
+        action: 'Order Deleted',
+        actionType: 'delete',
+        resourceType: 'order',
+        resourceId: orderId,
+        resourceName: `Order ${orderId}`,
+        details: `Order ${orderId} (${orderToDelete?.customer || 'Unknown'}) deleted`,
+        metadata: { deletedOrder: orderToDelete },
+        ipAddress: req.ip,
+        userAgent: req.headers['user-agent'],
+        status: 'success'
+      });
+    } catch (auditError) {
+      console.warn('[Orders] Audit log failed for order delete:', auditError);
+    }
     
     console.log(`[Orders] Order ${orderId} deleted for tenant ${tenantId}`);
     res.json({ success: true });

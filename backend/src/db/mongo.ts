@@ -12,13 +12,20 @@ export const connectMongo = async () => {
   if (client) {
     return client;
   }
-  client = new MongoClient(env.mongoUri);
+  client = new MongoClient(env.mongoUri, {
+    serverSelectionTimeoutMS: 10000,
+    connectTimeoutMS: 10000,
+  });
   await client.connect();
   database = client.db(env.mongoDbName);
   console.log('[mongo] Native MongoDB client connected');
   
   // Create indexes for faster queries
-  await ensureIndexes(database);
+  try {
+    await ensureIndexes(database);
+  } catch (indexError) {
+    console.warn('[mongo] Index creation failed (non-fatal):', indexError);
+  }
   
   return client;
 };
@@ -55,9 +62,13 @@ const ensureIndexes = async (db: Db) => {
     );
     
     console.log('[mongo] Indexes ensured for tenant_data, expenses, incomes');
-  } catch (error) {
-    // Index might already exist, that's fine
-    console.log('[mongo] Index creation skipped (may already exist)');
+  } catch (error: any) {
+    // Code 48 = index already exists (not an error)
+    if (error?.code === 48) {
+      console.log('[mongo] Indexes already exist');
+    } else {
+      console.warn('[mongo] Index creation issue:', error?.message || error);
+    }
   }
 };
 

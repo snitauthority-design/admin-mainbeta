@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { AppProvider } from './providers';
+import { GlobalErrorListener } from '@/components/GlobalErrorListener';
 
 export const metadata: Metadata = {
   title: 'E-Commerce Store',
@@ -16,7 +17,9 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300" suppressHydrationWarning>
         <AppProvider>
-          {children}
+          <GlobalErrorListener>
+            {children}
+          </GlobalErrorListener>
         </AppProvider>
       </body>
     </html>
