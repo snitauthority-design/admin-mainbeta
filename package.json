@@ -1,4 +1,13 @@
 {
+  "name": "admin-mainbeta",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "cd admin-next && npm run build",
+    "dev": "cd admin-next && npm run dev",
+    "start": "cd admin-next && npm start",
+    "lint": "cd admin-next && npm run lint"
+  },
   "dependencies": {
     "tailwind-merge": "^3.5.0"
   }
