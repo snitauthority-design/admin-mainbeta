@@ -1,1 +1,0 @@
-export { FeaturedDealsSection } from "./FeaturedDealsSection";
