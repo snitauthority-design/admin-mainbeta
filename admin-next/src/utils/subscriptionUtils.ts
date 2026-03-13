@@ -199,6 +199,7 @@ export function dismissNotificationForToday(tenantId: string): void {
 }
 
 /**
- * Renewal URL
+ * Renewal URL - configurable via env var
  */
-export const RENEWAL_URL = 'https://systemnextit.com/renew';
+const _renewalDomain = (import.meta.env.VITE_PRIMARY_DOMAIN || '').replace(/^https?:\/\//, '').replace(/\/$/, '');
+export const RENEWAL_URL = _renewalDomain ? `https://${_renewalDomain}/renew` : '/renew';

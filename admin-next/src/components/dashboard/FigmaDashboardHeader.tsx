@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { useDarkMode } from '../../context/DarkModeContext';
 import { DashboardHeaderProps } from './types';
+import { getStoreUrl } from '../../utils/appHelpers';
 
 // Notification icon by type
 const getNotificationIcon = (type: string) => {
@@ -69,16 +70,7 @@ const TUTORIAL_VIDEOS: Record<string, string> = {
   'default': 'https://www.youtube.com/watch?v=59b9ptwx0Js'
 };
 
-// Get store URL for tenant
-const getStoreUrl = (tenantSubdomain?: string) => {
-  if (!tenantSubdomain) return '#';
-  // Check if we're on localhost
-  const isLocalhost = window.location.hostname.includes('localhost');
-  if (isLocalhost) {
-    return `http://${tenantSubdomain}.localhost:3000`;
-  }
-  return `https://${tenantSubdomain}.allinbangla.com`;
-};
+// Get store URL for tenant (uses centralized getStoreUrl from appHelpers)
 
 // Searchable admin menu items
 interface SearchMenuItem {

@@ -63,7 +63,9 @@ const nextConfig = {
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: '**.cloudflare.com' },
-      { protocol: 'https', hostname: '**.allinbangla.com' },
+      ...(process.env.NEXT_PUBLIC_PRIMARY_DOMAIN
+        ? [{ protocol: 'https', hostname: `**.${process.env.NEXT_PUBLIC_PRIMARY_DOMAIN}` }]
+        : []),
       { protocol: 'https', hostname: 'imagedelivery.net' },
     ],
   },

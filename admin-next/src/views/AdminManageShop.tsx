@@ -7,6 +7,7 @@ import {
 import { DataService } from '../services/DataService';
 import { getAuthHeader } from '../services/authService';
 import { Order, ChatMessage } from '../types';
+import { getStoreUrl } from '../utils/appHelpers';
 
 interface ManageShopProps {
   onNavigate: (section: string) => void;
@@ -397,7 +398,7 @@ const AdminManageShop: React.FC<ManageShopProps> = ({ onNavigate, tenantId, webs
           <p className="text-gray-500 mt-1 text-xs sm:text-sm truncate">শপ ম্যানেজ করুন - Configure and manage your store</p>
         </div>
         <button
-          onClick={() => window.open(`https://${tenantSubdomain || websiteConfig?.domain || 'store'}.allinbangla.com`, '_blank')}
+          onClick={() => window.open(getStoreUrl(tenantSubdomain || websiteConfig?.domain || 'store'), '_blank')}
           className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition text-gray-700 font-medium shadow-sm text-sm w-full sm:w-auto"
         >
           <ExternalLink size={16} className="sm:hidden" />

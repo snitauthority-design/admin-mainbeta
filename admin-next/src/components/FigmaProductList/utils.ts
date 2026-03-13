@@ -32,10 +32,4 @@ export const stripHtmlTags = (html: string): string => {
 };
 
 /** Get the store front URL for a given subdomain (SSR-safe) */
-export const getStoreUrl = (subdomain?: string): string => {
-  if (!subdomain) return '';
-  if (typeof window === 'undefined') return `https://${subdomain}.allinbangla.com`;
-  const isLocalhost = window.location.hostname.includes('localhost');
-  if (isLocalhost) return `http://${subdomain}.localhost:3000`;
-  return `https://${subdomain}.allinbangla.com`;
-};
+export { getStoreUrl } from '../../utils/appHelpers';

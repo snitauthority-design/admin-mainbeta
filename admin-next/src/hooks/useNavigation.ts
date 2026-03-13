@@ -19,14 +19,12 @@ export function getOrderIdFromUrl(): string | null {
 
 // Check if we're on the admin subdomain (including localhost)
 const isAdminSubdomain = typeof window !== 'undefined' && 
-  (window.location.hostname === 'admin.allinbangla.com' || 
-   window.location.hostname.startsWith('admin.') ||
+  (window.location.hostname.startsWith('admin.') ||
    window.location.hostname === 'admin.localhost');
 
 // Check if we're on the superadmin subdomain (including localhost)
 const isSuperAdminSubdomain = typeof window !== 'undefined' && 
-  (window.location.hostname === 'superadmin.allinbangla.com' || 
-   window.location.hostname.startsWith('superadmin.') ||
+  (window.location.hostname.startsWith('superadmin.') ||
    window.location.hostname === 'superadmin.localhost');
 
 // Check if we're on the tenant login portal (systemnextit.website)
