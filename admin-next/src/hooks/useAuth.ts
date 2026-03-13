@@ -12,12 +12,19 @@ import { auth, provider } from '../config/firebase';
 // Default tenant ID
 const DEFAULT_TENANT_ID = '';  // Empty to prevent data leaking to real tenant
 
-// API Base URL
+// API Base URL - derived from env var or current hostname
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
   ? String(import.meta.env.VITE_API_BASE_URL)
   : (() => {
     const domain = getPrimaryDomain();
-    return domain && domain !== 'localhost' ? `https://${domain}` : '';
+    if (domain && domain !== 'localhost') return `https://${domain}`;
+    // In browser, extract from current location; during SSR, return empty
+    if (typeof window !== 'undefined') {
+      const parts = window.location.hostname.split('.');
+      const root = parts.length > 2 ? parts.slice(-2).join('.') : window.location.hostname;
+      return `${window.location.protocol}//${root}`;
+    }
+    return '';
   })();
 
 // Use canonical tenant resolution from appHelpers (supports all domains)

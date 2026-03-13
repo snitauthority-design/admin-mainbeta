@@ -296,10 +296,9 @@ export const uploadImageToServer = async (
     // If backend returns full URL (with http/https), use it directly
     // Otherwise, construct the full URL
     if (data.imageUrl.startsWith('http://') || data.imageUrl.startsWith('https://')) {
-      // Normalize the returned URL to use the configured API base URL
-      const cleanUrl = data.imageUrl;
-      console.log(`[ImageUpload] Cleaned URL: ${cleanUrl}`);
-      return cleanUrl;
+      // Use the returned URL directly
+      console.log(`[ImageUpload] Cleaned URL: ${data.imageUrl}`);
+      return data.imageUrl;
     }
     
     // If it's a relative path, prepend API_BASE_URL

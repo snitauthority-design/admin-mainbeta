@@ -3,11 +3,11 @@
  * Simplified version for productDetailPage
  */
 
-// Derive domain from env; fallback used only when env var is unset (e.g. standalone builds)
+// Derive domain from env
 const PRIMARY_DOMAIN = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_PRIMARY_DOMAIN)
   ? import.meta.env.VITE_PRIMARY_DOMAIN.replace(/^https?:\/\//, '').replace(/\/$/, '')
-  : 'allinbangla.com';
-const PRODUCTION_URL = `https://${PRIMARY_DOMAIN}`;
+  : '';
+const PRODUCTION_URL = PRIMARY_DOMAIN ? `https://${PRIMARY_DOMAIN}` : '';
 
 const stripWrappingQuotes = (value: string): string => {
   const v = value.trim();
