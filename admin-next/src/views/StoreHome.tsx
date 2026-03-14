@@ -424,13 +424,13 @@ const StoreHome: React.FC<StoreHomeProps> = ({
       ) : (
         <>
       {/* Hero Section */}
-                <section className="max-w-[1720px] mx-auto px-2 sm:px-6 lg:px-8 pt-2">
-      <HeroSection carouselItems={websiteConfig?.carouselItems} websiteConfig={websiteConfig} />
+      <section className="max-w-[1720px] mx-auto px-2 sm:px-4 lg:px-6 pt-2">
+        <HeroSection carouselItems={websiteConfig?.carouselItems} websiteConfig={websiteConfig} />
       </section>
 
       {/* Categories Section */}
       {displayCategories.length > 0 && (
-                  <section ref={categoriesSectionRef} className="max-w-[1720px] mx-auto px-2 sm:px-6 lg:px-8 pt-0">
+        <section ref={categoriesSectionRef} className="max-w-[1720px] mx-auto px-2 sm:px-4 lg:px-6">
           <CategoriesSection
             style={(websiteConfig?.categorySectionStyle as any) || 'style6'}
             categories={displayCategories}
@@ -441,7 +441,7 @@ const StoreHome: React.FC<StoreHomeProps> = ({
       )}
 
       {/* Main Content */}
-                <main className="max-w-[1720px] mx-auto px-2 sm:px-6 lg:px-8 space-y-2 sm:space-y-3 pb-20 md:pb-3" style={{ minHeight: '680px', contain: 'layout' }}>
+      <main className="max-w-[1720px] mx-auto px-2 sm:px-4 lg:px-6 space-y-4 sm:space-y-6 pb-20 md:pb-6" style={{ minHeight: '680px', contain: 'layout' }}>
         {hasSearchQuery ? (
           <Suspense fallback={<SearchResultsSkeleton />}>
             <SearchResultsSection

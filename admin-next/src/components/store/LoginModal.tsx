@@ -33,7 +33,7 @@ export const LoginModal = ({ onClose, onLogin, onRegister, onGoogleLogin }: Logi
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden relative">
-        <button onClick={onClose} className="absolute right-4 to p-4 text-gray-400 hover:text-gray-600"><X size={24}/></button>
+        <button onClick={onClose} className="absolute right-4 top-4 text-gray-400 hover:text-gray-600"><X size={24}/></button>
         {/* Crystal Blue header accent */}
         <div className="h-1.5 w-full" style={{ background: 'linear-gradient(90deg, #38BDF8 0%, #0EA5E9 50%, #0284C7 100%)' }} />
         <div className="p-8">

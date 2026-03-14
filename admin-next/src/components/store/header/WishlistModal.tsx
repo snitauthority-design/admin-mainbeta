@@ -10,7 +10,7 @@ export const WishlistModal = ({ isOpen, onClose, wishlistItems, catalogSource, o
   return (
     <div className="fixed inset-0 z-[999] bg-black/40 flex items-center justify-center" onClick={onClose}>
       <div className="bg-white rounded-xl shadow-lg w-full max-w-md mx-4 p-4 sm:p-6 relative" onClick={e => e.stopPropagation()}>
-        <button className="absolute to p-3 right-3 text-gray-500 hover:text-gray-900" onClick={onClose}><X size={22} /></button>
+        <button className="absolute top-3 right-3 text-gray-500 hover:text-gray-900" onClick={onClose}><X size={22} /></button>
         <h2 className="text-lg font-bold mb-4">My Wishlist</h2>
         {wishlistItems.length === 0 ? <div className="text-center text-gray-500 py-8">No items in wishlist.</div> : (
           <ul className="space-y-4 max-h-96 overflow-y-auto">

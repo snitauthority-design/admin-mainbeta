@@ -209,7 +209,7 @@ const BrandStyle5 = memo(({ brands, onBrandClick }: Omit<Props, 'style' | 'secti
             onClick={() => onBrandClick?.(brand)}
             className={`group relative bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 hover:shadow-xl transition-all overflow-hidden ${i === 0 ? 'md:col-span-2 md:row-span-2' : ''}`}
           >
-            <div className="absolute to p-3 right-3 px-2 py-1 bg-theme-primary/10 rounded-full">
+            <div className="absolute top-3 right-3 px-2 py-1 bg-theme-primary/10 rounded-full">
               <span className="text-xs font-medium text-theme-primary">Official</span>
             </div>
             <div className={`flex items-center justify-center ${i === 0 ? 'h-40 md:h-60' : 'h-24'} mb-4`}>

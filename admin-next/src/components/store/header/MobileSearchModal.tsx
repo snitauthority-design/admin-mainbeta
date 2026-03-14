@@ -34,7 +34,7 @@ export const MobileSearchModal: React.FC<MobileSearchModalProps> = ({
         onClick={onClose}
         aria-hidden="true"
       />
-      <div className="fixed to p-0 left-0 right-0 bg-white p-4 shadow-lg z-[100] transform transition-transform duration-300 ease-in-out">
+      <div className="fixed top-0 left-0 right-0 bg-white p-4 shadow-lg z-[100] transform transition-transform duration-300 ease-in-out">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold text-gray-800">Search Products</h2>
           <button
