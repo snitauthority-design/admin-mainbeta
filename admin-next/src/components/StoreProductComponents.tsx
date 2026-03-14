@@ -132,7 +132,7 @@ const ProductCardStyle2: React.FC<ProductCardProps> = ({ product, onClick, onBuy
 // Note: This style emphasizes a clean look with interactive hover actions for quick view and add to cart, while keeping the product information concise and focused.
 return (
     <div 
-      className="relative inline-flex h-full w-full cursor-pointer flex-col rounded-xl border border-[#ebebeb] bg-white shadow-[0_0_10px_rgba(0,0,0,0.07)] transition-all duration-500 ease-in-out no-underline"
+      className="relative inline-flex h-full w-full cursor-pointer flex-col rounded-lg sm:rounded-xl border border-[#ebebeb] bg-white shadow-[0_0_10px_rgba(0,0,0,0.07)] transition-all duration-500 ease-in-out no-underline"
       style={{ contain: 'layout' }}
       onMouseEnter={() => setIsHovered?.(true)}
       onMouseLeave={() => setIsHovered?.(false)}
@@ -217,7 +217,7 @@ return (
         </div>
         {/* প্রোডাক্ট নাম */}
         <h3 
-        className="mb-1 h-[34px] overflow-hidden text-ellipsis text-left text-[13px] sm:text-[14px] font-medium leading-[1.25] text-black line-clamp-2"
+        className="mb-1 h-[33px] overflow-hidden text-ellipsis text-left text-[13px] sm:text-[14px] font-medium leading-[1.25] text-black line-clamp-2"
           onClick={() => onClick?.(product)}
         >
           {String(product?.name || 'Unknown Product')}
