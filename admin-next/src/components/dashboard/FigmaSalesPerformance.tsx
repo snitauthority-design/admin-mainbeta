@@ -216,9 +216,9 @@ const FigmaSalesPerformance: React.FC<FigmaSalesPerformanceProps> = ({
       </div>
 
       {/* X-axis labels */}
-      <div className="w-full pl-8 inline-flex justify-between items-center">
+      <div className="w-full pl-3 xs:pl-5 sm:pl-8 inline-flex justify-between items-center">
         {displayData.map((item, i) => (
-          <div key={i} className="opacity-50 text-neutral-900 dark:text-gray-300 text-[10px] font-medium font-family: Poppins, Helvetica, sans-serif">
+          <div key={i} className="opacity-50 text-neutral-900 dark:text-gray-300 text-[8px] xs:text-[9px] sm:text-[10px] font-medium font-poppins">
             {item.label}
           </div>
         ))}

@@ -87,7 +87,7 @@ const TrafficChartSection = ({ chartData, loading }: { chartData: any[]; loading
   };
 
   return (
-    <div className="relative w-full h-[273px] bg-white dark:bg-gray-800 rounded-lg overflow-hidden p-4">
+    <div className="relative w-full h-[220px] sm:h-[250px] lg:h-[273px] bg-white dark:bg-gray-800 rounded-lg overflow-hidden p-3 sm:p-4">
       {loading ? (
         <div className="h-full w-full flex items-center justify-center">
           <div className="w-8 h-8 border-4 border-slate-100 border-t-slate-400 rounded-full animate-spin" />
@@ -97,53 +97,53 @@ const TrafficChartSection = ({ chartData, loading }: { chartData: any[]; loading
           {/* Chart Area */}
           <div className="flex-1 flex items-end justify-between gap-2 pb-2 relative">
             {/* Y-axis label */}
-            <div className="absolute -left-2 top-1/2 -translate-y-1/2 -rotate-90">
+            <div className="absolute -left-1 sm:-left-2 top-1/2 -translate-y-1/2 -rotate-90 hidden sm:block">
               <span className="text-[10px] font-medium text-gray-400 dark:text-gray-500 whitespace-nowrap">
                 Units of measure
               </span>
             </div>
 
             {/* Y-axis line */}
-            <div className="absolute left-8 top-0 bottom-8 w-px bg-gray-200 dark:bg-gray-600" />
+            <div className="absolute left-4 sm:left-8 top-0 bottom-8 w-px bg-gray-200 dark:bg-gray-600" />
 
             {/* Chart bars */}
-            <div className="flex-1 flex items-end justify-around gap-1 pl-12 pr-2 h-[180px]">
+            <div className="flex-1 flex items-end justify-around gap-0.5 xs:gap-1 sm:gap-2 pl-6 sm:pl-10 lg:pl-12 pr-1 sm:pr-2 h-[140px] sm:h-[160px] lg:h-[180px]">
               {chartData.map((data, index) => (
-                <div key={index} className="flex flex-col items-center justify-end flex-1 max-w-[80px]">
-                  <div className="flex items-end gap-0.5 mb-1">
+                <div key={index} className="flex flex-col items-center justify-end flex-1 min-w-0 max-w-[60px] sm:max-w-[80px]">
+                  <div className="flex items-end gap-px xs:gap-0.5 sm:gap-1 mb-1">
                     {/* Mobile bar */}
                     <div 
-                      className="relative w-4 bg-[linear-gradient(180deg,rgba(56,189,248,1)_0%,rgba(30,144,255,1)_100%)] rounded-t-sm"
+                      className="relative w-2 xs:w-3 sm:w-4 bg-[linear-gradient(180deg,rgba(56,189,248,1)_0%,rgba(30,144,255,1)_100%)] rounded-t-sm"
                       style={{ height: `${getHeight(data.mobile)}px` }}
                     >
-                      <div className="text-center absolute top-1 left-1/2 -translate-x-1/2 -rotate-90 text-white text-[10px] font-semibold whitespace-nowrap">
+                      <div className="text-center absolute top-1 left-1/2 -translate-x-1/2 -rotate-90 text-white text-[7px] xs:text-[8px] sm:text-[10px] font-semibold whitespace-nowrap">
                         {data.mobile}
                       </div>
                     </div>
 
                     {/* Tablet bar */}
                     <div 
-                      className="relative w-4 bg-[linear-gradient(180deg,rgba(255,159,28,1)_0%,rgba(255,106,0,1)_100%)] rounded-t-sm"
+                      className="relative w-2 xs:w-3 sm:w-4 bg-[linear-gradient(180deg,rgba(255,159,28,1)_0%,rgba(255,106,0,1)_100%)] rounded-t-sm"
                       style={{ height: `${getHeight(data.tab)}px` }}
                     >
-                      <div className="text-center absolute top-1 left-1/2 -translate-x-1/2 -rotate-90 text-white text-[10px] font-semibold whitespace-nowrap">
+                      <div className="text-center absolute top-1 left-1/2 -translate-x-1/2 -rotate-90 text-white text-[7px] xs:text-[8px] sm:text-[10px] font-semibold whitespace-nowrap">
                         {data.tab}
                       </div>
                     </div>
 
                     {/* Desktop bar */}
                     <div 
-                      className="relative w-4 bg-[linear-gradient(180deg,rgba(160,139,255,1)_0%,rgba(89,67,255,1)_100%)] rounded-t-sm"
+                      className="relative w-2 xs:w-3 sm:w-4 bg-[linear-gradient(180deg,rgba(160,139,255,1)_0%,rgba(89,67,255,1)_100%)] rounded-t-sm"
                       style={{ height: `${getHeight(data.desktop)}px` }}
                     >
-                      <div className="text-center absolute top-1 left-1/2 -translate-x-1/2 -rotate-90 text-white text-[10px] font-semibold whitespace-nowrap">
+                      <div className="text-center absolute top-1 left-1/2 -translate-x-1/2 -rotate-90 text-white text-[7px] xs:text-[8px] sm:text-[10px] font-semibold whitespace-nowrap">
                         {data.desktop}
                       </div>
                     </div>
                   </div>
 
                   {/* Date label */}
-                  <div className="text-[9px] text-gray-500 dark:text-gray-400 font-medium whitespace-nowrap">
+                  <div className="text-[7px] xs:text-[8px] sm:text-[9px] text-gray-500 dark:text-gray-400 font-medium whitespace-nowrap">
                     {data.date}
                   </div>
                 </div>
@@ -152,11 +152,11 @@ const TrafficChartSection = ({ chartData, loading }: { chartData: any[]; loading
           </div>
 
           {/* Legend */}
-          <div className="flex items-center justify-center gap-6 pt-3 border-t border-gray-100 dark:border-gray-700">
+          <div className="flex items-center justify-center gap-3 xs:gap-4 sm:gap-6 pt-2 sm:pt-3 border-t border-gray-100 dark:border-gray-700">
             {legendItems.map((item, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <div className={`w-4 h-4 rounded-full ${item.color}`} />
-                <span className="text-[10px] font-medium text-gray-600 dark:text-gray-400">
+              <div key={index} className="flex items-center gap-1 xs:gap-1.5 sm:gap-2">
+                <div className={`w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 lg:w-4 lg:h-4 rounded-full flex-shrink-0 ${item.color}`} />
+                <span className="text-[8px] xs:text-[9px] sm:text-[10px] font-medium text-gray-600 dark:text-gray-400 whitespace-nowrap">
                   {item.label}
                 </span>
               </div>
@@ -258,10 +258,10 @@ export const VisitorAnalytics: React.FC<VisitorAnalyticsProps> = ({ tenantId }) 
   }, [tenantId]);
 
   return (
-    <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4">
+    <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-2.5 sm:gap-3 lg:gap-4">
       {/* Left: Visitor Stat Cards */}
-      <section className="lg:col-span-4 flex flex-col gap-3 sm:gap-4">
-        <div className="flex-1">
+      <section className="lg:col-span-4 flex flex-row lg:flex-col gap-2 sm:gap-3 lg:gap-4 overflow-x-auto lg:overflow-visible pb-1 lg:pb-0">
+        <div className="flex-1 min-w-[160px] sm:min-w-0">
           <VisitorCard
             icon={<OnlineNowIcon color="#0EA5E9" />}
             title="Online Now"
@@ -273,7 +273,7 @@ export const VisitorAnalytics: React.FC<VisitorAnalyticsProps> = ({ tenantId }) 
             loading={loading}
           />
         </div>
-        <div className="flex-1">
+        <div className="flex-1 min-w-[160px] sm:min-w-0">
           <VisitorCard
             icon={<TodayVisitorsIcon color="#F97316" />}
             title="Today Visitors"
@@ -285,7 +285,7 @@ export const VisitorAnalytics: React.FC<VisitorAnalyticsProps> = ({ tenantId }) 
             loading={loading}
           />
         </div>
-        <div className="flex-1">
+        <div className="flex-1 min-w-[160px] sm:min-w-0">
           <VisitorCard
             icon={<TotalVisitorsIcon color="#6366F1" />}
             title="Total Visitors"

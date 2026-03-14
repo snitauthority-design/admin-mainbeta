@@ -191,14 +191,14 @@ const CustomerTable: React.FC<CustomerTableProps> = ({
       </div>
 
       {/* Mobile Card View */}
-      <div className="md:hidden space-y-4 p-4">
+      <div className="md:hidden space-y-2 p-2 xs:p-3 sm:p-4">
         {customers.length === 0 ? (
-          <div className="text-center text-gray-500 py-8">No customers found</div>
+          <div className="text-center text-gray-500 dark:text-gray-400 py-8">No customers found</div>
         ) : (
           customers.map((customer) => (
             <div
               key={customer.id}
-              className="bg-white border border-gray-100 rounded-xl p-4 shadow-sm flex items-start gap-4"
+              className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl p-3 sm:p-4 shadow-sm flex items-start gap-3 active:scale-[0.99] transition-transform"
             >
               <div
                 className={`mt-1 w-5 h-5 rounded border cursor-pointer flex items-center justify-center flex-shrink-0 ${

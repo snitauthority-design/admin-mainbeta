@@ -67,27 +67,27 @@ const FigmaOrderStatus: React.FC<FigmaOrderStatusProps> = ({
 
 return (
   <div className="px-2 xs:px-3 sm:px-4 md:px-5 lg:px-3 xl:px-4 w-full">
-    <h2 className="text-black dark:text-white text-base font-semibold mb-3 font-['Poppins']">Order</h2>
+    <h2 className="text-black dark:text-white text-sm xs:text-base font-semibold mb-2 xs:mb-3 font-['Poppins']">Order</h2>
     
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 xs:gap-3 sm:gap-4">
       {orderItems.map((item, index) => (
         <div 
           key={index} 
-          style={{width: '100%', height: 48, position: 'relative', background: 'white', boxShadow: '0px 2px 9.6px rgba(0, 0, 0, 0.08)', overflow: 'hidden', borderRadius: 8}}
+          className={`w-full rounded-lg overflow-hidden shadow-[0px_2px_9.6px_rgba(0,0,0,0.08)] bg-white dark:bg-gray-800 flex items-center gap-2 xs:gap-3 px-2 xs:px-3 py-2 xs:py-2.5 min-h-[48px] transition-shadow hover:shadow-md active:scale-[0.98]`}
         >
           {/* Icon Container */}
-          <div style={{width: 32, height: 32, left: 8, top: 8, position: 'absolute', backgroundColor: item.bgColor || '#FFD9F4', overflow: 'hidden', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+          <div className={`w-8 h-8 xs:w-9 xs:h-9 flex-shrink-0 ${item.bgColor} rounded-lg flex items-center justify-center`}>
              {item.icon}
           </div>
 
-          {/* Label (Today) */}
-          <div style={{left: 46, top: 15, position: 'absolute', color: 'black', fontSize: 12, fontFamily: 'Poppins', fontWeight: '500', wordWrap: 'break-word'}}>
-            {item.label}
-          </div>
-
-          {/* Value (35) */}
-          <div style={{right: 12, top: 6, position: 'absolute', color: 'black', fontSize: 24, fontFamily: 'Poppins', fontWeight: '500', wordWrap: 'break-word'}}>
-            {item.value}
+          {/* Label + Value */}
+          <div className="flex-1 min-w-0 flex items-center justify-between gap-1">
+            <span className="text-[11px] xs:text-xs text-black dark:text-white font-medium font-['Poppins'] truncate">
+              {item.label}
+            </span>
+            <span className="text-lg xs:text-xl sm:text-2xl font-medium text-black dark:text-white font-['Poppins'] flex-shrink-0 tabular-nums">
+              {item.value}
+            </span>
           </div>
         </div>
       ))}

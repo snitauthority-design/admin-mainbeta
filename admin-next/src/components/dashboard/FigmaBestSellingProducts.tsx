@@ -35,21 +35,21 @@ const FigmaBestSellingProducts: React.FC<FigmaBestSellingProductsProps> = ({
         </div>
 
         {/* Table - Scroll on mobile */}
-        <div className="w-full overflow-x-auto -mx-3 sm:mx-0 px-3 sm:px-0">
-          <div className="min-w-[500px] flex flex-col justify-start items-end gap-3">
+        <div className="w-full overflow-x-auto -mx-2 xs:-mx-3 sm:mx-0 px-2 xs:px-3 sm:px-0 scrollbar-hide">
+          <div className="min-w-[400px] xs:min-w-[450px] sm:min-w-[500px] flex flex-col justify-start items-end gap-2 xs:gap-3">
           {/* Table Header */}
           <div className="self-stretch bg-blue-50 dark:bg-gray-700 rounded-lg border-b inline-flex justify-start items-center">
-            <div className="w-60 self-stretch px-5 py-2 border-zinc-300 dark:border-gray-600 flex justify-start items-center gap-1">
-              <div className="flex-1 justify-start text-neutral-500 dark:text-gray-400 text-xs font-medium font-['Public_Sans'] uppercase">Product</div>
+            <div className="w-36 xs:w-44 sm:w-52 lg:w-60 self-stretch px-2 xs:px-3 sm:px-5 py-2 border-zinc-300 dark:border-gray-600 flex justify-start items-center gap-1">
+              <div className="flex-1 justify-start text-neutral-500 dark:text-gray-400 text-[10px] xs:text-xs font-medium font-['Public_Sans'] uppercase">Product</div>
             </div>
-            <div className="flex-1 self-stretch pl-5 pr-2 py-2 border-zinc-300 dark:border-gray-600 flex justify-start items-center gap-1">
-              <div className="flex-1 justify-start text-neutral-500 dark:text-gray-400 text-xs font-medium font-['Public_Sans'] uppercase">Total Order</div>
+            <div className="flex-1 self-stretch pl-2 xs:pl-3 sm:pl-5 pr-1 sm:pr-2 py-2 border-zinc-300 dark:border-gray-600 flex justify-start items-center gap-1">
+              <div className="flex-1 justify-start text-neutral-500 dark:text-gray-400 text-[10px] xs:text-xs font-medium font-['Public_Sans'] uppercase">Total Order</div>
             </div>
-            <div className="flex-1 self-stretch px-5 py-2 border-zinc-300 dark:border-gray-600 flex justify-start items-center gap-1">
-              <div className="flex-1 justify-start text-neutral-500 dark:text-gray-400 text-xs font-medium font-['Public_Sans'] uppercase">Status</div>
+            <div className="flex-1 self-stretch px-2 xs:px-3 sm:px-5 py-2 border-zinc-300 dark:border-gray-600 flex justify-start items-center gap-1">
+              <div className="flex-1 justify-start text-neutral-500 dark:text-gray-400 text-[10px] xs:text-xs font-medium font-['Public_Sans'] uppercase">Status</div>
             </div>
-            <div className="flex-1 px-5 py-4 border-zinc-300 dark:border-gray-600 flex justify-start items-center gap-1">
-              <div className="flex-1 justify-start text-neutral-500 dark:text-gray-400 text-xs font-medium font-['Public_Sans'] uppercase">Price</div>
+            <div className="flex-1 px-2 xs:px-3 sm:px-5 py-2 xs:py-4 border-zinc-300 dark:border-gray-600 flex justify-start items-center gap-1">
+              <div className="flex-1 justify-start text-neutral-500 dark:text-gray-400 text-[10px] xs:text-xs font-medium font-['Public_Sans'] uppercase">Price</div>
             </div>
           </div>
 
@@ -58,19 +58,19 @@ const FigmaBestSellingProducts: React.FC<FigmaBestSellingProductsProps> = ({
             {products.map((product) => (
               <div 
                 key={product.id} 
-                className="self-stretch rounded-lg border-b inline-flex justify-start items-center hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer"
+                className="self-stretch rounded-lg border-b inline-flex justify-start items-center hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer active:scale-[0.99]"
                 onClick={() => onProductClick?.(product.id)}
               >
                 {/* Product */}
-                <div className="w-60 self-stretch pr-5 pb-2 border-zinc-300 dark:border-gray-600 flex justify-start items-center gap-3">
-                  <div className="w-11 h-11 relative rounded-[9.86px] overflow-hidden bg-zinc-100 dark:bg-gray-600 flex items-center justify-center">
+                <div className="w-36 xs:w-44 sm:w-52 lg:w-60 self-stretch pr-2 xs:pr-3 sm:pr-5 pb-2 border-zinc-300 dark:border-gray-600 flex justify-start items-center gap-2 xs:gap-3">
+                  <div className="w-9 h-9 xs:w-10 xs:h-10 sm:w-11 sm:h-11 relative rounded-lg xs:rounded-[9.86px] overflow-hidden bg-zinc-100 dark:bg-gray-600 flex items-center justify-center flex-shrink-0">
                     {product.image ? (
-                      <img className="w-11 h-11 object-cover " src={normalizeImageUrl(product.image)} alt={product.name} />
+                      <img className="w-full h-full object-cover" src={normalizeImageUrl(product.image)} alt={product.name} />
                     ) : (
-                      <span className="text-zinc-400 dark:text-gray-400 text-sm font-medium">{product.name.charAt(0)}</span>
+                      <span className="text-zinc-400 dark:text-gray-400 text-xs xs:text-sm font-medium">{product.name.charAt(0)}</span>
                     )}
                   </div>
-                  <div className="w-full truncate text-teal-950 dark:text-white text-sm sm:text-base font-medium font-family: Poppins, Helvetica, sans-serif">{product.name}</div>
+                  <div className="w-full truncate text-teal-950 dark:text-white text-xs xs:text-sm sm:text-base font-medium font-poppins">{product.name}</div>
                 </div>
 
                 {/* Total Order */}

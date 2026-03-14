@@ -24,17 +24,17 @@ const StatCard = ({
   iconUrl: string;
   language: Language;
 }) => (
-  <div className="bg-[#f9f9f9] dark:bg-gray-700 rounded-[8px] h-[68px] flex items-center justify-between px-4 overflow-hidden">
+  <div className="bg-[#f9f9f9] dark:bg-gray-700 rounded-lg min-h-[52px] xs:min-h-[60px] sm:h-[68px] flex items-center justify-between px-2.5 xs:px-3 sm:px-4 py-2 overflow-hidden">
     <div className="flex flex-col justify-center min-w-0">
-      <span className="text-[24px] font-medium font-['Poppins'] leading-tight text-black dark:text-white truncate">
+      <span className="text-base xs:text-lg sm:text-xl lg:text-[24px] font-medium font-['Poppins'] leading-tight text-black dark:text-white truncate tabular-nums">
         {typeof value === 'number' ? formatNumber(value, language) : value}
       </span>
-      <span className="text-[12px] font-medium font-['Poppins'] text-black dark:text-gray-300 truncate">
+      <span className="text-[10px] xs:text-[11px] sm:text-[12px] font-medium font-['Poppins'] text-black dark:text-gray-300 truncate">
         {label}
       </span>
     </div>
-    <div className="w-11 h-11 bg-white dark:bg-gray-600 rounded-[8px] flex items-center justify-center flex-shrink-0 shadow-sm">
-      <img src={iconUrl} alt={label} className="w-8 h-8 object-contain" />
+    <div className="w-8 h-8 xs:w-9 xs:h-9 sm:w-11 sm:h-11 bg-white dark:bg-gray-600 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
+      <img src={iconUrl} alt={label} className="w-5 h-5 xs:w-6 xs:h-6 sm:w-8 sm:h-8 object-contain" />
     </div>
   </div>
 );
@@ -73,18 +73,18 @@ const OrderAnalytics: React.FC<OrderAnalyticsProps> = ({
   return (
     <div className="w-full font-['Poppins']">
       {/* Title */}
-      <h2 className="text-[16px] font-semibold text-black dark:text-white mb-4">
+      <h2 className="text-sm xs:text-base font-semibold text-black dark:text-white mb-2 xs:mb-3 sm:mb-4">
         Order Analytics
       </h2>
 
       {/* Body: left cards + right notification */}
-      <div className="flex flex-col lg:flex-row gap-3">
+      <div className="flex flex-col lg:flex-row gap-2 xs:gap-3">
 
         {/* Left: two rows of stat cards */}
-        <div className="flex-1 flex flex-col gap-3 min-w-0">
+        <div className="flex-1 flex flex-col gap-2 xs:gap-3 min-w-0">
 
           {/* Row 1 */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 xs:gap-3">
             {/* Products on Hands */}
             <StatCard
               value={totalProducts}
@@ -102,7 +102,7 @@ const OrderAnalytics: React.FC<OrderAnalyticsProps> = ({
             />
 
             {/* Language Switcher */}
-            <div className="bg-[#f9f9f9] dark:bg-gray-700 rounded-[8px] h-[68px] flex flex-col justify-center px-4 overflow-hidden">
+            <div className="bg-[#f9f9f9] dark:bg-gray-700 rounded-lg min-h-[52px] xs:min-h-[60px] sm:h-[68px] flex flex-col justify-center px-2.5 xs:px-3 sm:px-4 py-2 overflow-hidden">
               <span className="text-[12px] font-normal text-black dark:text-gray-300 mb-1.5">
                 {t('language') || 'Language'}
               </span>
@@ -128,13 +128,13 @@ const OrderAnalytics: React.FC<OrderAnalyticsProps> = ({
             </div>
 
             {/* Date / Day */}
-            <div className="h-[68px]">
-              <div style={{ width: '100%', height: '100%', position: 'relative', background: '#F9F9F9', overflow: 'hidden', borderRadius: 8 }}>
-                <div style={{ width: 160, height: 160, left: 26.5, top: 22, position: 'absolute', background: 'linear-gradient(90deg, #38BDF8 0%, #1E90FF 100%)', borderRadius: 9999 }} />
-                <div style={{ left: 10.5, top: 10, position: 'absolute', color: 'black', fontSize: 16, fontFamily: 'Poppins', fontWeight: 500, wordWrap: 'break-word' }}>
+            <div className="min-h-[52px] xs:min-h-[60px] sm:h-[68px]">
+              <div className="w-full h-full relative bg-[#F9F9F9] dark:bg-gray-700 overflow-hidden rounded-lg">
+                <div className="absolute w-[120px] h-[120px] xs:w-[140px] xs:h-[140px] sm:w-[160px] sm:h-[160px] left-5 top-4 xs:top-5 bg-gradient-to-r from-sky-400 to-blue-500 rounded-full" />
+                <div className="absolute left-2 xs:left-2.5 sm:left-3 top-2 xs:top-2.5 sm:top-3 text-sm xs:text-base font-medium font-['Poppins'] text-black dark:text-white">
                   {currentDate}
                 </div>
-                <div style={{ left: 67.5, top: 34, position: 'absolute', color: 'white', fontSize: 24, fontFamily: 'Poppins', fontWeight: 500, wordWrap: 'break-word' }}>
+                <div className="absolute left-[50px] xs:left-[55px] sm:left-[68px] top-7 xs:top-8 sm:top-[34px] text-lg xs:text-xl sm:text-2xl font-medium font-['Poppins'] text-white">
                   {currentDay}
                 </div>
               </div>
@@ -142,7 +142,7 @@ const OrderAnalytics: React.FC<OrderAnalyticsProps> = ({
           </div>
 
           {/* Row 2 */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 xs:gap-3">
             <StatCard
               value={reservedPrice || totalRevenue}
               label={t('reserved_price') || 'Reserved Price'}
@@ -173,8 +173,8 @@ const OrderAnalytics: React.FC<OrderAnalyticsProps> = ({
 
         {/* Right: Important Notification */}
         <div className="w-full lg:w-[262px] flex-shrink-0">
-          <div className="bg-[#f9f9f9] dark:bg-gray-700 rounded-[8px] h-full p-4 flex flex-col">
-            <span className="text-[12px] font-normal text-black dark:text-gray-300 mb-3">
+          <div className="bg-[#f9f9f9] dark:bg-gray-700 rounded-lg h-full p-3 xs:p-4 flex flex-col">
+            <span className="text-[11px] xs:text-[12px] font-normal text-black dark:text-gray-300 mb-2 xs:mb-3">
               Important Notification
             </span>
 

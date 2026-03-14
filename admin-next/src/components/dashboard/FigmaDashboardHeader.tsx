@@ -290,12 +290,12 @@ const FigmaDashboardHeader: React.FC<DashboardHeaderProps> = ({
   return (
     <div className="w-full bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 px-2 sm:px-4 md:px-5 lg:px-3 xl:px-4 py-2 sm:py-3 md:py-4 transition-colors duration-300">
       <div className="flex items-center justify-between gap-1 xs:gap-2">
-        {/* Welcome Section - Hidden on very small screens */}
-        <div className="flex-1 min-w-0 hidden sm:block">
-          <h1 className="text-sm sm:text-lg md:text-xl font-semibold text-gray-900 dark:text-white truncate font-['Poppins']">
-            Welcome back, {user?.name || 'Yuvraj'}
+        {/* Welcome Section - Compact on mobile, expanded on desktop */}
+        <div className="flex-1 min-w-0">
+          <h1 className="text-xs xs:text-sm sm:text-lg md:text-xl font-semibold text-gray-900 dark:text-white truncate font-['Poppins']">
+            Welcome, {user?.name || 'Yuvraj'}
           </h1>
-          <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-0.5 sm:mt-1 hidden md:block font-['Poppins']">
+          <p className="text-[10px] xs:text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-0.5 sm:mt-1 hidden xs:block font-['Poppins']">
             Monitor your business.
           </p>
         </div>
@@ -324,7 +324,7 @@ const FigmaDashboardHeader: React.FC<DashboardHeaderProps> = ({
             </button>
 
             {showTenantDropdown && (
-              <div className="absolute left-0 top-full mt-1 w-[320px] rounded-xl z-50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 shadow-2xl">
+              <div className="absolute left-0 sm:left-0 top-full mt-1 w-[calc(100vw-2rem)] sm:w-[320px] max-w-[320px] rounded-xl z-50 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 shadow-2xl right-0 sm:right-auto">
                 {/* Search */}
                 <div className="p-2 border-b border-gray-100 dark:border-gray-700">
                   <div className="relative">
@@ -432,9 +432,9 @@ const FigmaDashboardHeader: React.FC<DashboardHeaderProps> = ({
             <span className="text-xs sm:text-sm font-medium hidden sm:inline font-['Poppins']">Tutorials</span>
           </button>
 
-          {/* Search Bar with Dropdown */}
-          <div className="relative hidden md:block" ref={searchRef}>
-            <div className={`relative flex items-center bg-gray-50 dark:bg-gray-700 rounded-md sm:rounded-lg px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 w-40 lg:w-64 xl:w-72 border ${showSearchDropdown && filteredItems.length > 0 ? 'border-blue-300 ring-2 ring-blue-100 dark:ring-blue-900' : 'border-gray-100 dark:border-gray-600'}`}>
+          {/* Search Bar with Dropdown - visible on all screens */}
+          <div className="relative hidden xs:block md:block" ref={searchRef}>
+            <div className={`relative flex items-center bg-gray-50 dark:bg-gray-700 rounded-md sm:rounded-lg px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 w-8 xs:w-28 sm:w-36 md:w-40 lg:w-64 xl:w-72 border ${showSearchDropdown && filteredItems.length > 0 ? 'border-blue-300 ring-2 ring-blue-100 dark:ring-blue-900' : 'border-gray-100 dark:border-gray-600'} transition-all focus-within:w-40 xs:focus-within:w-40 sm:focus-within:w-48`}>
               <Search className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 dark:text-gray-400 mr-2 sm:mr-3" />
               <input
                 ref={searchInputRef}
@@ -556,7 +556,7 @@ const FigmaDashboardHeader: React.FC<DashboardHeaderProps> = ({
               
               {/* Notification Dropdown */}
               {showNotificationDropdown && (
-                <div className="absolute right-0 top-full mt-2 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-100 dark:border-gray-700 z-50 overflow-hidden">
+                <div className="absolute right-0 top-full mt-2 w-[calc(100vw-2rem)] xs:w-80 max-w-[320px] bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-100 dark:border-gray-700 z-50 overflow-hidden">
                   <div className="p-3 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between bg-gray-50 dark:bg-gray-900">
                     <h3 className="font-semibold text-gray-900 dark:text-white text-sm">Notifications</h3>
                     {notificationCount > 0 && (
@@ -650,32 +650,32 @@ const FigmaDashboardHeader: React.FC<DashboardHeaderProps> = ({
       
       {/* Tutorial Video Modal */}
       {showTutorialModal && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[100] p-4" onClick={() => setShowTutorialModal(false)}>
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[100] p-2 sm:p-4" onClick={() => setShowTutorialModal(false)}>
           <div 
-            className="bg-white rounded-2xl shadow-2xl w-full max-w-7xl overflow-hidden"
+            className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl shadow-2xl w-full max-w-7xl overflow-hidden max-h-[95vh] flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-100">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
-                  <PlayCircle className="w-5 h-5 text-red-500" />
+            <div className="flex items-center justify-between p-3 sm:p-4 border-b border-gray-100 dark:border-gray-700 flex-shrink-0">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-red-100 dark:bg-red-900/30 rounded-lg sm:rounded-xl flex items-center justify-center">
+                  <PlayCircle className="w-4 h-4 sm:w-5 sm:h-5 text-red-500" />
                 </div>
                 <div>
-                  <h2 className="text-lg font-semibold text-gray-900">Tutorial Video</h2>
-                  <p className="text-sm text-gray-500">Learn how to use this feature</p>
+                  <h2 className="text-sm sm:text-lg font-semibold text-gray-900 dark:text-white">Tutorial Video</h2>
+                  <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 hidden xs:block">Learn how to use this feature</p>
                 </div>
               </div>
               <button 
                 onClick={() => setShowTutorialModal(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-1.5 sm:p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
               >
-                <X className="w-5 h-5 text-gray-500" />
+                <X className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" />
               </button>
             </div>
             
-            {/* Video Container - Full size */}
-            <div className="w-full bg-black" style={{ height: '70vh', maxHeight: '600px' }}>
+            {/* Video Container - Responsive */}
+            <div className="w-full bg-black flex-1" style={{ minHeight: '200px', maxHeight: '70vh' }}>
               <iframe
                 width="100%"
                 height="100%"
@@ -696,13 +696,13 @@ const FigmaDashboardHeader: React.FC<DashboardHeaderProps> = ({
             </div>
             
             {/* Modal Footer */}
-            <div className="p-4 bg-gray-50 flex items-center justify-between">
-              <p className="text-sm text-gray-500">
+            <div className="p-3 sm:p-4 bg-gray-50 dark:bg-gray-900 flex items-center justify-between flex-shrink-0">
+              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                 Need more help? Visit our <a href="#" className="text-blue-600 hover:underline">Help Center</a>
               </p>
               <button 
                 onClick={() => setShowTutorialModal(false)}
-                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium text-sm"
+                className="px-3 sm:px-4 py-1.5 sm:py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors font-medium text-xs sm:text-sm"
               >
                 Close
               </button>

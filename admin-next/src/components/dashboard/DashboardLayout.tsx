@@ -60,7 +60,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   };
 
   return (
-    <div className={`flex h-screen bg-[#F8FAFC] dark:bg-gray-900 transition-colors duration-300 ${className}`}>
+    <div className={`flex h-[100dvh] min-h-screen bg-[#F8FAFC] dark:bg-gray-900 transition-colors duration-300 ${className}`}>
       {/* Mobile Overlay */}
       {sidebarOpen && (
         <div 
@@ -74,7 +74,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         fixed lg:relative inset-y-0 left-0 z-50
         transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0
         transition-transform duration-300 ease-in-out
-        flex-shrink-0 w-[260px] sm:w-[280px] lg:w-[250px] bg-white dark:bg-gray-800 shadow-lg lg:shadow-sm border-r border-gray-100 dark:border-gray-700
+        flex-shrink-0 w-[85vw] max-w-[280px] sm:w-[280px] lg:w-[250px] bg-white dark:bg-gray-800 shadow-lg lg:shadow-sm border-r border-gray-100 dark:border-gray-700
       `}>
         <div className="sticky top-0 h-screen overflow-y-auto">
           {/* Logo + Close Button (mobile) */}

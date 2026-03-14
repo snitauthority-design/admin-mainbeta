@@ -59,23 +59,23 @@ const AddOrderModal: React.FC<AddOrderModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
       onClick={(e) => { if (e.target === e.currentTarget) setShowAddOrderModal(false); }}
     >
-      <div className="bg-white rounded-2xl w-full max-w-lg shadow-xl" onClick={(e) => e.stopPropagation()}>
+      <div className="bg-white dark:bg-gray-800 rounded-t-2xl sm:rounded-2xl w-full max-w-lg shadow-xl max-h-[95vh] sm:max-h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
         {/* Header */}
-        <div className="flex items-center justify-between p-3 sm:p-4 lg:p-4 xl:p-5 border-b">
-          <h2 className="text-xl font-semibold text-gray-900">Add New Order</h2>
+        <div className="flex items-center justify-between p-3 sm:p-4 lg:p-5 border-b border-gray-100 dark:border-gray-700 flex-shrink-0">
+          <h2 className="text-base sm:text-xl font-semibold text-gray-900 dark:text-white">Add New Order</h2>
           <button
             onClick={() => setShowAddOrderModal(false)}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-1.5 sm:p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
           >
-            <X className="w-5 h-5 text-gray-500" />
+            <X className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" />
           </button>
         </div>
 
         {/* Form */}
-        <div className="p-6 space-y-4 max-h-[60vh] overflow-y-auto">
+        <div className="p-3 sm:p-4 lg:p-6 space-y-3 sm:space-y-4 flex-1 overflow-y-auto">
           {/* No Products Warning */}
           {safeProducts.length === 0 && (
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-center">

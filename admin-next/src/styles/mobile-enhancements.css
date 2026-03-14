@@ -415,12 +415,63 @@ img {
   opacity: 0.85;
 }
 
-/* Mobile Touch Feedback */
-.mobile-touch-feedback {
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
+/* ===== Admin Dashboard Mobile Enhancements ===== */
+
+/* Use dynamic viewport height for mobile browsers */
+@supports (height: 100dvh) {
+  .h-dvh {
+    height: 100dvh;
+  }
 }
 
-.mobile-touch-feedback:active {
-  opacity: 0.85;
+/* Dashboard cards - horizontal scroll on mobile */
+@media (max-width: 639px) {
+  .dashboard-cards-scroll {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .dashboard-cards-scroll::-webkit-scrollbar {
+    display: none;
+  }
+  .dashboard-cards-scroll > * {
+    scroll-snap-align: start;
+  }
+}
+
+/* Ensure modals don't overflow on small screens */
+@media (max-width: 480px) {
+  .fixed.inset-0 [class*="max-w-"] {
+    max-width: calc(100vw - 1rem);
+  }
+}
+
+/* Better table scrolling on mobile */
+@media (max-width: 768px) {
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Make table rows more tappable */
+  table tbody tr {
+    min-height: 48px;
+  }
+
+  /* Responsive form inputs on mobile */
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="number"],
+  input[type="search"],
+  select,
+  textarea {
+    font-size: 16px; /* Prevents iOS zoom on focus */
+  }
+}
+
+/* Smooth sidebar transitions */
+.sidebar-transition {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
 }
