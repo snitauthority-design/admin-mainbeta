@@ -86,7 +86,7 @@ const ProductCard = ({ product, onProductClick, onBuyNow, onAddToCart, onQuickVi
       </div>
       
       {/* Details - Compact on Mobile */}
-      <div className="p-1.5 sm:p-2 md:p-3 flex flex-col flex-1">
+      <div className="p-0.5 sm:p-1 md:p-1.5 flex flex-col flex-1">
         {/* Rating - Compact on Mobile */}
         <div className="flex items-center gap-0.5 sm:gap-1 mb-0.5 sm:mb-1">
           <Star size={10} className="sm:w-3 sm:h-3 text-amber-400 fill-amber-400" />
@@ -178,16 +178,16 @@ export const FlashSalesSection = ({ products, showCounter, countdown, onProductC
   return (
     <section 
       ref={sectionRef} 
-      className="pt-1 pb-2"
+      className="pt-0.5 pb-0.5"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
       {/* Modern Header - Responsive */}
-      <div className="bg-gradient-to-r from-pink-500 via-rose-500 to-orange-500 rounded-xl sm:rounded-2xl p-0.5 sm:p-1 shadow-lg">
-        <div className="bg-gradient-to-r from-pink-500/90 via-rose-500/90 to-orange-500/90 rounded-lg sm:rounded-xl p-2.5 sm:p-4 md:p-5">
+      <div className="bg-gradient-to-r from-pink-500 via-rose-500 to-orange-500 rounded-xl sm:rounded-2xl p-px sm:p-0.5 shadow-lg">
+        <div className="bg-gradient-to-r from-pink-500/90 via-rose-500/90 to-orange-500/90 rounded-lg sm:rounded-xl p-1 sm:p-1.5 md:p-1.5">
           {/* Title Row - Compact on Mobile */}
-          <div className="flex items-center justify-between mb-2 sm:mb-4">
-            <div className="flex items-center gap-1.5 sm:gap-3">
+          <div className="flex items-center justify-between mb-0.5 sm:mb-1">
+            <div className="flex items-center gap-0.5 sm:gap-1">
               <div className="w-7 h-7 sm:w-10 sm:h-10 bg-white/20 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0">
                 <Flame className="text-white w-4 h-4 sm:w-5 sm:h-5 md:w-[22px] md:h-[22px]" />
               </div>
@@ -251,7 +251,7 @@ export const FlashSalesSection = ({ products, showCounter, countdown, onProductC
             {/* Products Container - Tighter gaps on Mobile */}
             <div 
               ref={scrollRef}
-              className="flex gap-2 sm:gap-3 md:gap-4 overflow-x-auto scrollbar-hide pb-1 sm:pb-2 scroll-smooth px-0.5 sm:px-1"
+              className="flex gap-0.5 sm:gap-0.5 md:gap-1 overflow-x-auto scrollbar-hide pb-0.5 sm:pb-0.5 scroll-smooth px-px sm:px-0.5"
             >
               {products.map((p, idx) => (
                 <ProductCard 
@@ -280,7 +280,7 @@ export const FlashSalesSection = ({ products, showCounter, countdown, onProductC
           
           {/* Progress Dots - Compact on Mobile */}
           {products.length > 4 && (
-            <div className="flex justify-center gap-1 sm:gap-1.5 mt-2 sm:mt-4">
+            <div className="flex justify-center gap-0.5 sm:gap-0.5 mt-0.5 sm:mt-1">
               {Array.from({ length: Math.min(5, Math.ceil(products.length / 2)) }).map((_, i) => (
                 <div key={i} className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-white/40 hover:bg-white/80 transition-colors cursor-pointer" />
               ))}

@@ -69,7 +69,7 @@ const ProductCardStyle1: React.FC<ProductCardProps> = ({ product, onClick, onBuy
         />
       </div>
 
-      <div className="px-2 pb-2 pt-1.5 md:px-2.5 md:pb-2.5 flex-1 flex flex-col gap-0.5">
+      <div className="px-1 pb-1 pt-0.5 md:px-1 md:pb-1 flex-1 flex flex-col gap-0.5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-0.5 text-[9px] md:text-[10px] text-amber-600 font-semibold">
             <Star size={10} className="fill-amber-400 text-amber-400" />
@@ -94,7 +94,7 @@ const ProductCardStyle1: React.FC<ProductCardProps> = ({ product, onClick, onBuy
           )}
         </div>
 
-        <div className="flex gap-1.5 mt-1">
+        <div className="flex gap-0.5 mt-0.5">
           <button
             className={`flex items-center justify-center w-8 h-7 md:h-8 border rounded-lg transition-all active:scale-95 ${isOutOfStock ? 'border-gray-100 text-gray-300 cursor-not-allowed' : 'border-gray-200 text-gray-600 hover:bg-theme-primary hover:text-white hover:border-theme-primary'}`}
             onClick={handleCart}
@@ -195,9 +195,9 @@ return (
       </div>
 
       {/* কন্টেন্ট সেকশন */}
-      <div className="flex flex-1 flex-col px-1.5 pt-1 pb-1.5 sm:px-2 sm:pt-1.5 sm:pb-2 md:px-3 md:pt-2 md:pb-3">
+      <div className="flex flex-1 flex-col px-0.5 pt-0.5 pb-0.5 sm:px-1 sm:pt-0.5 sm:pb-1 md:px-1.5 md:pt-0.5 md:pb-1">
         {/* রেটিং */}
-        <div className="mb-1">
+        <div className="mb-0.5">
             <div className="flex items-center gap-2">
                 <div className="flex items-center gap-1">
  <span>
@@ -217,14 +217,14 @@ return (
         </div>
         {/* প্রোডাক্ট নাম */}
         <h3 
-        className="mb-1 h-[33px] overflow-hidden text-ellipsis text-left text-[13px] sm:text-[14px] font-medium leading-[1.25] text-black line-clamp-2"
+        className="mb-0.5 h-[33px] overflow-hidden text-ellipsis text-left text-[13px] sm:text-[14px] font-medium leading-[1.25] text-black line-clamp-2"
           onClick={() => onClick?.(product)}
         >
           {String(product?.name || 'Unknown Product')}
         </h3>
 
         {/* প্রাইজ সেকশন */}
-        <div className="mt-auto flex flex-col items-left justify-center space-y-1 sm:space-y-2">
+        <div className="mt-auto flex flex-col items-left justify-center space-y-0.5 sm:space-y-0.5">
           <div className="flex flex-wrap items-baseline gap-2">
           <span className="text-[#2F3485] font-bold text-[16px] text-center font-roboto ">
             ৳{Number(price).toLocaleString()}
@@ -296,19 +296,19 @@ const ProductCardStyle3: React.FC<ProductCardProps> = ({ product, onClick, onBuy
       <div className="relative cursor-pointer bg-white m-2 rounded-xl overflow-hidden" style={{ aspectRatio: '1/1' }} onClick={() => onClick(product)}>
         <LazyImage src={getImage(product)} alt={product.name} className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500" width={300} height={300} />
       </div>
-      <div className="px-4 pb-4 pt-1 flex-1 flex flex-col" style={{ minHeight: '120px' }}>
-        <div className="flex items-center gap-1 mb-2">
+      <div className="px-1 pb-1 pt-0.5 flex-1 flex flex-col" style={{ minHeight: '80px' }}>
+        <div className="flex items-center gap-0.5 mb-0.5">
           {[1, 2, 3, 4, 5].map((s) => <Star key={s} size={12} className={s <= Math.round(product.rating || 0) ? 'text-amber-400 fill-amber-400' : 'text-gray-200'} />)}
           <span className="text-[10px] text-gray-400 ml-1">({product.reviews || 0})</span>
         </div>
-        <h3 className="font-semibold text-gray-800 text-sm leading-snug mb-2 line-clamp-2 cursor-pointer hover:text-theme-primary transition-colors" onClick={() => onClick(product)}>{product.name}</h3>
-        <div className="flex items-baseline gap-2 mb-3 mt-auto">
+        <h3 className="font-semibold text-gray-800 text-sm leading-snug mb-0.5 line-clamp-2 cursor-pointer hover:text-theme-primary transition-colors" onClick={() => onClick(product)}>{product.name}</h3>
+        <div className="flex items-baseline gap-1 mb-0.5 mt-auto">
           <span className="text-lg font-bold text-theme-primary">৳{product.price?.toLocaleString()}</span>
           {product.originalPrice && <span className="text-xs text-gray-400 line-through">৳{product.originalPrice?.toLocaleString()}</span>}
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-0.5">
           <button className="flex items-center justify-center w-10 h-10 border-2 border-theme-primary/30 text-theme-primary rounded-xl hover:bg-theme-primary hover:text-white hover:border-theme-primary transition-all" onClick={handleCart}><ShoppingCart size={16} /></button>
-          <button className="flex-1 text-white text-sm font-semibold py-2.5 rounded-xl transition-all btn-order" onClick={handleBuyNow}>{t('buy_now')}</button>
+          <button className="flex-1 text-white text-sm font-semibold py-1.5 rounded-xl transition-all btn-order" onClick={handleBuyNow}>{t('buy_now')}</button>
         </div>
       </div>
     </div>
@@ -331,19 +331,19 @@ const ProductCardStyle4: React.FC<ProductCardProps> = ({ product, onClick, onBuy
       <div className="relative cursor-pointer bg-gray-800 m-2 rounded-lg overflow-hidden" style={{ aspectRatio: '1/1' }} onClick={() => onClick(product)}>
         <LazyImage src={getImage(product)} alt={product.name} className="w-full h-full object-contain p-3 group-hover:scale-110 transition-transform duration-300" width={300} height={300} />
       </div>
-      <div className="px-3 pb-3 flex-1 flex flex-col" style={{ minHeight: '110px' }}>
-        <div className="flex items-center gap-1 mb-1.5">
+      <div className="px-1 pb-1 flex-1 flex flex-col" style={{ minHeight: '70px' }}>
+        <div className="flex items-center gap-0.5 mb-0.5">
           {[1, 2, 3, 4, 5].map((s) => <Star key={s} size={10} className={s <= Math.round(product.rating || 0) ? 'text-cyan-400 fill-cyan-400' : 'text-gray-600'} />)}
           <span className="text-[10px] text-gray-500 ml-1">{product.reviews || 0}</span>
         </div>
-        <h3 className="font-medium text-white text-xs leading-snug mb-2 line-clamp-2 cursor-pointer hover:text-cyan-400 transition-colors" onClick={() => onClick(product)}>{product.name}</h3>
-        <div className="flex items-baseline gap-2 mb-2 mt-auto">
+        <h3 className="font-medium text-white text-xs leading-snug mb-0.5 line-clamp-2 cursor-pointer hover:text-cyan-400 transition-colors" onClick={() => onClick(product)}>{product.name}</h3>
+        <div className="flex items-baseline gap-1 mb-0.5 mt-auto">
           <span className="text-base font-bold text-cyan-400">৳{product.price?.toLocaleString()}</span>
           {product.originalPrice && <span className="text-[10px] text-gray-500 line-through">৳{product.originalPrice?.toLocaleString()}</span>}
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-0.5">
           <button className="flex items-center justify-center w-9 h-9 bg-gray-800 border border-cyan-500/30 text-cyan-400 rounded-lg hover:bg-cyan-500 hover:text-white transition-all" onClick={handleCart}><ShoppingCart size={14} /></button>
-          <button className="flex-1 bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xs font-semibold py-2 rounded-lg hover:from-cyan-400 hover:to-blue-500 transition-all" onClick={handleBuyNow}>{t('buy_now')}</button>
+          <button className="flex-1 bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xs font-semibold py-1 rounded-lg hover:from-cyan-400 hover:to-blue-500 transition-all" onClick={handleBuyNow}>{t('buy_now')}</button>
         </div>
       </div>
     </div>
@@ -368,12 +368,12 @@ const ProductCardStyle5: React.FC<ProductCardProps> = ({ product, onClick, onBuy
         <LazyImage src={getImage(product)} alt={product.name} className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-300" width={300} height={300} />
         <div className="absolute inset-0 bg-theme-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
       </div>
-      <div className="px-2.5 pb-2.5 pt-2 flex-1 flex flex-col border-t border-gray-100" style={{ minHeight: '95px' }}>
-        <div className="flex items-center justify-between mb-1">
+      <div className="px-1 pb-1 pt-0.5 flex-1 flex flex-col border-t border-gray-100" style={{ minHeight: '60px' }}>
+        <div className="flex items-center justify-between mb-px">
           <div className="flex items-center gap-0.5">{[1, 2, 3, 4, 5].map((s) => <Star key={s} size={9} className={s <= Math.round(product.rating || 0) ? 'text-amber-400 fill-amber-400' : 'text-gray-200'} />)}</div>
           <span className="text-[9px] text-gray-400 flex items-center gap-0.5"><Package size={9} />{(product.initialSoldCount || 0) + (product.soldCount || 0)}</span>
         </div>
-        <h3 className="font-medium text-gray-700 text-[11px] leading-snug mb-1 line-clamp-2 cursor-pointer hover:text-theme-primary transition-colors" onClick={() => onClick(product)}>{product.name}</h3>
+        <h3 className="font-medium text-gray-700 text-[11px] leading-snug mb-px line-clamp-2 cursor-pointer hover:text-theme-primary transition-colors" onClick={() => onClick(product)}>{product.name}</h3>
         <div className="flex items-center justify-between mt-auto">
           <div className="flex flex-col">
             <span className="text-sm font-bold text-theme-primary">৳{product.price?.toLocaleString()}</span>

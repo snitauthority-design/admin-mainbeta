@@ -28,9 +28,9 @@ const BrandStyle1 = memo(({ brands, onBrandClick }: Omit<Props, 'style' | 'secti
   const duplicated = [...display, ...display];
 
   return (
-    <section className="py-6 px-2 sm:px-4 overflow-hidden">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="p-2 rounded-xl bg-gradient-theme-br">
+    <section className="py-1 px-0.5 sm:px-1 overflow-hidden">
+      <div className="flex items-center gap-1 mb-1">
+        <div className="p-1 rounded-xl bg-gradient-theme-br">
           <Award className="w-5 h-5 text-white" />
         </div>
         <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Shop by Brand</h2>
@@ -42,14 +42,14 @@ const BrandStyle1 = memo(({ brands, onBrandClick }: Omit<Props, 'style' | 'secti
         onMouseLeave={() => setIsPaused(false)}
       >
         <div 
-          className={`flex gap-6 items-center ${isPaused ? '' : 'animate-marquee-brand'}`}
+          className={`flex gap-1.5 items-center ${isPaused ? '' : 'animate-marquee-brand'}`}
           style={{ animationDuration: `${display.length * 3}s`, animationPlayState: isPaused ? 'paused' : 'running' }}
         >
           {duplicated.map((brand, i) => (
             <button
               key={`${brand.name}-${i}`}
               onClick={() => onBrandClick?.(brand)}
-              className="flex-shrink-0 w-28 h-20 sm:w-36 sm:h-24 bg-white rounded-xl border border-gray-200 hover:border-theme-primary hover:shadow-lg transition-all flex items-center justify-center p-4 group"
+              className="flex-shrink-0 w-28 h-20 sm:w-36 sm:h-24 bg-white rounded-xl border border-gray-200 hover:border-theme-primary hover:shadow-lg transition-all flex items-center justify-center p-1 group"
             >
               {brand.image || brand.logo ? (
                 <img src={normalizeImageUrl(brand.image || brand.logo || '')} alt={brand.name} className="max-w-full max-h-full object-contain opacity-70 group-hover:opacity-100 transition-opacity" />
@@ -73,19 +73,19 @@ const BrandStyle2 = memo(({ brands, onBrandClick }: Omit<Props, 'style' | 'secti
   if (!display.length) return null;
 
   return (
-    <section className="py-6 px-2 sm:px-4">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="p-2 rounded-xl bg-amber-500">
+    <section className="py-1 px-0.5 sm:px-1">
+      <div className="flex items-center gap-1 mb-1">
+        <div className="p-1 rounded-xl bg-amber-500">
           <Star className="w-5 h-5 text-white" fill="white" />
         </div>
         <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Popular Brands</h2>
       </div>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-0.5 sm:gap-1">
         {display.map((brand) => (
           <button
             key={brand.name}
             onClick={() => onBrandClick?.(brand)}
-            className="group relative bg-white rounded-2xl border border-gray-200 p-4 sm:p-6 h-32 flex items-center justify-center hover:shadow-xl hover:border-theme-primary transition-all overflow-hidden"
+            className="group relative bg-white rounded-2xl border border-gray-200 p-1 sm:p-1.5 h-32 flex items-center justify-center hover:shadow-xl hover:border-theme-primary transition-all overflow-hidden"
           >
             <div className="absolute inset-0 bg-gradient-theme-br opacity-0 group-hover:opacity-5 transition-opacity" />
             {brand.image || brand.logo ? (
@@ -115,9 +115,9 @@ const BrandStyle3 = memo(({ brands, onBrandClick }: Omit<Props, 'style' | 'secti
   if (!display.length) return null;
 
   return (
-    <section className="py-6 px-2 sm:px-4">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3">
+    <section className="py-1 px-0.5 sm:px-1">
+      <div className="flex items-center justify-between mb-1">
+        <div className="flex items-center gap-1">
           <div className="p-2 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500">
             <Crown className="w-5 h-5 text-white" />
           </div>
@@ -132,14 +132,14 @@ const BrandStyle3 = memo(({ brands, onBrandClick }: Omit<Props, 'style' | 'secti
           </button>
         </div>
       </div>
-      <div ref={scrollRef} className="flex gap-4 overflow-x-auto scrollbar-hide pb-2" style={{ scrollbarWidth: 'none' }}>
+      <div ref={scrollRef} className="flex gap-1 overflow-x-auto scrollbar-hide pb-0.5" style={{ scrollbarWidth: 'none' }}>
         {display.map((brand) => (
           <button
             key={brand.name}
             onClick={() => onBrandClick?.(brand)}
-            className="flex-shrink-0 flex flex-col items-center gap-2 group"
+            className="flex-shrink-0 flex flex-col items-center gap-0.5 group"
           >
-            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-white border-2 border-gray-200 group-hover:border-theme-primary p-3 flex items-center justify-center shadow-md group-hover:shadow-lg transition-all">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-white border-2 border-gray-200 group-hover:border-theme-primary p-1 flex items-center justify-center shadow-md group-hover:shadow-lg transition-all">
               {brand.image || brand.logo ? (
                 <img src={normalizeImageUrl(brand.image || brand.logo || '')} alt={brand.name} className="max-w-full max-h-full object-contain rounded-full" />
               ) : (
@@ -162,19 +162,19 @@ const BrandStyle4 = memo(({ brands, onBrandClick }: Omit<Props, 'style' | 'secti
   if (!display.length) return null;
 
   return (
-    <section className="py-6 px-2 sm:px-4">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="p-2 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500">
+    <section className="py-1 px-0.5 sm:px-1">
+      <div className="flex items-center gap-1 mb-1">
+        <div className="p-1 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500">
           <Shield className="w-5 h-5 text-white" />
         </div>
         <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Trusted Brands</h2>
       </div>
-      <div className="flex flex-wrap gap-2 sm:gap-3">
+      <div className="flex flex-wrap gap-0.5 sm:gap-0.5">
         {display.map((brand) => (
           <button
             key={brand.name}
             onClick={() => onBrandClick?.(brand)}
-            className="inline-flex items-center gap-2 px-4 py-2.5 bg-white rounded-full border border-gray-200 hover:border-theme-primary hover:shadow-md transition-all group"
+            className="inline-flex items-center gap-1 px-1.5 py-1 bg-white rounded-full border border-gray-200 hover:border-theme-primary hover:shadow-md transition-all group"
           >
             {(brand.image || brand.logo) && (
               <img src={normalizeImageUrl(brand.image || brand.logo || '')} alt="" className="w-5 h-5 object-contain" />
@@ -195,24 +195,24 @@ const BrandStyle5 = memo(({ brands, onBrandClick }: Omit<Props, 'style' | 'secti
   if (!display.length) return null;
 
   return (
-    <section className="py-6 px-2 sm:px-4">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="p-2 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600">
+    <section className="py-1 px-0.5 sm:px-1">
+      <div className="flex items-center gap-1 mb-1">
+        <div className="p-1 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600">
           <Sparkles className="w-5 h-5 text-white" />
         </div>
         <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Featured Brands</h2>
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-1">
         {display.map((brand, i) => (
           <button
             key={brand.name}
             onClick={() => onBrandClick?.(brand)}
-            className={`group relative bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 hover:shadow-xl transition-all overflow-hidden ${i === 0 ? 'md:col-span-2 md:row-span-2' : ''}`}
+            className={`group relative bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-1.5 hover:shadow-xl transition-all overflow-hidden ${i === 0 ? 'md:col-span-2 md:row-span-2' : ''}`}
           >
             <div className="absolute top-3 right-3 px-2 py-1 bg-theme-primary/10 rounded-full">
               <span className="text-xs font-medium text-theme-primary">Official</span>
             </div>
-            <div className={`flex items-center justify-center ${i === 0 ? 'h-40 md:h-60' : 'h-24'} mb-4`}>
+            <div className={`flex items-center justify-center ${i === 0 ? 'h-40 md:h-60' : 'h-24'} mb-1`}>
               {brand.image || brand.logo ? (
                 <img src={normalizeImageUrl(brand.image || brand.logo || '')} alt={brand.name} className="max-w-full max-h-full object-contain opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all" />
               ) : (
