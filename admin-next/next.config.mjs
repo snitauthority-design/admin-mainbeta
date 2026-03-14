@@ -5,6 +5,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Separate build output dirs for dev and production to prevent conflicts
+  distDir: process.env.NODE_ENV === 'development' ? '.next-dev' : '.next',
   typescript: {
     ignoreBuildErrors: true,
   },
