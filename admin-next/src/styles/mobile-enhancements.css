@@ -419,7 +419,7 @@ img {
 
 /* Use dynamic viewport height for mobile browsers */
 @supports (height: 100dvh) {
-  .h-screen {
+  .h-dvh {
     height: 100dvh;
   }
 }

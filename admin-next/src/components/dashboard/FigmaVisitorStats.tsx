@@ -63,7 +63,7 @@ const VisitorCard: React.FC<VisitorCardProps> = ({
         >
           {title}
         </div>
-        <div className="text-[11px] sm:text-[13px] font-normal text-gray-800 dark:text-gray-300 leading-tight mt-0.5 truncate font-poppins">
+        <div className="text-xs font-normal text-gray-800 dark:text-gray-300 leading-tight mt-0.5 truncate font-poppins">
           {subtitle}
         </div>
       </div>

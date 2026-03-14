@@ -60,7 +60,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   };
 
   return (
-    <div className={`flex h-[100dvh] bg-[#F8FAFC] dark:bg-gray-900 transition-colors duration-300 ${className}`}>
+    <div className={`flex h-[100dvh] min-h-screen bg-[#F8FAFC] dark:bg-gray-900 transition-colors duration-300 ${className}`}>
       {/* Mobile Overlay */}
       {sidebarOpen && (
         <div 
