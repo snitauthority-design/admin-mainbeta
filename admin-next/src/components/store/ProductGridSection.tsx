@@ -60,19 +60,19 @@ ProductSectionStyle1.displayName = 'ProductSectionStyle1';
 // Style 2: Bordered Cards with Icon Header
 const ProductSectionStyle2 = memo(({ title, titleExtra, products, accentColor = 'green', onProductClick, onBuyNow, onQuickView, onAddToCart, wishlist, onToggleWishlist, productCardStyle, keyPrefix, showSoldCount }: Omit<Props, 'productSectionStyle' | 'maxProducts' | 'reverseOrder'> & { products: Product[] }) => {
   return (
-    <section className="pt-1 pb-2">
-      <div className="flex items-center gap-3 mb-4 px-1">
-        <div className={`p-2.5 rounded-xl ${colors[accentColor]}`}>
+    <section className="pt-1 pb-1">
+      <div className="flex items-center gap-2 mb-2 px-1">
+        <div className={`p-2 rounded-xl ${colors[accentColor]}`}>
           {icons[accentColor]}
         </div>
         <div>
-          <h2 className="text-lg md:text-xl font-bold text-gray-900">{title}</h2>
-          <p className="text-xs text-gray-500">{products.length} products available</p>
+          <h2 className="text-base sm:text-lg md:text-xl font-bold text-gray-900">{title}</h2>
+          <p className="text-[10px] sm:text-xs text-gray-500">{products.length} products available</p>
         </div>
         {titleExtra && <div className="ml-3">{titleExtra}</div>}
       </div>
-      <div className="bg-white rounded-2xl border border-gray-200 p-3 sm:p-4">
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+      <div className="bg-white rounded-xl sm:rounded-2xl border border-gray-200 p-1.5 sm:p-3 md:p-4">
+        <div className="grid grid-cols-2 gap-1.5 sm:gap-3 md:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
           {products.map((p, idx) => <ProductCard key={`${keyPrefix}-${p.id}-${idx}`} product={p} onClick={onProductClick} onBuyNow={onBuyNow} variant={productCardStyle} onQuickView={onQuickView} onAddToCart={onAddToCart} wishlist={wishlist} onToggleWishlist={onToggleWishlist} showSoldCount={showSoldCount}/>)}
         </div>
       </div>
@@ -84,19 +84,19 @@ ProductSectionStyle2.displayName = 'ProductSectionStyle2';
 // Style 3: Gradient Header with Shadow Cards
 const ProductSectionStyle3 = memo(({ title, titleExtra, products, accentColor = 'green', onProductClick, onBuyNow, onQuickView, onAddToCart, wishlist, onToggleWishlist, productCardStyle, keyPrefix, showSoldCount }: Omit<Props, 'productSectionStyle' | 'maxProducts' | 'reverseOrder'> & { products: Product[] }) => {
   return (
-    <section className="pt-1 pb-2">
-      <div className="bg-gradient-theme-br rounded-t-2xl p-4 sm:p-5">
+    <section className="pt-1 pb-1">
+      <div className="bg-gradient-theme-br rounded-t-xl sm:rounded-t-2xl p-3 sm:p-5">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Star className="w-6 h-6 text-white" fill="white" />
-            <h2 className="text-lg md:text-xl font-bold text-white">{title}</h2>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Star className="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="white" />
+            <h2 className="text-base sm:text-lg md:text-xl font-bold text-white">{title}</h2>
             {titleExtra && <div className="ml-2">{titleExtra}</div>}
           </div>
-          <span className="text-xs text-white/80 bg-white/20 px-3 py-1 rounded-full">{products.length} items</span>
+          <span className="text-[10px] sm:text-xs text-white/80 bg-white/20 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full">{products.length} items</span>
         </div>
       </div>
-      <div className="bg-gray-50 rounded-b-2xl p-3 sm:p-4 border border-t-0 border-gray-200">
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+      <div className="bg-gray-50 rounded-b-xl sm:rounded-b-2xl p-1.5 sm:p-3 md:p-4 border border-t-0 border-gray-200">
+        <div className="grid grid-cols-2 gap-1.5 sm:gap-3 md:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
           {products.map((p, idx) => <ProductCard key={`${keyPrefix}-${p.id}-${idx}`} product={p} onClick={onProductClick} onBuyNow={onBuyNow} variant={productCardStyle} onQuickView={onQuickView} onAddToCart={onAddToCart} wishlist={wishlist} onToggleWishlist={onToggleWishlist} showSoldCount={showSoldCount}/>)}
         </div>
       </div>
@@ -108,16 +108,16 @@ ProductSectionStyle3.displayName = 'ProductSectionStyle3';
 // Style 4: Minimal with Underline
 const ProductSectionStyle4 = memo(({ title, titleExtra, products, accentColor = 'green', onProductClick, onBuyNow, onQuickView, onAddToCart, wishlist, onToggleWishlist, productCardStyle, keyPrefix, showSoldCount }: Omit<Props, 'productSectionStyle' | 'maxProducts' | 'reverseOrder'> & { products: Product[] }) => {
   return (
-    <section className="pt-1 pb-2">
-      <div className="flex items-center justify-between mb-4 pb-3 border-b-2 border-gray-100">
-        <div className="relative flex items-center gap-3">
-          <h2 className="text-lg md:text-xl font-bold text-gray-900">{title}</h2>
+    <section className="pt-1 pb-1">
+      <div className="flex items-center justify-between mb-2 pb-2 sm:mb-4 sm:pb-3 border-b-2 border-gray-100">
+        <div className="relative flex items-center gap-2 sm:gap-3">
+          <h2 className="text-base sm:text-lg md:text-xl font-bold text-gray-900">{title}</h2>
           {titleExtra}
           <div className={`absolute -bottom-3 left-0 h-0.5 w-16 rounded-full ${colors[accentColor]}`} />
         </div>
         <span className="text-sm text-gray-500">{products.length} products</span>
       </div>
-      <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+      <div className="grid grid-cols-2 gap-1.5 sm:gap-3 lg:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
         {products.map((p, idx) => <ProductCard key={`${keyPrefix}-${p.id}-${idx}`} product={p} onClick={onProductClick} onBuyNow={onBuyNow} variant={productCardStyle} onQuickView={onQuickView} onAddToCart={onAddToCart} wishlist={wishlist} onToggleWishlist={onToggleWishlist} showSoldCount={showSoldCount}/>)}
       </div>
     </section>
@@ -128,23 +128,23 @@ ProductSectionStyle4.displayName = 'ProductSectionStyle4';
 // Style 5: Card Container with Badge
 const ProductSectionStyle5 = memo(({ title, titleExtra, products, accentColor = 'green', onProductClick, onBuyNow, onQuickView, onAddToCart, wishlist, onToggleWishlist, productCardStyle, keyPrefix, showSoldCount }: Omit<Props, 'productSectionStyle' | 'maxProducts' | 'reverseOrder'> & { products: Product[] }) => {
   return (
-    <section className="pt-1 pb-2">
-      <div className="relative bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    <section className="pt-1 pb-1">
+      <div className="relative bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-theme-r" />
-        <div className="p-4 sm:p-5 pb-3 border-b border-gray-100 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-full ${colors[accentColor]} flex items-center justify-center`}>
+        <div className="p-3 sm:p-4 md:p-5 pb-2 sm:pb-3 border-b border-gray-100 flex items-center justify-between">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full ${colors[accentColor]} flex items-center justify-center`}>
               {icons[accentColor]}
             </div>
-            <h2 className="text-lg md:text-xl font-bold text-gray-900">{title}</h2>
+            <h2 className="text-base sm:text-lg md:text-xl font-bold text-gray-900">{title}</h2>
             {titleExtra && <div className="ml-2">{titleExtra}</div>}
           </div>
           <div className="px-3 py-1 bg-gray-100 rounded-full">
             <span className="text-xs font-medium text-gray-600">{products.length} items</span>
           </div>
         </div>
-        <div className="p-3 sm:p-4">
-          <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+        <div className="p-1.5 sm:p-3 md:p-4">
+          <div className="grid grid-cols-2 gap-1.5 sm:gap-3 lg:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
             {products.map((p, idx) => <ProductCard key={`${keyPrefix}-${p.id}-${idx}`} product={p} onClick={onProductClick} onBuyNow={onBuyNow} variant={productCardStyle} onQuickView={onQuickView} onAddToCart={onAddToCart} wishlist={wishlist} onToggleWishlist={onToggleWishlist} showSoldCount={showSoldCount}/>)}
           </div>
         </div>

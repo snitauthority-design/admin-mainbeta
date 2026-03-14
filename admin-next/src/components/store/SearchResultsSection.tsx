@@ -9,8 +9,8 @@ interface Props { searchTerm: string; products: Product[]; sortOption: SortOptio
  }
 
 export const SearchResultsSection = ({ searchTerm, products, sortOption, onSortChange, onClearSearch, onProductClick, onBuyNow, onQuickView, onAddToCart, productCardStyle, wishlist, onToggleWishlist }: Props) => (
-  <section className="rounded-2xl border border-gray-100 bg-white p-4 sm:p-6 shadow-sm">
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+  <section className="rounded-xl sm:rounded-2xl border border-gray-100 bg-white p-2 sm:p-4 md:p-6 shadow-sm">
+    <div className="flex flex-col gap-2 sm:gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex-1 min-w-0">
         <p className="text-xs uppercase tracking-widest text-gray-400">Search</p>
         <h2 className="text-xl sm:text-2xl font-bold text-gray-900 break-words">{products.length} {products.length === 1 ? 'result' : 'results'} for "{searchTerm}".</h2>
@@ -24,7 +24,7 @@ export const SearchResultsSection = ({ searchTerm, products, sortOption, onSortC
       </div>
     </div>
     {products.length ? (
-      <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 auto-rows-max">{products.map(p => <ProductCard key={`search-${p.id}`} product={p} onClick={onProductClick} onBuyNow={onBuyNow} variant={productCardStyle} onQuickView={onQuickView} onAddToCart={onAddToCart} wishlist={wishlist} onToggleWishlist={onToggleWishlist}/>)}</div>
+      <div className="mt-3 sm:mt-6 grid grid-cols-2 gap-1.5 sm:gap-3 md:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 auto-rows-max">{products.map(p => <ProductCard key={`search-${p.id}`} product={p} onClick={onProductClick} onBuyNow={onBuyNow} variant={productCardStyle} onQuickView={onQuickView} onAddToCart={onAddToCart} wishlist={wishlist} onToggleWishlist={onToggleWishlist}/>)}</div>
     ) : <EmptySearchState query={searchTerm} onClear={onClearSearch}/>}
   </section>
 );

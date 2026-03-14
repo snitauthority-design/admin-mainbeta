@@ -320,7 +320,7 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
       case 'flash-sale':
         if (flashSalesProducts.length === 0) return null;
         return (
-          <section key={key} className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8">
+          <section key={key} className="max-w-[1500px] mx-auto px-2 sm:px-4 md:px-6 lg:px-8">
             <Suspense fallback={<FlashSalesSkeleton />}>
               <FlashSalesSection
                 products={flashSalesProducts}
@@ -343,7 +343,7 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
           : activeProducts;
         if (gridProducts.length === 0) return null;
         return (
-          <section key={key} className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8">
+          <section key={key} className="max-w-[1500px] mx-auto px-2 sm:px-4 md:px-6 lg:px-8">
             <Suspense fallback={<ProductGridSkeleton count={settings?.productsToShow || 12} />}>
               <LazySection fallback={<ProductGridSkeleton count={settings?.productsToShow || 12} />} rootMargin="0px 0px 300px" minHeight="400px">
                 <ProductGridSection
@@ -371,7 +371,7 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
       case 'brands':
         if (brands.length === 0) return null;
         return (
-          <section key={key} className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8">
+          <section key={key} className="max-w-[1500px] mx-auto px-2 sm:px-4 md:px-6 lg:px-8">
             <Suspense fallback={<BrandSkeleton />}>
               <LazySection fallback={<BrandSkeleton />} rootMargin="0px 0px 300px" minHeight="200px">
                 <BrandSection
@@ -386,7 +386,7 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
 
       case 'testimonials':
         return (
-          <section key={key} className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <section key={key} className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
             <div className="text-center">
               <h2 className="text-2xl font-bold mb-6">{settings?.heading || 'What Our Customers Say'}</h2>
               <p className="text-gray-600">Customer testimonials will be displayed here</p>
@@ -398,7 +398,7 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
         return (
           <section 
             key={key} 
-            className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-12"
+            className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 md:py-12"
             style={{ backgroundColor: settings?.backgroundColor || '#f8f9fa' }}
           >
             <div className="max-w-xl mx-auto text-center">
@@ -425,7 +425,7 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
         return (
           <section 
             key={key} 
-            className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-8"
+            className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8"
             style={{ backgroundColor: settings?.backgroundColor || 'transparent' }}
           >
             <div 
@@ -442,8 +442,8 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
 
       case 'image-with-text':
         return (
-          <section key={key} className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div className={`flex flex-col ${settings?.imagePosition === 'right' ? 'md:flex-row-reverse' : 'md:flex-row'} gap-8 items-center`}>
+          <section key={key} className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 md:py-12">
+            <div className={`flex flex-col ${settings?.imagePosition === 'right' ? 'md:flex-row-reverse' : 'md:flex-row'} gap-4 sm:gap-6 md:gap-8 items-center`}>
               <div className="flex-1">
                 {settings?.imageUrl ? (
                   <img src={settings.imageUrl} alt={settings?.heading || ''} className="rounded-lg w-full" />
@@ -475,7 +475,7 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
         const matchedTag = tags.find((t: any) => t.name?.toLowerCase() === settings?.tagName?.toLowerCase());
         const tagHasCountdown = matchedTag?.showCountdown && matchedTag?.expiresAt && new Date(matchedTag.expiresAt).getTime() > Date.now();
         return (
-          <section key={key} className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8">
+          <section key={key} className="max-w-[1500px] mx-auto px-2 sm:px-4 md:px-6 lg:px-8">
             <Suspense fallback={<ProductGridSkeleton count={settings?.productsToShow || 8} />}>
               <LazySection fallback={<ProductGridSkeleton count={settings?.productsToShow || 8} />} rootMargin="0px 0px 300px" minHeight="400px">
                 <ProductGridSection
@@ -548,7 +548,7 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
         };
         const youtubeId = settings?.videoUrl ? getYoutubeId(settings.videoUrl) : null;
         return (
-          <section key={key} className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <section key={key} className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 md:py-12">
             {settings?.heading && <h2 className="text-2xl font-bold text-center mb-6">{settings.heading}</h2>}
             <div className="relative" style={{ paddingBottom: settings?.aspectRatio === '4:3' ? '75%' : '56.25%' }}>
               {youtubeId ? (
@@ -578,7 +578,7 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
 
       case 'map':
         return (
-          <section key={key} className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <section key={key} className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 md:py-12">
             {settings?.heading && <h2 className="text-2xl font-bold text-center mb-6">{settings.heading}</h2>}
             {settings?.address ? (
               <div className="rounded-lg overflow-hidden" style={{ height: settings?.mapHeight || 400 }}>
@@ -627,7 +627,7 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
         const columnContent = settings?.columnContent || [];
         const numColumns = settings?.columns || 3;
         return (
-          <section key={key} className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <section key={key} className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 md:py-12">
             {settings?.heading && <h2 className="text-2xl font-bold text-center mb-8">{settings.heading}</h2>}
             <div className={`grid grid-cols-1 md:grid-cols-${numColumns} gap-6`}>
               {columnContent.length > 0 ? columnContent.map((col: any, idx: number) => (
@@ -650,7 +650,7 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
       case 'collapsible-content':
         const faqItems = settings?.items || [];
         return (
-          <section key={key} className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <section key={key} className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 md:py-12">
             {settings?.heading && <h2 className="text-2xl font-bold text-center mb-8">{settings.heading}</h2>}
             <div className="max-w-3xl mx-auto space-y-3">
               {faqItems.length > 0 ? faqItems.map((item: any, idx: number) => (
@@ -669,7 +669,7 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
 
       case 'contact-form':
         return (
-          <section key={key} className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <section key={key} className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 md:py-12">
             <div className="max-w-2xl mx-auto text-center">
               {settings?.heading && <h2 className="text-2xl font-bold mb-2">{settings.heading}</h2>}
               {settings?.subheading && <p className="text-gray-600 mb-8">{settings.subheading}</p>}
@@ -687,7 +687,7 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
 
       case 'custom-html':
         return (
-          <section key={key} className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <section key={key} className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
             {settings?.html ? (
               <div dangerouslySetInnerHTML={{ __html: settings.html }} />
             ) : (
@@ -712,7 +712,7 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
       default:
         // Unknown section type - render placeholder
         return (
-          <section key={key} className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <section key={key} className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
             <div className="bg-gray-100 rounded-lg p-4 sm:p-6 lg:p-8 text-center">
               <p className="text-gray-500">Section: {section.name || type}</p>
             </div>

@@ -132,14 +132,14 @@ const ProductCardStyle2: React.FC<ProductCardProps> = ({ product, onClick, onBuy
 // Note: This style emphasizes a clean look with interactive hover actions for quick view and add to cart, while keeping the product information concise and focused.
 return (
     <div 
-      className="relative inline-flex h-full w-full cursor-pointer flex-col rounded-[1rem] border border-[#ebebeb] bg-white shadow-[0_0_10px_rgba(0,0,0,0.07)] transition-all duration-500 ease-in-out no-underline"
+      className="relative inline-flex h-full w-full cursor-pointer flex-col rounded-lg sm:rounded-xl border border-[#ebebeb] bg-white shadow-[0_0_10px_rgba(0,0,0,0.07)] transition-all duration-500 ease-in-out no-underline"
       style={{ contain: 'layout' }}
       onMouseEnter={() => setIsHovered?.(true)}
       onMouseLeave={() => setIsHovered?.(false)}
     >
       {/* ইমেজ সেকশন */}
       <div 
-        className="relative m-1.5 mb-0 overflow-hidden rounded-xl bg-[#f8f8f8] group-hover:opacity-95 transition-opacity"
+        className="relative m-1 mb-0 overflow-hidden rounded-lg sm:rounded-xl bg-[#f8f8f8] group-hover:opacity-95 transition-opacity"
         style={{ aspectRatio: '1.2/1' }} 
         onClick={() => onClick?.(product)}
       >
@@ -171,7 +171,7 @@ return (
           loading="lazy"
         /> */}
 
-        <div className="flex h-[150px] md:h-[210px] w-full items-center justify-center overflow-hidden px-1.5 py-1">
+        <div className="flex h-[130px] sm:h-[150px] md:h-[210px] w-full items-center justify-center overflow-hidden px-1 py-0.5 sm:px-1.5 sm:py-1">
           <img 
             src={getImage(product)}
             alt={product?.name || 'Product'} 
@@ -195,7 +195,7 @@ return (
       </div>
 
       {/* কন্টেন্ট সেকশন */}
-      <div className="flex flex-1 flex-col px-2 pt-1.5 pb-2 md:px-3 md:pt-2 md:pb-3">
+      <div className="flex flex-1 flex-col px-1.5 pt-1 pb-1.5 sm:px-2 sm:pt-1.5 sm:pb-2 md:px-3 md:pt-2 md:pb-3">
         {/* রেটিং */}
         <div className="mb-1">
             <div className="flex items-center gap-2">
@@ -217,14 +217,14 @@ return (
         </div>
         {/* প্রোডাক্ট নাম */}
         <h3 
-        className="mb-1.5 h-[36px] overflow-hidden text-ellipsis text-left text-[14px] font-medium leading-[1.25] text-black line-clamp-2"
+        className="mb-1 h-[33px] overflow-hidden text-ellipsis text-left text-[13px] sm:text-[14px] font-medium leading-[1.25] text-black line-clamp-2"
           onClick={() => onClick?.(product)}
         >
           {String(product?.name || 'Unknown Product')}
         </h3>
 
         {/* প্রাইজ সেকশন */}
-        <div className="mt-auto flex flex-col items-left justify-center space-y-2">
+        <div className="mt-auto flex flex-col items-left justify-center space-y-1 sm:space-y-2">
           <div className="flex flex-wrap items-baseline gap-2">
           <span className="text-[#2F3485] font-bold text-[16px] text-center font-roboto ">
             ৳{Number(price).toLocaleString()}
@@ -244,10 +244,10 @@ return (
          
          </div>
         {/* অ্যাকশন বাটন গ্রুপ */}
-       <div className="mt-0.5 flex w-full items-center gap-2">
+       <div className="mt-0.5 flex w-full items-center gap-1.5">
            {/* Add to Cart Button */}
           <button
-            className={`flex h-9 flex-1 items-center justify-center gap-1.5 rounded-xl px-2 text-xs font-bold text-white shadow-sm transition-all active:translate-y-0.5 lg:text-sm ${
+            className={`flex h-8 sm:h-9 flex-1 items-center justify-center gap-1 sm:gap-1.5 rounded-lg sm:rounded-xl px-1.5 sm:px-2 text-[11px] sm:text-xs font-bold text-white shadow-sm transition-all active:translate-y-0.5 lg:text-sm ${
               isOutOfStock
                 ? 'cursor-not-allowed bg-gray-300'
                 : 'bg-gradient-to-b from-[#FF9D1B] to-[#FF6C01] hover:brightness-110'
@@ -256,13 +256,13 @@ return (
             title={t('add_to_cart')}
             disabled={isOutOfStock}
           >
-            <ShoppingCart className="w-3.5 h-3.5 lg:w-5 lg:h-5" />
+            <ShoppingCart className="w-3 h-3 sm:w-3.5 sm:h-3.5 lg:w-5 lg:h-5" />
              <span className="whitespace-nowrap">{t('cart')}</span>
           </button>
 
           {/* Buy Now Button */}
           <button
-            className={`flex h-9 flex-1 items-center justify-center gap-1.5 rounded-xl px-2 text-xs font-bold text-white shadow-sm transition-all active:translate-y-0.5 lg:text-sm ${
+            className={`flex h-8 sm:h-9 flex-1 items-center justify-center gap-1 sm:gap-1.5 rounded-lg sm:rounded-xl px-1.5 sm:px-2 text-[11px] sm:text-xs font-bold text-white shadow-sm transition-all active:translate-y-0.5 lg:text-sm ${
               isOutOfStock
                 ? 'cursor-not-allowed bg-gray-300'
                 : 'bg-gradient-to-b from-[#38BDF8] to-[#1E90FF] hover:brightness-110'
