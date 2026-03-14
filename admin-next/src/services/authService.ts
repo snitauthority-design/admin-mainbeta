@@ -4,11 +4,15 @@ import type { User, Role, Permission } from '../types';
 // Dynamic API URL - works for main domain and all subdomains
 const getApiUrl = (): string => {
   if (typeof window === 'undefined') {
-    // Use env var during SSR; no hardcoded domain fallback
-    const envApi = process.env.NEXT_PUBLIC_API_BASE_URL;
-    if (envApi) return envApi.replace(/\/$/, '');
-    const primaryDomain = process.env.NEXT_PUBLIC_PRIMARY_DOMAIN;
-    if (primaryDomain) return `https://${primaryDomain}/api`;
+    // SSR: use env vars with defensive checks
+    try {
+      const envApi = process.env.NEXT_PUBLIC_API_BASE_URL;
+      if (envApi) return envApi.replace(/\/$/, '');
+      const primaryDomain = process.env.NEXT_PUBLIC_PRIMARY_DOMAIN;
+      if (primaryDomain) return `https://${primaryDomain}/api`;
+    } catch {
+      // env access failed - fall through to default
+    }
     return '/api';
   }
   

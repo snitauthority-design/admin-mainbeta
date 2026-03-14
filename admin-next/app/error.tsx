@@ -17,9 +17,16 @@ export default function GlobalError({
 }) {
   const [sent, setSent] = useState(false);
 
+  // Defensive: error may be null/undefined in rare Next.js edge cases
+  const safeError = error ?? { message: 'Unknown error (null error object)', digest: undefined, stack: undefined };
+
   useEffect(() => {
-    console.error('[App Error]', error);
-  }, [error]);
+    console.error('[App Error]', JSON.stringify({
+      message: safeError.message,
+      digest: safeError.digest,
+      stack: safeError.stack,
+    }));
+  }, [safeError]);
 
   const sendErrorToWhatsApp = () => {
     const phone = '8801798923162';
@@ -29,11 +36,11 @@ export default function GlobalError({
       ``,
       `*Time:* ${timestamp}`,
       `*Page:* ${typeof window !== 'undefined' ? window.location.href : 'unknown'}`,
-      `*Error:* ${error.message || 'Unknown error'}`,
-      `*Digest:* ${error.digest || 'N/A'}`,
+      `*Error:* ${safeError.message || 'Unknown error'}`,
+      `*Digest:* ${safeError.digest || 'N/A'}`,
       ``,
       `*Stack Trace:*`,
-      error.stack ? error.stack.substring(0, 500) : 'No stack trace available',
+      safeError.stack ? safeError.stack.substring(0, 500) : 'No stack trace available',
     ].join('\n');
 
     const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(errorMessage)}`;
@@ -58,7 +65,7 @@ export default function GlobalError({
           The application encountered an unexpected error.
         </p>
         <p className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 rounded-lg p-3 mb-6 font-mono break-all">
-          {error.message || 'An unexpected error occurred'}
+          {safeError.message || 'An unexpected error occurred'}
         </p>
 
         <div className="flex flex-col gap-3">

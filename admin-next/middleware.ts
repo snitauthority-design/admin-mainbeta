@@ -16,8 +16,14 @@ const KNOWN_BASE_DOMAINS = [
 const SYSTEM_SUBDOMAINS = ['admin', 'superadmin', 'www', 'api'];
 
 export function middleware(request: NextRequest) {
-  const hostname = request.headers.get('host') || '';
-  const hostnameWithoutPort = hostname.split(':')[0];
+  const rawHost = request.headers.get('host') ?? request.headers.get('x-forwarded-host') ?? '';
+  const hostnameWithoutPort = (rawHost.split(':')[0] || '').toLowerCase();
+
+  // Bail out early if hostname is empty (e.g. health-check probes)
+  if (!hostnameWithoutPort) {
+    return NextResponse.next();
+  }
+
   const url = request.nextUrl.clone();
 
   // Detect tenant from subdomain
@@ -34,15 +40,14 @@ export function middleware(request: NextRequest) {
 
   // Extract tenant subdomain
   const isKnownBase = KNOWN_BASE_DOMAINS.some(
-    (base) => hostnameWithoutPort === base || hostnameWithoutPort.endsWith('.' + base)
+    (base) => base && (hostnameWithoutPort === base || hostnameWithoutPort.endsWith('.' + base))
   );
 
   if (isKnownBase) {
     const parts = hostnameWithoutPort.split('.');
-    // Handle tenant.localhost or tenant.allinbangla.com
     if (parts.length >= 2) {
-      const subdomain = parts[0].toLowerCase();
-      if (!SYSTEM_SUBDOMAINS.includes(subdomain)) {
+      const subdomain = parts[0];
+      if (subdomain && !SYSTEM_SUBDOMAINS.includes(subdomain)) {
         tenantId = subdomain;
       }
     }

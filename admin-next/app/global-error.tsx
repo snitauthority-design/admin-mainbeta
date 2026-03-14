@@ -16,9 +16,16 @@ export default function GlobalError({
 }) {
   const [sent, setSent] = useState(false);
 
+  // Defensive: error may be null/undefined in rare Next.js edge cases
+  const safeError = error ?? { message: 'Unknown error (null error object)', digest: undefined, stack: undefined };
+
   useEffect(() => {
-    console.error('[Global Error]', error);
-  }, [error]);
+    console.error('[Global Error]', JSON.stringify({
+      message: safeError.message,
+      digest: safeError.digest,
+      stack: safeError.stack,
+    }));
+  }, [safeError]);
 
   const sendErrorToWhatsApp = () => {
     const phone = '8801798923162';
@@ -28,11 +35,11 @@ export default function GlobalError({
       ``,
       `*Time:* ${timestamp}`,
       `*Page:* ${typeof window !== 'undefined' ? window.location.href : 'unknown'}`,
-      `*Error:* ${error.message || 'Unknown error'}`,
-      `*Digest:* ${error.digest || 'N/A'}`,
+      `*Error:* ${safeError.message || 'Unknown error'}`,
+      `*Digest:* ${safeError.digest || 'N/A'}`,
       ``,
       `*Stack Trace:*`,
-      error.stack ? error.stack.substring(0, 500) : 'No stack trace available',
+      safeError.stack ? safeError.stack.substring(0, 500) : 'No stack trace available',
     ].join('\n');
 
     const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(errorMessage)}`;
@@ -59,7 +66,7 @@ export default function GlobalError({
               The application encountered a critical error.
             </p>
             <p style={{ fontSize: '14px', color: '#dc2626', backgroundColor: '#fef2f2', borderRadius: '8px', padding: '12px', marginBottom: '24px', fontFamily: 'monospace', wordBreak: 'break-all' }}>
-              {error.message || 'An unexpected error occurred'}
+              {safeError.message || 'An unexpected error occurred'}
             </p>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
