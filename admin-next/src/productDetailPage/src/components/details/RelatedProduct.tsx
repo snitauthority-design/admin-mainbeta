@@ -37,7 +37,7 @@ const StarRating = ({ rating }: { rating: number }) => (
         {[1, 2, 3, 4, 5].map((i) => (
             <svg
                 key={i}
-                className={`w-3 h-3 ${i <= Math.round(rating) ? "text-amber-400" : "text-gray-300"}`}
+                className={`w-2.5 h-2.5 ${i <= Math.round(rating) ? "text-amber-400" : "text-gray-200"}`}
                 fill="currentColor"
                 viewBox="0 0 20 20"
             >
@@ -58,53 +58,44 @@ export default function RelatedProduct({ products = [], onProductClick, currency
 
     return (
         <div>
-            <div className="flex justify-between items-center mb-4 lg:mb-6">
-                <h2 className="text-xl lg:text-2xl font-lato font-bold text-gray-900">Related Product</h2>
-                <a href="#" className="flex gap-0.5 text-[14px] lg:text-[16px] items-center text-black font-lato font-medium">
+            <div className="flex justify-between items-center mb-3 lg:mb-6">
+                <h2 className="text-lg lg:text-2xl font-lato font-bold text-gray-900">Related Product</h2>
+                <a href="#" className="flex gap-0.5 text-xs lg:text-sm items-center text-gray-500 font-lato font-medium hover:text-blue-500 transition-colors">
                     View More
-                    <ChevronRight width={12} height={16} color="#1E90FF" />
+                    <ChevronRight size={14} className="text-blue-500" />
                 </a>
             </div>
-            <div className="grid grid-cols-2 gap-3 lg:hidden">
+            <div className="grid grid-cols-2 gap-2 lg:hidden">
                 {products.slice(0, 4).map((product) => (
-                    <div key={product.id} onClick={() => handleClick(product.id)} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden cursor-pointer">
+                    <div key={product.id} onClick={() => handleClick(product.id)} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden cursor-pointer active:scale-[0.98] transition-transform">
                         <div className="relative w-full aspect-square">
                             {product.isSale && (
-                                <span className="absolute top-2 left-2 z-10 bg-[#FF3C3C] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">SALE</span>
+                                <span className="absolute top-1.5 left-1.5 z-10 bg-rose-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md">SALE</span>
                             )}
-                            <button className="absolute top-2 right-2 z-10 bg-white rounded-full p-1 shadow">
-                                <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                                </svg>
-                            </button>
                             <img src={product.image} alt={product.title} className="object-cover w-full h-full absolute inset-0" />
                         </div>
-                        <div className="p-2">
-                            <div className="flex items-center gap-1 mb-1">
+                        <div className="p-1.5">
+                            <div className="flex items-center gap-1 mb-0.5">
                                 {product.rating && <StarRating rating={product.rating} />}
-                                {product.sold !== undefined && (
-                                    <>
-                                        <span className="text-[10px] text-gray-500">({product.sold})</span>
-                                        <span className="text-[10px] text-gray-400 ml-1">| {product.sold} Sold</span>
-                                    </>
+                                {product.sold !== undefined && product.sold > 0 && (
+                                    <span className="text-[9px] text-gray-400">{product.sold} sold</span>
                                 )}
                             </div>
-                            <h3 className="text-[12px] font-roboto font-medium leading-tight line-clamp-2 mb-1">{truncateWords(product.title)}</h3>
-                            {product.description && <p className="text-[10px] text-[#727272] line-clamp-2 mb-1.5">{stripHtml(product.description)}</p>}
-                            <div className="flex items-center gap-1 mb-1">
-                                {product.oldPrice && (
-                                    <span className="text-[#FF3C3C] font-bold text-[12px] font-roboto line-through">{currency}{product.oldPrice}</span>
+                            <h3 className="text-[11px] font-medium leading-tight line-clamp-2 mb-1 text-gray-800">{truncateWords(product.title)}</h3>
+                            <div className="flex items-baseline gap-1 mb-1">
+                                <span className="text-[13px] font-bold text-theme-primary">{currency}{product.price?.toLocaleString()}</span>
+                                {product.oldPrice && product.oldPrice > product.price && (
+                                    <span className="text-[10px] text-gray-400 line-through">{currency}{product.oldPrice?.toLocaleString()}</span>
                                 )}
-                                <span className="text-[#2F3485] font-bold text-[12px] font-roboto">{currency}{product.price}</span>
                             </div>
-                            <div className="flex gap-1.5">
-                                <button className="flex-1 flex items-center justify-center gap-1 bg-[linear-gradient(0deg,#38BDF8_0%,#1E90FF_100%)] text-white text-[11px] font-bold py-1.5 rounded-[6px]">
+                            <div className="flex gap-1">
+                                <button className="flex-1 flex items-center justify-center gap-0.5 bg-gray-100 text-gray-700 text-[10px] font-semibold py-1.5 rounded-lg hover:bg-gray-200 active:scale-95 transition-all">
                                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                                     </svg>
                                     Cart
                                 </button>
-                                <button className="flex-1 flex items-center justify-center gap-1 bg-[linear-gradient(180deg,#FF6A00_0%,#FF9F1C_100%)] text-white text-[11px] font-bold py-1.5 rounded-[6px]">
+                                <button className="flex-[1.3] flex items-center justify-center bg-gradient-to-b from-[#FF6A00] to-[#FF9F1C] text-white text-[10px] font-bold py-1.5 rounded-lg active:scale-95 transition-all">
                                     Buy Now
                                 </button>
                             </div>
@@ -114,29 +105,24 @@ export default function RelatedProduct({ products = [], onProductClick, currency
             </div>
 
             {/* desktop */}
-            <div className="hidden lg:block space-y-5">
+            <div className="hidden lg:block space-y-4">
                 {products.slice(0, 4).map((product) => (
-                    <div key={product.id} onClick={() => handleClick(product.id)} className="flex gap-6 items-start pb-3 cursor-pointer">
-                        <div className="relative w-20 h-24 flex-shrink-0">
-                            <img src={product.image} alt={product.title} className="object-cover rounded-md w-full h-full absolute inset-0" />
+                    <div key={product.id} onClick={() => handleClick(product.id)} className="flex gap-4 items-start pb-3 cursor-pointer hover:bg-gray-50 rounded-lg transition-colors -mx-2 px-2">
+                        <div className="relative w-16 h-20 flex-shrink-0 rounded-lg overflow-hidden">
+                            <img src={product.image} alt={product.title} className="object-cover w-full h-full absolute inset-0" />
                         </div>
-                        <div className="flex-1">
-                            <div className="flex justify-between items-start">
-                                <h3 className="text-[16px] text-gray-900 font-roboto font-medium">{truncateWords(product.title)}</h3>
+                        <div className="flex-1 min-w-0">
+                            <div className="flex justify-between items-start gap-2">
+                                <h3 className="text-sm text-gray-900 font-medium line-clamp-2">{truncateWords(product.title)}</h3>
                                 {product.isSale && (
-                                    <span className="bg-[#FF3C3C] font-roboto font-bold text-white text-xs px-2 py-0.5 rounded-full">SALE</span>
+                                    <span className="bg-rose-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md flex-shrink-0">SALE</span>
                                 )}
                             </div>
-                            {product.description && (
-                                <p className="text-xs text-[#727272] mt-2 font-roboto font-normal line-clamp-2">{stripHtml(product.description)}</p>
-                            )}
-                            <div className="flex justify-between items-center mt-2">
-                                <div className="flex items-center gap-1">
-                                    <span className="text-[#2F3485] font-bold text-[16px] font-roboto">{currency}{product.price}</span>
-                                    {product.oldPrice && (
-                                        <span className="text-[#666] font-roboto font-normal line-through text-xs">{currency}{product.oldPrice}</span>
-                                    )}
-                                </div>
+                            <div className="flex items-center gap-1.5 mt-1.5">
+                                <span className="text-theme-primary font-bold text-sm">{currency}{product.price?.toLocaleString()}</span>
+                                {product.oldPrice && product.oldPrice > product.price && (
+                                    <span className="text-gray-400 line-through text-xs">{currency}{product.oldPrice?.toLocaleString()}</span>
+                                )}
                             </div>
                         </div>
                     </div>

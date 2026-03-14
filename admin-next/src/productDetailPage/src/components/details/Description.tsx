@@ -69,15 +69,15 @@ export default function Description({ product, tenantId, user, onLoginClick }: D
     return (
         <div className="flex-1 min-w-0 px-0 py-0 rounded-2xl">
             {/* Tabs */}
-            <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
+            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide pb-1">
                 {tabs.map((tab) => (
                     <button
                         key={tab.key}
                         onClick={() => setActiveTab(tab.key)}
-                        className={`px-5 py-2 text-base lg:text-2xl font-medium leading-[150%] font-lato rounded-[32px] whitespace-nowrap transition-colors ${
+                        className={`px-3 lg:px-5 py-1.5 lg:py-2 text-sm lg:text-xl font-medium leading-[150%] font-lato rounded-full whitespace-nowrap transition-all ${
                             activeTab === tab.key
-                                ? 'border border-[#FF6A00] text-[#FF6A00]'
-                                : 'border border-transparent text-gray-500 hover:text-gray-700'
+                                ? 'border border-[#FF6A00] text-[#FF6A00] bg-orange-50/50'
+                                : 'border border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'
                         }`}
                     >
                         {tab.label}
@@ -86,7 +86,7 @@ export default function Description({ product, tenantId, user, onLoginClick }: D
             </div>
 
             {/* Tab Content */}
-            <div className="mt-6 lg:mt-10">
+            <div className="mt-3 lg:mt-8">
                 {/* Description Tab */}
                 {activeTab === 'description' && (
                     <div className="flex flex-col lg:flex-row items-start gap-4">
