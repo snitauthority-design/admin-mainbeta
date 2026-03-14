@@ -47,97 +47,28 @@ const VisitorCard: React.FC<VisitorCardProps> = ({
   themeColors,
   loading = false
 }) => {
-  const cardStyle: React.CSSProperties = {
-    width: '100%',
-    minHeight: '81px',
-    background: 'linear-gradient(90deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%)',
-    borderRadius: '12px',
-    boxShadow: '0px 1px 3px 0px rgba(0,0,0,0.10)',
-    display: 'flex',
-    alignItems: 'center',
-    padding: '12px 16px',
-    gap: '12px',
-    position: 'relative',
-    overflow: 'hidden'
-  };
-
-  const ellipseStyle: React.CSSProperties = {
-    position: 'absolute',
-    width: '198px',
-    height: '198px',
-    right: '-37px',
-    top: '-83px',
-    background: themeColors.gradient,
-    borderRadius: '50%',
-    opacity: 0.2
-  };
-
-  const iconContainerStyle: React.CSSProperties = {
-    width: '32px',
-    height: '32px',
-    flexShrink: 0,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 10
-  };
-
-  const textContainerStyle: React.CSSProperties = {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    minWidth: 0,
-    zIndex: 10
-  };
-
-  const titleStyle: React.CSSProperties = {
-    color: themeColors.titleColor,
-    fontSize: '16px',
-    fontWeight: 500,
-    lineHeight: '1.2',
-    fontFamily: 'Poppins, sans-serif'
-  };
-
-  const subtitleStyle: React.CSSProperties = {
-    color: '#161719',
-    fontSize: '13px',
-    fontWeight: 400,
-    lineHeight: '1.2',
-    fontFamily: 'Poppins, sans-serif',
-    marginTop: '2px'
-  };
-
-  const valueStyle: React.CSSProperties = {
-    color: '#161719',
-    fontSize: '28px',
-    fontWeight: 500,
-    lineHeight: '1',
-    fontFamily: 'Poppins, sans-serif',
-    flexShrink: 0,
-    zIndex: 10
-  };
-
-  const loadingStyle: React.CSSProperties = {
-    width: '40px',
-    height: '32px',
-    backgroundColor: '#E5E7EB',
-    borderRadius: '4px',
-    animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
-  };
-
   return (
-    <div style={cardStyle}>
-      <div style={ellipseStyle} />
-      <div style={iconContainerStyle}>
+    <div className="w-full min-h-[64px] sm:min-h-[75px] lg:min-h-[81px] bg-gradient-to-r from-white/95 to-white/90 dark:from-gray-800/95 dark:to-gray-800/90 rounded-xl shadow-sm flex items-center px-3 sm:px-4 gap-2.5 sm:gap-3 relative overflow-hidden transition-shadow hover:shadow-md active:scale-[0.98]">
+      <div
+        className="absolute w-[140px] h-[140px] sm:w-[198px] sm:h-[198px] -right-8 sm:-right-[37px] -top-16 sm:-top-[83px] rounded-full opacity-20 pointer-events-none"
+        style={{ background: themeColors.gradient }}
+      />
+      <div className="w-7 h-7 sm:w-8 sm:h-8 flex-shrink-0 flex items-center justify-center z-10">
         {icon}
       </div>
-      <div style={textContainerStyle}>
-        <div style={titleStyle}>{title}</div>
-        <div style={subtitleStyle}>{subtitle}</div>
+      <div className="flex-1 flex flex-col justify-center min-w-0 z-10">
+        <div
+          className="font-medium text-sm sm:text-base leading-tight truncate font-poppins"
+          style={{ color: themeColors.titleColor }}
+        >
+          {title}
+        </div>
+        <div className="text-[11px] sm:text-[13px] font-normal text-gray-800 dark:text-gray-300 leading-tight mt-0.5 truncate font-poppins">
+          {subtitle}
+        </div>
       </div>
-      <div style={valueStyle}>
-        {loading ? <div style={loadingStyle} /> : value}
+      <div className="text-xl sm:text-2xl lg:text-[28px] font-medium text-gray-900 dark:text-white leading-none flex-shrink-0 z-10 tabular-nums font-poppins">
+        {loading ? <div className="w-10 h-7 sm:h-8 bg-gray-200 dark:bg-gray-600 rounded animate-pulse" /> : value}
       </div>
     </div>
   );
@@ -154,129 +85,6 @@ interface BarChartProps {
 }
 
 const BarChart: React.FC<BarChartProps> = ({ chartData, loading = false }) => {
-  const containerStyle: React.CSSProperties = {
-    width: '100%',
-    height: '100%',
-    background: 'linear-gradient(90deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%)',
-    borderRadius: '12px',
-    boxShadow: '0px 1px 3px 0px rgba(0,0,0,0.10)',
-    padding: '20px',
-    position: 'relative',
-    display: 'flex',
-    flexDirection: 'column'
-  };
-
-  const headerStyle: React.CSSProperties = {
-    fontSize: '16px',
-    fontWeight: 500,
-    color: '#161719',
-    fontFamily: 'Poppins, sans-serif',
-    marginBottom: '16px'
-  };
-
-  const chartAreaStyle: React.CSSProperties = {
-    flex: 1,
-    position: 'relative',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    paddingTop: '40px'
-  };
-
-  const yAxisLabelStyle: React.CSSProperties = {
-    position: 'absolute',
-    left: '10px',
-    top: '50%',
-    transform: 'translateY(-50%) rotate(-90deg)',
-    transformOrigin: 'center center',
-    fontSize: '10px',
-    color: '#4b494e',
-    fontFamily: 'DM Sans, sans-serif',
-    whiteSpace: 'nowrap'
-  };
-
-  const barsContainerStyle: React.CSSProperties = {
-    display: 'flex',
-    alignItems: 'flex-end',
-    justifyContent: 'space-between',
-    width: '100%',
-    maxWidth: '689px',
-    height: '200px',
-    gap: '20px',
-    paddingLeft: '40px'
-  };
-
-  const dayGroupStyle: React.CSSProperties = {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '4px',
-    flex: 1
-  };
-
-  const barsWrapperStyle: React.CSSProperties = {
-    display: 'flex',
-    gap: '4px',
-    alignItems: 'flex-end'
-  };
-
-  const barStyle = (height: number, gradient: string): React.CSSProperties => ({
-    width: '24px',
-    height: `${height}px`,
-    background: gradient,
-    position: 'relative',
-    overflow: 'hidden',
-    borderRadius: '2px'
-  });
-
-  const barLabelStyle: React.CSSProperties = {
-    position: 'absolute',
-    left: '50%',
-    top: '5px',
-    transform: 'translateX(-50%) rotate(-90deg)',
-    transformOrigin: 'center center',
-    fontSize: '14px',
-    fontWeight: 600,
-    color: 'white',
-    fontFamily: 'Lato, sans-serif',
-    whiteSpace: 'nowrap'
-  };
-
-  const dateLabelStyle: React.CSSProperties = {
-    fontSize: '12px',
-    color: '#4b494e',
-    fontFamily: 'DM Sans, sans-serif',
-    fontWeight: 400
-  };
-
-  const legendContainerStyle: React.CSSProperties = {
-    display: 'flex',
-    justifyContent: 'center',
-    gap: '48px',
-    marginTop: '20px'
-  };
-
-  const legendItemStyle: React.CSSProperties = {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '10px'
-  };
-
-  const legendColorStyle = (gradient: string): React.CSSProperties => ({
-    width: '20px',
-    height: '20px',
-    borderRadius: '22px',
-    background: gradient,
-    flexShrink: 0
-  });
-
-  const legendTextStyle: React.CSSProperties = {
-    fontSize: '12px',
-    fontWeight: 500,
-    color: '#4b494e',
-    fontFamily: 'DM Sans, sans-serif'
-  };
 
   // Color gradients matching Figma
   const mobileGradient = 'linear-gradient(180deg, #38bdf8 1.829%, #1e90ff 100%)';
@@ -308,32 +116,18 @@ const BarChart: React.FC<BarChartProps> = ({ chartData, loading = false }) => {
   };
 
   if (loading) {
-    const loadingContainerStyle: React.CSSProperties = {
-      ...containerStyle,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      minHeight: '300px'
-    };
-
-    const loadingTextStyle: React.CSSProperties = {
-      fontSize: '14px',
-      color: '#9CA3AF',
-      fontFamily: 'Poppins, sans-serif'
-    };
-
     return (
-      <div style={loadingContainerStyle}>
-        <div style={loadingTextStyle}>Loading chart data...</div>
+      <div className="w-full bg-gradient-to-r from-white/95 to-white/90 dark:from-gray-800/95 dark:to-gray-800/90 rounded-xl shadow-sm p-4 sm:p-5 flex flex-col min-h-[200px] sm:min-h-[300px] items-center justify-center">
+        <span className="text-sm text-gray-400 font-poppins">Loading chart data...</span>
       </div>
     );
   }
 
   if (chartData.length === 0) {
     return (
-      <div style={containerStyle}>
-        <div style={headerStyle}>Visitor Analytics</div>
-        <div style={{ ...chartAreaStyle, justifyContent: 'center', fontSize: '14px', color: '#9CA3AF' }}>
+      <div className="w-full bg-gradient-to-r from-white/95 to-white/90 dark:from-gray-800/95 dark:to-gray-800/90 rounded-xl shadow-sm p-4 sm:p-5 flex flex-col">
+        <h3 className="text-sm sm:text-base font-medium text-gray-900 dark:text-white mb-4 font-poppins">Visitor Analytics</h3>
+        <div className="flex-1 flex items-center justify-center text-sm text-gray-400">
           No data available
         </div>
       </div>
@@ -341,51 +135,60 @@ const BarChart: React.FC<BarChartProps> = ({ chartData, loading = false }) => {
   }
 
   return (
-    <div style={containerStyle}>
-      <div style={headerStyle}>Visitor Analytics</div>
+    <div className="w-full bg-gradient-to-r from-white/95 to-white/90 dark:from-gray-800/95 dark:to-gray-800/90 rounded-xl shadow-sm p-3 sm:p-4 lg:p-5 flex flex-col">
+      <h3 className="text-sm sm:text-base font-medium text-gray-900 dark:text-white mb-3 sm:mb-4 font-poppins">Visitor Analytics</h3>
       
-      <div style={chartAreaStyle}>
-        <div style={yAxisLabelStyle}>Units of measure</div>
+      <div className="flex-1 relative flex flex-col items-center justify-end pt-6 sm:pt-8 lg:pt-10">
+        {/* Y-axis label - hidden on very small screens */}
+        <div className="hidden sm:block absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 -rotate-90 text-[10px] text-gray-500 dark:text-gray-400 whitespace-nowrap font-['DM_Sans']">
+          Units of measure
+        </div>
         
-        <div style={barsContainerStyle}>
+        <div className="flex items-end justify-between w-full h-[140px] xs:h-[160px] sm:h-[180px] lg:h-[200px] gap-1 xs:gap-2 sm:gap-3 lg:gap-4 pl-2 sm:pl-8 lg:pl-10">
           {chartData.map((day, index) => (
-            <div key={index} style={dayGroupStyle}>
-              <div style={barsWrapperStyle}>
+            <div key={index} className="flex flex-col items-center gap-1 flex-1 min-w-0">
+              <div className="flex items-end gap-px xs:gap-0.5 sm:gap-1">
                 {/* Mobile bar */}
-                <div style={barStyle(getBarHeight(day.mobile, maxValue), mobileGradient)}>
-                  <div style={barLabelStyle}>{day.mobile}</div>
+                <div className="relative w-2 xs:w-3 sm:w-4 lg:w-5 xl:w-6 rounded-t-sm overflow-hidden" style={{ height: `${Math.max(25, getBarHeight(day.mobile, maxValue) * 0.65)}px`, background: mobileGradient }}>
+                  <div className="absolute left-1/2 top-1 -translate-x-1/2 -rotate-90 text-[7px] xs:text-[8px] sm:text-[10px] lg:text-xs font-semibold text-white whitespace-nowrap font-lato">
+                    {day.mobile}
+                  </div>
                 </div>
                 
                 {/* Tablet bar */}
-                <div style={barStyle(getBarHeight(day.tablet, maxValue), tabletGradient)}>
-                  <div style={barLabelStyle}>{day.tablet}</div>
+                <div className="relative w-2 xs:w-3 sm:w-4 lg:w-5 xl:w-6 rounded-t-sm overflow-hidden" style={{ height: `${Math.max(25, getBarHeight(day.tablet, maxValue) * 0.65)}px`, background: tabletGradient }}>
+                  <div className="absolute left-1/2 top-1 -translate-x-1/2 -rotate-90 text-[7px] xs:text-[8px] sm:text-[10px] lg:text-xs font-semibold text-white whitespace-nowrap font-lato">
+                    {day.tablet}
+                  </div>
                 </div>
                 
                 {/* Desktop bar */}
-                <div style={barStyle(getBarHeight(day.desktop, maxValue), desktopGradient)}>
-                  <div style={barLabelStyle}>{day.desktop}</div>
+                <div className="relative w-2 xs:w-3 sm:w-4 lg:w-5 xl:w-6 rounded-t-sm overflow-hidden" style={{ height: `${Math.max(25, getBarHeight(day.desktop, maxValue) * 0.65)}px`, background: desktopGradient }}>
+                  <div className="absolute left-1/2 top-1 -translate-x-1/2 -rotate-90 text-[7px] xs:text-[8px] sm:text-[10px] lg:text-xs font-semibold text-white whitespace-nowrap font-lato">
+                    {day.desktop}
+                  </div>
                 </div>
               </div>
               
-              <div style={dateLabelStyle}>{formatDate(day.date)}</div>
+              <div className="text-[7px] xs:text-[8px] sm:text-[10px] lg:text-xs text-gray-500 dark:text-gray-400 font-['DM_Sans'] whitespace-nowrap">{formatDate(day.date)}</div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Legend */}
-      <div style={legendContainerStyle}>
-        <div style={legendItemStyle}>
-          <div style={legendColorStyle(mobileGradient)} />
-          <div style={legendTextStyle}>Mobile View</div>
+      {/* Legend - responsive */}
+      <div className="flex items-center justify-center gap-3 xs:gap-4 sm:gap-6 lg:gap-8 xl:gap-12 mt-3 sm:mt-4 lg:mt-5">
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 rounded-full flex-shrink-0" style={{ background: mobileGradient }} />
+          <span className="text-[9px] xs:text-[10px] sm:text-xs font-medium text-gray-500 dark:text-gray-400 font-['DM_Sans']">Mobile View</span>
         </div>
-        <div style={legendItemStyle}>
-          <div style={legendColorStyle(tabletGradient)} />
-          <div style={legendTextStyle}>Tab View</div>
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 rounded-full flex-shrink-0" style={{ background: tabletGradient }} />
+          <span className="text-[9px] xs:text-[10px] sm:text-xs font-medium text-gray-500 dark:text-gray-400 font-['DM_Sans']">Tab View</span>
         </div>
-        <div style={legendItemStyle}>
-          <div style={legendColorStyle(desktopGradient)} />
-          <div style={legendTextStyle}>Desktop View</div>
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="w-3 h-3 sm:w-4 sm:h-4 lg:w-5 lg:h-5 rounded-full flex-shrink-0" style={{ background: desktopGradient }} />
+          <span className="text-[9px] xs:text-[10px] sm:text-xs font-medium text-gray-500 dark:text-gray-400 font-['DM_Sans']">Desktop View</span>
         </div>
       </div>
     </div>
@@ -506,18 +309,6 @@ const FigmaVisitorStats: React.FC<FigmaVisitorStatsProps> = ({
     return () => clearInterval(interval);
   }, [visitorStats, tenantId]);
 
-  const containerStyle: React.CSSProperties = {
-    width: '100%',
-    height: '100%',
-    fontFamily: 'Poppins, sans-serif'
-  };
-
-  const cardsContainerStyle: React.CSSProperties = {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '14px'
-  };
-
   const blueTheme = {
     gradient: 'radial-gradient(circle at 50% 50%, #38bdf8 0%, #1e90ff 100%)',
     iconColor: '#38bdf8',
@@ -537,9 +328,9 @@ const FigmaVisitorStats: React.FC<FigmaVisitorStatsProps> = ({
   };
 
   return (
-    <div style={containerStyle} className="grid grid-cols-1 lg:grid-cols-[372px_1fr] gap-4 lg:gap-5">
+    <div className="w-full font-poppins grid grid-cols-1 lg:grid-cols-[minmax(280px,340px)_1fr] xl:grid-cols-[372px_1fr] gap-3 sm:gap-4 lg:gap-5">
       {/* Left: Visitor Cards */}
-      <div style={cardsContainerStyle}>
+      <div className="flex flex-col gap-2.5 sm:gap-3 lg:gap-[14px]">
         <VisitorCard
           icon={<OnlineNowIcon color={blueTheme.iconColor} />}
           title="Online Now"

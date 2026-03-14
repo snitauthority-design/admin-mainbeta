@@ -1075,51 +1075,75 @@ const parsedDiscountValue = Number(newOrderForm.discountValue) || 0;
       {/* Mobile Card View */}
       <div className="block sm:hidden space-y-2">
         {paginatedOrders.length > 0 ? paginatedOrders.map((order) => (
-          <div key={order.id} className="bg-white border border-gray-200 rounded-lg p-3 flex items-center justify-between">
-            <div className="flex items-center gap-3 flex-1 min-w-0">
-              {order.productImage ? (
-                <img src={normalizeImageUrl(order.productImage)} alt="" className="w-10 h-10 rounded object-cover flex-shrink-0" />
-              ) : (
-                <div className="w-10 h-10 rounded bg-gray-100 flex items-center justify-center flex-shrink-0">
-                  <Package2 size={16} className="text-gray-400" />
-                </div>
-              )}
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-gray-900 truncate">{truncateToWords(order.productName)}</p>
-                <p className="text-xs text-gray-500">{order.customer} • {formatCurrency(order.amount)}</p>
-                <OrderStatusBadge status={order.status} className="inline-block mt-1" />
+          <div key={order.id} className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 active:scale-[0.99] transition-transform">
+            <div className="flex items-start gap-3">
+              {/* Checkbox + Image */}
+              <div className="flex flex-col items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={selectedOrders.has(order.id)}
+                  onChange={() => toggleOrderSelection(order.id)}
+                  className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                />
+                {order.productImage ? (
+                  <img src={normalizeImageUrl(order.productImage)} alt="" className="w-12 h-12 rounded-lg object-cover flex-shrink-0" />
+                ) : (
+                  <div className="w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
+                    <Package2 size={18} className="text-gray-400" />
+                  </div>
+                )}
               </div>
-            </div>
-            <div className="relative" data-dropdown>
-              <button 
-                onClick={() => setOpenDropdownId(openDropdownId === order.id ? null : order.id)} 
-                className="p-2 hover:bg-gray-100 rounded-lg"
-              >
-                <MoreVertical className="w-5 h-5 text-gray-600" />
-              </button>
-              {openDropdownId === order.id && (
-                <div className="absolute right-0 top-full mt-1 z-[99999] bg-white rounded-lg shadow-lg border border-gray-200 py-1 min-w-[120px]">
-                  <button 
-                    onClick={() => { openOrderModal(order); setOpenDropdownId(null); }}
-                    className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                  >
-                    <Eye size={16} />
-                    View
-                  </button>
-                  <button 
-                    onClick={() => { openOrderModal(order); setOpenDropdownId(null); }}
-                    className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-                  >
-                    <Edit3 size={16} />
-                    Edit
-                  </button>
+              {/* Details */}
+              <div className="min-w-0 flex-1">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{truncateToWords(order.productName)}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">#{order.orderId || order.id?.slice(-6)}</p>
+                  </div>
+                  <span className="text-sm font-bold text-gray-900 dark:text-white whitespace-nowrap">{formatCurrency(order.amount)}</span>
                 </div>
-              )}
+                <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                  <span className="text-xs text-gray-600 dark:text-gray-300">{order.customer}</span>
+                  <span className="text-gray-300 dark:text-gray-600">•</span>
+                  <span className="text-xs text-gray-400">{order.date ? new Date(order.date).toLocaleDateString() : ''}</span>
+                </div>
+                <div className="flex items-center justify-between mt-2">
+                  <OrderStatusBadge status={order.status} className="inline-block" />
+                  <div className="flex items-center gap-1">
+                    <button 
+                      onClick={() => { openOrderModal(order); }}
+                      className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                      title="View/Edit"
+                    >
+                      <Eye size={16} className="text-gray-500" />
+                    </button>
+                    <div className="relative" data-dropdown>
+                      <button 
+                        onClick={() => setOpenDropdownId(openDropdownId === order.id ? null : order.id)} 
+                        className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                      >
+                        <MoreVertical className="w-4 h-4 text-gray-500" />
+                      </button>
+                      {openDropdownId === order.id && (
+                        <div className="absolute right-0 top-full mt-1 z-[99999] bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 py-1 min-w-[140px]">
+                          <button 
+                            onClick={() => { openOrderModal(order); setOpenDropdownId(null); }}
+                            className="flex items-center gap-2 w-full px-4 py-2.5 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700"
+                          >
+                            <Edit3 size={16} />
+                            Edit
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         )) : (
-          <div className="text-center py-8 text-gray-500">
-            <Package2 size={40} className="mx-auto mb-3 text-gray-300" />
+          <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+            <Package2 size={40} className="mx-auto mb-3 text-gray-300 dark:text-gray-600" />
             <p className="text-sm">No orders found</p>
           </div>
         )}
@@ -1206,11 +1230,11 @@ const parsedDiscountValue = Number(newOrderForm.discountValue) || 0;
 
       {/* Courier Selection Modal */}
       {showCourierModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
-            <div className="p-6 border-b border-gray-100 bg-gray-50">
-              <h3 className="text-lg font-bold text-gray-900">Select Courier</h3>
-              <p className="text-sm text-gray-500">Choose a delivery partner</p>
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm p-0 sm:p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-t-2xl sm:rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+            <div className="p-4 sm:p-6 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+              <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">Select Courier</h3>
+              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Choose a delivery partner</p>
             </div>
             <div className="p-2">
               {COURIERS.map((courier) => (
@@ -1243,25 +1267,25 @@ const parsedDiscountValue = Number(newOrderForm.discountValue) || 0;
 
       {/* Edit Order Modal */}
       {selectedOrder && draftOrder && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl h-[90vh] flex flex-col overflow-hidden">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm p-0 sm:p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-t-2xl sm:rounded-2xl shadow-2xl w-full max-w-5xl h-[95vh] sm:h-[90vh] flex flex-col overflow-hidden">
             {/* Modal Header */}
-            <div className="flex justify-between items-center p-3 sm:p-4 lg:p-4 xl:p-5 border-b bg-gray-50">
-              <div>
-                <div className="flex items-center gap-3">
-                  <h2 className="text-xl font-bold text-gray-900">Edit Order</h2>
-                  <span className="px-2.5 py-0.5 rounded-full bg-gray-200 text-gray-700 text-xs font-mono">{selectedOrder.id?.slice(-6)}</span>
+            <div className="flex justify-between items-center p-3 sm:p-4 lg:p-5 border-b bg-gray-50 dark:bg-gray-900 flex-shrink-0">
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <h2 className="text-base sm:text-xl font-bold text-gray-900 dark:text-white">Edit Order</h2>
+                  <span className="px-2 py-0.5 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-[10px] sm:text-xs font-mono">{selectedOrder.id?.slice(-6)}</span>
                 </div>
-                <p className="text-sm text-gray-500 mt-1">Update order details and send to courier</p>
+                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-0.5 sm:mt-1 hidden xs:block">Update order details and send to courier</p>
               </div>
-              <button onClick={closeOrderModal} className="p-2 text-gray-400 hover:text-gray-700 hover:bg-gray-200 rounded-full">
-                <X size={24} />
+              <button onClick={closeOrderModal} className="p-1.5 sm:p-2 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full flex-shrink-0">
+                <X size={20} className="sm:w-6 sm:h-6" />
               </button>
             </div>
 
             {/* Modal Body */}
-            <div className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-4 xl:p-5 lg:p-8">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+            <div className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-5 xl:p-8">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6 xl:gap-8">
                 {/* Left: Form Fields */}
                 <div className="lg:col-span-2 space-y-6">
                   {/* Customer Info */}

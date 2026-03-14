@@ -152,8 +152,8 @@ const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({ tenantId }) =
   if (loading && chartData.length === 0) {
     return (
       <div className="w-full">
-        <div className="flex w-full items-center gap-5 bg-white p-6 rounded-2xl shadow-xl">
-          <div className="w-full h-[273px] flex items-center justify-center">
+        <div className="flex w-full items-center bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-2xl shadow-sm">
+          <div className="w-full h-[200px] sm:h-[273px] flex items-center justify-center">
             <div className="w-8 h-8 border-4 border-slate-100 border-t-slate-400 rounded-full animate-spin" />
           </div>
         </div>
@@ -163,125 +163,102 @@ const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({ tenantId }) =
 
   return (
     <div className="w-full">
-      <div className="flex w-full items-stretch gap-5 bg-white p-6 rounded-2xl">
-        {/* Visitor Stats Section - fixed width */}
-        <section className="flex flex-col h-[273px] items-start justify-center gap-[15px] flex-shrink-0 w-[372px]">
+      <div className="flex flex-col lg:flex-row w-full items-stretch gap-3 sm:gap-4 lg:gap-5 bg-white dark:bg-gray-800 p-3 sm:p-4 lg:p-6 rounded-2xl">
+        {/* Visitor Stats Section - responsive width */}
+        <section className="flex flex-row lg:flex-col gap-2 sm:gap-3 lg:gap-[15px] flex-shrink-0 lg:w-[340px] xl:w-[372px] overflow-x-auto lg:overflow-visible pb-1 lg:pb-0">
           {statsData.map((stat) => (
             <article
               key={stat.id}
-              className={`relative flex-1 w-full rounded-lg overflow-hidden shadow-[0px_2px_4px_#0000000d] ${stat.bgGradient}`}
+              className={`relative flex-1 lg:flex-1 min-w-[160px] sm:min-w-0 rounded-lg overflow-hidden shadow-[0px_2px_4px_#0000000d] ${stat.bgGradient} transition-shadow hover:shadow-md active:scale-[0.98]`}
             >
-              <div
-                className={`${stat.decorativeCircleBg} absolute top-[-83px] left-[237px] w-[198px] h-[198px] rounded-[99px]`}
-              />
+              <div className="flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 lg:p-3 min-h-[60px] sm:min-h-[70px] lg:min-h-[75px]">
+                <div
+                  className={`${stat.decorativeCircleBg} absolute -top-16 -right-4 sm:-top-20 sm:right-auto sm:left-[200px] lg:left-[237px] w-[140px] h-[140px] sm:w-[198px] sm:h-[198px] rounded-full pointer-events-none`}
+                />
 
-              <div className="flex flex-col w-[125px] items-start absolute top-[calc(50.00%_-_20px)] left-[70px]">
-                <h3
-                  className="relative self-stretch mt-[-1.00px] font-medium text-base tracking-[0] leading-[normal]"
-                  style={{ color: stat.titleColor, fontFamily: "Poppins, Helvetica, sans-serif" }}
+                <img
+                  className="w-7 h-7 sm:w-[34px] sm:h-[34px] lg:w-[38px] lg:h-[38px] flex-shrink-0 z-10"
+                  alt={stat.iconAlt}
+                  src={stat.icon}
+                />
+
+                <div className="flex-1 min-w-0 z-10">
+                  <h3
+                    className="font-medium text-xs sm:text-sm lg:text-base leading-tight truncate font-poppins"
+                    style={{ color: stat.titleColor }}
+                  >
+                    {stat.title}
+                  </h3>
+                  <p className="font-normal text-black dark:text-gray-300 text-[10px] sm:text-xs leading-tight truncate font-poppins">
+                    {stat.subtitle}
+                  </p>
+                </div>
+
+                <div
+                  className="font-medium text-black dark:text-white text-lg sm:text-xl lg:text-2xl flex-shrink-0 z-10 tabular-nums font-poppins"
                 >
-                  {stat.title}
-                </h3>
-                <p
-                  className="relative self-stretch font-normal text-black text-xs tracking-[0] leading-[normal]"
-                  style={{ fontFamily: "Poppins, Helvetica, sans-serif" }}
-                >
-                  {stat.subtitle}
-                </p>
-              </div>
-
-              <img
-                className="absolute top-[calc(50.00%_-_18px)] left-4 w-[38px] h-[38px] aspect-[1]"
-                alt={stat.iconAlt}
-                src={stat.icon}
-              />
-
-              <div
-                className="absolute top-[calc(50.00%_-_18px)] left-[310px] font-medium text-black text-2xl tracking-[0] leading-[normal]"
-                style={{ fontFamily: "Poppins, Helvetica, sans-serif" }}
-              >
-                {stat.value}
+                  {stat.value}
+                </div>
               </div>
             </article>
           ))}
         </section>
 
         {/* Traffic Chart Section - takes remaining width */}
-        <div className="relative flex-1 min-w-0 h-[273px] bg-white rounded-lg overflow-hidden border border-slate-100">
-          {/* Y-axis label */}
-          <div className="inline-flex h-[196px] items-center gap-2 absolute top-[13px] left-2.5">
-            <div
-              className="relative w-fit ml-[-39.50px] mr-[-31.50px] rotate-[-90.00deg] font-normal text-slate-400 text-xs text-center tracking-[0] leading-[normal]"
-              style={{ fontFamily: "DM Sans, Helvetica, sans-serif" }}
-            >
+        <div className="relative flex-1 min-w-0 h-[220px] sm:h-[250px] lg:h-[273px] bg-white dark:bg-gray-800 rounded-lg overflow-hidden border border-slate-100 dark:border-gray-700 p-2 sm:p-3 lg:p-4">
+          {/* Y-axis label - hidden on very small screens */}
+          <div className="hidden sm:flex absolute left-0 top-0 bottom-8 items-center">
+            <div className="rotate-[-90deg] font-normal text-slate-400 dark:text-gray-500 text-[10px] whitespace-nowrap font-['DM_Sans']">
               Units of measure
             </div>
-            <div className="relative self-stretch w-px bg-slate-200 mt-[-0.35px] mb-[-0.35px] mr-[-0.65px]" />
+            <div className="h-full w-px bg-slate-200 dark:bg-gray-600 ml-1" />
           </div>
 
-          {/* Chart bars - responsive width */}
-          <div className="flex items-end justify-between absolute top-4 left-[47px] right-4">
+          {/* Chart bars - fully responsive */}
+          <div className="flex items-end justify-between h-[calc(100%-40px)] pl-2 sm:pl-8 lg:pl-10 pr-1 sm:pr-2 pt-2 gap-0.5 xs:gap-1 sm:gap-2">
             {chartData.map((data, index) => (
               <div
                 key={index}
-                className="inline-flex flex-col items-center justify-center gap-1 relative flex-[0_0_auto]"
+                className="flex flex-col items-center justify-end gap-0.5 sm:gap-1 flex-1 min-w-0"
               >
-                <div className="inline-flex items-end gap-1 relative flex-[0_0_auto]">
-                  <div className="relative w-6 bg-[linear-gradient(180deg,rgba(56,189,248,1)_0%,rgba(30,144,255,1)_100%)] rounded-t-sm" style={{ height: `${data.mobileHeight || 82}px` }}>
-                    <div
-                      className="text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-90 font-semibold text-white text-[10px] tracking-[0] leading-[normal] whitespace-nowrap"
-                      style={{ fontFamily: "Lato, Helvetica, sans-serif" }}
-                    >
+                <div className="flex items-end gap-px xs:gap-0.5 sm:gap-1 w-full justify-center">
+                  <div className="w-2 xs:w-3 sm:w-4 lg:w-5 xl:w-6 bg-[linear-gradient(180deg,rgba(56,189,248,1)_0%,rgba(30,144,255,1)_100%)] rounded-t-sm relative" style={{ height: `${Math.max(20, (data.mobileHeight || 82) * 0.6)}px` }}>
+                    <div className="text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-90 font-semibold text-white text-[7px] xs:text-[8px] sm:text-[10px] whitespace-nowrap font-lato">
                       {data.mobile}
                     </div>
                   </div>
 
-                  <div className="relative w-6 bg-[linear-gradient(180deg,rgba(255,159,28,1)_0%,rgba(255,106,0,1)_100%)] rounded-t-sm" style={{ height: `${data.tabHeight || 60}px` }}>
-                    <div
-                      className="text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-90 font-semibold text-white text-[10px] tracking-[0] leading-[normal] whitespace-nowrap"
-                      style={{ fontFamily: "Lato, Helvetica, sans-serif" }}
-                    >
+                  <div className="w-2 xs:w-3 sm:w-4 lg:w-5 xl:w-6 bg-[linear-gradient(180deg,rgba(255,159,28,1)_0%,rgba(255,106,0,1)_100%)] rounded-t-sm relative" style={{ height: `${Math.max(20, (data.tabHeight || 60) * 0.6)}px` }}>
+                    <div className="text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-90 font-semibold text-white text-[7px] xs:text-[8px] sm:text-[10px] whitespace-nowrap font-lato">
                       {data.tab}
                     </div>
                   </div>
 
-                  <div
-                    className="relative w-6 bg-[linear-gradient(180deg,rgba(160,139,255,1)_0%,rgba(89,67,255,1)_100%)] rounded-t-sm"
-                    style={{ height: `${data.desktopHeight}px` }}
-                  >
-                    <div
-                      className="text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-90 font-semibold text-white text-[10px] tracking-[0] leading-[normal] whitespace-nowrap"
-                      style={{ fontFamily: "Lato, Helvetica, sans-serif" }}
-                    >
+                  <div className="w-2 xs:w-3 sm:w-4 lg:w-5 xl:w-6 bg-[linear-gradient(180deg,rgba(160,139,255,1)_0%,rgba(89,67,255,1)_100%)] rounded-t-sm relative" style={{ height: `${Math.max(20, (data.desktopHeight || 82) * 0.6)}px` }}>
+                    <div className="text-center absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 -rotate-90 font-semibold text-white text-[7px] xs:text-[8px] sm:text-[10px] whitespace-nowrap font-lato">
                       {data.desktop}
                     </div>
                   </div>
                 </div>
 
-                <div
-                  className="relative w-fit font-normal text-slate-400 text-[10px] tracking-[0] leading-[normal]"
-                  style={{ fontFamily: "DM Sans, Helvetica, sans-serif" }}
-                >
+                <div className="font-normal text-slate-400 dark:text-gray-500 text-[7px] xs:text-[8px] sm:text-[10px] whitespace-nowrap font-['DM_Sans']">
                   {data.date}
                 </div>
               </div>
             ))}
           </div>
 
-          {/* Legend */}
-          <div className="inline-flex items-center gap-12 absolute top-[238px] left-[calc(50.00%_-_192px)]">
+          {/* Legend - responsive positioning */}
+          <div className="flex items-center justify-center gap-3 xs:gap-4 sm:gap-6 lg:gap-8 xl:gap-12 absolute bottom-1 sm:bottom-2 left-0 right-0">
             {legendItems.map((item, index) => (
               <div
                 key={index}
-                className="inline-flex items-center justify-center gap-2.5 relative flex-[0_0_auto]"
+                className="flex items-center gap-1 xs:gap-1.5 sm:gap-2"
               >
-                <div className={`relative w-4 h-4 rounded-full ${item.color}`} />
-                <div
-                  className="relative w-fit font-medium text-slate-500 text-[10px] text-center tracking-[0] leading-[normal]"
-                  style={{ fontFamily: "DM Sans, Helvetica, sans-serif" }}
-                >
+                <div className={`w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 lg:w-4 lg:h-4 rounded-full flex-shrink-0 ${item.color}`} />
+                <span className="font-medium text-slate-500 dark:text-gray-400 text-[8px] xs:text-[9px] sm:text-[10px] whitespace-nowrap font-['DM_Sans']">
                   {item.label}
-                </div>
+                </span>
               </div>
             ))}
           </div>
