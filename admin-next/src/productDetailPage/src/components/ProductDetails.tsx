@@ -204,7 +204,7 @@ export default function ProductDetailsPage({
     }));
 
     return (
-        <div className="min-h-screen bg-gray-50 font-sans">
+        <div className="min-h-screen bg-gray-50 font-sans pb-[120px] lg:pb-0">
             <StoreHeader
                 logo={logoUrl}
               websiteConfig={websiteConfig as WebsiteConfig}
@@ -216,7 +216,7 @@ export default function ProductDetailsPage({
             />
 
             {/*Section 1 */}
-            <main className="max-w-[1720px] mx-auto px-4 lg:px-8 py-4 lg:py-8">
+            <main className="max-w-[1720px] mx-auto px-0 lg:px-8 py-2 lg:py-6">
                 <div className="lg:flex lg:gap-6">
                     <div className="flex-1 min-w-0">
                         <ProductMain
@@ -231,14 +231,14 @@ export default function ProductDetailsPage({
                         />
                     </div>
                     {/* Related product desktop*/}
-                    <div className="hidden lg:block h-fit w-72 xl:w-80 bg-white px-4 py-6  rounded-2xl flex-shrink-0">
+                    <div className="hidden lg:block h-fit w-72 xl:w-80 bg-white px-4 py-6 rounded-2xl flex-shrink-0">
                         <RelatedProduct products={mappedRelated} onProductClick={onProductClick} currency={currency} />
                     </div>
                 </div>
             </main>
 
             {/* sidebar */}
-            <main className="max-w-[1720px] mx-auto px-4 lg:px-8 py-0 lg:py-8 pb-0 lg:pb-0 text-gray-900">
+            <main className="max-w-[1720px] mx-auto px-3 lg:px-8 py-0 lg:py-6 text-gray-900">
                 <div className="lg:flex lg:gap-6">
                     <div className="w-full lg:flex-1 min-w-0">
                         <Description product={mappedProduct} tenantId={tenantId} user={user} onLoginClick={onLoginClick} />
@@ -251,15 +251,15 @@ export default function ProductDetailsPage({
             </main>
 
             {/*mobile related & recent products - combined to remove gap */}
-            <section className="lg:hidden max-w-[1720px] mx-auto px-4 pt-4">
+            <section className="lg:hidden max-w-[1720px] mx-auto px-3 pt-2">
                 <RelatedProduct products={mappedRelated} onProductClick={onProductClick} currency={currency} />
-                <div className="-mt-4">
+                <div className="-mt-2">
                     <RecentProduct products={mappedRecent} onProductClick={onProductClick} currency={currency} />
                 </div>
             </section>
 
             {/* mobile categories*/}
-            <section className="lg:hidden max-w-[1720px] mx-auto py-4 pb-8">
+            <section className="lg:hidden max-w-[1720px] mx-auto py-2 pb-4">
                 <MobileCategories categories={mappedCategories} onCategoryClick={onProductClick ? (name: string) => {} : undefined} />
             </section>
 

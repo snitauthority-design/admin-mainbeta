@@ -1,4 +1,4 @@
-import { X } from 'lucide-react';
+import { X, ShoppingBag, Trash2, ArrowRight } from 'lucide-react';
 import { Product } from '../../../types';
 import { formatCurrency } from '../../../utils/format';
 import { normalizeImageUrl } from '../../../utils/imageUrlHelper';
@@ -7,31 +7,93 @@ interface Props { isOpen: boolean; onClose: () => void; cartItems: number[]; cat
 
 export const CartModal = ({ isOpen, onClose, cartItems, catalogSource, onToggleCart, onCheckout }: Props) => {
   if (!isOpen) return null;
+
+  const cartProducts = cartItems
+    .map(id => catalogSource.find(x => x.id === id))
+    .filter(Boolean) as Product[];
+
+  const totalPrice = cartProducts.reduce((sum, p) => sum + (p.price || 0), 0);
+
   return (
-    <div className="fixed inset-0 z-[999] bg-black/40 backdrop-blur-sm flex items-center justify-center" onClick={onClose}>
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 p-5 sm:p-6 relative overflow-hidden" onClick={e => e.stopPropagation()}>
-        {/* Crystal blue accent bar */}
-        <div className="absolute top-0 left-0 right-0 h-1" style={{ background: 'linear-gradient(90deg, #38BDF8 0%, #0EA5E9 50%, #0284C7 100%)' }} />
-        <button className="absolute to p-3 right-3 text-gray-500 hover:text-gray-900 transition" onClick={onClose}><X size={22} /></button>
-        <h2 className="text-xl font-bold mb-5 mt-1 text-gray-900">My Cart</h2>
-        {cartItems.length === 0 ? <div className="text-center text-gray-500 py-12">No items in cart.</div> : (
-          <ul className="space-y-4 max-h-96 overflow-y-auto pr-2">
-            {cartItems.map(id => {
-              const p = catalogSource.find(x => x.id === id);
-              if (!p) return null;
-              return (<li key={id} className="flex items-center gap-3 pb-4 border-b last:border-b-0">
-                <img src={normalizeImageUrl(p.image)} alt={p.name} className="w-16 h-16 rounded-xl object-cover border shadow-sm" loading="lazy" decoding="async" />
-                <div className="flex-1 min-w-0">
-                  <div className="font-semibold text-gray-900">{p.name}</div>
-                  <div className="text-sm font-bold mt-1" style={{ color: '#0EA5E9' }}>৳ {formatCurrency(p.price)}</div>
-                  <div className="mt-3 flex gap-2">
-                    <button className="flex-1 py-2 text-sm text-white font-bold rounded-lg transition-all hover:shadow-lg active:scale-95" style={{ background: 'linear-gradient(135deg, #FB923C 0%, #F97316 60%, #EA580C 100%)' }} onClick={() => onCheckout(id)}>Checkout</button>
-                    <button className="rounded-lg border border-red-200 text-red-500 text-xs font-semibold px-3 py-2 hover:bg-red-50 transition" onClick={() => onToggleCart(id)}>Remove</button>
+    <div className="fixed inset-0 z-[999] bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center" onClick={onClose}>
+      <div
+        className="bg-white w-full sm:max-w-md sm:mx-4 sm:rounded-2xl rounded-t-2xl shadow-2xl relative overflow-hidden animate-slide-up max-h-[85vh] flex flex-col"
+        onClick={e => e.stopPropagation()}
+        style={{ animation: 'slideUp 0.25s ease-out' }}
+      >
+        <style>{`@keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }`}</style>
+        
+        {/* Handle bar for mobile */}
+        <div className="flex justify-center pt-2 sm:hidden">
+          <div className="w-10 h-1 bg-gray-300 rounded-full" />
+        </div>
+
+        {/* Header */}
+        <div className="flex items-center justify-between px-4 sm:px-5 py-3 border-b border-gray-100">
+          <div className="flex items-center gap-2">
+            <ShoppingBag size={20} className="text-theme-primary" />
+            <h2 className="text-base font-bold text-gray-900">My Cart</h2>
+            {cartItems.length > 0 && (
+              <span className="bg-theme-primary/10 text-theme-primary text-[11px] font-bold px-2 py-0.5 rounded-full">
+                {cartItems.length} {cartItems.length === 1 ? 'item' : 'items'}
+              </span>
+            )}
+          </div>
+          <button className="p-1.5 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition" onClick={onClose} aria-label="Close cart">
+            <X size={20} />
+          </button>
+        </div>
+
+        {/* Cart Items */}
+        {cartItems.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+              <ShoppingBag size={28} className="text-gray-300" />
+            </div>
+            <p className="text-gray-500 font-medium text-sm">Your cart is empty</p>
+            <p className="text-gray-400 text-xs mt-1">Browse products and add items to get started</p>
+          </div>
+        ) : (
+          <>
+            <ul className="flex-1 overflow-y-auto divide-y divide-gray-100">
+              {cartProducts.map(p => (
+                <li key={p.id} className="flex items-center gap-3 px-4 sm:px-5 py-3 hover:bg-gray-50/50 transition-colors">
+                  <div className="w-14 h-14 rounded-lg overflow-hidden bg-gray-50 border border-gray-100 flex-shrink-0">
+                    <img src={normalizeImageUrl(p.image)} alt={p.name} className="w-full h-full object-contain p-0.5" loading="lazy" decoding="async" />
                   </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium text-gray-900 text-sm leading-snug line-clamp-1">{p.name}</div>
+                    <div className="text-sm font-bold text-theme-primary mt-0.5">৳ {formatCurrency(p.price)}</div>
+                  </div>
+                  <div className="flex items-center gap-1.5 flex-shrink-0">
+                    <button
+                      className="h-9 px-3 text-xs text-white font-semibold rounded-lg bg-theme-primary hover:brightness-110 active:scale-95 transition-all flex items-center gap-1 shadow-sm"
+                      onClick={() => onCheckout(p.id)}
+                    >
+                      Order <ArrowRight size={12} />
+                    </button>
+                    <button
+                      className="h-9 w-9 rounded-lg border border-gray-200 text-gray-400 hover:text-red-500 hover:border-red-200 hover:bg-red-50 flex items-center justify-center transition-all active:scale-95"
+                      onClick={() => onToggleCart(p.id)}
+                      aria-label="Remove from cart"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+
+            {/* Footer with total */}
+            <div className="border-t border-gray-100 px-4 sm:px-5 py-3 bg-gray-50/80">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-xs text-gray-500">Total</span>
+                  <div className="text-lg font-bold text-gray-900">৳ {formatCurrency(totalPrice)}</div>
                 </div>
-              </li>);
-            })}
-          </ul>
+              </div>
+            </div>
+          </>
         )}
       </div>
     </div>

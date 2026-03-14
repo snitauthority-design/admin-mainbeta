@@ -165,9 +165,9 @@ export default function ProductMain({
         product.variantGroups.some(g => g.options.some(o => o.attribute.trim()));
 
     return (
-        <div className="bg-white rounded-[8px] p-0 lg:p-6 mb-4">
+        <div className="bg-white rounded-xl p-0 lg:p-6 mb-2 lg:mb-4">
             <div className="lg:flex lg:gap-6">
-                <div className="lg:basis-1/2 flex-shrink-0 mb-4 lg:mb-0 min-w-0">
+                <div className="lg:basis-1/2 flex-shrink-0 mb-2 lg:mb-0 min-w-0">
                     {displayImages.length > 0 ? (
                         <>
                             {/* Main Product Image with Zoom */}
@@ -255,44 +255,40 @@ export default function ProductMain({
                 </div>
 
 
-                <div className="lg:basis-1/2 min-w-0 font-inter">
+                <div className="lg:basis-1/2 min-w-0 font-inter px-3 lg:px-0">
 
-                    <h1 className="text-xl lg:text-3xl font-bold font-lato text-black leading-tight mb-3 lg:mb-9 mt-3 lg:mt-0">
+                    <h1 className="text-lg lg:text-3xl font-bold font-lato text-black leading-snug mb-2 lg:mb-6 mt-2 lg:mt-0">
                         {product.titleBn && product.titleBn !== product.title
                             ? `${product.titleBn} | ${product.title}`
                             : product.title}
                     </h1>
 
                     {/* Badges: discount, stock, sold */}
-                    <div className="flex items-center gap-3 mb-4">
+                    <div className="flex items-center flex-wrap gap-2 mb-2 lg:mb-4">
                         {product.discount > 0 && (
-                            <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-800 px-2 py-1 rounded-md text-sm font-semibold">
+                            <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-800 px-2 py-0.5 rounded-md text-xs font-semibold">
                                 Save {product.discount}%
                             </span>
                         )}
-                        <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-md text-sm font-medium ${product.stock && product.stock > 0 ? 'bg-emerald-50 text-emerald-800' : 'bg-red-50 text-red-700'}`}>
+                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-medium ${product.stock && product.stock > 0 ? 'bg-emerald-50 text-emerald-800' : 'bg-red-50 text-red-700'}`}>
                             {product.stock && product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
                         </span>
                         {product.totalSold ? (
-                            <span className="text-sm text-gray-600">Sold: {product.totalSold}</span>
+                            <span className="text-xs text-gray-500">Sold: {product.totalSold}</span>
                         ) : null}
                     </div>
 
                     {/* Category & Ratings desktop */}
                     <div className="hidden lg:flex flex-wrap items-center justify-between gap-x-3 font-lato gap-y-1 mb-4 text-sm">
-                        <div className="flex items-center gap-6">
-                            <span className="text-black text-lg">Category :</span>
+                        <div className="flex items-center gap-3">
+                            <span className="text-gray-600 text-sm">Category:</span>
                             <span
-                                className="font-lato
-                                            text-[16px] font-bold leading-[125%] tracking-[0.32px]
-                                            bg-gradient-to-b from-[#FF6A00] to-[#FF9F1C]
-                                            bg-clip-text text-transparent
-                                            cursor-pointer hover:underline">
+                                className="font-lato text-sm font-bold leading-[125%] tracking-[0.32px] bg-gradient-to-b from-[#FF6A00] to-[#FF9F1C] bg-clip-text text-transparent cursor-pointer hover:underline">
                                 {product.category}
                             </span>
                         </div>
-                        <div className="flex items-center gap-6">
-                            <span className="text-black text-lg">Ratings :</span>
+                        <div className="flex items-center gap-3">
+                            <span className="text-gray-600 text-sm">Ratings:</span>
                             <div className="flex items-center gap-1">
                                 <Reviwicon rating={product.rating} />
                                 <span className="text-black text-sm">({product.reviewCount})</span>
@@ -305,8 +301,8 @@ export default function ProductMain({
                         <MetaData product={product} />
                     </div>
 
-                    {/*price on mobile*/}
-                    <div className="flex items-center flex-wrap justify-between mb-3 lg:mb-9">
+                    {/* Price, rating, and qty */}
+                    <div className="flex items-center flex-wrap justify-between gap-y-1 mb-2 lg:mb-6">
                         <Price product={product} currency={currency} />
                         {/* Ratings mobile */}
                         <div className="flex lg:hidden items-center gap-1">
@@ -371,24 +367,24 @@ export default function ProductMain({
                         </div>
                     )}
 
-                    {/* BUTTONS */}
-                    <div className="flex gap-3 mb-4 flex-wrap">
+                    {/* BUTTONS — Desktop/Tablet */}
+                    <div className="hidden lg:flex gap-3 mb-4">
                         <button
                             onClick={onAddToCart}
                             aria-label="Add to cart"
                             disabled={product.stock !== undefined && product.stock <= 0}
-                            className={`flex-1 font-lato text-white py-3 rounded-[8px] font-bold flex items-center justify-center gap-2 transition-shadow duration-150 ${product.stock !== undefined && product.stock <= 0 ? 'opacity-60 cursor-not-allowed bg-gray-400' : 'bg-[linear-gradient(0deg,#38BDF8_0%,#1E90FF_100%)] hover:shadow-lg'}`}
+                            className={`flex-1 font-lato text-white py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-all duration-200 active:scale-[0.97] ${product.stock !== undefined && product.stock <= 0 ? 'opacity-60 cursor-not-allowed bg-gray-400' : 'bg-gradient-to-b from-[#38BDF8] to-[#1E90FF] hover:shadow-lg hover:shadow-blue-500/25'}`}
                         >
-                            <img src="https://details-snit.vercel.app/images/shopping.svg" width={24} height={24} alt="shopping" />
+                            <img src="https://details-snit.vercel.app/images/shopping.svg" width={22} height={22} alt="cart" />
                             কার্ট
                         </button>
                         <button
                             onClick={onCheckout}
                             aria-label="Buy now"
                             disabled={product.stock !== undefined && product.stock <= 0}
-                            className={`flex-1 font-lato text-white py-3 rounded-[8px] font-bold flex items-center justify-center gap-2 transition-shadow duration-150 ${product.stock !== undefined && product.stock <= 0 ? 'opacity-60 cursor-not-allowed bg-gray-400' : 'bg-[linear-gradient(180deg,#FF6A00_0%,#FF9F1C_100%)] hover:shadow-lg'}`}
+                            className={`flex-1 font-lato text-white py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-all duration-200 active:scale-[0.97] ${product.stock !== undefined && product.stock <= 0 ? 'opacity-60 cursor-not-allowed bg-gray-400' : 'bg-gradient-to-b from-[#FF6A00] to-[#FF9F1C] hover:shadow-lg hover:shadow-orange-500/25'}`}
                         >
-                            <img src="https://details-snit.vercel.app/images/atc.svg" width={24} height={24} alt="shopping" />
+                            <img src="https://details-snit.vercel.app/images/atc.svg" width={22} height={22} alt="order" />
                             অর্ডার করুন
                         </button>
                     </div>
@@ -396,29 +392,30 @@ export default function ProductMain({
                     <CallOrderBar phoneNumber={phoneNumber} onShare={onShare} />
                 </div>
             </div>
-            {/* Mobile sticky action bar */}
-            <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t px-4 py-3">
-                <div className="flex items-center justify-between gap-3">
-                    <div>
-                        <div className="text-sm text-gray-600">{product.title}</div>
-                        <div className="font-bold text-lg text-black">{currency}{(product.price + extraPrice).toFixed(2)}</div>
+            {/* Mobile sticky action bar — positioned above MobileBottomNav (bottom-[60px]) */}
+            <div className="lg:hidden fixed bottom-[60px] left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-gray-200 px-3 py-2 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
+                <div className="flex items-center gap-2 max-w-[560px] mx-auto">
+                    <div className="flex-1 min-w-0">
+                        <div className="text-[11px] text-gray-500 truncate leading-tight">{product.title}</div>
+                        <div className="font-bold text-base text-gray-900 leading-tight">{currency}{(product.price + extraPrice).toLocaleString()}</div>
                     </div>
-                    <div className="flex gap-2 w-2/3">
+                    <div className="flex gap-2 flex-shrink-0">
                         <button
                             onClick={onAddToCart}
                             aria-label="Add to cart mobile"
                             disabled={product.stock !== undefined && product.stock <= 0}
-                            className={`flex-1 text-white py-2 rounded-[8px] font-semibold ${product.stock !== undefined && product.stock <= 0 ? 'opacity-60 bg-gray-400 cursor-not-allowed' : 'bg-blue-500 hover:shadow-md'}`}
+                            className={`h-10 px-4 rounded-lg font-semibold text-sm flex items-center gap-1.5 transition-all active:scale-95 ${product.stock !== undefined && product.stock <= 0 ? 'opacity-50 bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-white text-blue-600 border-2 border-blue-500 hover:bg-blue-50'}`}
                         >
-                            Add
+                            <img src="https://details-snit.vercel.app/images/shopping.svg" width={16} height={16} alt="cart" className={`${product.stock !== undefined && product.stock <= 0 ? 'opacity-50' : ''}`} style={product.stock !== undefined && product.stock <= 0 ? {} : { filter: 'brightness(0) saturate(100%) invert(35%) sepia(85%) saturate(2000%) hue-rotate(200deg)' }} />
+                            Cart
                         </button>
                         <button
                             onClick={onCheckout}
                             aria-label="Buy now mobile"
                             disabled={product.stock !== undefined && product.stock <= 0}
-                            className={`flex-1 text-white py-2 rounded-[8px] font-semibold ${product.stock !== undefined && product.stock <= 0 ? 'opacity-60 bg-gray-400 cursor-not-allowed' : 'bg-amber-500 hover:shadow-md'}`}
+                            className={`h-10 px-5 rounded-lg font-bold text-sm text-white flex items-center gap-1.5 transition-all active:scale-95 ${product.stock !== undefined && product.stock <= 0 ? 'opacity-50 bg-gray-400 cursor-not-allowed' : 'bg-gradient-to-r from-[#FF6A00] to-[#FF9F1C] hover:shadow-lg hover:shadow-orange-400/30'}`}
                         >
-                            Buy
+                            Buy Now
                         </button>
                     </div>
                 </div>
