@@ -14,7 +14,7 @@ export const TrackOrderModal = ({ onClose, orders }: TrackOrderModalProps) => {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden relative">
-        <button onClick={onClose} className="absolute right-4 to p-4 text-gray-400 hover:text-gray-600"><X size={24} /></button>
+        <button onClick={onClose} className="absolute right-4 top-4 text-gray-400 hover:text-gray-600"><X size={24} /></button>
         <div className="p-8">
           <div className="flex items-center gap-3 mb-1"><Truck size={28} className="text-purple-600" /><h2 className="text-2xl font-bold text-gray-800">Track Order</h2></div>
           <div className="flex gap-2 mb-6">

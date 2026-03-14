@@ -216,7 +216,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ carouselItems, website
                                 <button onClick={navigate(1)} aria-label="Next slide" className="hero-nav-button hero-nav-next">
                                     <ChevronRight size={isMobile ? 18 : 22} strokeWidth={2.5} />
                                 </button>
-                                 <div className="">
+                                 <div className="absolute bottom-3 md:bottom-4 left-0 right-0 flex justify-center gap-1.5 md:gap-2 z-20">
                                     {items.map((_, i) => (
                                         <button 
                                             key={i} 
@@ -247,7 +247,7 @@ export const CategoryCircle: React.FC<{ name: string; icon: React.ReactNode }> =
 export const CategoryPill: React.FC<{ name: string; icon: React.ReactNode }> = ({ name, icon }) => (
     <div className="category-pill group">
         <div className="category-pill-icon">{icon}</div>
-        <span className="text-sm font-semibold text-gray-700 group-hover:text-primary-600 transitiabsolute bottom-3 md:bottom-4 left-0 right-0 flex justify-center gap-1.5 md:gap-2 z-20on-colors">{name}</span>
+        <span className="text-sm font-semibold text-gray-700 group-hover:text-primary-600 transition-colors">{name}</span>
     </div>
 );
 

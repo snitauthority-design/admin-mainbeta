@@ -95,7 +95,7 @@ const ShowcaseStyle2 = memo(({ products, onProductClick, onBuyNow, onQuickView, 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Hero Product */}
         <div onClick={() => onProductClick(hero)} className="group relative bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl overflow-hidden cursor-pointer border border-gray-200 hover:shadow-xl transition-all duration-300">
-          <div className="aspect-[4/3]p-4 sm:p-6 flex items-center justify-center">
+          <div className="aspect-[4/3] p-4 sm:p-6 flex items-center justify-center">
             <img src={normalizeImageUrl(heroImg)} alt={hero.name} className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-500" />
           </div>
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-4 sm:p-6">
@@ -137,7 +137,7 @@ const ShowcaseStyle3 = memo(({ products, onProductClick, onBuyNow, onQuickView, 
           <div key={p.id} className={`${i === 0 ? 'md:col-span-2 md:row-span-2' : ''}`}>
             <div className="h-full relative">
               {i === 0 && (
-                <div className="absolute to p-3 left-3 z-10 px-3 py-1.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold rounded-full flex items-center gap-1.5 shadow-lg">
+                <div className="absolute top-3 left-3 z-10 px-3 py-1.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold rounded-full flex items-center gap-1.5 shadow-lg">
                   <Crown size={12} /> Most Popular
                 </div>
               )}

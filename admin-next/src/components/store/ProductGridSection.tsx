@@ -43,13 +43,13 @@ const icons = {
 // Style 1: Classic Clean Grid
 const ProductSectionStyle1 = memo(({ title, titleExtra, products, accentColor = 'green', onProductClick, onBuyNow, onQuickView, onAddToCart, wishlist, onToggleWishlist, productCardStyle, keyPrefix, showSoldCount }: Omit<Props, 'productSectionStyle' | 'maxProducts' | 'reverseOrder'> & { products: Product[] }) => {
   return (
-    <section className="pt-1 pb-2">
-      <div className="bg-white rounded-lg p-1 md:p-1 mb-1 flex items-center gap-2">
-        {/* <div className={`h-5 w-1 rounded-full ${colors[accentColor]}`}/> */}
+    <section className="pt-2 pb-3">
+      <div className="bg-white rounded-lg p-2 md:p-2.5 mb-2 flex items-center gap-2.5">
+        <div className={`h-5 w-1 rounded-full ${colors[accentColor]}`}/>
         <SectionHeader title={title} className="text-base md:text-lg font-bold text-gray-900"/>
         {titleExtra && <div className="ml-3">{titleExtra}</div>}
       </div>
-      <div className="grid grid-cols-2 gap-1 sm:gap-1 md:gap-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+      <div className="grid grid-cols-2 gap-2 sm:gap-2.5 md:gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
         {products.map((p, idx) => <ProductCard key={`${keyPrefix}-${p.id}-${idx}`} product={p} onClick={onProductClick} onBuyNow={onBuyNow} variant={productCardStyle} onQuickView={onQuickView} onAddToCart={onAddToCart} wishlist={wishlist} onToggleWishlist={onToggleWishlist} showSoldCount={showSoldCount}/>)}
       </div>
     </section>
@@ -130,7 +130,7 @@ const ProductSectionStyle5 = memo(({ title, titleExtra, products, accentColor = 
   return (
     <section className="pt-1 pb-2">
       <div className="relative bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="absolute to p-0 left-0 right-0 h-1 bg-gradient-theme-r" />
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-theme-r" />
         <div className="p-4 sm:p-5 pb-3 border-b border-gray-100 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className={`w-10 h-10 rounded-full ${colors[accentColor]} flex items-center justify-center`}>

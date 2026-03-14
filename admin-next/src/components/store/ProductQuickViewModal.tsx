@@ -19,7 +19,7 @@ export const ProductQuickViewModal = ({ product: p, onClose, onCompleteOrder, on
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xl p-4">
       <div className="bg-white/95 backdrop-blur-2xl border border-white/50 rounded-3xl shadow-2xl max-w-4xl w-full overflow-hidden grid grid-cols-1 lg:grid-cols-2">
-        <button aria-label="Close" onClick={onClose} className="absolute to p-4 right-4 text-gray-400 hover:text-gray-600 z-10"><X size={22}/></button>
+        <button aria-label="Close" onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 z-10"><X size={22}/></button>
         <div className="p-6 lg:p-10 bg-gradient-to-br from-gray-50/80 to-white/90 flex flex-col items-center justify-center">
           <div className="relative w-full max-w-sm"><div className="absolute inset-6 bg-gradient-to-br from-sky-200/40 via-transparent to-transparent blur-3xl"/><img src={normalizeImageUrl(p.galleryImages?.[0] || p.image)} alt={p.name} className="relative w-full h-80 object-contain"/></div>
           <div className="mt-4 flex gap-2 text-xs text-gray-500">

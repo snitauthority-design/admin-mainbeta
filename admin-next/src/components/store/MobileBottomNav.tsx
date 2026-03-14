@@ -185,7 +185,7 @@ const BottomNavStyle4: React.FC<MobileBottomNavProps> = ({
                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${activeTab === 'cart' ? 'bg-theme-primary shadow-lg shadow-theme-primary/30' : 'bg-gray-100 hover:bg-gray-200'}`}>
                     <ShoppingCart size={24} className={activeTab === 'cart' ? 'text-white' : 'text-gray-500'} strokeWidth={2} />
                 </div>
-                {(cartCount ?? 0) > 0 && <span className="absolute to p-0 right-0 bg-theme-primary text-white text-[9px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-md">{cartCount}</span>}
+                {(cartCount ?? 0) > 0 && <span className="absolute top-0 right-0 bg-theme-primary text-white text-[9px] font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-md">{cartCount}</span>}
                 <span className={`text-[10px] font-semibold ${activeTab === 'cart' ? 'text-theme-primary' : 'text-gray-400'}`}>Cart</span>
             </button>
             {chatEnabled && onChatClick ? (
