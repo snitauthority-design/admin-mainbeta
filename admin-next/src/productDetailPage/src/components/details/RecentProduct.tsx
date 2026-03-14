@@ -30,39 +30,38 @@ export default function RecentProduct({ products = [], onProductClick, currency 
 
     return (
         <div>
-            <div className="flex justify-between items-center mb-4 lg:mb-6">
-                <h2 className="text-xl lg:text-2xl font-lato font-bold">Recent Products</h2>
+            <div className="flex justify-between items-center mb-3 lg:mb-5">
+                <h2 className="text-lg lg:text-2xl font-lato font-bold text-gray-900">Recent Products</h2>
             </div>
-            <div className="space-y-4 lg:space-y-5">
+            <div className="space-y-2 lg:space-y-4">
                 {products.slice(0, 4).map((product) => (
-                    <div key={product.id} onClick={() => handleClick(product.id)} className="flex gap-4 items-start pb-3 border-b border-gray-100 last:border-0 cursor-pointer">
-                        <div className="relative w-16 h-20 lg:w-20 lg:h-24 flex-shrink-0">
+                    <div key={product.id} onClick={() => handleClick(product.id)} className="flex gap-3 items-center py-2 border-b border-gray-50 last:border-0 cursor-pointer hover:bg-gray-50 rounded-lg transition-colors -mx-1 px-1 active:scale-[0.99]">
+                        <div className="relative w-14 h-14 lg:w-16 lg:h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-50 border border-gray-100">
                             <img
                                 src={product.image}
                                 alt={product.title}
-                                className="object-cover rounded-md w-full h-full absolute inset-0"
+                                className="object-contain w-full h-full p-0.5"
+                                loading="lazy"
                             />
                         </div>
-                        <div className="flex-1">
-                            <h3 className="text-[14px] lg:text-[16px] text-gray-900 font-roboto font-medium line-clamp-1">
+                        <div className="flex-1 min-w-0">
+                            <h3 className="text-[13px] lg:text-sm text-gray-800 font-medium line-clamp-1 leading-snug">
                                 {product.title}
                             </h3>
                             {product.description && (
-                                <p className="text-xs text-[#727272] mt-1 font-roboto font-normal line-clamp-2">
+                                <p className="text-[11px] text-gray-400 mt-0.5 line-clamp-1">
                                     {stripHtml(product.description)}
                                 </p>
                             )}
-                            <div className="flex justify-between items-center mt-2">
-                                <div className="flex items-center gap-1">
-                                    <span className="text-[#2F3485] font-bold text-[14px] lg:text-[16px] font-roboto">
-                                        {currency}{product.price}
+                            <div className="flex items-baseline gap-1.5 mt-1">
+                                <span className="text-theme-primary font-bold text-[13px] lg:text-sm">
+                                    {currency}{product.price?.toLocaleString()}
+                                </span>
+                                {product.oldPrice && product.oldPrice > product.price && (
+                                    <span className="text-gray-400 line-through text-[10px] lg:text-xs">
+                                        {currency}{product.oldPrice?.toLocaleString()}
                                     </span>
-                                    {product.oldPrice && (
-                                        <span className="text-[#666] font-roboto font-normal line-through text-xs">
-                                            {currency}{product.oldPrice}
-                                        </span>
-                                    )}
-                                </div>
+                                )}
                             </div>
                         </div>
                     </div>

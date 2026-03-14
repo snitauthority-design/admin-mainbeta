@@ -7,18 +7,18 @@ const CallOrderBar = ({ phoneNumber, onShare }: CallOrderBarProps) => {
     if (!phoneNumber) return null;
 
     return (
-        <div className="w-full flex gap-2 items-center justify-between pt-1">
-            <a href={`tel:${phoneNumber}`} className="flex items-center gap-3 bg-[#F9F9F9] rounded-md py-3 w-full justify-center">
-                <div className="text-[#1E90FF]">
+        <div className="w-full flex gap-2 items-center justify-between pt-1 hidden lg:flex">
+            <a href={`tel:${phoneNumber}`} className="flex items-center gap-2.5 bg-gray-50 hover:bg-gray-100 rounded-lg py-2.5 w-full justify-center transition-colors">
+                <div className="text-blue-500">
                     <img
                         src={'https://details-snit.vercel.app/images/call.svg'}
                         alt='call'
-                        width={18}
-                        height={18}
+                        width={16}
+                        height={16}
                     />
                 </div>
                 <p
-                    className="text-[18px] font-semibold"
+                    className="text-sm font-semibold"
                     style={{
                         background: "linear-gradient(90deg, #38BDF8 0%, #1E90FF 100%)",
                         backgroundClip: "text",
@@ -29,12 +29,12 @@ const CallOrderBar = ({ phoneNumber, onShare }: CallOrderBarProps) => {
                     Call Order : {phoneNumber}
                 </p>
             </a>
-            <button onClick={onShare} className="p-3.5 bg-[#F9F9F9] rounded-md cursor-pointer">
+            <button onClick={onShare} className="p-2.5 bg-gray-50 hover:bg-gray-100 rounded-lg cursor-pointer transition-colors active:scale-95">
                 <img
                     src='https://details-snit.vercel.app/images/share-01.svg'
                     alt="share"
-                    width={24}
-                    height={24}
+                    width={20}
+                    height={20}
                 />
             </button>
         </div>

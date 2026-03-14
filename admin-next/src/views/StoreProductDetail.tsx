@@ -573,7 +573,7 @@ const StoreProductDetail = ({
   }
 
   return (
-    <div className="min-h-screen font-sans text-slate-900 pb-20 md:pb-0 animate-fadeIn mobile-smooth-scroll" style={{ animation: 'fadeIn 0.2s ease-out', background: 'linear-gradient(to bottom, #f0f4f8, #e8ecf1)' }}>
+    <div className="min-h-screen font-sans text-slate-900 pb-28 md:pb-0 animate-fadeIn mobile-smooth-scroll" style={{ animation: 'fadeIn 0.2s ease-out', background: 'linear-gradient(to bottom, #f0f4f8, #e8ecf1)' }}>
       <style>{`
         @keyframes fadeIn {
           from { opacity: 0; transform: translateY(8px); }
@@ -671,7 +671,7 @@ const StoreProductDetail = ({
           <div className="flex-1">
             {/* Product Hero Block */}
 
-<div className="bg-white/80 backdrop-blur-xl rounded-[32px] p-6 md:p-10 shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-slate-100 flex flex-col md:flex-row gap-10 animate-slide-up selection:bg-theme-primary/10 selection:text-theme-primary">
+<div className="bg-white/90 backdrop-blur-xl rounded-2xl md:rounded-[32px] p-4 md:p-10 shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-slate-100 flex flex-col md:flex-row gap-4 md:gap-10 animate-slide-up">
 
   {/* --- Image Section: Enhanced Boutique Gallery --- */}
   <div className="w-full md:w-1/2 flex flex-col gap-6">
@@ -799,59 +799,59 @@ const StoreProductDetail = ({
 
   {/* --- Info Section: Clean & Structured Typography --- */}
   <div className="w-full md:w-1/2 flex flex-col">
-    <div className="mb-6 space-y-3">
-      <h1 className="text-3xl font-black text-slate-900 tracking-tight leading-tight">{product.name}</h1>
-      <div className="flex items-center gap-4">
+    <div className="mb-3 md:mb-6 space-y-2">
+      <h1 className="text-xl md:text-3xl font-black text-slate-900 tracking-tight leading-snug">{product.name}</h1>
+      <div className="flex items-center gap-3">
         <StarRating rating={product.rating || 0} count={product.reviews} />
-        <div className="h-4 w-px bg-slate-200" />
-        <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">{product.sku}</span>
+        <div className="h-3 w-px bg-slate-200" />
+        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{product.sku}</span>
       </div>
     </div>
 
-    <div className="flex items-baseline gap-4 mb-8">
-      <span className="text-4xl font-black text-slate-900">৳ {formattedPrice}</span>
+    <div className="flex items-baseline gap-3 mb-4 md:mb-8">
+      <span className="text-2xl md:text-4xl font-black text-slate-900">৳ {formattedPrice}</span>
       {formattedOriginalPrice && (
-        <span className="text-xl text-slate-300 line-through font-medium">৳ {formattedOriginalPrice}</span>
+        <span className="text-base md:text-xl text-slate-300 line-through font-medium">৳ {formattedOriginalPrice}</span>
       )}
     </div>
 
     {/* Share Button Section */}
-    <div className="mb-10 flex items-center gap-4">
+    <div className="mb-4 md:mb-10 flex items-center gap-4">
       <button
         type="button"
         onClick={handleShareLink}
-        className="inline-flex items-center gap-2.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-black uppercase tracking-widest px-6 py-3 transition-all active:scale-95"
+        className="inline-flex items-center gap-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-[10px] md:text-xs font-black uppercase tracking-widest px-4 md:px-6 py-2 md:py-3 transition-all active:scale-95"
       >
-        <Share2 size={16} strokeWidth={2.5} /> Share Product
+        <Share2 size={14} strokeWidth={2.5} /> Share
       </button>
     </div>
 
-    <div className="space-y-8 mb-10">
+    <div className="space-y-4 md:space-y-8 mb-4 md:mb-10">
       {/* Quantity Selector */}
       <div>
-        <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3">Select Quantity</p>
-        <div className="flex items-center gap-6">
-          <div className="flex items-center bg-slate-50 border border-slate-200 rounded-2xl p-1">
-            <button onClick={decreaseQuantity} className="w-10 h-10 flex items-center justify-center text-slate-900 font-bold hover:bg-white hover:shadow-sm rounded-xl transition-all">-</button>
-            <span className="w-12 text-center font-black text-slate-900">{quantity}</span>
-            <button onClick={increaseQuantity} disabled={atStockLimit} className={`w-10 h-10 flex items-center justify-center font-bold rounded-xl transition-all ${atStockLimit ? 'text-slate-300' : 'text-slate-900 hover:bg-white hover:shadow-sm'}`}>+</button>
+        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Quantity</p>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center bg-slate-50 border border-slate-200 rounded-xl p-0.5">
+            <button onClick={decreaseQuantity} className="w-9 h-9 flex items-center justify-center text-slate-900 font-bold hover:bg-white hover:shadow-sm rounded-lg transition-all text-lg">-</button>
+            <span className="w-10 text-center font-black text-slate-900 text-sm">{quantity}</span>
+            <button onClick={increaseQuantity} disabled={atStockLimit} className={`w-9 h-9 flex items-center justify-center font-bold rounded-lg transition-all text-lg ${atStockLimit ? 'text-slate-300' : 'text-slate-900 hover:bg-white hover:shadow-sm'}`}>+</button>
           </div>
           {Number.isFinite(availableStock) && (
-            <span className={`text-xs font-bold uppercase tracking-tight ${isOutOfStock ? 'text-red-500' : 'text-slate-400'}`}>
-              {isOutOfStock ? 'Sold Out' : `${availableStock} Pieces Remaining`}
+            <span className={`text-[10px] font-bold uppercase tracking-tight ${isOutOfStock ? 'text-red-500' : 'text-slate-400'}`}>
+              {isOutOfStock ? 'Sold Out' : `${availableStock} left`}
             </span>
           )}
         </div>
       </div>
 
       {/* Variant Selectors: Modern Pill Buttons */}
-      <div className="space-y-6">
+      <div className="space-y-3 md:space-y-6">
         {showColorSelector && (
           <div>
-            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Color: <span className="text-slate-900 ml-1">{selectedColor}</span></label>
-            <div className="flex flex-wrap gap-3">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Color: <span className="text-slate-900 ml-1">{selectedColor}</span></label>
+            <div className="flex flex-wrap gap-2">
               {colorOptions.map(color => (
-                <button key={color} onClick={() => setSelectedColor(color)} className={`px-5 py-2.5 rounded-xl text-xs font-bold transition-all border-2 ${selectedColor === color ? 'bg-slate-900 text-white border-slate-900 shadow-xl' : 'bg-white text-slate-600 border-slate-100 hover:border-slate-300'}`}>{color}</button>
+                <button key={color} onClick={() => setSelectedColor(color)} className={`px-4 py-2 rounded-lg text-xs font-bold transition-all border-2 ${selectedColor === color ? 'bg-slate-900 text-white border-slate-900 shadow-lg' : 'bg-white text-slate-600 border-slate-100 hover:border-slate-300'}`}>{color}</button>
               ))}
             </div>
           </div>
@@ -859,10 +859,10 @@ const StoreProductDetail = ({
 
         {showSizeSelector && (
           <div>
-            <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Size: <span className="text-slate-900 ml-1">{selectedSize}</span></label>
-            <div className="flex flex-wrap gap-3">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Size: <span className="text-slate-900 ml-1">{selectedSize}</span></label>
+            <div className="flex flex-wrap gap-2">
               {sizeOptions.map(size => (
-                <button key={size} onClick={() => setSelectedSize(size)} className={`min-w-[50px] h-12 flex items-center justify-center rounded-xl text-xs font-bold transition-all border-2 ${selectedSize === size ? 'bg-slate-900 text-white border-slate-900 shadow-xl' : 'bg-white text-slate-600 border-slate-100 hover:border-slate-300'}`}>{size}</button>
+                <button key={size} onClick={() => setSelectedSize(size)} className={`min-w-[44px] h-10 flex items-center justify-center rounded-lg text-xs font-bold transition-all border-2 ${selectedSize === size ? 'bg-slate-900 text-white border-slate-900 shadow-lg' : 'bg-white text-slate-600 border-slate-100 hover:border-slate-300'}`}>{size}</button>
               ))}
             </div>
           </div>
@@ -871,20 +871,20 @@ const StoreProductDetail = ({
     </div>
 
     {/* Primary Action Buttons */}
-    <div className="flex flex-col sm:flex-row gap-4 mb-8">
+    <div className="hidden md:flex gap-3 mb-6">
       <button
         onClick={handleAddToCart}
         disabled={isOutOfStock}
-        className={`flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all transform active:scale-95 ${isOutOfStock ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-slate-900 text-white hover:bg-slate-800 shadow-2xl shadow-slate-200'}`}
+        className={`flex-1 py-3.5 rounded-xl font-black text-xs uppercase tracking-[0.15em] flex items-center justify-center gap-2.5 transition-all active:scale-[0.97] ${isOutOfStock ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-slate-900 text-white hover:bg-slate-800 shadow-xl shadow-slate-200'}`}
       >
-        <ShoppingCart size={18} strokeWidth={2.5} /> Add to Cart
+        <ShoppingCart size={16} strokeWidth={2.5} /> Add to Cart
       </button>
       <button
         onClick={handleBuyNow}
         disabled={isOutOfStock}
-        className={`flex-1 py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] flex items-center justify-center gap-3 transition-all transform active:scale-95 ${isOutOfStock ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-theme-primary text-white hover:brightness-110 shadow-2xl shadow-theme-primary/20'}`}
+        className={`flex-1 py-3.5 rounded-xl font-black text-xs uppercase tracking-[0.15em] flex items-center justify-center gap-2.5 transition-all active:scale-[0.97] ${isOutOfStock ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-theme-primary text-white hover:brightness-110 shadow-xl shadow-theme-primary/20'}`}
       >
-        <Zap size={18} strokeWidth={2.5} fill="currentColor" /> Buy It Now
+        <Zap size={16} strokeWidth={2.5} fill="currentColor" /> Buy Now
       </button>
     </div>
 
@@ -1118,53 +1118,38 @@ const StoreProductDetail = ({
 
         </div>
       </main>
-      {/* Mobile Sticky Action Bar */}
+      {/* Mobile Sticky Action Bar — positioned above MobileBottomNav */}
       <div
-        className="fixed bottom-0 left-0 right-0 md:hidden z-50 flex items-center gap-2 px-4 py-3"
+        className="fixed bottom-0 left-0 right-0 md:hidden z-40 flex items-center gap-2 px-3 py-2"
         style={{
-          background: 'linear-gradient(to top, #ffffff 0%, #fafafa 100%)',
+          background: 'rgba(255,255,255,0.97)',
+          backdropFilter: 'blur(12px)',
           borderTop: '1px solid #e5e7eb',
-          boxShadow: '0 -8px 30px rgba(0,0,0,0.12)'
+          boxShadow: '0 -4px 20px rgba(0,0,0,0.08)'
         }}
       >
         <button
           onClick={onBack}
-          className="h-11 w-11 flex items-center justify-center rounded-full text-gray-600 hover:text-gray-900 active:scale-95 transition-all duration-200"
-          style={{
-            background: '#f3f4f6',
-            border: 'none'
-          }}
+          className="h-10 w-10 flex items-center justify-center rounded-xl text-gray-600 hover:text-gray-900 active:scale-95 transition-all bg-gray-100"
           aria-label="Go back"
         >
-          <ArrowLeft size={20} strokeWidth={2.5} />
+          <ArrowLeft size={18} strokeWidth={2.5} />
         </button>
-        <div className="flex-1 grid grid-cols-2 gap-2">
+        <div className="flex-1 grid grid-cols-2 gap-1.5">
           <button
             onClick={handleAddToCart}
             disabled={isOutOfStock}
-            className={`h-12 flex items-center justify-center gap-2 rounded-full font-semibold text-sm active:scale-[0.98] transition-all duration-200 ${isOutOfStock ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-lg'}`}
-            style={{
-              background: '#ffffff',
-              border: '2px solid #10b981',
-              color: '#10b981',
-              boxShadow: '0 2px 8px rgba(16, 185, 129, 0.15)'
-            }}
+            className={`h-11 flex items-center justify-center gap-1.5 rounded-xl font-semibold text-sm active:scale-[0.97] transition-all ${isOutOfStock ? 'opacity-50 cursor-not-allowed bg-gray-100 text-gray-400' : 'bg-white border-2 border-emerald-500 text-emerald-600 hover:bg-emerald-50'}`}
           >
-            <ShoppingCart size={18} strokeWidth={2} />
-            <span>Add to cart</span>
+            <ShoppingCart size={16} strokeWidth={2} />
+            <span>Cart</span>
           </button>
           <button
             onClick={handleBuyNow}
             disabled={isOutOfStock}
-            className={`h-12 flex items-center justify-center gap-2 rounded-full font-semibold text-sm active:scale-[0.98] transition-all duration-200 ${isOutOfStock ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-lg'}`}
-            style={{
-              background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-              border: 'none',
-              color: '#ffffff',
-              boxShadow: '0 4px 15px rgba(16, 185, 129, 0.4)'
-            }}
+            className={`h-11 flex items-center justify-center gap-1.5 rounded-xl font-bold text-sm active:scale-[0.97] transition-all ${isOutOfStock ? 'opacity-50 cursor-not-allowed bg-gray-300 text-gray-500' : 'bg-gradient-to-r from-emerald-500 to-emerald-600 text-white shadow-lg shadow-emerald-500/30 hover:shadow-emerald-500/40'}`}
           >
-            <ShoppingBag size={18} strokeWidth={2} />
+            <ShoppingBag size={16} strokeWidth={2} />
             <span>Buy Now</span>
           </button>
         </div>

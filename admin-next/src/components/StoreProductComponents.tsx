@@ -28,77 +28,87 @@ const getImage = (p: Product) => normalizeImageUrl(p.galleryImages?.[0] || p.ima
 const ProductCardStyle1: React.FC<ProductCardProps> = ({ product, onClick, onBuyNow, onAddToCart, wishlist = [], onToggleWishlist, showSoldCount }) => {
   const { t } = useLanguage();
   const isWishlisted = wishlist.includes(product.id);
-  const handleBuyNow = (e?: React.MouseEvent) => { e?.stopPropagation(); onBuyNow ? onBuyNow(product) : onClick(product); };
-  const handleCart = (e: React.MouseEvent) => { e.stopPropagation(); onAddToCart?.(product); };
+  const isOutOfStock = product.stock === 0;
+  const handleBuyNow = (e?: React.MouseEvent) => { e?.stopPropagation(); if (!isOutOfStock) { onBuyNow ? onBuyNow(product) : onClick(product); } };
+  const handleCart = (e: React.MouseEvent) => { e.stopPropagation(); if (!isOutOfStock) onAddToCart?.(product); };
   const handleWishlist = (e: React.MouseEvent) => { e.stopPropagation(); onToggleWishlist?.(product.id); showToast.success(isWishlisted ? 'Removed from wishlist' : 'Added to wishlist ❤️'); };
   const discountPercent = product.originalPrice && product.price ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) : null;
+  const soldCount = (product.initialSoldCount || 0) + (product.soldCount || 0);
 
   return (
-    <div className="group bg-white rounded-2xl overflow-hidden flex flex-col relative border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1" style={{ contain: 'layout' }}>
-      <div className="absolute top-0 left-0 right-0 h-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ background: 'linear-gradient(to right, var(--color-primary, #8b5cf6), var(--color-secondary, #ec4899))' }} />
+    <div className="group bg-white rounded-xl overflow-hidden flex flex-col relative border border-gray-100/80 shadow-[0_1px_3px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_25px_rgba(0,0,0,0.1)] hover:border-gray-200 transition-all duration-300 hover:-translate-y-1 active:scale-[0.98]" style={{ contain: 'layout' }}>
 
       <button
-        className="absolute top-2 left-2 z-10 w-8 h-8 rounded-full bg-white/80 backdrop-blur-sm shadow-sm flex items-center justify-center text-pink-500 hover:scale-110 transition-all"
+        className="absolute top-1.5 left-1.5 z-10 w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm shadow-sm flex items-center justify-center text-pink-500 hover:scale-110 active:scale-95 transition-all"
         onClick={handleWishlist}
+        aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
       >
-        <Heart size={16} fill={isWishlisted ? 'currentColor' : 'none'} strokeWidth={2} />
+        <Heart size={14} fill={isWishlisted ? 'currentColor' : 'none'} strokeWidth={2} />
       </button>
 
-      <div className="absolute top-2 right-2 z-10 flex flex-col gap-1">
+      <div className="absolute top-1.5 right-1.5 z-10 flex flex-col gap-0.5">
         {(product.discount || discountPercent) && (
-          <span className="text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm" style={{ background: 'linear-gradient(135deg, #ff5f6d, #ffc371)' }}>
+          <span className="text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md shadow-sm bg-rose-500">
             {product.discount || `-${discountPercent}%`}
+          </span>
+        )}
+        {isOutOfStock && (
+          <span className="text-white text-[9px] font-medium px-1.5 py-0.5 rounded-md bg-gray-800">
+            Sold Out
           </span>
         )}
       </div>
 
-      <div className="relative cursor-pointer bg-gray-50 overflow-hidden" style={{ aspectRatio: '1/1' }} onClick={() => onClick(product)}>
+      <div className={`relative cursor-pointer bg-gray-50/50 overflow-hidden ${isOutOfStock ? 'opacity-40 grayscale-[30%]' : ''}`} style={{ aspectRatio: '1/1' }} onClick={() => onClick(product)}>
         <LazyImage
           src={getImage(product)}
           alt={product.name}
-          className="w-full h-full object-contain p-2 group-hover:scale-110 transition-transform duration-500"
+          className="w-full h-full object-contain p-1 group-hover:scale-105 transition-transform duration-500"
           width={400}
           height={400}
         />
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300" />
       </div>
 
-      <div className="px-2 pb-2 pt-2 md:px-3 md:pb-3 md:pt-2.5 flex-1 flex flex-col">
-        <div className="flex items-center justify-between mb-1">
-          <div className="flex items-center gap-1 text-[9px] md:text-[10px] text-amber-500 font-semibold bg-amber-50 px-1.5 py-0.5 rounded-full">
-            <Star size={9} className="fill-amber-500" />
+      <div className="px-2 pb-2 pt-1.5 md:px-2.5 md:pb-2.5 flex-1 flex flex-col gap-0.5">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-0.5 text-[9px] md:text-[10px] text-amber-600 font-semibold">
+            <Star size={10} className="fill-amber-400 text-amber-400" />
             <span>{product.rating || 5}</span>
-            <span className="text-amber-300/80 font-normal">({product.reviews || 0})</span>
+            <span className="text-gray-400 font-normal">({product.reviews || 0})</span>
           </div>
-          {(showSoldCount || product.soldCount || product.initialSoldCount) && (
-            <span className="text-[9px] md:text-[10px] text-gray-400 font-medium">{(product.initialSoldCount || 0) + (product.soldCount || 0)} sold</span>
+          {(showSoldCount || soldCount > 0) && (
+            <span className="text-[8px] md:text-[9px] text-gray-400 font-medium">
+              {soldCount > 999 ? `${(soldCount / 1000).toFixed(1)}k` : soldCount} sold
+            </span>
           )}
         </div>
 
-        <h3 className="font-semibold text-gray-800 text-xs md:text-[13px] leading-tight mb-1.5 line-clamp-2 cursor-pointer hover:text-theme-primary min-h-[28px] md:min-h-[32px]" onClick={() => onClick(product)}>
+        <h3 className="font-medium text-gray-800 text-[11px] md:text-[13px] leading-[1.3] line-clamp-2 cursor-pointer hover:text-theme-primary transition-colors" onClick={() => onClick(product)}>
           {product.name}
         </h3>
 
-        <div className="flex items-baseline gap-1.5 mb-2 mt-auto">
-          <span className="text-sm md:text-base font-bold text-theme-primary">৳{product.price?.toLocaleString()}</span>
-          {product.originalPrice && (
-            <span className="text-[10px] md:text-[11px] text-gray-400 line-through font-medium">৳{product.originalPrice?.toLocaleString()}</span>
+        <div className="flex items-baseline gap-1.5 mt-auto">
+          <span className="text-[14px] md:text-base font-bold text-theme-primary leading-none">৳{product.price?.toLocaleString()}</span>
+          {product.originalPrice && product.originalPrice > product.price && (
+            <span className="text-[10px] md:text-[11px] text-gray-400 line-through font-medium leading-none">৳{product.originalPrice?.toLocaleString()}</span>
           )}
         </div>
 
-        <div className="flex gap-1.5 h-8 md:h-9">
+        <div className="flex gap-1.5 mt-1">
           <button
-            className="flex items-center justify-center w-9 h-full border border-gray-200 text-gray-600 rounded-xl hover:bg-theme-primary hover:text-white hover:border-theme-primary transition-all shadow-sm active:scale-95"
+            className={`flex items-center justify-center w-8 h-7 md:h-8 border rounded-lg transition-all active:scale-95 ${isOutOfStock ? 'border-gray-100 text-gray-300 cursor-not-allowed' : 'border-gray-200 text-gray-600 hover:bg-theme-primary hover:text-white hover:border-theme-primary'}`}
             onClick={handleCart}
             title={t('add_to_cart')}
+            disabled={isOutOfStock}
           >
-            <ShoppingCart size={16} />
+            <ShoppingCart size={14} />
           </button>
           <button
-            className="flex-1 btn-order text-xs font-bold rounded-xl h-full shadow-sm hover:shadow-md transition-all active:scale-95 flex items-center justify-center gap-1 bg-gradient-to-r from-theme-primary to-theme-secondary text-white"
+            className={`flex-1 text-[11px] md:text-xs font-bold rounded-lg h-7 md:h-8 transition-all active:scale-95 flex items-center justify-center gap-1 ${isOutOfStock ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-theme-primary text-white hover:brightness-110 shadow-sm shadow-theme-primary/20'}`}
             onClick={handleBuyNow}
+            disabled={isOutOfStock}
           >
-            {t('buy_now')}
+            {isOutOfStock ? 'Sold Out' : t('buy_now')}
           </button>
         </div>
       </div>

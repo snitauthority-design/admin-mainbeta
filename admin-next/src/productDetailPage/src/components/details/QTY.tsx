@@ -4,22 +4,22 @@ import React from 'react'
 export default function QTY({ quantity, setQuantity }: { quantity: number, setQuantity: (quantity: number) => void }) {
     return (
         <div>
-            <div className="flex items-center gap-3">
-                <div className="flex items-center overflow-hidden gap-2">
+            <div className="flex items-center gap-1.5">
+                <div className="flex items-center overflow-hidden gap-1">
                     <button
                         onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                        className="w-9 h-9 flex items-center justify-center cursor-pointer bg-[#F9F9F9] rounded-full p-2"
+                        className="w-8 h-8 flex items-center justify-center cursor-pointer bg-gray-100 hover:bg-gray-200 rounded-full transition-colors active:scale-95"
                     >
-                        <Minus color="#141B34" />
+                        <Minus size={16} color="#141B34" />
                     </button>
-                    <span className="w-20 text-center font-semibold text-black bg-[#F9F9F9] py-1.5 px-8 rounded-4xl">
+                    <span className="w-12 text-center font-semibold text-black bg-gray-100 py-1 rounded-full text-sm">
                         {quantity}
                     </span>
                     <button
                         onClick={() => setQuantity(quantity + 1)}
-                        className="w-9 h-9 flex items-center justify-center cursor-pointer bg-[#F9F9F9] rounded-full p-2 text-gray-900"
+                        className="w-8 h-8 flex items-center justify-center cursor-pointer bg-gray-100 hover:bg-gray-200 rounded-full transition-colors active:scale-95 text-gray-900"
                     >
-                        <Plus />
+                        <Plus size={16} />
                     </button>
                 </div>
             </div>
