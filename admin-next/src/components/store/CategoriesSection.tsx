@@ -53,10 +53,10 @@ const CategoryStyle1 = memo(({ categories, onCategoryClick, sectionRef }: Omit<P
   const duplicatedItems = [...processed, ...processed];
 
   return (
-    <div ref={sectionRef} className="relative pt-2 sm:pt-2 pb-2 sm:pb-3 overflow-hidden"
+    <div ref={sectionRef} className="relative pt-0.5 sm:pt-0.5 pb-0.5 sm:pb-0.5 overflow-hidden"
       onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)}
       onTouchStart={() => setIsPaused(true)} onTouchEnd={() => setTimeout(() => setIsPaused(false), 3000)}>
-      <div className="flex items-center justify-between mb-3 sm:mb-4 px-2">
+      <div className="flex items-center justify-between mb-0.5 sm:mb-1 px-0.5">
         <div className="flex items-center gap-2">
           <h2 className="text-base sm:text-lg font-bold text-gray-900">
             Categories
@@ -79,14 +79,14 @@ const CategoryStyle1 = memo(({ categories, onCategoryClick, sectionRef }: Omit<P
       </div>
       
       <div ref={scrollContainerRef} className="overflow-hidden">
-        <div className={`flex gap-2 w-max ${isPaused ? '' : 'animate-marquee-cat'}`}
+        <div className={`flex gap-0.5 w-max ${isPaused ? '' : 'animate-marquee-cat'}`}
           style={{ animationDuration: `${animationDuration}s`, animationPlayState: isPaused ? 'paused' : 'running' }}>
           {duplicatedItems.map((category, index) => {
             const iconSrc = category.image || category.icon;
             const hasImage = iconSrc && isImageUrl(iconSrc);
             return (
               <button key={`${category.name}-${index}`} onClick={() => handleClick(category.slug || category.name)}
-                className="flex-shrink-0 flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-white border border-gray-100 text-gray-700 hover:bg-gray-50 hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98] transition-all duration-200 shadow-sm group touch-manipulation">
+                className="flex-shrink-0 flex items-center gap-1 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full bg-white border border-gray-100 text-gray-700 hover:bg-gray-50 hover:shadow-md hover:-translate-y-0.5 active:scale-[0.98] transition-all duration-200 shadow-sm group touch-manipulation">
                 <div className="w-7 h-7 sm:w-9 sm:h-9 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0 bg-gray-50 group-hover:bg-gray-100 transition-colors duration-200">
                   {hasImage ? <img src={normalizeImageUrl(iconSrc)} alt={category.name} className="w-full h-full object-cover rounded-full" loading="eager" decoding="sync" />
                     : <Grid size={18} className="text-theme-primary" strokeWidth={1.5} />}
@@ -117,8 +117,8 @@ const CategoryStyle2 = memo(({ categories, onCategoryClick, sectionRef }: Omit<P
   if (!processed.length) return null;
 
   return (
-    <div ref={sectionRef} className="py-1 sm:py-1.5 px-0 sm:px-0">
-      <div className="flex items-center justify-between mb-2 sm:mb-3">
+    <div ref={sectionRef} className="py-0.5 sm:py-0.5 px-0 sm:px-0">
+      <div className="flex items-center justify-between mb-0.5 sm:mb-0.5">
 
         <h2 className="text-lg font-bold text-gray-900">Categories</h2>
         {/* Category text */}
@@ -127,14 +127,14 @@ const CategoryStyle2 = memo(({ categories, onCategoryClick, sectionRef }: Omit<P
         </button>
       </div>
       
-      <div className="grid grid-cols-6 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3 sm:gap-4">
+      <div className="grid grid-cols-6 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-0.5 sm:gap-1">
         {processed.map((category, index) => {
           const iconSrc = category.image || category.icon;
           const hasImage = iconSrc && isImageUrl(iconSrc);
           return (
             <button key={`${category.name}-${index}`} onClick={() => onCategoryClick(category.slug || category.name)}
-              className="group flex flex-col items-center p-1.5 sm:p-1 rounded-2xl bg-white transition-all duration-300">
-              <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 group-hover:from-theme-primary/10 group-hover:to-theme-secondary/10 flex items-center justify-center overflow-hidden mb-2 sm:mb-3 transition-all duration-300 shadow-inner">  
+              className="group flex flex-col items-center p-0.5 sm:p-0.5 rounded-2xl bg-white transition-all duration-300">
+              <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 group-hover:from-theme-primary/10 group-hover:to-theme-secondary/10 flex items-center justify-center overflow-hidden mb-0.5 sm:mb-0.5 transition-all duration-300 shadow-inner">  
                 {hasImage ? <img src={normalizeImageUrl(iconSrc)} alt={category.name} className="w-full h-full object-cover rounded-xl" loading="lazy" />
                   : <ShoppingBag size={24} className="text-gray-400 group-hover:text-theme-primary transition-colors" />}
               </div>
@@ -168,8 +168,8 @@ const CategoryStyle3 = memo(({ categories, onCategoryClick, sectionRef }: Omit<P
   if (!processed.length) return null;
 
   return (
-    <div ref={sectionRef} className="py-4 sm:py-6 bg-gradient-to-b from-gray-50 to-white">
-      <div className="flex items-center justify-between mb-4 px-3 sm:px-4">
+    <div ref={sectionRef} className="py-0.5 sm:py-1 bg-gradient-to-b from-gray-50 to-white">
+      <div className="flex items-center justify-between mb-0.5 px-0.5 sm:px-1">
         <h2 className="text-base sm:text-lg font-bold text-gray-900 flex items-center gap-2">
           <Sparkles size={18} className="text-theme-primary" /> Categories
         </h2>
@@ -184,13 +184,13 @@ const CategoryStyle3 = memo(({ categories, onCategoryClick, sectionRef }: Omit<P
         </div>
       </div>
       
-      <div ref={scrollRef} className="flex gap-4 sm:gap-6 overflow-x-auto px-3 sm:px-4 pb-2 scrollbar-hide snap-x snap-mandatory" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+      <div ref={scrollRef} className="flex gap-1 sm:gap-1.5 overflow-x-auto px-0.5 sm:px-1 pb-0.5 scrollbar-hide snap-x snap-mandatory" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         {processed.map((category, index) => {
           const iconSrc = category.image || category.icon;
           const hasImage = iconSrc && isImageUrl(iconSrc);
           return (
             <button key={`${category.name}-${index}`} onClick={() => onCategoryClick(category.slug || category.name)}
-              className="flex-shrink-0 flex flex-col items-center gap-2 group snap-start active:scale-95 transition-transform">
+              className="flex-shrink-0 flex flex-col items-center gap-0.5 group snap-start active:scale-95 transition-transform">
               <div className="relative">
                 <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full p-0.5 bg-gradient-theme-tr group-hover:shadow-lg group-hover:shadow-theme-primary/30 transition-shadow">
                   <div className="w-full h-full rounded-full bg-white p-1 overflow-hidden">
@@ -232,9 +232,9 @@ const CategoryStyle4 = memo(({ categories, onCategoryClick, sectionRef }: Omit<P
   if (!processed.length) return null;
 
   return (
-    <div ref={sectionRef} className="py-4 sm:py-6 px-2 sm:px-4">
+    <div ref={sectionRef} className="py-0.5 sm:py-1 px-0.5 sm:px-1">
       <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="bg-gradient-theme-r p-4 sm:p-5">
+        <div className="bg-gradient-theme-r p-1 sm:p-1.5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center">
@@ -257,7 +257,7 @@ const CategoryStyle4 = memo(({ categories, onCategoryClick, sectionRef }: Omit<P
             const hasImage = iconSrc && isImageUrl(iconSrc);
             return (
               <button key={`${category.name}-${index}`} onClick={() => onCategoryClick(category.slug || category.name)}
-                className="flex items-center gap-3 p-3 sm:p-4 hover:bg-gradient-to-r hover:from-theme-primary/5 hover:to-theme-secondary/5 transition-all group">
+                className="flex items-center gap-1 p-1 sm:p-1 hover:bg-gradient-to-r hover:from-theme-primary/5 hover:to-theme-secondary/5 transition-all group">
                 <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gray-100 group-hover:bg-theme-primary/10 flex items-center justify-center overflow-hidden flex-shrink-0 transition-colors">
                   {hasImage ? <img src={normalizeImageUrl(iconSrc)} alt={category.name} className="w-full h-full object-cover" loading="lazy" />
                     : <Grid size={18} className="text-gray-400 group-hover:text-theme-primary transition-colors" />}
@@ -309,8 +309,8 @@ const CategoryStyle5 = memo(({ categories, onCategoryClick, sectionRef }: Omit<P
   ];
 
   return (
-    <div ref={sectionRef} className="py-4 sm:py-6">
-      <div className="flex items-center justify-between mb-4 px-3 sm:px-4">
+    <div ref={sectionRef} className="py-0.5 sm:py-1">
+      <div className="flex items-center justify-between mb-0.5 px-0.5 sm:px-1">
         <div className="flex items-center gap-2">
           <Star size={20} className="text-theme-primary fill-theme-primary" />
           <h2 className="text-base sm:text-lg font-bold text-gray-900">Featured Categories</h2>
@@ -326,7 +326,7 @@ const CategoryStyle5 = memo(({ categories, onCategoryClick, sectionRef }: Omit<P
         </div>
       </div>
       
-      <div ref={scrollRef} className="flex gap-3 sm:gap-4 overflow-x-auto px-3 sm:px-4 pb-2 snap-x snap-mandatory" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+      <div ref={scrollRef} className="flex gap-0.5 sm:gap-1 overflow-x-auto px-0.5 sm:px-1 pb-0.5 snap-x snap-mandatory" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         {processed.map((category, index) => {
           const iconSrc = category.image || category.icon;
           const hasImage = iconSrc && isImageUrl(iconSrc);
@@ -429,7 +429,7 @@ const CategoryStyle6 = memo(({ categories, onCategoryClick, sectionRef }: Omit<P
       )}
 
       {/* Content Section */}
-      <div className="relative z-20 p-6 sm:p-10 h-full flex flex-col justify-between">
+      <div className="relative z-20 p-2 sm:p-3 h-full flex flex-col justify-between">
         <div className="space-y-1 sm:space-y-2">
           {/* Top Label */}
           <h3 
@@ -481,21 +481,21 @@ const CategoryStyle6 = memo(({ categories, onCategoryClick, sectionRef }: Omit<P
   };
 
   return (
-    <div ref={sectionRef} className="py-8 sm:py-16 px-4 md:px-8 flex flex-col items-center">
+    <div ref={sectionRef} className="py-1 sm:py-2 px-1 md:px-2 flex flex-col items-center">
       <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-      <header className="mb-8 sm:mb-14 text-center">
+      <header className="mb-1 sm:mb-2 text-center">
         <h2 className="text-3xl sm:text-5xl md:text-[64px] font-bold text-[#4B4B4B] tracking-tight" style={{ fontFamily: "'Montserrat', sans-serif" }}>
           Product Categories
         </h2>
       </header>
-      <div className="max-w-[1360px] w-full flex flex-col gap-4 sm:gap-6 items-center">
+      <div className="max-w-[1360px] w-full flex flex-col gap-1 sm:gap-1.5 items-center">
         {topRow.length > 0 && (
-          <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 w-full">
+          <div className="flex flex-col lg:flex-row gap-1 sm:gap-1.5 w-full">
             {topRow.map((card, i) => renderCard(card, i))}
           </div>
         )}
         {bottomRow.length > 0 && (
-          <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 w-full">
+          <div className="flex flex-col lg:flex-row gap-1 sm:gap-1.5 w-full">
             {bottomRow.map((card, i) => renderCard(card, i + 3))}
           </div>
         )}
