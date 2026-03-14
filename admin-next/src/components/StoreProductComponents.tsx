@@ -69,7 +69,7 @@ const ProductCardStyle1: React.FC<ProductCardProps> = ({ product, onClick, onBuy
         />
       </div>
 
-      <div className="px-1 pb-1 pt-0.5 md:px-1 md:pb-1 flex-1 flex flex-col gap-px">
+      <div className="px-1 pb-1 pt-0.5 md:px-1 md:pb-1 flex-1 flex flex-col gap-0.5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-0.5 text-[9px] md:text-[10px] text-amber-600 font-semibold">
             <Star size={10} className="fill-amber-400 text-amber-400" />
@@ -296,7 +296,7 @@ const ProductCardStyle3: React.FC<ProductCardProps> = ({ product, onClick, onBuy
       <div className="relative cursor-pointer bg-white m-2 rounded-xl overflow-hidden" style={{ aspectRatio: '1/1' }} onClick={() => onClick(product)}>
         <LazyImage src={getImage(product)} alt={product.name} className="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500" width={300} height={300} />
       </div>
-      <div className="px-1 pb-1 pt-0.5 flex-1 flex flex-col" style={{ minHeight: '60px' }}>
+      <div className="px-1 pb-1 pt-0.5 flex-1 flex flex-col" style={{ minHeight: '80px' }}>
         <div className="flex items-center gap-0.5 mb-0.5">
           {[1, 2, 3, 4, 5].map((s) => <Star key={s} size={12} className={s <= Math.round(product.rating || 0) ? 'text-amber-400 fill-amber-400' : 'text-gray-200'} />)}
           <span className="text-[10px] text-gray-400 ml-1">({product.reviews || 0})</span>
@@ -331,7 +331,7 @@ const ProductCardStyle4: React.FC<ProductCardProps> = ({ product, onClick, onBuy
       <div className="relative cursor-pointer bg-gray-800 m-2 rounded-lg overflow-hidden" style={{ aspectRatio: '1/1' }} onClick={() => onClick(product)}>
         <LazyImage src={getImage(product)} alt={product.name} className="w-full h-full object-contain p-3 group-hover:scale-110 transition-transform duration-300" width={300} height={300} />
       </div>
-      <div className="px-1 pb-1 flex-1 flex flex-col" style={{ minHeight: '55px' }}>
+      <div className="px-1 pb-1 flex-1 flex flex-col" style={{ minHeight: '70px' }}>
         <div className="flex items-center gap-0.5 mb-0.5">
           {[1, 2, 3, 4, 5].map((s) => <Star key={s} size={10} className={s <= Math.round(product.rating || 0) ? 'text-cyan-400 fill-cyan-400' : 'text-gray-600'} />)}
           <span className="text-[10px] text-gray-500 ml-1">{product.reviews || 0}</span>
@@ -368,7 +368,7 @@ const ProductCardStyle5: React.FC<ProductCardProps> = ({ product, onClick, onBuy
         <LazyImage src={getImage(product)} alt={product.name} className="w-full h-full object-contain p-2 group-hover:scale-105 transition-transform duration-300" width={300} height={300} />
         <div className="absolute inset-0 bg-theme-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
       </div>
-      <div className="px-1 pb-1 pt-0.5 flex-1 flex flex-col border-t border-gray-100" style={{ minHeight: '50px' }}>
+      <div className="px-1 pb-1 pt-0.5 flex-1 flex flex-col border-t border-gray-100" style={{ minHeight: '60px' }}>
         <div className="flex items-center justify-between mb-px">
           <div className="flex items-center gap-0.5">{[1, 2, 3, 4, 5].map((s) => <Star key={s} size={9} className={s <= Math.round(product.rating || 0) ? 'text-amber-400 fill-amber-400' : 'text-gray-200'} />)}</div>
           <span className="text-[9px] text-gray-400 flex items-center gap-0.5"><Package size={9} />{(product.initialSoldCount || 0) + (product.soldCount || 0)}</span>
