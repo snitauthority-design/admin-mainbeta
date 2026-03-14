@@ -46,13 +46,13 @@ const ShowcaseStyle1 = memo(({ products, onProductClick, onBuyNow, onQuickView, 
   if (!display.length) return null;
 
   return (
-    <section className="pt-1 pb-2 px-2 sm:px-4">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-gradient-theme-br">
-            <Sparkles className="w-5 h-5 text-white" />
+    <section className="pt-1 pb-1 px-2 sm:px-4">
+      <div className="flex items-center justify-between mb-2 sm:mb-4">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className="p-1.5 sm:p-2 rounded-xl bg-gradient-theme-br">
+            <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
           </div>
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Featured Products</h2>
+          <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">Featured Products</h2>
         </div>
         <div className="flex gap-2">
           <button onClick={() => scroll('left')} disabled={!canScrollLeft} className={`p-2 rounded-full border ${canScrollLeft ? 'border-gray-300 hover:bg-gray-100 text-gray-700' : 'border-gray-200 text-gray-300 cursor-not-allowed'}`}>
@@ -63,7 +63,7 @@ const ShowcaseStyle1 = memo(({ products, onProductClick, onBuyNow, onQuickView, 
           </button>
         </div>
       </div>
-      <div ref={scrollRef} className="flex gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-2" style={{ scrollbarWidth: 'none' }}>
+      <div ref={scrollRef} className="flex gap-2 sm:gap-3 md:gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-1 sm:pb-2" style={{ scrollbarWidth: 'none' }}>
         {display.map(p => (
           <div key={p.id} className="flex-shrink-0 w-[280px] sm:w-[300px] snap-start">
             <ProductCard product={p} onClick={onProductClick} onBuyNow={onBuyNow} variant={productCardStyle} onQuickView={onQuickView} onAddToCart={onAddToCart} wishlist={wishlist} onToggleWishlist={onToggleWishlist} />

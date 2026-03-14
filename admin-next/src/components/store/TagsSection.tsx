@@ -49,8 +49,8 @@ const TagStyle1 = memo(({ tags, onTagClick }: Omit<Props, 'style'>) => {
   if (!activeTags.length) return null;
 
   return (
-    <div className="py-3 sm:py-4">
-      <div className="flex items-center justify-between mb-3">
+    <div className="py-1.5 sm:py-3">
+      <div className="flex items-center justify-between mb-1.5 sm:mb-3">
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
             <Hash size={14} className="text-white" strokeWidth={2.5} />
@@ -96,8 +96,8 @@ const TagStyle2 = memo(({ tags, onTagClick }: Omit<Props, 'style'>) => {
   const colors = ['from-purple-500 to-pink-500', 'from-blue-500 to-cyan-500', 'from-green-500 to-emerald-500', 'from-orange-500 to-amber-500', 'from-rose-500 to-red-500'];
 
   return (
-    <div className="py-3 sm:py-4">
-      <div className="flex items-center gap-2 mb-3">
+    <div className="py-1.5 sm:py-3">
+      <div className="flex items-center gap-2 mb-1.5 sm:mb-3">
         <Hash size={16} className="text-purple-600" />
         <h2 className="text-sm sm:text-base font-semibold text-gray-700">Browse by Tags</h2>
       </div>
@@ -128,7 +128,7 @@ const TagStyle3 = memo(({ tags, onTagClick }: Omit<Props, 'style'>) => {
   if (!activeTags.length) return null;
 
   return (
-    <div className="py-2 sm:py-3 flex items-center gap-2 flex-wrap">
+    <div className="py-1 sm:py-2 flex items-center gap-2 flex-wrap">
       <span className="text-xs sm:text-sm text-gray-500 font-medium">Popular:</span>
       {activeTags.map((tag, i) => (
         <button key={tag.id || i} onClick={() => onTagClick(tag.name)}
