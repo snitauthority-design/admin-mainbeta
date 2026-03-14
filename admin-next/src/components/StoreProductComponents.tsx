@@ -128,6 +128,7 @@ const ProductCardStyle2: React.FC<ProductCardProps> = ({ product, onClick, onBuy
   const discountPercent = product.originalPrice && product.price ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) : null;
   const price = product.price || 0;
   const originalPrice = product.originalPrice || 0;
+  const soldOutLabel = t('sold_out');
 // Note: This style emphasizes a clean look with interactive hover actions for quick view and add to cart, while keeping the product information concise and focused.
 return (
     <div 
@@ -170,11 +171,11 @@ return (
           loading="lazy"
         /> */}
 
-        <div className="flex h-full w-full items-center justify-center overflow-hidden px-1.5 py-1">
+        <div className="flex h-[150px] md:h-[210px] w-full items-center justify-center overflow-hidden px-1.5 py-1">
           <img 
             src={getImage(product)}
             alt={product?.name || 'Product'} 
-            className="h-full w-full object-contain"
+            className="max-h-full max-w-full object-contain"
             loading="lazy"
           />
         </div>
@@ -269,7 +270,7 @@ return (
             onClick={(e) => { e.stopPropagation(); handleBuyNow?.(); }}
             disabled={isOutOfStock}
           >
-            <span className="whitespace-nowrap">{isOutOfStock ? 'Sold Out' : t('buy_now')}</span>
+            <span className="whitespace-nowrap">{isOutOfStock ? (soldOutLabel === 'sold_out' ? 'Sold Out' : soldOutLabel) : t('buy_now')}</span>
             
           </button>
         </div>
