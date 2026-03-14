@@ -121,23 +121,25 @@ const ProductCardStyle2: React.FC<ProductCardProps> = ({ product, onClick, onBuy
   const { t } = useLanguage();
   const [isHovered, setIsHovered] = useState(false);
   const isWishlisted = wishlist.includes(product.id);
+  const isOutOfStock = product.stock === 0;
   const handleBuyNow = (e?: React.MouseEvent) => { e?.stopPropagation(); onBuyNow ? onBuyNow(product) : onClick(product); };
-  const handleCart = (e: React.MouseEvent) => { e.stopPropagation(); onAddToCart?.(product); };
+  const handleCart = (e: React.MouseEvent) => { e.stopPropagation(); if (!isOutOfStock) onAddToCart?.(product); };
   const handleWishlist = (e: React.MouseEvent) => { e.stopPropagation(); onToggleWishlist?.(product.id); showToast.success(isWishlisted ? 'Removed from wishlist' : 'Added to wishlist ❤️'); };
   const discountPercent = product.originalPrice && product.price ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) : null;
   const price = product.price || 0;
   const originalPrice = product.originalPrice || 0;
+  const soldOutLabel = t('sold_out');
 // Note: This style emphasizes a clean look with interactive hover actions for quick view and add to cart, while keeping the product information concise and focused.
 return (
     <div 
-      className="relative inline-block w-full cursor-pointer rounded-[1rem] border border-[#ebebeb] shadow-[0_0_10px_rgba(0,0,0,0.07)] transition-all duration-500 ease-in-out no-underline"
+      className="relative inline-flex h-full w-full cursor-pointer flex-col rounded-[1rem] border border-[#ebebeb] bg-white shadow-[0_0_10px_rgba(0,0,0,0.07)] transition-all duration-500 ease-in-out no-underline"
       style={{ contain: 'layout' }}
       onMouseEnter={() => setIsHovered?.(true)}
       onMouseLeave={() => setIsHovered?.(false)}
     >
       {/* ইমেজ সেকশন */}
       <div 
-        className="relative bg-[#f8f8f8] rounded-xl m-2 mb-0 overflow-hidden group-hover:opacity-95 transition-opacity" 
+        className="relative m-1.5 mb-0 overflow-hidden rounded-xl bg-[#f8f8f8] group-hover:opacity-95 transition-opacity"
         style={{ aspectRatio: '1.2/1' }} 
         onClick={() => onClick?.(product)}
       >
@@ -169,13 +171,12 @@ return (
           loading="lazy"
         /> */}
 
-        <div className="flex h-[160px] md:h-[220px] w-full items-center justify-center overflow-hidden">
+        <div className="flex h-[150px] md:h-[210px] w-full items-center justify-center overflow-hidden px-1.5 py-1">
           <img 
             src={getImage(product)}
-          alt={product?.name || 'Product'} 
-            className="height-fit w-fit"
-            
-          loading="lazy"
+            alt={product?.name || 'Product'} 
+            className="max-h-full max-w-full object-contain"
+            loading="lazy"
           />
         </div>
 
@@ -194,9 +195,9 @@ return (
       </div>
 
       {/* কন্টেন্ট সেকশন */}
-      <div className="px-2 pt-2 pb-2 md:px-3 md:pt-3 md:pb-4 flex flex-col flex-grow">
+      <div className="flex flex-1 flex-col px-2 pt-1.5 pb-2 md:px-3 md:pt-2 md:pb-3">
         {/* রেটিং */}
-        <div className="mb-2">
+        <div className="mb-1">
             <div className="flex items-center gap-2">
                 <div className="flex items-center gap-1">
  <span>
@@ -216,14 +217,14 @@ return (
         </div>
         {/* প্রোডাক্ট নাম */}
         <h3 
-        className="text-[14px] font-medium text-left mb-[5px] text-black leading-normal h-[39px] line-clamp-2 overflow-hidden text-ellipsis" 
+        className="mb-1.5 h-[36px] overflow-hidden text-ellipsis text-left text-[14px] font-medium leading-[1.25] text-black line-clamp-2"
           onClick={() => onClick?.(product)}
         >
           {String(product?.name || 'Unknown Product')}
         </h3>
 
         {/* প্রাইজ সেকশন */}
-        <div className="mt-auto space-y-3 items-left justify-center flex flex-col">
+        <div className="mt-auto flex flex-col items-left justify-center space-y-2">
           <div className="flex flex-wrap items-baseline gap-2">
           <span className="text-[#2F3485] font-bold text-[16px] text-center font-roboto ">
             ৳{Number(price).toLocaleString()}
@@ -241,29 +242,37 @@ return (
               </span>
                )}
          
-        </div>
+         </div>
         {/* অ্যাকশন বাটন গ্রুপ */}
-       <div className="mt-[0px] flex items-center gap-[10px] w-full">
-       <div className="mt-[0px] flex items-center gap-[10px] w-full">
+       <div className="mt-0.5 flex w-full items-center gap-2">
            {/* Add to Cart Button */}
           <button
-            className="flex-1 px-3 py-1 flex items-center justify-center gap-1.5 rounded-lg bg-gradient-to-b from-[#FF9D1B] to-[#FF6C01] text-white text-xs lg:text-base font-bold shadow-sm active:translate-y-0.5 transition-all hover:brightness-110"
+            className={`flex h-9 flex-1 items-center justify-center gap-1.5 rounded-xl px-2 text-xs font-bold text-white shadow-sm transition-all active:translate-y-0.5 lg:text-sm ${
+              isOutOfStock
+                ? 'cursor-not-allowed bg-gray-300'
+                : 'bg-gradient-to-b from-[#FF9D1B] to-[#FF6C01] hover:brightness-110'
+            }`}
             onClick={(e) => { e.stopPropagation(); handleCart?.(e); }}
             title={t('add_to_cart')}
+            disabled={isOutOfStock}
           >
             <ShoppingCart className="w-3.5 h-3.5 lg:w-5 lg:h-5" />
-             {t('cart')}
+             <span className="whitespace-nowrap">{t('cart')}</span>
           </button>
 
           {/* Buy Now Button */}
           <button
-            className="flex-1 px-3 py-1 flex items-center justify-center gap-1.5 rounded-lg bg-gradient-to-b from-[#38BDF8] to-[#1E90FF]  text-white text-xs lg:text-base font-bold shadow-sm active:translate-y-0.5 transition-all hover:brightness-110"
+            className={`flex h-9 flex-1 items-center justify-center gap-1.5 rounded-xl px-2 text-xs font-bold text-white shadow-sm transition-all active:translate-y-0.5 lg:text-sm ${
+              isOutOfStock
+                ? 'cursor-not-allowed bg-gray-300'
+                : 'bg-gradient-to-b from-[#38BDF8] to-[#1E90FF] hover:brightness-110'
+            }`}
             onClick={(e) => { e.stopPropagation(); handleBuyNow?.(); }}
+            disabled={isOutOfStock}
           >
-            <span>{t('buy_now')}</span>
-           
+            <span className="whitespace-nowrap">{isOutOfStock ? (soldOutLabel === 'sold_out' ? 'Sold Out' : soldOutLabel) : t('buy_now')}</span>
+            
           </button>
-          </div>
         </div>
       </div>
      </div> 
