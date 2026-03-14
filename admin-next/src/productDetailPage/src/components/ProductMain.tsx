@@ -11,7 +11,7 @@ import Price from "./details/Price";
 import Color from "./details/Color";
 import Size from "./details/Size";
 import CallOrderBar from "./details/CallOrderBar";
-import { Heart, ChevronLeft, ChevronRight, ZoomIn } from 'lucide-react';
+import { Heart, ChevronLeft, ChevronRight, ZoomIn, ShoppingCart as ShoppingCartIcon } from 'lucide-react';
 
 
 interface VariantOption {
@@ -406,7 +406,7 @@ export default function ProductMain({
                             disabled={product.stock !== undefined && product.stock <= 0}
                             className={`h-10 px-4 rounded-lg font-semibold text-sm flex items-center gap-1.5 transition-all active:scale-95 ${product.stock !== undefined && product.stock <= 0 ? 'opacity-50 bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-white text-blue-600 border-2 border-blue-500 hover:bg-blue-50'}`}
                         >
-                            <img src="https://details-snit.vercel.app/images/shopping.svg" width={16} height={16} alt="cart" className={`${product.stock !== undefined && product.stock <= 0 ? 'opacity-50' : ''}`} style={product.stock !== undefined && product.stock <= 0 ? {} : { filter: 'brightness(0) saturate(100%) invert(35%) sepia(85%) saturate(2000%) hue-rotate(200deg)' }} />
+                            <ShoppingCartIcon size={16} />
                             Cart
                         </button>
                         <button

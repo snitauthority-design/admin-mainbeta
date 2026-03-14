@@ -1125,7 +1125,7 @@ const StoreProductDetail = ({
           background: 'rgba(255,255,255,0.97)',
           backdropFilter: 'blur(12px)',
           borderTop: '1px solid #e5e7eb',
-          boxShadow: '0 -4px_20px rgba(0,0,0,0.08)'
+          boxShadow: '0 -4px 20px rgba(0,0,0,0.08)'
         }}
       >
         <button

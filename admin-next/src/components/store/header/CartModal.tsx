@@ -39,7 +39,7 @@ export const CartModal = ({ isOpen, onClose, cartItems, catalogSource, onToggleC
               </span>
             )}
           </div>
-          <button className="p-1.5 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition" onClick={onClose} aria-label="Close cart">
+          <button type="button" className="p-1.5 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition" onClick={onClose} aria-label="Close cart">
             <X size={20} />
           </button>
         </div>
