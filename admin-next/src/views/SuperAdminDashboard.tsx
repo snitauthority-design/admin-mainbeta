@@ -748,7 +748,10 @@ const SuperAdminDashboard: React.FC = () => {
       
       const response = await fetch(`${API_URL}/tenants/${tenantId}/status`, {
         method: 'PATCH',
-        headers: getAuthHeader(),
+        headers: {
+          ...getAuthHeader(),
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({ status: backendStatus }),
       });
 
@@ -1421,9 +1424,9 @@ const SuperAdminDashboard: React.FC = () => {
         <React.Suspense fallback={<TabLoadingFallback />}>
           <IsActiveTogglebtn 
             tenants={tenants} 
-            onSelectTenant={async (tenant: any, action: string) => {
+            onSelectTenant={async (tenant: Tenant, action: string) => {
               const newStatus = action === 'activate' ? 'active' : 'suspended';
-              await handleUpdateTenantStatus(tenant.id || tenant._id, newStatus as Tenant['status']);
+              await handleUpdateTenantStatus(tenant.id || tenant._id || '', newStatus as Tenant['status']);
             }}
           />
         </React.Suspense>
