@@ -27,6 +27,7 @@ const getImage = (p: Product) => normalizeImageUrl(p.galleryImages?.[0] || p.ima
 // Style 1: Default - Clean modern card with gradient top bar
 const ProductCardStyle1: React.FC<ProductCardProps> = ({ product, onClick, onBuyNow, onAddToCart, wishlist = [], onToggleWishlist, showSoldCount }) => {
   const { t } = useLanguage();
+  const [isHovered, setIsHovered] = useState(false);
   const isWishlisted = wishlist.includes(product.id);
   const isOutOfStock = product.stock === 0;
   const handleBuyNow = (e?: React.MouseEvent) => { e?.stopPropagation(); if (!isOutOfStock) { onBuyNow ? onBuyNow(product) : onClick(product); } };
@@ -36,7 +37,10 @@ const ProductCardStyle1: React.FC<ProductCardProps> = ({ product, onClick, onBuy
   const soldCount = (product.initialSoldCount || 0) + (product.soldCount || 0);
 
   return (
-    <div className="group bg-white rounded-xl overflow-hidden flex flex-col relative border border-gray-100/80 shadow-[0_1px_3px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_25px_rgba(0,0,0,0.1)] hover:border-gray-200 transition-all duration-300 hover:-translate-y-1 active:scale-[0.98]" style={{ contain: 'layout' }}>
+    <div className="group bg-white rounded-xl overflow-hidden flex flex-col relative border border-gray-100/80 shadow-[0_1px_3px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_25px_rgba(0,0,0,0.1)] hover:border-gray-200 transition-all duration-300 hover:-translate-y-1 active:scale-[0.98]" style={{ contain: 'layout' }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
 
       <button
         className="absolute top-1.5 left-1.5 z-10 w-7 h-7 rounded-full bg-white/90 backdrop-blur-sm shadow-sm flex items-center justify-center text-pink-500 hover:scale-110 active:scale-95 transition-all"
@@ -94,7 +98,7 @@ const ProductCardStyle1: React.FC<ProductCardProps> = ({ product, onClick, onBuy
           )}
         </div>
 
-        <div className="flex gap-0.5 mt-0.5">
+        <div className={`flex gap-0.5 overflow-hidden transition-all duration-300 ${isHovered ? 'max-h-12 opacity-100 mt-0.5' : 'max-h-0 opacity-0 mt-0'}`}>
           <button
             className={`flex items-center justify-center w-8 h-7 md:h-8 border rounded-lg transition-all active:scale-95 ${isOutOfStock ? 'border-gray-100 text-gray-300 cursor-not-allowed' : 'border-gray-200 text-gray-600 hover:bg-theme-primary hover:text-white hover:border-theme-primary'}`}
             onClick={handleCart}
@@ -244,7 +248,7 @@ return (
          
          </div>
         {/* অ্যাকশন বাটন গ্রুপ */}
-       <div className="mt-0.5 flex w-full items-center gap-1.5">
+       <div className={`flex w-full items-center gap-1.5 overflow-hidden transition-all duration-300 ${isHovered ? 'max-h-14 opacity-100 mt-0.5' : 'max-h-0 opacity-0 mt-0'}`}>
            {/* Add to Cart Button */}
           <button
             className={`flex h-8 sm:h-9 flex-1 items-center justify-center gap-1 sm:gap-1.5 rounded-lg sm:rounded-xl px-1.5 sm:px-2 text-[11px] sm:text-xs font-bold text-white shadow-sm transition-all active:translate-y-0.5 lg:text-sm ${
