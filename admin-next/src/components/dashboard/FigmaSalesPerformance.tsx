@@ -154,17 +154,17 @@ const FigmaSalesPerformance: React.FC<FigmaSalesPerformanceProps> = ({
   };
 
   return (
-    <div className="w-full h-80 sm:h-96 p-2.5 xs:p-3 sm:p-4 bg-white dark:bg-gray-800 rounded-xl border border-zinc-200 dark:border-gray-700 flex flex-col justify-start items-start gap-1.5 xs:gap-2 overflow-hidden">
+    <div className="w-full h-64 sm:h-80 p-2.5 xs:p-3 sm:p-4 bg-white dark:bg-gray-800 rounded-xl border border-zinc-200 dark:border-gray-700 flex flex-col justify-start items-start gap-1.5 xs:gap-2 overflow-hidden">
       {/* Header */}
       <div className="w-full flex justify-between items-center gap-2 xs:gap-2.5">
         <div className="text-zinc-800 dark:text-white text-lg font-bold font-family: Poppins, Helvetica, sans-serif">Sale Performance</div>
       </div>
 
       {/* Legend - Wrap on mobile */}
-      <div className="flex flex-wrap justify-start items-center gap-2 xs:gap-3 sm:gap-6">
-        <div className="text-sky-400 text-sm font-bold font-family: Poppins, Helvetica, sans-serif">Placed Order</div>
-        <div className="text-orange-500 text-sm font-bold font-family: Poppins, Helvetica, sans-serif">Order Delivered</div>
-        <div className="text-red-600 text-sm font-bold font-family: Poppins, Helvetica, sans-serif">Order Cancel</div>
+      <div className="flex flex-wrap justify-start items-center gap-1.5 xs:gap-2 sm:gap-4">
+        <div className="text-sky-400 text-xs sm:text-sm font-bold font-family: Poppins, Helvetica, sans-serif">Placed Order</div>
+        <div className="text-orange-500 text-xs sm:text-sm font-bold font-family: Poppins, Helvetica, sans-serif">Order Delivered</div>
+        <div className="text-red-600 text-xs sm:text-sm font-bold font-family: Poppins, Helvetica, sans-serif">Order Cancel</div>
       </div>
 
       {/* Chart Area */}
@@ -172,7 +172,7 @@ const FigmaSalesPerformance: React.FC<FigmaSalesPerformanceProps> = ({
         {/* Y-axis labels */}
         <div className="flex flex-col justify-between h-full pr-2">
           {[100, 75, 50, 25, 0].map((val) => (
-            <div key={val} className="w-6 h-9 opacity-50 text-right text-neutral-900 dark:text-gray-300 text-[10px] font-medium font-family: Poppins, Helvetica, sans-serif flex items-center justify-end">
+            <div key={val} className="w-6 h-8 sm:h-9 opacity-50 text-right text-neutral-900 dark:text-gray-300 text-[10px] font-medium font-family: Poppins, Helvetica, sans-serif flex items-center justify-end">
               {val}
             </div>
           ))}
