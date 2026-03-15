@@ -49,7 +49,7 @@ const ProductSectionStyle1 = memo(({ title, titleExtra, products, accentColor = 
         <SectionHeader title={title} className="text-base md:text-lg font-bold text-gray-900"/>
         {titleExtra && <div className="ml-1">{titleExtra}</div>}
       </div>
-      <div className="grid grid-cols-2 gap-0.5 sm:gap-0.5 md:gap-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+      <div className="grid grid-cols-2 gap-2 sm:gap-2 md:gap-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
         {products.map((p, idx) => <ProductCard key={`${keyPrefix}-${p.id}-${idx}`} product={p} onClick={onProductClick} onBuyNow={onBuyNow} variant={productCardStyle} onQuickView={onQuickView} onAddToCart={onAddToCart} wishlist={wishlist} onToggleWishlist={onToggleWishlist} showSoldCount={showSoldCount}/>)}
       </div>
     </section>
@@ -72,7 +72,7 @@ const ProductSectionStyle2 = memo(({ title, titleExtra, products, accentColor = 
         {titleExtra && <div className="ml-1">{titleExtra}</div>}
       </div>
       <div className="bg-white rounded-xl sm:rounded-2xl border border-gray-200 p-0.5 sm:p-0.5 md:p-1">
-        <div className="grid grid-cols-2 gap-0.5 sm:gap-0.5 md:gap-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+        <div className="grid grid-cols-2 gap-2 sm:gap-2 md:gap-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
           {products.map((p, idx) => <ProductCard key={`${keyPrefix}-${p.id}-${idx}`} product={p} onClick={onProductClick} onBuyNow={onBuyNow} variant={productCardStyle} onQuickView={onQuickView} onAddToCart={onAddToCart} wishlist={wishlist} onToggleWishlist={onToggleWishlist} showSoldCount={showSoldCount}/>)}
         </div>
       </div>
@@ -96,7 +96,7 @@ const ProductSectionStyle3 = memo(({ title, titleExtra, products, accentColor = 
         </div>
       </div>
       <div className="bg-gray-50 rounded-b-xl sm:rounded-b-2xl p-0.5 sm:p-0.5 md:p-1 border border-t-0 border-gray-200">
-        <div className="grid grid-cols-2 gap-0.5 sm:gap-0.5 md:gap-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+        <div className="grid grid-cols-2 gap-2 sm:gap-2 md:gap-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
           {products.map((p, idx) => <ProductCard key={`${keyPrefix}-${p.id}-${idx}`} product={p} onClick={onProductClick} onBuyNow={onBuyNow} variant={productCardStyle} onQuickView={onQuickView} onAddToCart={onAddToCart} wishlist={wishlist} onToggleWishlist={onToggleWishlist} showSoldCount={showSoldCount}/>)}
         </div>
       </div>
@@ -117,7 +117,7 @@ const ProductSectionStyle4 = memo(({ title, titleExtra, products, accentColor = 
         </div>
         <span className="text-sm text-gray-500">{products.length} products</span>
       </div>
-      <div className="grid grid-cols-2 gap-0.5 sm:gap-0.5 lg:gap-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+      <div className="grid grid-cols-2 gap-2 sm:gap-2 lg:gap-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
         {products.map((p, idx) => <ProductCard key={`${keyPrefix}-${p.id}-${idx}`} product={p} onClick={onProductClick} onBuyNow={onBuyNow} variant={productCardStyle} onQuickView={onQuickView} onAddToCart={onAddToCart} wishlist={wishlist} onToggleWishlist={onToggleWishlist} showSoldCount={showSoldCount}/>)}
       </div>
     </section>
@@ -144,7 +144,7 @@ const ProductSectionStyle5 = memo(({ title, titleExtra, products, accentColor = 
           </div>
         </div>
         <div className="p-0.5 sm:p-0.5 md:p-1">
-          <div className="grid grid-cols-2 gap-0.5 sm:gap-0.5 lg:gap-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+          <div className="grid grid-cols-2 gap-2 sm:gap-2 lg:gap-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
             {products.map((p, idx) => <ProductCard key={`${keyPrefix}-${p.id}-${idx}`} product={p} onClick={onProductClick} onBuyNow={onBuyNow} variant={productCardStyle} onQuickView={onQuickView} onAddToCart={onAddToCart} wishlist={wishlist} onToggleWishlist={onToggleWishlist} showSoldCount={showSoldCount}/>)}
           </div>
         </div>

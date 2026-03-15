@@ -80,7 +80,7 @@ const ProductCardStyle1: React.FC<ProductCardProps> = ({ product, onClick, onBuy
 
         <div className={`flex gap-0.5 overflow-hidden transition-all duration-300 ${isHovered ? 'max-h-12 opacity-100 mt-0.5' : 'max-h-0 opacity-0 mt-0'}`}>
           <button
-            className={`flex items-center justify-center w-8 h-7 md:h-8 border rounded-lg transition-all active:scale-95 ${isOutOfStock ? 'border-gray-100 text-gray-300 cursor-not-allowed' : 'border-gray-200 text-gray-600 hover:bg-theme-primary hover:text-white hover:border-theme-primary'}`}
+            className={`flex items-center justify-center w-8 h-7 md:h-8 border rounded-lg transition-all active:scale-95 ${isOutOfStock ? 'border-gray-100 text-gray-300 cursor-not-allowed' : 'border-[#FFB74D] bg-[#FFB74D] text-white hover:brightness-110'}`}
             onClick={handleCart}
             title={t('add_to_cart')}
             disabled={isOutOfStock}
@@ -88,7 +88,7 @@ const ProductCardStyle1: React.FC<ProductCardProps> = ({ product, onClick, onBuy
             <ShoppingCart size={14} />
           </button>
           <button
-            className={`flex-1 text-[11px] md:text-xs font-bold rounded-lg h-7 md:h-8 transition-all active:scale-95 flex items-center justify-center gap-1 ${isOutOfStock ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-theme-primary text-white hover:brightness-110 shadow-sm shadow-theme-primary/20'}`}
+            className={`flex-1 text-[11px] md:text-xs font-bold rounded-lg h-7 md:h-8 transition-all active:scale-95 flex items-center justify-center gap-1 ${isOutOfStock ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-[#4FC3F7] text-white hover:brightness-110 shadow-sm shadow-[#4FC3F7]/20'}`}
             onClick={handleBuyNow}
             disabled={isOutOfStock}
           >
