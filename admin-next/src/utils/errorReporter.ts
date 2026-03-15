@@ -27,6 +27,18 @@ export const buildErrorWhatsAppUrl = (context: string, errorMessage: string, det
   return `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(message)}`;
 };
 
+const ErrorToastContent: React.FC<{ toastId: string; errorMessage: string; whatsappUrl: string }> = ({ toastId, errorMessage, whatsappUrl }) =>
+  React.createElement('div', { className: 'flex flex-col gap-2 max-w-[300px]' },
+    React.createElement('span', { className: 'text-sm font-medium text-red-800' }, errorMessage),
+    React.createElement('a', {
+      href: whatsappUrl,
+      target: '_blank',
+      rel: 'noopener noreferrer',
+      onClick: () => toast.dismiss(toastId),
+      className: 'inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-green-500 hover:bg-green-600 rounded-md w-fit cursor-pointer no-underline transition-colors',
+    }, '📱 Send Error Report')
+  );
+
 /**
  * Show an error toast with a WhatsApp "Send" report button.
  * The toast stays visible for 8 seconds so the user has time to click the button.
@@ -39,29 +51,7 @@ export const showErrorWithWhatsApp = (
   const whatsappUrl = buildErrorWhatsAppUrl(context, errorMessage, details);
 
   toast(
-    (t) => React.createElement('div', { style: { display: 'flex', flexDirection: 'column' as const, gap: '8px', maxWidth: '300px' } },
-      React.createElement('span', { style: { fontSize: '13px', color: '#991b1b', fontWeight: 500 } }, errorMessage),
-      React.createElement('a', {
-        href: whatsappUrl,
-        target: '_blank',
-        rel: 'noopener noreferrer',
-        onClick: () => toast.dismiss(t.id),
-        style: {
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '6px',
-          padding: '6px 12px',
-          fontSize: '12px',
-          fontWeight: 600,
-          color: 'white',
-          backgroundColor: '#25D366',
-          borderRadius: '6px',
-          textDecoration: 'none',
-          width: 'fit-content',
-          cursor: 'pointer',
-        },
-      }, '📱 Send Error Report')
-    ),
+    (t) => React.createElement(ErrorToastContent, { toastId: t.id, errorMessage, whatsappUrl }),
     { duration: 8000, icon: '❌' }
   );
 };

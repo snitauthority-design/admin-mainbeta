@@ -242,7 +242,7 @@ export function useProductForm({
     } catch (error) {
       console.error('Upload error:', error);
       const msg = error instanceof Error ? error.message : 'Upload failed';
-      showErrorWithWhatsApp('Image Upload', `Upload failed: ${msg}`, `File: ${file.name}`);
+      showErrorWithWhatsApp('Single Image Upload', `Upload failed: ${msg}`, `File: ${file.name}`);
       return null;
     }
   };
@@ -372,7 +372,7 @@ export function useProductForm({
       toast.success(`${uploadedUrls.length} image(s) uploaded`, { id: 'upload' });
     } else {
       toast.dismiss('upload');
-      showErrorWithWhatsApp('Image Upload', 'Failed to upload images');
+      showErrorWithWhatsApp('Product Image Upload', 'Failed to upload images');
     }
 
     e.target.value = '';
@@ -495,7 +495,7 @@ export function useProductForm({
       toast.success(`${uploadedUrls.length} image(s) uploaded`, { id: 'upload-drop' });
     } else {
       toast.dismiss('upload-drop');
-      showErrorWithWhatsApp('Image Upload (Drop)', 'Failed to upload images');
+      showErrorWithWhatsApp('Product Image Upload (Drop)', 'Failed to upload images');
     }
   };
 
