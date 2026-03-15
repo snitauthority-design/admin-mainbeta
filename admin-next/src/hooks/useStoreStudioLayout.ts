@@ -6,8 +6,16 @@ const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 const FETCH_TIMEOUT_MS = 5000; // 5 second timeout
 
 interface CachedBatchData {
-  data: any;
+  data: BatchResult;
   timestamp: number;
+}
+
+interface BatchResult {
+  data?: {
+    config?: { enabled?: boolean; productDisplayOrder?: number[] };
+    layout?: { sections?: any[] };
+    styles?: Record<string, string>;
+  };
 }
 
 const getCachedBatch = (tenantId: string): CachedBatchData | null => {
@@ -25,7 +33,7 @@ const getCachedBatch = (tenantId: string): CachedBatchData | null => {
   }
 };
 
-const setCachedBatch = (tenantId: string, data: any) => {
+const setCachedBatch = (tenantId: string, data: BatchResult) => {
   try {
     sessionStorage.setItem(CACHE_KEY_PREFIX + tenantId, JSON.stringify({ data, timestamp: Date.now() }));
   } catch {}
@@ -57,7 +65,7 @@ export const useStoreStudioLayout = ({
   const [storeStudioStyles, setStoreStudioStyles] = useState<Record<string, string> | null>(null);
   const abortRef = useRef<AbortController | null>(null);
 
-  const applyBatchResult = useCallback((batchResult: any, logPrefix = '') => {
+  const applyBatchResult = useCallback((batchResult: BatchResult, logPrefix = '') => {
     const { config: configData, layout: layoutData, styles: stylesData } = batchResult.data || {};
 
     const isStoreStudioEnabled = configData?.enabled || false;
@@ -126,8 +134,8 @@ export const useStoreStudioLayout = ({
         setCachedBatch(tenantId, batchResult);
         applyBatchResult(batchResult, logPrefix);
       }
-    } catch (e: any) {
-      if (e?.name === 'AbortError') {
+    } catch (e: unknown) {
+      if (e instanceof Error && e.name === 'AbortError') {
         console.warn(`[StoreHome]${logPrefix} Layout fetch timed out, using default layout`);
       } else {
         console.log(`[StoreHome]${logPrefix} Error checking layout, using default:`, e);
