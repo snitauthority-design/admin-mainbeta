@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { Menu, Search, Plus, ShoppingCart, Image, X } from 'lucide-react';
+import { Menu, Search, Plus, ShoppingCart, ArrowLeft, X } from 'lucide-react';
 
 interface SearchMenuItem {
   id: string;
@@ -162,16 +162,14 @@ export const AdminBottomNav: React.FC<AdminBottomNavProps> = ({
               <span className={`text-[10px] font-medium font-['Poppins'] ${isActive('orders') ? 'text-sky-500' : 'text-gray-500 dark:text-gray-400'}`}>Orders</span>
             </button>
 
-            {/* Gallery Button */}
+            {/* Back Button */}
             <button
-              onClick={() => onNavigate?.('gallery')}
-              className={`flex flex-col items-center justify-center gap-0.5 min-w-[3rem] py-1 px-2 rounded-lg transition-colors ${
-                isActive('gallery') ? 'text-sky-500' : ''
-              }`}
-              aria-label="Gallery"
+              onClick={() => window.history.back()}
+              className="flex flex-col items-center justify-center gap-0.5 min-w-[3rem] py-1 px-2 rounded-lg transition-colors"
+              aria-label="Back"
             >
-              <Image className={`w-5 h-5 ${isActive('gallery') ? 'text-sky-500' : 'text-gray-500 dark:text-gray-400'}`} />
-              <span className={`text-[10px] font-medium font-['Poppins'] ${isActive('gallery') ? 'text-sky-500' : 'text-gray-500 dark:text-gray-400'}`}>Gallery</span>
+              <ArrowLeft className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+              <span className="text-[10px] font-medium font-['Poppins'] text-gray-500 dark:text-gray-400">Back</span>
             </button>
           </div>
         </div>
