@@ -183,7 +183,7 @@ const CategoryAccordion: React.FC<{
               return (
                 <div className="mb-3 rounded-lg overflow-hidden border border-indigo-200 shadow-sm">
                   <div className="px-2 py-1 bg-indigo-50 text-[10px] text-indigo-600 font-medium flex items-center gap-1">
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" strokeWidth="2"/><circle cx="12" cy="12" r="3" strokeWidth="2"/></svg>
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="Preview icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" strokeWidth="2"/><circle cx="12" cy="12" r="3" strokeWidth="2"/></svg>
                     Live Preview — How it looks in your store
                   </div>
                   <img 
@@ -191,6 +191,7 @@ const CategoryAccordion: React.FC<{
                     alt={`${selectedVariant.name} — Store Preview`}
                     className="w-full h-auto object-cover"
                     loading="lazy"
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                   />
                   <div className="px-2 py-1.5 bg-indigo-50 text-xs text-indigo-700 font-medium text-center">
                     {selectedVariant.name} — Currently Applied
