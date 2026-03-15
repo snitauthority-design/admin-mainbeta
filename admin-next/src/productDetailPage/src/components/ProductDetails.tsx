@@ -57,7 +57,7 @@ export interface ModernProductDetailProps {
         image: string;
         description?: string;
     }>;
-    categories?: Array<{ id?: number | string; name: string; image?: string }>;
+    categories?: Array<{ id?: number | string; name: string; slug?: string; image?: string; icon?: string }>;
     websiteConfig?: WebsiteConfig;
     logo?: string | null;
     onBack?: () => void;
@@ -72,6 +72,7 @@ export interface ModernProductDetailProps {
     user?: { name: string; email: string } | null;
     onLoginClick?: () => void;
     onChatClick?: () => void;
+    onCategoryClick?: (categorySlug: string) => void;
 }
 
 export default function ProductDetailsPage({
@@ -93,6 +94,7 @@ export default function ProductDetailsPage({
     user,
     onLoginClick,
     onChatClick,
+    onCategoryClick,
 }: ModernProductDetailProps) {
     const [quantity, setQuantity] = useState(1);
     const cartOpenRef = useRef<(() => void) | null>(null);
@@ -200,7 +202,9 @@ export default function ProductDetailsPage({
     const mappedCategories = categories.map((c) => ({
         id: String(c.id || ""),
         name: c.name,
+        slug: c.slug || "",
         image: normalizeImageUrl(c.image || ""),
+        iconUrl: c.icon && c.icon.startsWith('http') ? normalizeImageUrl(c.icon) : "",
     }));
 
     return (
@@ -260,7 +264,7 @@ export default function ProductDetailsPage({
 
             {/* mobile categories*/}
             <section className="lg:hidden max-w-[1720px] mx-auto py-2 pb-4">
-                <MobileCategories categories={mappedCategories} onCategoryClick={onProductClick ? (name: string) => {} : undefined} />
+                <MobileCategories categories={mappedCategories} onCategoryClick={onCategoryClick} />
             </section>
 
             {/* Mobile tab bar */}

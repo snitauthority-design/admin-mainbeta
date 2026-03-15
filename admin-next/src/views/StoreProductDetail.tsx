@@ -567,6 +567,7 @@ const StoreProductDetail = ({
           user={user ? { name: user.name || user.email, email: user.email } : null}
           onLoginClick={onLoginClick}
           onChatClick={onOpenChat}
+          onCategoryClick={handleCategorySelect}
         />
       </Suspense>
     );
@@ -1075,7 +1076,7 @@ const StoreProductDetail = ({
     ).map((cat, idx) => (
       <div
         key={idx}
-        onClick={() => onCategoryClick?.(cat.name)}
+        onClick={() => onCategoryClick?.(cat.slug || cat.name)}
         className="group relative flex items-center gap-4 p-3 rounded-[16px] hover:bg-theme-primary/5 transition-all duration-300 cursor-pointer overflow-hidden active:scale-[0.98]"
       >
         {/* একটি সূক্ষ্ম লেফট বর্ডার ইন্ডিকেটর যা হোভারে দেখা যাবে */}
