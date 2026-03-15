@@ -146,8 +146,8 @@ const ProductCardComponent: React.FC<ProductCardProps> = ({
                     )}
                 </div>
 
-                {/* Action Buttons */}
-                <div className="flex gap-1.5 mt-1.5">
+                {/* Action Buttons — visible only on hover */}
+                <div className={`flex gap-1.5 overflow-hidden transition-all duration-300 ${isHovered ? 'max-h-12 opacity-100 mt-1.5' : 'max-h-0 opacity-0 mt-0'}`}>
                     <button
                         className={`flex-1 py-1.5 md:py-2 font-semibold rounded-lg text-[11px] md:text-xs flex items-center justify-center gap-1 transition-all duration-200 ${
                             isOutOfStock
