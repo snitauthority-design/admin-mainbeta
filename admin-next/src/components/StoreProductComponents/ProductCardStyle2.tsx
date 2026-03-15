@@ -50,11 +50,11 @@ const ProductCardStyle2: React.FC<ProductCardProps> = ({ product, onClick, onBuy
           />
         </button>
 
-        <div className="flex h-[130px] sm:h-[150px] md:h-[210px] w-full items-center justify-center overflow-hidden">
+        <div className="w-full overflow-hidden">
           <img 
             src={getImage(product)}
             alt={product?.name || 'Product'} 
-            className="w-full h-full object-cover"
+            className="w-full h-auto object-contain"
             loading="lazy"
           />
         </div>

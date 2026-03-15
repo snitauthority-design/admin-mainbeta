@@ -246,6 +246,23 @@ const StoreCheckout = ({
     { key: 'review', label: 'Review' }
   ], []);
 
+  const completedSteps = useMemo(() => {
+    const steps: Record<string, boolean> = {};
+    // Step 1 (Cart): Always completed since user is on checkout
+    steps.cart = true;
+    // Step 2 (Address): Completed when required address fields are filled
+    const addressFields = ['fullName', 'phone', 'division', 'district', 'address'];
+    steps.address = addressFields.every(field => {
+      const value = (formData as Record<string, string>)[field] || '';
+      return value.trim().length > 0;
+    });
+    // Step 3 (Payment): Completed when a payment method is selected
+    steps.payment = !!selectedPaymentMethod;
+    // Step 4 (Review): Completed when all previous steps are done
+    steps.review = steps.cart && steps.address && steps.payment;
+    return steps;
+  }, [formData, selectedPaymentMethod]);
+
   const validateField = useCallback((field: string, value: string) => {
     switch (field) {
       case 'fullName':
@@ -511,8 +528,9 @@ const StoreCheckout = ({
           </div>
           <div className="mt-2 sm:mt-4 flex flex-col md:flex-row gap-2 sm:gap-4">
             {progressSteps.map((step, index) => {
-              const active = index <= 2;
-              const isCompleted = index < 2;
+              const isCompleted = completedSteps[step.key] || false;
+              const prevCompleted = index === 0 || completedSteps[progressSteps[index - 1].key] || false;
+              const active = isCompleted || prevCompleted;
               return (
                 <div key={step.key} className="flex-1 flex items-center gap-1.5 sm:gap-2 md:gap-3">
                   <div
