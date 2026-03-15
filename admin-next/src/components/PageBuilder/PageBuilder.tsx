@@ -314,7 +314,7 @@ const StorePreview: React.FC<{ sections: PlacedSection[]; selectedSectionId: str
         );
       }
       case 'product-grid': {
-        const cols = typeof section.settings.columns === 'string' ? parseInt(section.settings.columns) : section.settings.columns;
+        const cols = typeof section.settings.columns === 'string' ? parseInt(section.settings.columns, 10) : section.settings.columns;
         const responsiveColumns = typeof window !== 'undefined' && window.innerWidth < 640 ? Math.min(cols, 2) : cols;
         const gridGap = section.settings.gap ? `${section.settings.gap}px` : undefined;
         return (
@@ -390,7 +390,7 @@ const StorePreview: React.FC<{ sections: PlacedSection[]; selectedSectionId: str
           </div>
         );
       case 'footer': {
-        const footerCols = typeof section.settings.columns === 'string' ? parseInt(section.settings.columns) : (section.settings.columns || 4);
+        const footerCols = typeof section.settings.columns === 'string' ? parseInt(section.settings.columns, 10) : (section.settings.columns || 4);
         return (
           <div className={`${baseClass} py-8 sm:py-10 px-4 sm:px-6`} style={{ backgroundColor: section.settings.footerBgColor || '#111827', color: section.settings.footerTextColor || 'white', ...customStyle }}>
             <div className="grid gap-4 sm:gap-6 mb-6" style={{ gridTemplateColumns: `repeat(${footerCols}, 1fr)` }}>
@@ -455,7 +455,7 @@ const StorePreview: React.FC<{ sections: PlacedSection[]; selectedSectionId: str
           </div>
         );
       case 'photo-gallery': {
-        const cols = typeof section.settings.columns === 'string' ? parseInt(section.settings.columns) : (section.settings.columns || 3);
+        const cols = typeof section.settings.columns === 'string' ? parseInt(section.settings.columns, 10) : (section.settings.columns || 3);
         const images = [section.settings.galleryImage1, section.settings.galleryImage2, section.settings.galleryImage3, section.settings.galleryImage4, section.settings.galleryImage5, section.settings.galleryImage6].filter(Boolean);
         return (
           <div className={`${baseClass} py-6 sm:py-8 px-4 sm:px-6`} style={customStyle}>
@@ -480,7 +480,7 @@ const StorePreview: React.FC<{ sections: PlacedSection[]; selectedSectionId: str
         );
       }
       case 'video-gallery': {
-        const cols = typeof section.settings.columns === 'string' ? parseInt(section.settings.columns) : (section.settings.columns || 2);
+        const cols = typeof section.settings.columns === 'string' ? parseInt(section.settings.columns, 10) : (section.settings.columns || 2);
         const videos = [section.settings.videoUrl1, section.settings.videoUrl2, section.settings.videoUrl3].filter(Boolean);
         return (
           <div className={`${baseClass} py-6 sm:py-8 px-4 sm:px-6`} style={{ backgroundColor: section.settings.backgroundColor, ...customStyle }}>

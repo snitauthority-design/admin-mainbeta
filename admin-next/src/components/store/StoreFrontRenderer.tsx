@@ -705,7 +705,7 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
         );
 
       case 'photo-gallery': {
-        const galleryCols = typeof settings?.columns === 'string' ? parseInt(settings.columns) : (settings?.columns || 3);
+        const galleryCols = typeof settings?.columns === 'string' ? parseInt(settings.columns, 10) : (settings?.columns || 3);
         const galleryImages = [
           settings?.galleryImage1, settings?.galleryImage2, settings?.galleryImage3,
           settings?.galleryImage4, settings?.galleryImage5, settings?.galleryImage6
@@ -741,21 +741,27 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
       }
 
       case 'video-gallery': {
-        const videoCols = typeof settings?.columns === 'string' ? parseInt(settings.columns) : (settings?.columns || 2);
+        const videoCols = typeof settings?.columns === 'string' ? parseInt(settings.columns, 10) : (settings?.columns || 2);
         const videoUrls = [settings?.videoUrl1, settings?.videoUrl2, settings?.videoUrl3].filter(Boolean);
         if (videoUrls.length === 0) return null;
         const getEmbedUrl = (url: string) => {
-          if (url.includes('youtube.com/watch?v=')) {
-            const videoId = url.split('v=')[1]?.split('&')[0];
-            return `https://www.youtube.com/embed/${videoId}`;
-          }
-          if (url.includes('youtu.be/')) {
-            const videoId = url.split('youtu.be/')[1]?.split('?')[0];
-            return `https://www.youtube.com/embed/${videoId}`;
-          }
-          if (url.includes('vimeo.com/')) {
-            const videoId = url.split('vimeo.com/')[1]?.split('?')[0];
-            return `https://player.vimeo.com/video/${videoId}`;
+          try {
+            const parsed = new URL(url);
+            const hostname = parsed.hostname;
+            if (hostname === 'www.youtube.com' || hostname === 'youtube.com') {
+              const videoId = parsed.searchParams.get('v');
+              if (videoId) return `https://www.youtube.com/embed/${encodeURIComponent(videoId)}`;
+            }
+            if (hostname === 'youtu.be') {
+              const videoId = parsed.pathname.slice(1).split('/')[0];
+              if (videoId) return `https://www.youtube.com/embed/${encodeURIComponent(videoId)}`;
+            }
+            if (hostname === 'vimeo.com' || hostname === 'www.vimeo.com') {
+              const videoId = parsed.pathname.slice(1).split('/')[0];
+              if (videoId && /^\d+$/.test(videoId)) return `https://player.vimeo.com/video/${encodeURIComponent(videoId)}`;
+            }
+          } catch {
+            // Invalid URL, return as-is
           }
           return url;
         };
