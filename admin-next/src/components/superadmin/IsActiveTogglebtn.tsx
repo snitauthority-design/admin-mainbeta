@@ -64,10 +64,10 @@ const IsActiveTogglebtn: React.FC<IsActiveTogglebtnProps> = ({
       actions.push({ label: 'Activate', action: 'activate', icon: <PlayCircle className="w-3.5 h-3.5" />, color: 'bg-emerald-600 hover:bg-emerald-700 text-white' });
     }
     if (tenant.status === 'active' || tenant.status === 'trialing') {
-      actions.push({ label: 'Suspend', action: 'suspend', icon: <Ban className="w-3.5 h-3.5" />, color: 'bg-orange-500 hover:bg-orange-600 text-white' });
-    }
-    if (tenant.status === 'active' || tenant.status === 'trialing') {
-      actions.push({ label: 'Block', action: 'block', icon: <XCircle className="w-3.5 h-3.5" />, color: 'bg-red-600 hover:bg-red-700 text-white' });
+      actions.push(
+        { label: 'Suspend', action: 'suspend', icon: <Ban className="w-3.5 h-3.5" />, color: 'bg-orange-500 hover:bg-orange-600 text-white' },
+        { label: 'Block', action: 'block', icon: <XCircle className="w-3.5 h-3.5" />, color: 'bg-red-600 hover:bg-red-700 text-white' }
+      );
     }
     if (tenant.status === 'suspended' || tenant.status === 'inactive') {
       actions.push({ label: 'Reactivate', action: 'reactivate', icon: <RotateCcw className="w-3.5 h-3.5" />, color: 'bg-blue-600 hover:bg-blue-700 text-white' });
