@@ -334,7 +334,10 @@ type CacheEntry<T> = { data: T; timestamp: number; tenantId?: string };
 const dataCache = new Map<string, CacheEntry<unknown>>();
 const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes cache - increased to prevent frequent resets
 
-const getCacheKey = (key: string, tenantId?: string) => `${tenantId || 'public'}::${key}`;
+const getCacheKey = (key: string, tenantId?: string) => {
+  const scope = (tenantId && tenantId.trim()) ? tenantId.trim() : 'public';
+  return `${scope}::${key}`;
+};
 
 // LocalStorage cache for instant loads
 const LOCAL_CACHE_PREFIX = 'ds_cache_';

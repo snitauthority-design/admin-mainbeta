@@ -118,6 +118,7 @@ export const CacheKeys = {
   tenantProducts: (tenantId: string) => `tenant:${tenantId}:products`,
   tenantOrders: (tenantId: string, page: number = 1) => `tenant:${tenantId}:orders:${page}`,
   tenantAnalytics: (tenantId: string, period: string) => `tenant:${tenantId}:analytics:${period}`,
+  storeStudioBatch: (tenantId: string) => `tenant:${tenantId}:store_studio_batch`,
   
   // User data
   userAuth: (userId: string) => `user:${userId}:auth`,

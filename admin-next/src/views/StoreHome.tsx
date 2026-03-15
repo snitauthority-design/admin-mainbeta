@@ -1,48 +1,27 @@
-
-import React, { lazy, Suspense, useCallback, useState, useEffect, useMemo } from 'react';
+import React, { lazy, Suspense, useCallback } from 'react';
 import type { Product, User, WebsiteConfig, Order, ProductVariantSelection } from '../types';
-import { noCacheFetchOptions } from '../utils/fetchHelpers';
-import { useLanguage } from '../context/LanguageContext';
 
 // Import storefront improvements CSS
 import '../styles/storefront-improvements.css';
 
-// Custom hook with all business logic
+// Custom hooks
 import { useStoreHome, formatSegment } from '../hooks/useStoreHome';
+import { useStoreStudioLayout } from '../hooks/useStoreStudioLayout';
 
-// Critical above-the-fold components - loaded EAGERLY (minimal set for first paint)
+// Critical above-the-fold component
 import { StoreHeader } from '../components/StoreHeader';
-import { HeroSection } from '../components/store/HeroSection';
-import { CategoriesSection } from '../components/store/CategoriesSection';
 
-// Skeletons - section-specific inline placeholders for accurate loading states
-import { 
-  SectionSkeleton, 
-  FooterSkeleton, 
-  StoreHomeSkeleton,
-  FlashSalesSkeleton,
-  ShowcaseSkeleton,
-  BrandSkeleton,
-  ProductGridSkeleton,
-  SearchResultsSkeleton
-} from '../components/store/skeletons';
+// Extracted sub-components
+import { StoreHomeModals } from '../components/store/StoreHomeModals';
+import { ScrollToTopButton } from '../components/store/ScrollToTopButton';
 
-// Near-fold components - lazy loaded but eagerly prefetched
-const FlashSalesSection = lazy(() => import('../components/store/FlashSalesSection').then(m => ({ default: m.FlashSalesSection })));
-const ProductGridSection = lazy(() => import('../components/store/ProductGridSection').then(m => ({ default: m.ProductGridSection })));
-const ShowcaseSection = lazy(() => import('../components/store/ShowcaseSection').then(m => ({ default: m.ShowcaseSection })));
-const BrandSection = lazy(() => import('../components/store/BrandSection').then(m => ({ default: m.BrandSection })));
-const LazySection = lazy(() => import('../components/store/LazySection').then(m => ({ default: m.LazySection })));
+// Skeletons
+import { SectionSkeleton, StoreHomeSkeleton } from '../components/store/skeletons';
 
-// Below-the-fold - lazy loaded
-const StorePopup = lazy(() => import('../components/StorePopup').then(m => ({ default: m.StorePopup })));
-const StoreFooter = lazy(() => import('../components/store/StoreFooter').then(m => ({ default: m.StoreFooter })));
-const ProductQuickViewModal = lazy(() => import('../components/store/ProductQuickViewModal').then(m => ({ default: m.ProductQuickViewModal })));
-const TrackOrderModal = lazy(() => import('../components/store/TrackOrderModal').then(m => ({ default: m.TrackOrderModal })));
+// Lazy loaded layout components
+const StoreHomeDefaultLayout = lazy(() => import('../components/store/StoreHomeDefaultLayout').then(m => ({ default: m.StoreHomeDefaultLayout })));
 const StoreCategoryProducts = lazy(() => import('../components/StoreCategoryProducts'));
-const SearchResultsSection = lazy(() => import('../components/store/SearchResultsSection').then(m => ({ default: m.SearchResultsSection })));
-const TagCountdownTimer = lazy(() => import('../components/store/TagCountdownTimer').then(m => ({ default: m.TagCountdownTimer })));
-// Dynamic storefront renderer for Page Builder layouts
+const StorePopup = lazy(() => import('../components/StorePopup').then(m => ({ default: m.StorePopup })));
 const StoreFrontRenderer = lazy(() => import('../components/store/StoreFrontRenderer').then(m => ({ default: m.StoreFrontRenderer })));
 const StoreFrontThemePage = lazy(() => import('../components/store/StoreFrontThemePage').then(m => ({ default: m.StoreFrontThemePage })));
 
@@ -113,14 +92,12 @@ const StoreHome: React.FC<StoreHomeProps> = ({
   onMobileMenuOpenRef,
   onCartOpenRef
 }) => {
-  const { t } = useLanguage();
-
   // Display skeleton only if products is undefined (still loading)
-  // If products is an empty array, the store has no products yet - show the page anyway
   if (products === undefined) {
     return <StoreHomeSkeleton />;
   }
-  // All state and logic from custom hook
+
+  // All state and logic from custom hooks
   const {
     isTrackOrderOpen,
     setIsTrackOrderOpen,
@@ -164,106 +141,15 @@ const StoreHome: React.FC<StoreHomeProps> = ({
     onSearchChange
   });
 
-
-  // === CUSTOM LAYOUT STATE ===
-  const [useCustomLayout, setUseCustomLayout] = useState(false);
-  const [customLayoutLoading, setCustomLayoutLoading] = useState(true);
-  const [customLayoutData, setCustomLayoutData] = useState(null);
-  const [storeStudioEnabled, setStoreStudioEnabled] = useState(false);
-  const [productDisplayOrder, setProductDisplayOrder] = useState<number[]>([]);
-  const [storeStudioStyles, setStoreStudioStyles] = useState<Record<string, string> | null>(null);
-
-  // Shared function to check and update custom layout state
-  const checkAndUpdateCustomLayout = useCallback(async (logPrefix = '') => {
-    if (!tenantId) return;
-    
-    try {
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
-      // Check store studio config, layout, and customization styles in parallel
-      const [configRes, layoutRes, stylesRes] = await Promise.all([
-        fetch(`${API_BASE_URL}/api/tenant-data/${tenantId}/store_studio_config`, noCacheFetchOptions),
-        fetch(`${API_BASE_URL}/api/tenant-data/${tenantId}/store_layout`, noCacheFetchOptions),
-        fetch(`${API_BASE_URL}/api/tenant-data/${tenantId}/store_customization`, noCacheFetchOptions)
-      ]);
-      
-      if (configRes.ok && layoutRes.ok) {
-        const configContentType = configRes.headers.get('content-type') || '';
-        const layoutContentType = layoutRes.headers.get('content-type') || '';
-        if (!configContentType.includes('application/json') || !layoutContentType.includes('application/json')) {
-          console.warn('[StoreHome] API returned non-JSON response, using default layout');
-          setCustomLayoutData(null);
-          setUseCustomLayout(false);
-          setCustomLayoutLoading(false);
-          return;
-        }
-        const [configResult, layoutResult] = await Promise.all([
-          configRes.json(),
-          layoutRes.json()
-        ]);
-        
-        const isStoreStudioEnabled = configResult.data?.enabled || false;
-        const hasCustomLayout = layoutResult.data?.sections?.length > 0;
-        const displayOrder = configResult.data?.productDisplayOrder || [];
-        
-        // Store the config and layout data to pass to StoreFrontRenderer
-        setStoreStudioEnabled(isStoreStudioEnabled);
-        setProductDisplayOrder(displayOrder);
-
-        // Fetch store studio style customizations
-        if (isStoreStudioEnabled && stylesRes.ok) {
-          try {
-            const stylesResult = await stylesRes.json();
-            if (stylesResult.data && typeof stylesResult.data === 'object') {
-              setStoreStudioStyles(stylesResult.data);
-            }
-          } catch {
-            console.warn('[StoreHome] Failed to parse store_customization styles');
-          }
-        } else {
-          setStoreStudioStyles(null);
-        }
-        
-        // When store studio is enabled, always use StoreFrontRenderer
-        // (blank page if no layout configured, custom layout if configured)
-        // When disabled, fallback to admin customization config
-        if (isStoreStudioEnabled) {
-          setCustomLayoutData(hasCustomLayout ? layoutResult.data : { sections: [] });
-          setUseCustomLayout(true);
-          if (hasCustomLayout) {
-            console.log(`[StoreHome]${logPrefix} Using custom layout from Store Studio`);
-          } else {
-            console.log(`[StoreHome]${logPrefix} Store Studio enabled but no layout configured, showing blank`);
-          }
-        } else {
-          setCustomLayoutData(null);
-          setUseCustomLayout(false);
-          setStoreStudioStyles(null);
-          console.log(`[StoreHome]${logPrefix} Store Studio is disabled, using default layout`);
-        }
-      }
-    } catch (e) {
-      console.log(`[StoreHome]${logPrefix} Error checking layout, using default:`, e);
-    }
-  }, [tenantId]);
-
-  // Check if tenant has store studio enabled and a custom layout saved (only on mount)
-  useEffect(() => {
-    const initCustomLayout = async () => {
-      if (!tenantId) {
-        setCustomLayoutLoading(false);
-        return;
-      }
-      await checkAndUpdateCustomLayout();
-      setCustomLayoutLoading(false);
-    };
-    initCustomLayout();
-  }, [tenantId, checkAndUpdateCustomLayout]);
-
-  // Merge store studio style customizations with websiteConfig when studio is enabled
-  const effectiveWebsiteConfig = useMemo<WebsiteConfig | undefined>(() => {
-    if (!storeStudioEnabled || !storeStudioStyles) return websiteConfig;
-    return { ...websiteConfig, ...storeStudioStyles } as WebsiteConfig;
-  }, [websiteConfig, storeStudioStyles, storeStudioEnabled]);
+  // Store Studio layout management (custom layout, styles, config)
+  const {
+    useCustomLayout,
+    customLayoutLoading,
+    customLayoutData,
+    storeStudioEnabled,
+    productDisplayOrder,
+    effectiveWebsiteConfig,
+  } = useStoreStudioLayout({ tenantId, websiteConfig });
 
   // === HANDLERS ===
   const selectInstantVariant = useCallback((product: Product): ProductVariantSelection => ({
@@ -379,31 +265,22 @@ const StoreHome: React.FC<StoreHomeProps> = ({
         tenantId={tenantId}
       />
       
-      {/* Track Order Modal */}
-      {isTrackOrderOpen && (
-        <Suspense fallback={<div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"><div className="animate-spin w-8 h-8 border-2 border-white border-t-transparent rounded-full" /></div>}>
-          <TrackOrderModal onClose={() => setIsTrackOrderOpen(false)} orders={orders} />
-        </Suspense>
-      )}
-     
-      {/* Quick View Modal */}
-      {quickViewProduct && (
-        <Suspense fallback={null}>
-          <ProductQuickViewModal
-            product={quickViewProduct}
-            onClose={() => setQuickViewProduct(null)}
-            onCompleteOrder={handleQuickViewOrder}
-            onViewDetails={(product) => {
-              setQuickViewProduct(null);
-              onProductClick(product);
-            }}
-          />
-        </Suspense>
-      )}
+      {/* Modals */}
+      <StoreHomeModals
+        isTrackOrderOpen={isTrackOrderOpen}
+        onCloseTrackOrder={() => setIsTrackOrderOpen(false)}
+        orders={orders}
+        quickViewProduct={quickViewProduct}
+        onCloseQuickView={() => setQuickViewProduct(null)}
+        onQuickViewOrder={handleQuickViewOrder}
+        onViewDetails={(product) => {
+          setQuickViewProduct(null);
+          onProductClick(product);
+        }}
+      />
       
       {/* Conditional: Custom Layout vs Default Layout */}
       {customLayoutLoading ? (
-        // Show loading skeleton while checking Store Studio status
         <StoreHomeSkeleton />
       ) : useCustomLayout ? (
         <Suspense fallback={<StoreHomeSkeleton />}>
@@ -424,7 +301,7 @@ const StoreHome: React.FC<StoreHomeProps> = ({
             wishlist={wishlist}
             onToggleWishlist={onToggleWishlist}
             onCategoryClick={handleCategoryClick}
-            onBrandClick={(slug) => handleCategoryClick(slug)}
+            onBrandClick={(slug) => handleCategoryClick(`brand:${slug}`)}
             onOpenChat={onOpenChat}
             layoutData={customLayoutData}
             storeStudioEnabled={storeStudioEnabled}
@@ -447,220 +324,44 @@ const StoreHome: React.FC<StoreHomeProps> = ({
           />
         </Suspense>
       ) : (
-        <>
-      {/* Hero Section */}
-      <section className="max-w-[1720px] mx-auto px-0.5 sm:px-1 lg:px-1.5 pt-0.5">
-        <HeroSection carouselItems={websiteConfig?.carouselItems} websiteConfig={websiteConfig} />
-      </section>
-
-      {/* Categories Section */}
-      {displayCategories.length > 0 && (
-        <section ref={categoriesSectionRef} className="max-w-[1720px] mx-auto px-0.5 sm:px-1 lg:px-1.5">
-          <CategoriesSection
-            style={(websiteConfig?.categorySectionStyle as any) || 'style6'}
-            categories={displayCategories}
-            onCategoryClick={handleCategoryClick}
+        <Suspense fallback={<StoreHomeSkeleton />}>
+          <StoreHomeDefaultLayout
+            websiteConfig={websiteConfig}
+            displayCategories={displayCategories}
+            flashSalesProducts={flashSalesProducts}
+            bestSaleProducts={bestSaleProducts}
+            popularProducts={popularProducts}
+            activeProducts={activeProducts}
+            sortedProducts={sortedProducts}
+            brands={brands}
+            tags={tags}
+            logo={logo}
+            tenantId={tenantId}
+            hasSearchQuery={hasSearchQuery}
+            searchTerm={searchTerm}
+            sortOption={sortOption}
+            onSortChange={setSortOption}
+            onClearSearch={() => {
+              updateSearchTerm('');
+              setSortOption('relevance');
+            }}
+            showFlashSaleCounter={showFlashSaleCounter}
+            flashSaleCountdown={flashSaleCountdown}
+            categoriesSectionRef={categoriesSectionRef}
+            productsSectionRef={productsSectionRef}
             categoryScrollRef={categoryScrollRef as React.RefObject<HTMLDivElement>}
+            onProductClick={onProductClick}
+            onBuyNow={handleBuyNow}
+            onQuickView={setQuickViewProduct}
+            onAddToCart={handleAddProductToCartFromCard}
+            onCategoryClick={handleCategoryClick}
+            wishlist={wishlist}
+            onToggleWishlist={onToggleWishlist}
+            onOpenChat={onOpenChat}
           />
-        </section>
+        </Suspense>
       )}
 
-      {/* Main Content */}
-      <main className="max-w-[1720px] mx-auto px-0.5 sm:px-1 lg:px-1.5 space-y-0.5 sm:space-y-1 pb-20 md:pb-1" style={{ minHeight: '680px', contain: 'layout' }}>
-        {hasSearchQuery ? (
-          <Suspense fallback={<SearchResultsSkeleton />}>
-            <SearchResultsSection
-              searchTerm={searchTerm.trim()}
-              products={sortedProducts}
-              sortOption={sortOption}
-              onSortChange={setSortOption}
-              onClearSearch={() => {
-                updateSearchTerm('');
-                setSortOption('relevance');
-              }}
-              onProductClick={onProductClick}
-              onBuyNow={handleBuyNow}
-              onQuickView={setQuickViewProduct}
-              onAddToCart={handleAddProductToCartFromCard}
-              productCardStyle={websiteConfig?.productCardStyle}
-              wishlist={wishlist}
-              onToggleWishlist={onToggleWishlist}
-            />
-          </Suspense>
-        ) : (
-          <>
-            {/* Flash Deals */}
-            {flashSalesProducts.length > 0 && (
-              <Suspense fallback={<FlashSalesSkeleton />}>
-                <FlashSalesSection
-                  products={flashSalesProducts}
-                  showCounter={showFlashSaleCounter}
-                  countdown={flashSaleCountdown}
-                  onProductClick={onProductClick}
-                  onBuyNow={handleBuyNow}
-                  onQuickView={setQuickViewProduct}
-                  onAddToCart={handleAddProductToCartFromCard}
-                  wishlist={wishlist}
-                  onToggleWishlist={onToggleWishlist}
-                  productCardStyle={websiteConfig?.productCardStyle}
-                  sectionRef={productsSectionRef as React.RefObject<HTMLElement>}
-                />
-              </Suspense>
-            )}
-
-            {/* Showcase Section */}
-            {bestSaleProducts.length > 0 && websiteConfig?.showcaseSectionStyle && websiteConfig.showcaseSectionStyle !== 'none' && (
-              <Suspense fallback={<ShowcaseSkeleton />}>
-                <LazySection fallback={<ShowcaseSkeleton />} rootMargin="0px 0px 300px" minHeight="400px">
-                  <ShowcaseSection
-                    products={bestSaleProducts.slice(0, 12)}
-                    onProductClick={onProductClick}
-                    onBuyNow={handleBuyNow}
-                    onQuickView={setQuickViewProduct}
-                    onAddToCart={handleAddProductToCartFromCard}
-                    wishlist={wishlist}
-                    onToggleWishlist={onToggleWishlist}
-                    productCardStyle={websiteConfig?.productCardStyle}
-                    style={websiteConfig?.showcaseSectionStyle}
-                  />
-                </LazySection>
-              </Suspense>
-            )}
-
-            {/* Brand Section */}
-            {brands && brands.length > 0 && websiteConfig?.brandSectionStyle && websiteConfig.brandSectionStyle !== 'none' && (
-              <Suspense fallback={<BrandSkeleton />}>
-                <LazySection fallback={<BrandSkeleton />} rootMargin="0px 0px 300px" minHeight="200px">
-                  <BrandSection
-                    brands={brands}
-                    onBrandClick={(brand) => handleCategoryClick(`brand:${brand.slug || brand.name}`)}
-                    style={websiteConfig?.brandSectionStyle}
-                  />
-                </LazySection>
-              </Suspense>
-            )}
-
-            {/* Best Sale Products */}
-            {bestSaleProducts.length > 0 && (
-              <Suspense fallback={<ProductGridSkeleton count={10} />}>
-                <LazySection fallback={<ProductGridSkeleton count={10} />} rootMargin="0px 0px 300px" minHeight="400px">
-                  <ProductGridSection
-                    title={t('best_sale')}
-                    products={bestSaleProducts}
-                    accentColor="green"
-                    keyPrefix="best"
-                    maxProducts={10}
-                    reverseOrder={true}
-                    onProductClick={onProductClick}
-                    onBuyNow={handleBuyNow}
-                    onQuickView={setQuickViewProduct}
-                    onAddToCart={handleAddProductToCartFromCard}
-                    wishlist={wishlist}
-                    onToggleWishlist={onToggleWishlist}
-                    productCardStyle={websiteConfig?.productCardStyle}
-                    productSectionStyle={websiteConfig?.productSectionStyle}
-                  />
-                </LazySection>
-              </Suspense>
-            )}
-
-            {/* Popular Products */}
-            {popularProducts.length > 0 && (
-              <Suspense fallback={<ProductGridSkeleton count={10} />}>
-                <LazySection fallback={<ProductGridSkeleton count={10} />} rootMargin="0px 0px 300px" minHeight="400px">
-                  <ProductGridSection
-                    title={t('popular_products')}
-                    products={popularProducts}
-                    accentColor="purple"
-                    keyPrefix="pop"
-                    maxProducts={10}
-                    reverseOrder={false}
-                    onProductClick={onProductClick}
-                    onBuyNow={handleBuyNow}
-                    onQuickView={setQuickViewProduct}
-                    onAddToCart={handleAddProductToCartFromCard}
-                    wishlist={wishlist}
-                    onToggleWishlist={onToggleWishlist}
-                    productCardStyle={websiteConfig?.productCardStyle}
-                    productSectionStyle={websiteConfig?.productSectionStyle}
-                  />
-                </LazySection>
-              </Suspense>
-            )}
-
-            {/* Tag-based Product Sections */}
-            {tags?.filter(t => !t.status || t.status === 'Active' || t.status?.toLowerCase() === 'active').map((tag, idx) => {
-              const tagProducts = activeProducts.filter(p => 
-                Array.isArray(p.tags) && p.tags.some((pt: any) => (typeof pt === 'string' ? pt : pt?.name)?.toLowerCase() === tag.name?.toLowerCase())
-              );
-              if (!tagProducts.length) return null;
-              const colors = ['purple', 'orange', 'blue', 'green', 'purple'] as const;
-              return (
-                <Suspense key={tag.id || tag.name} fallback={<ProductGridSkeleton count={10} />}>
-                  <LazySection fallback={<ProductGridSkeleton count={10} />} rootMargin="0px 0px 300px" minHeight="400px">
-                    <ProductGridSection
-                        title={tag.name}
-                        titleExtra={tag.showCountdown && tag.expiresAt && new Date(tag.expiresAt).getTime() > Date.now() ? (
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-xs sm:text-sm font-semibold" style={{ color: 'rgb(var(--color-secondary-rgb, 236 72 153))' }}>Ends in</span>
-                            <Suspense fallback={<span className="text-xs text-gray-400">...</span>}>
-                              <TagCountdownTimer expiresAt={tag.expiresAt} tagName={tag.name} />
-                            </Suspense>
-                          </div>
-                        ) : undefined}
-                        products={tagProducts}
-                        accentColor={colors[idx % colors.length] as 'purple' | 'orange' | 'blue' | 'green'}
-                        keyPrefix={`tag-${tag.name}`}
-                        maxProducts={10}
-                        reverseOrder={false}
-                        onProductClick={onProductClick}
-                        onBuyNow={handleBuyNow}
-                        onQuickView={setQuickViewProduct}
-                        onAddToCart={handleAddProductToCartFromCard}
-                        wishlist={wishlist}
-                        onToggleWishlist={onToggleWishlist}
-                        productCardStyle={websiteConfig?.productCardStyle}
-                        productSectionStyle={websiteConfig?.productSectionStyle}
-                      />
-                  </LazySection>
-                </Suspense>
-              );
-            })}
-
-            {/* All Products */}
-            {activeProducts.length > 0 && (
-              <Suspense fallback={<ProductGridSkeleton count={10} />}>
-                <LazySection fallback={<ProductGridSkeleton count={10} />} rootMargin="0px 0px 300px" minHeight="500px">
-                  <ProductGridSection
-                    title={t('all_products')}
-                    products={activeProducts}
-                    accentColor="blue"
-                    keyPrefix="all"
-                    maxProducts={50}
-                    reverseOrder={false}
-                    onProductClick={onProductClick}
-                    onBuyNow={handleBuyNow}
-                    onQuickView={setQuickViewProduct}
-                    onAddToCart={handleAddProductToCartFromCard}
-                    wishlist={wishlist}
-                    onToggleWishlist={onToggleWishlist}
-                    productCardStyle={websiteConfig?.productCardStyle}
-                    productSectionStyle={websiteConfig?.productSectionStyle}
-                  />
-                </LazySection>
-              </Suspense>
-            )}
-          </>
-        )}
-      </main>
-
-      {/* Footer */}
-      <Suspense fallback={<FooterSkeleton />}>
-        <StoreFooter websiteConfig={websiteConfig} logo={logo} tenantId={tenantId} onOpenChat={onOpenChat} />
-      </Suspense>
-      
-        </>
-      )}
       {/* Popup */}
       {activePopup && (
         <Suspense fallback={null}>
@@ -673,17 +374,7 @@ const StoreHome: React.FC<StoreHomeProps> = ({
       )}
 
       {/* Scroll to Top Button */}
-      <button
-        className={`fixed bottom-20 md:bottom-4 right-3 bg-gradient-to-r from-purple-600 to-purple-500 text-white rounded-full p-2.5 shadow-lg transition-all duration-300 z-40 ${
-          showScrollToTop ? 'opacity-100' : 'opacity-0 pointer-events-none'
-        }`}
-        onClick={scrollToTop}
-        aria-label="Scroll to top"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-        </svg>
-      </button>
+      <ScrollToTopButton visible={showScrollToTop} onClick={scrollToTop} />
     </div>
   );
 };

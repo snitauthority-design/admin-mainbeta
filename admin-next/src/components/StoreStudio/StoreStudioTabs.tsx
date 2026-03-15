@@ -1,7 +1,7 @@
 import React from 'react';
-import { Settings, Layout, Grid } from 'lucide-react';
+import { Settings, Layout, Grid, Palette } from 'lucide-react';
 
-type TabId = 'settings' | 'layout' | 'products';
+type TabId = 'settings' | 'styles' | 'layout' | 'products';
 
 interface StoreStudioTabsProps {
   activeTab: TabId;
@@ -10,6 +10,7 @@ interface StoreStudioTabsProps {
 
 const tabs: { id: TabId; label: string; icon: React.ReactNode }[] = [
   { id: 'settings', label: 'Settings', icon: <Settings className="w-4 h-4" /> },
+  { id: 'styles', label: 'Styles', icon: <Palette className="w-4 h-4" /> },
   { id: 'layout', label: 'Layout Builder', icon: <Layout className="w-4 h-4" /> },
   { id: 'products', label: 'Product Order', icon: <Grid className="w-4 h-4" /> },
 ];

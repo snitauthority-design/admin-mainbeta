@@ -7,6 +7,7 @@ import { getAuthHeader } from '../../services/authService';
 import StoreStudioHeader from './StoreStudioHeader';
 import StoreStudioTabs from './StoreStudioTabs';
 import StoreStudioSettings from './StoreStudioSettings';
+import StoreStudioStyles from './StoreStudioStyles';
 import ProductOrderManager from './ProductOrderManager';
 
 // Lazy load PageBuilder for the Layout tab
@@ -31,7 +32,7 @@ export const StoreStudioManager: React.FC<StoreStudioManagerProps> = ({
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState<'settings' | 'layout' | 'products'>('layout');
+  const [activeTab, setActiveTab] = useState<'settings' | 'styles' | 'layout' | 'products'>('layout');
   
   // Ref to store the config before toggle for proper rollback
   const configBeforeToggleRef = useRef<StoreStudioConfig | null>(null);
@@ -239,6 +240,10 @@ export const StoreStudioManager: React.FC<StoreStudioManagerProps> = ({
       <div className={activeTab === 'layout' ? '' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'}>
         {activeTab === 'settings' && (
           <StoreStudioSettings enabled={config.enabled} />
+        )}
+
+        {activeTab === 'styles' && (
+          <StoreStudioStyles tenantId={tenantId} />
         )}
 
         {activeTab === 'layout' && (
