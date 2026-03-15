@@ -197,7 +197,7 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
       icon: <img src="https://hdnfltv.com/image/nitimages/invoice.webp" alt="Orders" className="w-5 h-5 object-contain" />,
       hasDropdown: true,
       children: [
-        { id: 'all_orders', label: t('orders'), icon: <ChevronRight className="w-4 h-4" /> },
+        { id: 'all_orders', label: 'All Orders', icon: <ChevronRight className="w-4 h-4" /> },
         { id: 'incomplete_orders', label: 'Incomplete Orders', icon: <ChevronRight className="w-4 h-4" /> },
       ]
     },
