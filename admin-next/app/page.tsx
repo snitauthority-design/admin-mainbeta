@@ -14,15 +14,18 @@ const StoreHome = dynamic(() => import('@/views/StoreHome'));
 
 // Named exports: wrap in { default } for next/dynamic
 const MobileBottomNav = dynamic(() => 
-  import('@/components/store/MobileBottomNav').then((m) => ({ default: m.MobileBottomNav }))
+  import('@/components/store/MobileBottomNav').then((m) => ({ default: m.MobileBottomNav })),
+  { ssr: false }
 );
 
 const StoreChatModal = dynamic(() => 
-  import('@/components/store/StoreChatModal').then((m) => ({ default: m.StoreChatModal }))
+  import('@/components/store/StoreChatModal').then((m) => ({ default: m.StoreChatModal })),
+  { ssr: false }
 );
 
 const LoginModal = dynamic(() => 
-  import('@/components/store/LoginModal').then((m) => ({ default: m.LoginModal }))
+  import('@/components/store/LoginModal').then((m) => ({ default: m.LoginModal })),
+  { ssr: false }
 );
 
 function StorePageSkeleton() {

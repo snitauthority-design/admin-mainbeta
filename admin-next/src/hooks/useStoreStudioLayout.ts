@@ -1,5 +1,35 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import type { WebsiteConfig } from '../types';
+
+const CACHE_KEY_PREFIX = 'store_studio_batch_';
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
+const FETCH_TIMEOUT_MS = 5000; // 5 second timeout
+
+interface CachedBatchData {
+  data: any;
+  timestamp: number;
+}
+
+const getCachedBatch = (tenantId: string): CachedBatchData | null => {
+  try {
+    const raw = sessionStorage.getItem(CACHE_KEY_PREFIX + tenantId);
+    if (!raw) return null;
+    const parsed: CachedBatchData = JSON.parse(raw);
+    if (Date.now() - parsed.timestamp > CACHE_TTL_MS) {
+      sessionStorage.removeItem(CACHE_KEY_PREFIX + tenantId);
+      return null;
+    }
+    return parsed;
+  } catch {
+    return null;
+  }
+};
+
+const setCachedBatch = (tenantId: string, data: any) => {
+  try {
+    sessionStorage.setItem(CACHE_KEY_PREFIX + tenantId, JSON.stringify({ data, timestamp: Date.now() }));
+  } catch {}
+};
 
 interface UseStoreStudioLayoutProps {
   tenantId?: string;
@@ -25,17 +55,61 @@ export const useStoreStudioLayout = ({
   const [storeStudioEnabled, setStoreStudioEnabled] = useState(false);
   const [productDisplayOrder, setProductDisplayOrder] = useState<number[]>([]);
   const [storeStudioStyles, setStoreStudioStyles] = useState<Record<string, string> | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
+
+  const applyBatchResult = useCallback((batchResult: any, logPrefix = '') => {
+    const { config: configData, layout: layoutData, styles: stylesData } = batchResult.data || {};
+
+    const isStoreStudioEnabled = configData?.enabled || false;
+    const hasCustomLayout = layoutData?.sections?.length > 0;
+    const displayOrder = configData?.productDisplayOrder || [];
+
+    setStoreStudioEnabled(isStoreStudioEnabled);
+    setProductDisplayOrder(displayOrder);
+
+    if (isStoreStudioEnabled && stylesData && typeof stylesData === 'object') {
+      setStoreStudioStyles(stylesData);
+    } else {
+      setStoreStudioStyles(null);
+    }
+
+    if (isStoreStudioEnabled) {
+      setCustomLayoutData(hasCustomLayout ? layoutData : { sections: [] });
+      setUseCustomLayout(true);
+    } else {
+      setCustomLayoutData(null);
+      setUseCustomLayout(false);
+      setStoreStudioStyles(null);
+    }
+  }, []);
 
   // Shared function to check and update custom layout state
   const checkAndUpdateCustomLayout = useCallback(async (logPrefix = '') => {
     if (!tenantId) return;
-    
+
+    // Try session cache first for instant load
+    const cached = getCachedBatch(tenantId);
+    if (cached) {
+      applyBatchResult(cached.data, logPrefix + ' (cached)');
+      setCustomLayoutLoading(false);
+      return;
+    }
+
     try {
+      // Abort any in-flight request
+      abortRef.current?.abort();
+      const controller = new AbortController();
+      abortRef.current = controller;
+
+      // Set timeout to prevent hanging
+      const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+
       const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
-      // Use single batch endpoint instead of 3 parallel calls for faster loading
       const batchRes = await fetch(
-        `${API_BASE_URL}/api/tenant-data/${tenantId}/store_studio_batch`
+        `${API_BASE_URL}/api/tenant-data/${tenantId}/store_studio_batch`,
+        { signal: controller.signal }
       );
+      clearTimeout(timeoutId);
       
       if (batchRes.ok) {
         const contentType = batchRes.headers.get('content-type') || '';
@@ -47,45 +121,22 @@ export const useStoreStudioLayout = ({
           return;
         }
         const batchResult = await batchRes.json();
-        const { config: configData, layout: layoutData, styles: stylesData } = batchResult.data || {};
         
-        const isStoreStudioEnabled = configData?.enabled || false;
-        const hasCustomLayout = layoutData?.sections?.length > 0;
-        const displayOrder = configData?.productDisplayOrder || [];
-        
-        // Store the config and layout data to pass to StoreFrontRenderer
-        setStoreStudioEnabled(isStoreStudioEnabled);
-        setProductDisplayOrder(displayOrder);
-
-        // Set store studio style customizations
-        if (isStoreStudioEnabled && stylesData && typeof stylesData === 'object') {
-          setStoreStudioStyles(stylesData);
-        } else {
-          setStoreStudioStyles(null);
-        }
-        
-        // When store studio is enabled, always use StoreFrontRenderer
-        // (blank page if no layout configured, custom layout if configured)
-        // When disabled, fallback to admin customization config
-        if (isStoreStudioEnabled) {
-          setCustomLayoutData(hasCustomLayout ? layoutData : { sections: [] });
-          setUseCustomLayout(true);
-          if (hasCustomLayout) {
-            console.log(`[StoreHome]${logPrefix} Using custom layout from Store Studio`);
-          } else {
-            console.log(`[StoreHome]${logPrefix} Store Studio enabled but no layout configured, showing blank`);
-          }
-        } else {
-          setCustomLayoutData(null);
-          setUseCustomLayout(false);
-          setStoreStudioStyles(null);
-          console.log(`[StoreHome]${logPrefix} Store Studio is disabled, using default layout`);
-        }
+        // Cache the result for subsequent navigations
+        setCachedBatch(tenantId, batchResult);
+        applyBatchResult(batchResult, logPrefix);
       }
-    } catch (e) {
-      console.log(`[StoreHome]${logPrefix} Error checking layout, using default:`, e);
+    } catch (e: any) {
+      if (e?.name === 'AbortError') {
+        console.warn(`[StoreHome]${logPrefix} Layout fetch timed out, using default layout`);
+      } else {
+        console.log(`[StoreHome]${logPrefix} Error checking layout, using default:`, e);
+      }
+      // Fallback to default layout on any error
+      setCustomLayoutData(null);
+      setUseCustomLayout(false);
     }
-  }, [tenantId]);
+  }, [tenantId, applyBatchResult]);
 
   // Check if tenant has store studio enabled and a custom layout saved (only on mount)
   useEffect(() => {
@@ -98,6 +149,10 @@ export const useStoreStudioLayout = ({
       setCustomLayoutLoading(false);
     };
     initCustomLayout();
+
+    return () => {
+      abortRef.current?.abort();
+    };
   }, [tenantId, checkAndUpdateCustomLayout]);
 
   // Merge store studio style customizations with websiteConfig when studio is enabled

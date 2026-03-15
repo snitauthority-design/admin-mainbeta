@@ -89,7 +89,7 @@ export const useStoreHome = ({
     const handleScroll = () => {
       setShowScrollToTop(window.scrollY > 300);
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -347,9 +347,10 @@ export const useStoreHome = ({
 
   // === FLASH SALE COUNTDOWN ===
   const showFlashSaleCounter = websiteConfig?.showFlashSaleCounter ?? true;
+  const hasFlashProducts = flashSalesProducts.length > 0;
 
   useEffect(() => {
-    if (!showFlashSaleCounter) return;
+    if (!showFlashSaleCounter || !hasFlashProducts) return;
 
     flashSaleEndRef.current = getNextFlashSaleReset();
     setFlashTimeLeft(getTimeSegments(flashSaleEndRef.current - Date.now()));
@@ -364,7 +365,7 @@ export const useStoreHome = ({
       }
     }, 1000);
     return () => clearInterval(timer);
-  }, [showFlashSaleCounter]);
+  }, [showFlashSaleCounter, hasFlashProducts]);
 
   // === CATEGORY AUTO SCROLL (Style 2) ===
   useEffect(() => {

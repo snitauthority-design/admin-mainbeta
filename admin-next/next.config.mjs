@@ -12,6 +12,15 @@ const nextConfig = {
   },
   experimental: {
     missingSuspenseWithCSRBailout: false,
+    optimizePackageImports: [
+      'lucide-react',
+      'recharts',
+      '@dnd-kit/core',
+      '@dnd-kit/sortable',
+      '@dnd-kit/utilities',
+      'firebase/app',
+      'firebase/auth',
+    ],
   },
   transpilePackages: ['swiper'],
 
