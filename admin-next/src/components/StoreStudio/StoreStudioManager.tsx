@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 import { StoreStudioConfig, Product } from '../../types';
 import { DataService } from '../../services/DataService';
 import { noCacheFetchOptions } from '../../utils/fetchHelpers';
+import { getAuthHeader } from '../../services/authService';
 import ProductOrderManager from './ProductOrderManager';
 
 // Lazy load PageBuilder for the Layout tab
@@ -79,9 +80,7 @@ export const StoreStudioManager: React.FC<StoreStudioManagerProps> = ({
       const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
       const response = await fetch(`${API_BASE_URL}/api/tenant-data/${tenantId}/store_studio_config`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: getAuthHeader(),
         body: JSON.stringify(config),
       });
 
@@ -135,9 +134,7 @@ export const StoreStudioManager: React.FC<StoreStudioManagerProps> = ({
       const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
       const response = await fetch(`${API_BASE_URL}/api/tenant-data/${tenantId}/store_studio_config`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: getAuthHeader(),
         body: JSON.stringify(newConfig),
       });
 
@@ -168,9 +165,7 @@ export const StoreStudioManager: React.FC<StoreStudioManagerProps> = ({
       const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
       const response = await fetch(`${API_BASE_URL}/api/tenant-data/${tenantId}/product_display_order`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: getAuthHeader(),
         body: JSON.stringify({ productDisplayOrder: order }),
       });
 

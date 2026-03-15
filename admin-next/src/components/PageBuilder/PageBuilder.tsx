@@ -5,6 +5,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { v4 as uuidv4 } from 'uuid';
 import toast from 'react-hot-toast';
 import { uploadPreparedImageToServer } from '../../services/imageUploadService';
+import { getAuthHeader } from '../../services/authService';
 import ComponentLibrary from './components/ComponentLibrary';
 import { getStoreUrl } from '../../utils/appHelpers';
 
@@ -1169,7 +1170,7 @@ const PageBuilder: React.FC<PageBuilderProps> = ({ tenantId }) => {
     try {
       const res = await fetch(`/api/tenant-data/${tenantId}/store_layout`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeader(),
         body: JSON.stringify({ data: { sections, updatedAt: new Date().toISOString() } })
       });
       
@@ -1197,7 +1198,7 @@ const PageBuilder: React.FC<PageBuilderProps> = ({ tenantId }) => {
       const updated = { ...existing.data, [configKey]: styleValue };
       const saveRes = await fetch(`/api/tenant-data/${tenantId}/store_customization`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeader(),
         body: JSON.stringify({ data: updated })
       });
       if (saveRes.ok) {
