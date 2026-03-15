@@ -43,7 +43,7 @@ const getStyleValue = (variantId: string): string => {
   return match ? `style${match[1]}` : 'style1';
 };
 
-// Variant Preview Card with real thumbnail images
+// Variant Preview Card - shows style name and description; selecting shows live preview
 const VariantPreviewCard: React.FC<{ 
   variant: SectionVariant; 
   onAdd: () => void;
@@ -52,8 +52,6 @@ const VariantPreviewCard: React.FC<{
   isStyleSelector?: boolean;
   onHoverPreview?: (thumbnail: string | null) => void;
 }> = ({ variant, onAdd, onSelectStyle, isSelected, isStyleSelector, onHoverPreview }) => {
-  const [imageError, setImageError] = useState(false);
-  
   const handleClick = () => {
     if (isStyleSelector && onSelectStyle) {
       onSelectStyle();
@@ -61,38 +59,29 @@ const VariantPreviewCard: React.FC<{
       onAdd();
     }
   };
-
-  const handleMouseEnter = () => {
-    if (variant.thumbnail && onHoverPreview) {
-      onHoverPreview(variant.thumbnail);
-    }
-  };
-
-  const handleMouseLeave = () => {
-    if (onHoverPreview) {
-      onHoverPreview(null);
-    }
-  };
   
   return (
     <div 
       className={`relative cursor-pointer transition-all ${isSelected ? 'ring-2 ring-indigo-500 rounded-lg' : ''}`}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
       onClick={handleClick}
     >
       <div className={`border rounded-lg overflow-hidden transition-all bg-white ${isSelected ? 'border-indigo-500 shadow-lg' : 'border-gray-200 hover:border-indigo-400 hover:shadow-md'}`}>
-        {/* Preview Image */}
-        <div className="h-20 relative overflow-hidden bg-gray-100">
-          {variant.thumbnail && !imageError ? (
-            <img 
-              src={variant.thumbnail} 
-              alt={variant.name}
-              className="w-full h-full object-cover object-top"
-              onError={() => setImageError(true)}
-              loading="lazy"
-            />
+        {/* Preview Area */}
+        <div className={`${isStyleSelector ? 'h-16' : 'h-20'} relative overflow-hidden`}>
+          {isStyleSelector ? (
+            /* Theme styles: show name and description as label */
+            <div className={`w-full h-full flex flex-col items-center justify-center gap-1 px-2 ${
+              isSelected 
+                ? 'bg-indigo-50' 
+                : 'bg-gradient-to-br from-gray-50 to-gray-100 hover:from-indigo-50 hover:to-blue-50'
+            }`}>
+              <span className={`text-xs font-semibold text-center ${isSelected ? 'text-indigo-700' : 'text-gray-600'}`}>
+                {variant.name}
+              </span>
+              <span className="text-[10px] text-gray-400 text-center leading-tight">{variant.description}</span>
+            </div>
           ) : (
+            /* Non-theme variants: show description */
             <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
               <span className="text-[10px] text-gray-400 text-center px-2">{variant.description}</span>
             </div>
@@ -100,15 +89,17 @@ const VariantPreviewCard: React.FC<{
           
           {/* Selected indicator */}
           {isSelected && (
-            <div className="absolute to p-2 right-2 w-6 h-6 bg-indigo-500 rounded-full flex items-center justify-center text-white">
+            <div className="absolute top-1.5 right-1.5 w-5 h-5 bg-indigo-500 rounded-full flex items-center justify-center text-white">
               <CheckIcon />
             </div>
           )}
         </div>
         
         {/* Variant Name */}
-        <div className="px-2 py-1.5 border-t border-gray-100">
-          <span className="text-xs font-medium text-gray-700 block truncate">{variant.name}</span>
+        <div className={`px-2 py-1.5 border-t ${isSelected ? 'border-indigo-200 bg-indigo-50' : 'border-gray-100'}`}>
+          <span className={`text-xs font-medium block truncate ${isSelected ? 'text-indigo-700' : 'text-gray-700'}`}>
+            {isStyleSelector ? (isSelected ? '✓ Selected' : 'Click to apply') : variant.name}
+          </span>
         </div>
       </div>
     </div>
@@ -180,10 +171,37 @@ const CategoryAccordion: React.FC<{
           {hasThemeStyles && (
             <div className="mb-2 px-1">
               <span className="text-xs text-indigo-600 font-medium">
-                ✨ Click to apply style globally
+                ✨ Select a style to preview and apply
               </span>
             </div>
           )}
+          
+          {/* Show actual store preview of currently selected style */}
+          {hasThemeStyles && selectedStyleId && (() => {
+            const selectedVariant = filteredVariants.find(v => v.id === selectedStyleId);
+            if (selectedVariant?.thumbnail) {
+              return (
+                <div className="mb-3 rounded-lg overflow-hidden border border-indigo-200 shadow-sm">
+                  <div className="px-2 py-1 bg-indigo-50 text-[10px] text-indigo-600 font-medium flex items-center gap-1">
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-label="Preview icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" strokeWidth="2"/><circle cx="12" cy="12" r="3" strokeWidth="2"/></svg>
+                    Live Preview — How it looks in your store
+                  </div>
+                  <img 
+                    src={selectedVariant.thumbnail} 
+                    alt={`${selectedVariant.name} — Store Preview`}
+                    className="w-full h-auto object-cover"
+                    loading="lazy"
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                  />
+                  <div className="px-2 py-1.5 bg-indigo-50 text-xs text-indigo-700 font-medium text-center">
+                    {selectedVariant.name} — Currently Applied
+                  </div>
+                </div>
+              );
+            }
+            return null;
+          })()}
+          
           <div className="grid grid-cols-2 gap-2">
             {filteredVariants.map((variant) => (
               <VariantPreviewCard 

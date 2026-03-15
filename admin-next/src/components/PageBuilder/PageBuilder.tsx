@@ -5,6 +5,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { v4 as uuidv4 } from 'uuid';
 import toast from 'react-hot-toast';
 import { uploadPreparedImageToServer } from '../../services/imageUploadService';
+import { getAuthHeader } from '../../services/authService';
 import ComponentLibrary from './components/ComponentLibrary';
 import { getStoreUrl } from '../../utils/appHelpers';
 
@@ -1169,7 +1170,7 @@ const PageBuilder: React.FC<PageBuilderProps> = ({ tenantId }) => {
     try {
       const res = await fetch(`/api/tenant-data/${tenantId}/store_layout`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeader(),
         body: JSON.stringify({ data: { sections, updatedAt: new Date().toISOString() } })
       });
       
@@ -1178,6 +1179,16 @@ const PageBuilder: React.FC<PageBuilderProps> = ({ tenantId }) => {
         setSaveMessage({ type: 'success', text: 'Layout saved! Your store has been updated.' });
         setTimeout(() => setSaveMessage(null), 3000);
         console.log('[PageBuilder] Layout saved successfully');
+        // Clear server cache so store reflects changes immediately
+        try {
+          await fetch(`/api/tenant-data/${tenantId}/clear-cache`, {
+            method: 'POST',
+            headers: getAuthHeader(),
+          });
+          console.log('[PageBuilder] Cache cleared after layout save');
+        } catch (cacheErr) {
+          console.warn('[PageBuilder] Failed to clear cache:', cacheErr);
+        }
       } else {
         throw new Error('Failed to save');
       }
@@ -1197,11 +1208,21 @@ const PageBuilder: React.FC<PageBuilderProps> = ({ tenantId }) => {
       const updated = { ...existing.data, [configKey]: styleValue };
       const saveRes = await fetch(`/api/tenant-data/${tenantId}/store_customization`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeader(),
         body: JSON.stringify({ data: updated })
       });
       if (saveRes.ok) {
         toast.success(`${configKey.replace(/Style$/, '').replace(/([A-Z])/g, ' $1').trim()} updated to ${styleValue}`);
+        // Clear server cache so store reflects the style change immediately
+        try {
+          await fetch(`/api/tenant-data/${tenantId}/clear-cache`, {
+            method: 'POST',
+            headers: getAuthHeader(),
+          });
+          console.log('[PageBuilder] Cache cleared after style change');
+        } catch (cacheErr) {
+          console.warn('[PageBuilder] Failed to clear cache:', cacheErr);
+        }
       }
     } catch (e) {
       console.error('[PageBuilder] Failed to save theme style:', e);
