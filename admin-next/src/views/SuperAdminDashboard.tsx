@@ -742,26 +742,32 @@ const SuperAdminDashboard: React.FC = () => {
 
   // Tenant status update handler
   const handleUpdateTenantStatus = useCallback(async (tenantId: string, status: Tenant['status'], reason?: string): Promise<void> => {
+    if (!tenantId) {
+      toast.error('Invalid tenant ID');
+      return;
+    }
     try {
       // Map frontend status values to backend-supported enum
-      const backendStatus = status === 'inactive' ? 'suspended' : status;
+      // Backend accepts: trialing, active, suspended, archived
+      const statusMapping: Record<string, string> = {
+        inactive: 'suspended',
+        pending: 'trialing',
+      };
+      const backendStatus = statusMapping[status] || status;
       
       const response = await fetch(`${API_URL}/tenants/${tenantId}/status`, {
         method: 'PATCH',
-        headers: {
-          ...getAuthHeader(),
-          'Content-Type': 'application/json',
-        },
+        headers: getAuthHeader(),
         body: JSON.stringify({ status: backendStatus }),
       });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Failed to update tenant status');
+        throw new Error(errorData.error || `Failed to update tenant status (${response.status})`);
       }
       
       const updatedTenants = tenants.map(t => 
-        t.id === tenantId 
+        (t.id === tenantId || t._id === tenantId)
           ? { 
               ...t, 
               status,
@@ -1165,6 +1171,8 @@ const SuperAdminDashboard: React.FC = () => {
               onUpdateTrialSettings={async (settings) => {
                 await SubscriptionService.updateTrialSettings(settings);
               }}
+              tenants={tenants}
+              onUpdateTenantStatus={handleUpdateTenantStatus}
             />
           </React.Suspense>
         );

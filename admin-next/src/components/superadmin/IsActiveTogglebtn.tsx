@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
-  CheckCircle2, AlertCircle, Search, UserCheck, 
-  UserX, Ban, PlayCircle, X, ChevronRight, 
-  Loader2, Store, Building2, Globe
+  CheckCircle2, Search, 
+  Ban, PlayCircle, X, 
+  Loader2, Store, Building2, XCircle, RotateCcw, CreditCard
 } from 'lucide-react';
 import { getPrimaryDomain } from '../../utils/appHelpers';
+import type { Tenant } from '../../types';
 
 // Status colors matching your main theme
-const STATUS_COLORS = {
+const STATUS_COLORS: Record<string, { bg: string; text: string; dot: string; border: string }> = {
   active: { bg: 'bg-emerald-50', text: 'text-emerald-700', dot: 'bg-emerald-500', border: 'border-emerald-200' },
   trialing: { bg: 'bg-amber-50', text: 'text-amber-700', dot: 'bg-amber-500', border: 'border-amber-200' },
   suspended: { bg: 'bg-red-50', text: 'text-red-700', dot: 'bg-red-500', border: 'border-red-200' },
@@ -15,24 +16,37 @@ const STATUS_COLORS = {
   pending: { bg: 'bg-blue-50', text: 'text-blue-700', dot: 'bg-blue-500', border: 'border-blue-200' },
 };
 
-const IsActiveTogglebtn = ({ 
+interface IsActiveTogglebtnProps {
+  tenants?: Tenant[];
+  primaryDomain?: string;
+  onSelectTenant?: (tenant: Tenant, action: string) => Promise<void>;
+  isProcessing?: boolean;
+}
+
+const IsActiveTogglebtn: React.FC<IsActiveTogglebtnProps> = ({ 
   tenants = [], 
   primaryDomain = getPrimaryDomain() || 'localhost',
-  onSelectTenant, // This is the required prop from your error
+  onSelectTenant,
   isProcessing = false 
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedTenant, setSelectedTenant] = useState(null);
-  const [actionModal, setActionModal] = useState(null); // { tenant, action }
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [actionModal, setActionModal] = useState<{ tenant: Tenant; action: string } | null>(null);
 
-  // Filter tenants based on search
-  const filteredTenants = tenants.filter(t => 
-    t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    t.subdomain?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Filter tenants based on search and status
+  const filteredTenants = tenants.filter(t => {
+    const matchesSearch = t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      t.subdomain?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = statusFilter === 'all' || t.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
 
-  const handleActionClick = (tenant, action) => {
+  const statusCounts = tenants.reduce((acc, t) => {
+    acc[t.status] = (acc[t.status] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
+  const handleActionClick = (tenant: Tenant, action: string) => {
     setActionModal({ tenant, action });
   };
 
@@ -43,106 +57,143 @@ const IsActiveTogglebtn = ({
     }
   };
 
+  const getActionButtons = (tenant: Tenant) => {
+    const actions: { label: string; action: string; icon: React.ReactNode; color: string }[] = [];
+    
+    if (tenant.status !== 'active') {
+      actions.push({ label: 'Activate', action: 'activate', icon: <PlayCircle className="w-3.5 h-3.5" />, color: 'bg-emerald-600 hover:bg-emerald-700 text-white' });
+    }
+    if (tenant.status === 'active' || tenant.status === 'trialing') {
+      actions.push({ label: 'Suspend', action: 'suspend', icon: <Ban className="w-3.5 h-3.5" />, color: 'bg-orange-500 hover:bg-orange-600 text-white' });
+    }
+    if (tenant.status === 'active' || tenant.status === 'trialing') {
+      actions.push({ label: 'Block', action: 'block', icon: <XCircle className="w-3.5 h-3.5" />, color: 'bg-red-600 hover:bg-red-700 text-white' });
+    }
+    if (tenant.status === 'suspended' || tenant.status === 'inactive') {
+      actions.push({ label: 'Reactivate', action: 'reactivate', icon: <RotateCcw className="w-3.5 h-3.5" />, color: 'bg-blue-600 hover:bg-blue-700 text-white' });
+    }
+    return actions;
+  };
+
   return (
-    <div className="relative">
-      {/* Trigger Button */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl shadow-sm hover:bg-gray-50 transition active:scale-95"
-      >
-        <Building2 className="w-4 h-4 text-emerald-600" />
-        <span className="font-medium text-gray-700 text-sm">Manage Status</span>
-        <ChevronRight className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? 'rotate-90' : ''}`} />
-      </button>
+    <div className="p-3 sm:p-6">
+      {/* Header */}
+      <div className="mb-4 sm:mb-6">
+        <div className="flex items-center gap-2 mb-1 sm:mb-2">
+          <Building2 className="w-5 h-5 sm:w-6 sm:h-6 text-emerald-600" />
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-800">Package Management</h1>
+        </div>
+        <p className="text-sm sm:text-base text-slate-600">Manage tenant status - activate, suspend, block, or reactivate stores</p>
+      </div>
 
-      {/* Main Dropdown List */}
-      {isOpen && (
-        <>
-          <div 
-            className="fixed inset-0 z-40 bg-black/5 sm:bg-transparent" 
-            onClick={() => setIsOpen(false)} 
-          />
-          <div className="absolute top-full left-0 mt-2 w-72 sm:w-80 bg-white border border-gray-200 rounded-2xl shadow-xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2">
-            <div className="p-3 border-b bg-gray-50/50">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search stores..."
-                  className="w-full pl-9 pr-3 py-1.5 text-sm bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  autoFocus
-                />
-              </div>
-            </div>
+      {/* Status Filter Cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3 mb-4 sm:mb-6">
+        {[
+          { key: 'all', label: 'All', count: tenants.length, color: 'bg-slate-100 text-slate-700' },
+          { key: 'active', label: 'Active', count: statusCounts['active'] || 0, color: 'bg-emerald-50 text-emerald-700' },
+          { key: 'trialing', label: 'Trialing', count: statusCounts['trialing'] || 0, color: 'bg-amber-50 text-amber-700' },
+          { key: 'suspended', label: 'Suspended', count: statusCounts['suspended'] || 0, color: 'bg-red-50 text-red-700' },
+          { key: 'inactive', label: 'Inactive', count: statusCounts['inactive'] || 0, color: 'bg-gray-100 text-gray-600' },
+        ].map(item => (
+          <button
+            key={item.key}
+            onClick={() => setStatusFilter(item.key)}
+            className={`p-2 sm:p-3 rounded-xl border-2 transition-all text-center ${
+              statusFilter === item.key
+                ? 'border-emerald-500 shadow-sm'
+                : 'border-transparent hover:border-slate-200'
+            } ${item.color}`}
+          >
+            <div className="text-lg sm:text-2xl font-bold">{item.count}</div>
+            <div className="text-[10px] sm:text-xs font-medium">{item.label}</div>
+          </button>
+        ))}
+      </div>
 
-            <div className="max-h-64 overflow-y-auto divide-y divide-gray-100">
-              {filteredTenants.length === 0 ? (
-                <div className="p-8 text-center text-gray-400 text-sm">
-                  No stores found
-                </div>
-              ) : (
-                filteredTenants.map((tenant) => {
-                  const status = STATUS_COLORS[tenant.status] || STATUS_COLORS.inactive;
-                  return (
-                    <div 
-                      key={tenant.id}
-                      className="p-3 hover:bg-emerald-50/50 transition cursor-pointer group"
-                      onClick={() => setSelectedTenant(tenant)}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600">
-                            <Store className="w-4 h-4" />
-                          </div>
-                          <div>
-                            <p className="font-semibold text-gray-800 text-sm truncate w-32">{tenant.name}</p>
-                            <p className="text-[10px] text-gray-400 truncate">{tenant.subdomain}.{primaryDomain}</p>
-                          </div>
-                        </div>
-                        <div className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${status.bg} ${status.text} ${status.border}`}>
-                          {tenant.status}
-                        </div>
-                      </div>
-                      
-                      {/* Action Buttons inside List (Quick Actions) */}
-                      <div className="mt-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        {tenant.status !== 'active' && (
-                          <button 
-                            onClick={(e) => { e.stopPropagation(); handleActionClick(tenant, 'activate'); }}
-                            className="flex-1 py-1 bg-emerald-600 text-white text-[10px] rounded-md hover:bg-emerald-700 flex items-center justify-center gap-1"
-                          >
-                            <PlayCircle className="w-3 h-3" /> Activate
-                          </button>
-                        )}
-                        {tenant.status === 'active' && (
-                          <button 
-                            onClick={(e) => { e.stopPropagation(); handleActionClick(tenant, 'suspend'); }}
-                            className="flex-1 py-1 bg-orange-500 text-white text-[10px] rounded-md hover:bg-orange-600 flex items-center justify-center gap-1"
-                          >
-                            <Ban className="w-3 h-3" /> Suspend
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })
-              )}
-            </div>
+      {/* Search Bar */}
+      <div className="relative mb-4">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+        <input
+          type="text"
+          placeholder="Search stores by name or subdomain..."
+          className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
+
+      {/* Tenant Cards */}
+      <div className="space-y-3">
+        {filteredTenants.length === 0 ? (
+          <div className="text-center py-12 text-slate-400">
+            <Store className="w-12 h-12 mx-auto mb-3 opacity-50" />
+            <p className="text-sm">No stores found</p>
           </div>
-        </>
-      )}
+        ) : (
+          filteredTenants.map((tenant) => {
+            const status = STATUS_COLORS[tenant.status] || STATUS_COLORS.inactive;
+            const actions = getActionButtons(tenant);
+
+            return (
+              <div
+                key={tenant.id || tenant._id}
+                className="bg-white rounded-xl shadow-sm border border-slate-200 p-3 sm:p-4 hover:shadow-md transition-shadow"
+              >
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                  {/* Tenant Info */}
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-100 flex-shrink-0 flex items-center justify-center text-emerald-600">
+                      <Store className="w-5 h-5" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="font-semibold text-slate-800 text-sm truncate">{tenant.name}</p>
+                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border ${status.bg} ${status.text} ${status.border}`}>
+                          <span className={`w-1.5 h-1.5 rounded-full ${status.dot}`} />
+                          {tenant.status}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-400 truncate">{tenant.subdomain}.{primaryDomain}</p>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex flex-wrap gap-1.5 sm:flex-nowrap sm:gap-2">
+                    {actions.map(({ label, action, icon, color }) => (
+                      <button
+                        key={action}
+                        onClick={() => handleActionClick(tenant as Tenant, action)}
+                        className={`flex-1 sm:flex-none px-2.5 sm:px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-medium flex items-center justify-center gap-1 transition-colors ${color}`}
+                      >
+                        {icon} {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
 
       {/* The Popup Modal (Action Confirmation) */}
       {actionModal && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 animate-in zoom-in-95">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6">
             <div className="flex justify-between items-start mb-4">
               <div className={`p-3 rounded-2xl ${
-                actionModal.action === 'activate' ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'
+                actionModal.action === 'activate' || actionModal.action === 'reactivate'
+                  ? 'bg-emerald-100 text-emerald-600' 
+                  : actionModal.action === 'suspend'
+                  ? 'bg-orange-100 text-orange-600'
+                  : 'bg-red-100 text-red-600'
               }`}>
-                {actionModal.action === 'activate' ? <UserCheck className="w-6 h-6" /> : <Ban className="w-6 h-6" />}
+                {actionModal.action === 'activate' || actionModal.action === 'reactivate'
+                  ? <PlayCircle className="w-6 h-6" />
+                  : actionModal.action === 'suspend'
+                  ? <Ban className="w-6 h-6" />
+                  : <XCircle className="w-6 h-6" />
+                }
               </div>
               <button onClick={() => setActionModal(null)} className="text-gray-400 hover:text-gray-600">
                 <X className="w-5 h-5" />
@@ -153,8 +204,8 @@ const IsActiveTogglebtn = ({
               {actionModal.action} Store?
             </h3>
             <p className="text-gray-500 text-sm mb-6">
-              You are about to <strong>{actionModal.action}</strong> the store "<strong>{actionModal.tenant.name}</strong>". 
-              This will affect the store's accessibility immediately.
+              You are about to <strong>{actionModal.action}</strong> the store &ldquo;<strong>{actionModal.tenant.name}</strong>&rdquo;. 
+              This will affect the store&apos;s accessibility immediately.
             </p>
 
             <div className="flex gap-3">
@@ -168,7 +219,11 @@ const IsActiveTogglebtn = ({
                 onClick={confirmAction}
                 disabled={isProcessing}
                 className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-white font-medium rounded-xl transition ${
-                  actionModal.action === 'activate' ? 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-200 shadow-lg' : 'bg-red-600 hover:bg-red-700 shadow-red-200 shadow-lg'
+                  actionModal.action === 'activate' || actionModal.action === 'reactivate'
+                    ? 'bg-emerald-600 hover:bg-emerald-700'
+                    : actionModal.action === 'suspend'
+                    ? 'bg-orange-500 hover:bg-orange-600'
+                    : 'bg-red-600 hover:bg-red-700'
                 }`}
               >
                 {isProcessing ? (
