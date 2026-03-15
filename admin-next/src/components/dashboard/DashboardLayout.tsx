@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { DashboardSidebar } from './DashboardSidebar';
 import FigmaDashboardHeader from './FigmaDashboardHeader';
+import { AdminBottomNav } from './AdminBottomNav';
 import { SidebarProps, DashboardHeaderProps } from './types';
 import { Menu, X } from 'lucide-react';
 
@@ -131,11 +132,18 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto">
-          <div className="space-y-3 sm:space-y-4 lg:space-y-5 p-2 sm:p-3 md:p-4 lg:p-5 xl:p-6">
+          <div className="space-y-3 sm:space-y-4 lg:space-y-5 p-2 sm:p-3 md:p-4 lg:p-5 xl:p-6 pb-20 lg:pb-6">
             {children}
           </div>
         </div>
       </div>
+
+      {/* Mobile Bottom Navigation */}
+      <AdminBottomNav
+        activeItem={sidebarProps.activeItem}
+        onNavigate={(page) => sidebarProps.onNavigate?.(page)}
+        onMenuClick={() => setSidebarOpen(true)}
+      />
     </div>
   );
 };
