@@ -3,6 +3,7 @@ import toast from 'react-hot-toast';
 import { Product, Category, SubCategory, ChildCategory, Brand, Tag } from '../../../types';
 import { useAuth } from '../../../context/AuthContext';
 import { uploadAndSaveToGallery } from '../../../services/imageUploadService';
+import { showErrorWithWhatsApp } from '../../../utils/errorReporter';
 import { FormData } from './types';
 
 interface UseProductFormParams {
@@ -240,7 +241,8 @@ export function useProductForm({
       return imageUrl;
     } catch (error) {
       console.error('Upload error:', error);
-      toast.error(error instanceof Error ? error.message : 'Upload failed');
+      const msg = error instanceof Error ? error.message : 'Upload failed';
+      showErrorWithWhatsApp('Image Upload', `Upload failed: ${msg}`, `File: ${file.name}`);
       return null;
     }
   };
@@ -320,7 +322,8 @@ export function useProductForm({
         toast.success('Variant image uploaded');
       }
     } catch (error) {
-      toast.error('Failed to upload variant image');
+      const msg = error instanceof Error ? error.message : 'Unknown error';
+      showErrorWithWhatsApp('Variant Image Upload', `Failed to upload variant image: ${msg}`);
     } finally {
       setUploadingVariantImage(null);
     }
@@ -368,7 +371,8 @@ export function useProductForm({
       }
       toast.success(`${uploadedUrls.length} image(s) uploaded`, { id: 'upload' });
     } else {
-      toast.error('Failed to upload images', { id: 'upload' });
+      toast.dismiss('upload');
+      showErrorWithWhatsApp('Image Upload', 'Failed to upload images');
     }
 
     e.target.value = '';
@@ -398,7 +402,8 @@ export function useProductForm({
       updateField('unfilteredImages', [...formData.unfilteredImages, ...newUnfilteredImages]);
       toast.success(`${newUnfilteredImages.length} unfiltered image(s) uploaded`, { id: 'upload-unfiltered' });
     } else {
-      toast.error('Failed to upload unfiltered images', { id: 'upload-unfiltered' });
+      toast.dismiss('upload-unfiltered');
+      showErrorWithWhatsApp('Unfiltered Image Upload', 'Failed to upload unfiltered images');
     }
 
     e.target.value = '';
@@ -489,7 +494,8 @@ export function useProductForm({
       }
       toast.success(`${uploadedUrls.length} image(s) uploaded`, { id: 'upload-drop' });
     } else {
-      toast.error('Failed to upload images', { id: 'upload-drop' });
+      toast.dismiss('upload-drop');
+      showErrorWithWhatsApp('Image Upload (Drop)', 'Failed to upload images');
     }
   };
 
@@ -511,7 +517,8 @@ export function useProductForm({
         toast.success('Image uploaded');
       }
     } catch (error) {
-      toast.error('Failed to upload image');
+      const msg = error instanceof Error ? error.message : 'Unknown error';
+      showErrorWithWhatsApp('Catalog Image Upload', `Failed to upload image: ${msg}`);
     } finally {
       setUploadingCatalogImage(false);
     }

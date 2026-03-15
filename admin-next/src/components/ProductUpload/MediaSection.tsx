@@ -3,6 +3,7 @@ import { Upload, X, Play, Scan } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { uploadImageToServer } from '../../services/imageUploadService';
 import { normalizeImageUrl } from '../../utils/imageUrlHelper';
+import { showErrorWithWhatsApp } from '../../utils/errorReporter';
 
 interface MediaSectionProps {
   data: any;
@@ -36,7 +37,8 @@ const MediaSection: React.FC<MediaSectionProps> = ({ data, tenantId, onChange })
       onChange({ mainImage: imageUrl });
       toast.success('Image uploaded successfully');
     } catch (error) {
-      toast.error('Failed to upload image');
+      const msg = error instanceof Error ? error.message : 'Unknown error';
+      showErrorWithWhatsApp('Product Image Upload', `Failed to upload image: ${msg}`);
       console.error(error);
     } finally {
       setUploading(false);
@@ -55,7 +57,8 @@ const MediaSection: React.FC<MediaSectionProps> = ({ data, tenantId, onChange })
       });
       toast.success(`${uploadedUrls.length} images uploaded`);
     } catch (error) {
-      toast.error('Failed to upload images');
+      const msg = error instanceof Error ? error.message : 'Unknown error';
+      showErrorWithWhatsApp('Gallery Image Upload', `Failed to upload images: ${msg}`);
       console.error(error);
     } finally {
       setUploading(false);
@@ -79,7 +82,8 @@ const MediaSection: React.FC<MediaSectionProps> = ({ data, tenantId, onChange })
       });
       toast.success(`${uploadedUrls.length} unfiltered image(s) uploaded`);
     } catch (error) {
-      toast.error('Failed to upload unfiltered images');
+      const msg = error instanceof Error ? error.message : 'Unknown error';
+      showErrorWithWhatsApp('Unfiltered Image Upload', `Failed to upload unfiltered images: ${msg}`);
       console.error(error);
     } finally {
       setUploading(false);

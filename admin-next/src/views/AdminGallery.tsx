@@ -26,6 +26,7 @@ import { normalizeImageUrl } from '../utils/imageUrlHelper';
 import { ImageGridSkeleton } from '../components/SkeletonLoaders';
 import toast from 'react-hot-toast';
 import { useTenant } from '../hooks/useTenant';
+import { showErrorWithWhatsApp } from '../utils/errorReporter';
 
 const GALLERY_IMAGES: GalleryItem[] = [];
 
@@ -454,6 +455,7 @@ const AdminGallery: React.FC = () => {
       return;
     }
 
+    const errors: string[] = [];
     const uploadPromises = Array.from(files).map(async (file) => {
       try {
         const imageUrl = await uploadPreparedImageToServer(file, tenantId, 'gallery');
@@ -466,7 +468,9 @@ const AdminGallery: React.FC = () => {
         };
         return newItem;
       } catch (error) {
+        const msg = error instanceof Error ? error.message : 'Unknown error';
         console.error('Failed to upload:', file.name, error);
+        errors.push(`${file.name}: ${msg}`);
         return null;
       }
     });
@@ -477,6 +481,14 @@ const AdminGallery: React.FC = () => {
     if (uploaded.length > 0) {
       setImages(prev => [...uploaded, ...prev]);
       toast.success(`${uploaded.length} image(s) uploaded`);
+    }
+
+    if (errors.length > 0) {
+      showErrorWithWhatsApp(
+        'Gallery Upload',
+        `Failed to upload ${errors.length} image(s)`,
+        errors.join('; ')
+      );
     }
     
     if (input) input.value = '';
@@ -524,6 +536,7 @@ const AdminGallery: React.FC = () => {
       return;
     }
 
+    const errors: string[] = [];
     const uploadPromises = imageFiles.map(async (file) => {
       try {
         const imageUrl = await uploadPreparedImageToServer(file, tenantId, 'gallery');
@@ -536,7 +549,9 @@ const AdminGallery: React.FC = () => {
         };
         return newItem;
       } catch (error) {
+        const msg = error instanceof Error ? error.message : 'Unknown error';
         console.error('Failed to upload:', file.name, error);
+        errors.push(`${file.name}: ${msg}`);
         return null;
       }
     });
@@ -547,6 +562,14 @@ const AdminGallery: React.FC = () => {
     if (uploaded.length > 0) {
       setImages(prev => [...uploaded, ...prev]);
       toast.success(`${uploaded.length} image(s) uploaded`);
+    }
+
+    if (errors.length > 0) {
+      showErrorWithWhatsApp(
+        'Gallery Upload (Drop)',
+        `Failed to upload ${errors.length} image(s)`,
+        errors.join('; ')
+      );
     }
   };
 
