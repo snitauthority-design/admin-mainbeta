@@ -1,7 +1,6 @@
 
 import React, { lazy, Suspense, useCallback, useState, useEffect, useMemo } from 'react';
 import type { Product, User, WebsiteConfig, Order, ProductVariantSelection } from '../types';
-import { noCacheFetchOptions } from '../utils/fetchHelpers';
 import { useLanguage } from '../context/LanguageContext';
 
 // Import storefront improvements CSS
@@ -179,46 +178,34 @@ const StoreHome: React.FC<StoreHomeProps> = ({
     
     try {
       const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
-      // Check store studio config, layout, and customization styles in parallel
-      const [configRes, layoutRes, stylesRes] = await Promise.all([
-        fetch(`${API_BASE_URL}/api/tenant-data/${tenantId}/store_studio_config`, noCacheFetchOptions),
-        fetch(`${API_BASE_URL}/api/tenant-data/${tenantId}/store_layout`, noCacheFetchOptions),
-        fetch(`${API_BASE_URL}/api/tenant-data/${tenantId}/store_customization`, noCacheFetchOptions)
-      ]);
+      // Use single batch endpoint instead of 3 parallel calls for faster loading
+      const batchRes = await fetch(
+        `${API_BASE_URL}/api/tenant-data/${tenantId}/store_studio_batch`
+      );
       
-      if (configRes.ok && layoutRes.ok) {
-        const configContentType = configRes.headers.get('content-type') || '';
-        const layoutContentType = layoutRes.headers.get('content-type') || '';
-        if (!configContentType.includes('application/json') || !layoutContentType.includes('application/json')) {
+      if (batchRes.ok) {
+        const contentType = batchRes.headers.get('content-type') || '';
+        if (!contentType.includes('application/json')) {
           console.warn('[StoreHome] API returned non-JSON response, using default layout');
           setCustomLayoutData(null);
           setUseCustomLayout(false);
           setCustomLayoutLoading(false);
           return;
         }
-        const [configResult, layoutResult] = await Promise.all([
-          configRes.json(),
-          layoutRes.json()
-        ]);
+        const batchResult = await batchRes.json();
+        const { config: configData, layout: layoutData, styles: stylesData } = batchResult.data || {};
         
-        const isStoreStudioEnabled = configResult.data?.enabled || false;
-        const hasCustomLayout = layoutResult.data?.sections?.length > 0;
-        const displayOrder = configResult.data?.productDisplayOrder || [];
+        const isStoreStudioEnabled = configData?.enabled || false;
+        const hasCustomLayout = layoutData?.sections?.length > 0;
+        const displayOrder = configData?.productDisplayOrder || [];
         
         // Store the config and layout data to pass to StoreFrontRenderer
         setStoreStudioEnabled(isStoreStudioEnabled);
         setProductDisplayOrder(displayOrder);
 
-        // Fetch store studio style customizations
-        if (isStoreStudioEnabled && stylesRes.ok) {
-          try {
-            const stylesResult = await stylesRes.json();
-            if (stylesResult.data && typeof stylesResult.data === 'object') {
-              setStoreStudioStyles(stylesResult.data);
-            }
-          } catch {
-            console.warn('[StoreHome] Failed to parse store_customization styles');
-          }
+        // Set store studio style customizations
+        if (isStoreStudioEnabled && stylesData && typeof stylesData === 'object') {
+          setStoreStudioStyles(stylesData);
         } else {
           setStoreStudioStyles(null);
         }
@@ -227,7 +214,7 @@ const StoreHome: React.FC<StoreHomeProps> = ({
         // (blank page if no layout configured, custom layout if configured)
         // When disabled, fallback to admin customization config
         if (isStoreStudioEnabled) {
-          setCustomLayoutData(hasCustomLayout ? layoutResult.data : { sections: [] });
+          setCustomLayoutData(hasCustomLayout ? layoutData : { sections: [] });
           setUseCustomLayout(true);
           if (hasCustomLayout) {
             console.log(`[StoreHome]${logPrefix} Using custom layout from Store Studio`);

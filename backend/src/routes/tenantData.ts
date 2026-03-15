@@ -1,7 +1,7 @@
 import { Router, Request } from 'express';
 import { z } from 'zod';
 import { getTenantData, setTenantData, getTenantDataBatch } from '../services/tenantDataService';
-import { getCached, setCachedWithTTL, CacheKeys, deleteCached, clearAllTenantCache } from '../services/redisCache';
+import { getCached, setCachedWithTTL, CacheKeys, deleteCached, clearAllTenantCache, invalidateTenantCache } from '../services/redisCache';
 import { getTenantBySubdomain } from '../services/tenantsService';
 import { createAuditLog } from './auditLogs';
 import { Server as SocketIOServer } from 'socket.io';
@@ -220,6 +220,59 @@ tenantDataRouter.get('/:tenantId/secondary', async (req, res, next) => {
   }
 });
 
+// Store Studio batch endpoint - returns config, layout, and styles in ONE call
+// This replaces 3 parallel API calls from StoreHome for faster page loads
+tenantDataRouter.get('/:tenantId/store_studio_batch', async (req, res, next) => {
+  try {
+    const rawTenantId = req.params.tenantId;
+    if (!rawTenantId) {
+      return res.status(400).json({ error: 'tenantId is required' });
+    }
+
+    const tenantId = await resolveTenantId(rawTenantId);
+
+    // Check Redis cache first
+    const cacheKey = `tenant:${tenantId}:store_studio_batch`;
+    const cached = await getCached<unknown>(cacheKey);
+    if (cached !== null) {
+      res.set({ 'Cache-Control': 'public, max-age=30, stale-while-revalidate=60' });
+      return res.json({ data: cached });
+    }
+
+    // Fetch all three in a single batch DB query
+    const data = await getTenantDataBatch<{
+      store_studio_config: unknown;
+      store_layout: unknown;
+      store_customization: unknown;
+    }>(tenantId, ['store_studio_config', 'store_layout', 'store_customization']);
+
+    const defaultConfig = {
+      tenantId,
+      enabled: false,
+      productDisplayOrder: [],
+      customLayout: null,
+      updatedAt: new Date().toISOString()
+    };
+
+    const configData = data.store_studio_config;
+    const hasValidConfig = configData && typeof configData === 'object' && Object.keys(configData).length > 0;
+
+    const result = {
+      config: hasValidConfig ? configData : defaultConfig,
+      layout: data.store_layout || null,
+      styles: data.store_customization || null
+    };
+
+    // Cache for 5 minutes
+    await setCachedWithTTL(cacheKey, result, 'short');
+
+    res.set({ 'Cache-Control': 'public, max-age=30, stale-while-revalidate=60' });
+    res.json({ data: result });
+  } catch (error) {
+    next(error);
+  }
+});
+
 // Store Studio Configuration Endpoints
 // NOTE: These specific routes MUST be defined BEFORE the generic /:tenantId/:key routes
 // otherwise Express will match the generic route first
@@ -293,26 +346,33 @@ tenantDataRouter.put('/:tenantId/store_studio_config', authenticateToken, requir
     
     await setTenantData(tenantId, 'store_studio_config', config);
     
+    // Invalidate store studio batch cache so storefront gets fresh data
+    await deleteCached(`tenant:${tenantId}:store_studio_batch`);
+    
     // Emit real-time update
     emitDataUpdate(req, tenantId, 'store_studio_config', config);
     
     // Create audit log
-    await createAuditLog({
-      tenantId,
-      userId: user?._id || user?.id || 'system',
-      userName: user?.name || 'System',
-      userRole: user?.role || 'system',
-      action: 'Store Studio Config Updated',
-      actionType: 'update',
-      resourceType: 'settings',
-      resourceId: tenantId,
-      resourceName: 'store_studio_config',
-      details: `Store Studio ${config.enabled ? 'enabled' : 'disabled'}`,
-      metadata: { enabled: config.enabled },
-      ipAddress: req.ip,
-      userAgent: req.headers['user-agent'],
-      status: 'success'
-    });
+    try {
+      await createAuditLog({
+        tenantId,
+        userId: user?._id || user?.id || 'system',
+        userName: user?.name || 'System',
+        userRole: user?.role || 'system',
+        action: 'Store Studio Config Updated',
+        actionType: 'update',
+        resourceType: 'settings',
+        resourceId: tenantId,
+        resourceName: 'store_studio_config',
+        details: `Store Studio ${config.enabled ? 'enabled' : 'disabled'}`,
+        metadata: { enabled: config.enabled },
+        ipAddress: req.ip,
+        userAgent: req.headers['user-agent'],
+        status: 'success'
+      });
+    } catch (auditErr) {
+      console.warn('[TenantData] Audit log failed for store_studio_config:', auditErr);
+    }
     
     res.json({ data: config, success: true });
   } catch (error) {
@@ -363,26 +423,33 @@ tenantDataRouter.put('/:tenantId/product_display_order', authenticateToken, requ
     
     await setTenantData(tenantId, 'store_studio_config', existingConfig);
     
+    // Invalidate store studio batch cache
+    await deleteCached(`tenant:${tenantId}:store_studio_batch`);
+    
     // Emit real-time update
     emitDataUpdate(req, tenantId, 'store_studio_config', existingConfig);
     
     // Create audit log
-    await createAuditLog({
-      tenantId,
-      userId: user?._id || user?.id || 'system',
-      userName: user?.name || 'System',
-      userRole: user?.role || 'system',
-      action: 'Product Display Order Updated',
-      actionType: 'update',
-      resourceType: 'product',
-      resourceId: tenantId,
-      resourceName: 'product_display_order',
-      details: `Product display order updated (${productDisplayOrder.length} products)`,
-      metadata: { productCount: productDisplayOrder.length },
-      ipAddress: req.ip,
-      userAgent: req.headers['user-agent'],
-      status: 'success'
-    });
+    try {
+      await createAuditLog({
+        tenantId,
+        userId: user?._id || user?.id || 'system',
+        userName: user?.name || 'System',
+        userRole: user?.role || 'system',
+        action: 'Product Display Order Updated',
+        actionType: 'update',
+        resourceType: 'product',
+        resourceId: tenantId,
+        resourceName: 'product_display_order',
+        details: `Product display order updated (${productDisplayOrder.length} products)`,
+        metadata: { productCount: productDisplayOrder.length },
+        ipAddress: req.ip,
+        userAgent: req.headers['user-agent'],
+        status: 'success'
+      });
+    } catch (auditErr) {
+      console.warn('[TenantData] Audit log failed for product_display_order:', auditErr);
+    }
     
     res.json({ data: existingConfig, success: true });
   } catch (error) {
@@ -470,6 +537,18 @@ tenantDataRouter.put('/:tenantId/:key', authenticateToken, (req, res, next) => {
     const cacheKey = `tenant:${tenantId}:${key}`;
     await deleteCached(cacheKey);
     
+    // Also invalidate bootstrap cache when critical data changes
+    // This ensures the bootstrap endpoint always serves fresh data
+    const BOOTSTRAP_KEYS = ['products', 'theme_config', 'website_config'];
+    const STORE_STUDIO_KEYS = ['store_studio_config', 'store_layout', 'store_customization'];
+    if (BOOTSTRAP_KEYS.includes(key)) {
+      await invalidateTenantCache(tenantId);
+    }
+    // Invalidate store studio batch cache when any studio data changes
+    if (STORE_STUDIO_KEYS.includes(key)) {
+      await deleteCached(`tenant:${tenantId}:store_studio_batch`);
+    }
+    
     // Emit real-time update via Socket.IO
     emitDataUpdate(req, tenantId, key, payload.data);
     
@@ -477,24 +556,28 @@ tenantDataRouter.put('/:tenantId/:key', authenticateToken, (req, res, next) => {
     
     // Create audit log for important data changes
     if (['products', 'categories', 'subcategories', 'childcategories', 'brands', 'tags'].includes(key)) {
-      const user = (req as any).user;
-      const dataArray = Array.isArray(payload.data) ? payload.data : [];
-      await createAuditLog({
-        tenantId,
-        userId: user?._id || user?.id || 'system',
-        userName: user?.name || 'System',
-        userRole: user?.role || 'system',
-        action: `${key.charAt(0).toUpperCase() + key.slice(1)} Updated`,
-        actionType: 'update',
-        resourceType: key === 'products' ? 'product' : key === 'categories' ? 'category' : 'other',
-        resourceId: tenantId,
-        resourceName: key,
-        details: `${key} data updated (${dataArray.length} items)`,
-        metadata: { key, itemCount: dataArray.length },
-        ipAddress: req.ip,
-        userAgent: req.headers['user-agent'],
-        status: 'success'
-      });
+      try {
+        const user = (req as any).user;
+        const dataArray = Array.isArray(payload.data) ? payload.data : [];
+        await createAuditLog({
+          tenantId,
+          userId: user?._id || user?.id || 'system',
+          userName: user?.name || 'System',
+          userRole: user?.role || 'system',
+          action: `${key.charAt(0).toUpperCase() + key.slice(1)} Updated`,
+          actionType: 'update',
+          resourceType: key === 'products' ? 'product' : key === 'categories' ? 'category' : 'other',
+          resourceId: tenantId,
+          resourceName: key,
+          details: `${key} data updated (${dataArray.length} items)`,
+          metadata: { key, itemCount: dataArray.length },
+          ipAddress: req.ip,
+          userAgent: req.headers['user-agent'],
+          status: 'success'
+        });
+      } catch (auditErr) {
+        console.warn(`[TenantData] Audit log failed for ${key}:`, auditErr);
+      }
     }
 
     // Generate embeddings for products asynchronously (non-blocking)
