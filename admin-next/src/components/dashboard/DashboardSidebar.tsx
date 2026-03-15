@@ -23,7 +23,7 @@ import {
   Shield,
   Activity,
   GraduationCap,
-  Unplug
+  Sparkles
 } from 'lucide-react';
 import { PermissionMap } from './types';
 import { useLanguage } from '../../context/LanguageContext';
@@ -81,13 +81,23 @@ const itemResourceMap: Record<string, string> = {
   'activity_log': 'settings',
   'billing': 'settings',
   'incomplete_orders': 'orders',
+  'all_orders': 'orders',
+  'store_studio': 'customization',
 };
 
 const menuItems: SidebarItem[] = [
   // Main Menu
   { id: 'dashboard', label: 'Dashboard', icon: <img src="https://hdnfltv.com/image/nitimages/dashboard-square-01.webp" alt="Dashboard" className="w-5 h-5 object-contain" /> },
-  { id: 'orders', label: 'Orders', icon: <img src="https://hdnfltv.com/image/nitimages/invoice.webp" alt="Orders" className="w-5 h-5 object-contain" /> },
-  { id: 'incomplete_orders', label: 'Incomplete Orders', icon: <Unplug className="w-5 h-5" /> },
+  { 
+    id: 'orders', 
+    label: 'Orders', 
+    icon: <img src="https://hdnfltv.com/image/nitimages/invoice.webp" alt="Orders" className="w-5 h-5 object-contain" />,
+    hasDropdown: true,
+    children: [
+      { id: 'all_orders', label: 'All Orders', icon: <ChevronRight className="w-4 h-4" /> },
+      { id: 'incomplete_orders', label: 'Incomplete Orders', icon: <ChevronRight className="w-4 h-4" /> },
+    ]
+  },
   { id: 'products', label: 'Products', icon: <img src="https://hdnfltv.com/image/nitimages/icon-park_ad-product.webp" alt="Products" className="w-5 h-5 object-contain" /> },
   { 
     id: 'catalog', 
@@ -123,6 +133,7 @@ const menuItems: SidebarItem[] = [
   },
   { id: 'gallery', label: 'Gallery', icon: <img src="https://hdnfltv.com/image/nitimages/solar_gallery-linear.webp" alt="Gallery" className="w-5 h-5 object-contain" /> },
   { id: 'business_report', label: 'Business Report', icon: <img src="https://hdnfltv.com/image/nitimages/icon-park_table-report.webp" alt="Business Report" className="w-5 h-5 object-contain" /> },
+  { id: 'store_studio', label: 'Store Studio Beta', icon: <Sparkles className="w-5 h-5" /> },
   
   // System
   { id: 'settings', label: 'Settings', icon: <img src="https://hdnfltv.com/image/nitimages/ci_settings.webp" alt="Settings" className="w-5 h-5 object-contain" /> },
@@ -180,8 +191,16 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
   // Create translated menu items
   const translatedMenuItems: SidebarItem[] = useMemo(() => [
     { id: 'dashboard', label: t('dashboard'), icon: <img src="https://hdnfltv.com/image/nitimages/dashboard-square-01.webp" alt="Dashboard" className="w-5 h-5 object-contain" /> },
-    { id: 'orders', label: t('orders'), icon: <img src="https://hdnfltv.com/image/nitimages/invoice.webp" alt="Orders" className="w-5 h-5 object-contain" /> },
-    { id: 'incomplete_orders', label: 'Incomplete Orders', icon: <Unplug className="w-5 h-5" /> },
+    { 
+      id: 'orders', 
+      label: t('orders'), 
+      icon: <img src="https://hdnfltv.com/image/nitimages/invoice.webp" alt="Orders" className="w-5 h-5 object-contain" />,
+      hasDropdown: true,
+      children: [
+        { id: 'all_orders', label: 'All Orders', icon: <ChevronRight className="w-4 h-4" /> },
+        { id: 'incomplete_orders', label: 'Incomplete Orders', icon: <ChevronRight className="w-4 h-4" /> },
+      ]
+    },
     { id: 'products', label: t('products'), icon: <img src="https://hdnfltv.com/image/nitimages/icon-park_ad-product.webp" alt="Products" className="w-5 h-5 object-contain" /> },
     { 
       id: 'catalog', 
@@ -215,6 +234,7 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
     },
     { id: 'gallery', label: t('gallery'), icon: <img src="https://hdnfltv.com/image/nitimages/solar_gallery-linear.webp" alt="Gallery" className="w-5 h-5 object-contain" /> },
     { id: 'business_report', label: t('business_report'), icon: <img src="https://hdnfltv.com/image/nitimages/icon-park_table-report.webp" alt="Business Report" className="w-5 h-5 object-contain" /> },
+    { id: 'store_studio', label: 'Store Studio Beta', icon: <Sparkles className="w-5 h-5" /> },
     { id: 'settings', label: t('settings'), icon: <img src="https://hdnfltv.com/image/nitimages/ci_settings.webp" alt="Settings" className="w-5 h-5 object-contain" /> },
     { id: 'admin_control', label: t('admin_control'), icon:<img src="https://hdnfltv.com/image/nitimages/hugeicons_microsoft-admin.webp" alt="Admin Control" className="w-5 h-5 object-contain" /> },
     { id: 'activity_log', label: t('activity_log'), icon: <img src="https://hdnfltv.com/image/nitimages/transaction-history.webp" alt="Activity Log" className="w-5 h-5 object-contain" /> },
@@ -252,8 +272,8 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
   }, [userRole, permissions]);
 
   // Define menu categories by item IDs
-  const mainMenuIds = ['dashboard', 'orders', 'incomplete_orders', 'products', 'catalog', 'inventory', 'customers_reviews'];
-  const configIds = ['customization', 'website_content', 'gallery', 'business_report'];
+  const mainMenuIds = ['dashboard', 'orders', 'products', 'catalog', 'inventory', 'customers_reviews'];
+  const configIds = ['customization', 'website_content', 'gallery', 'business_report', 'store_studio'];
   const systemIds = ['settings', 'admin_control', 'activity_log', 'billing', 'support', 'tutorial'];
 
   // Group filtered items by category
@@ -282,11 +302,14 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
   const renderMenuItem = (item: SidebarItem) => {
     // For catalog, check if activeItem starts with 'catalog_'
     // For website_content, check if activeItem starts with 'website_content_'
+    // For orders, check if activeItem is 'orders', 'all_orders', or 'incomplete_orders'
     const isActive = item.id === 'catalog' 
       ? activeItem.startsWith('catalog_') 
       : item.id === 'website_content'
         ? activeItem.startsWith('website_content_')
-        : activeItem === item.id;
+        : item.id === 'orders'
+          ? activeItem === 'orders' || activeItem === 'all_orders' || activeItem === 'incomplete_orders'
+          : activeItem === item.id;
     
     const isExpanded = expandedItems.includes(item.id);
     const hasChildren = item.children && item.children.length > 0;
