@@ -4,7 +4,7 @@
  * Checkout Page
  * Route: /checkout
  */
-import { Suspense } from 'react';
+import { Suspense, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useApp } from '../providers';
 import { ensureVariantSelection } from '@/utils/appHelpers';
@@ -18,6 +18,7 @@ const MobileBottomNav = dynamic(() => import('@/components/store/MobileBottomNav
 export default function CheckoutPage() {
   const router = useRouter();
   const app = useApp();
+  const cartOpenRef = useRef<(() => void) | null>(null);
 
   const product = app.selectedProduct;
   const quantity = app.checkoutQuantity;
@@ -85,6 +86,7 @@ export default function CheckoutPage() {
           onCheckoutFromCart={app.handlers.handleCheckoutFromCart}
           productCatalog={app.products}
           orders={app.orders}
+          onCartOpenRef={(fn) => { cartOpenRef.current = fn; }}
         />
       </Suspense>
 
@@ -107,7 +109,7 @@ export default function CheckoutPage() {
       <Suspense fallback={null}>
         <MobileBottomNav
           onHomeClick={() => router.push('/')}
-          onCartClick={() => {}}
+          onCartClick={() => cartOpenRef.current?.()}
           onAccountClick={() => app.user ? router.push('/profile') : app.setIsLoginOpen(true)}
           onMenuClick={() => router.push('/categories')}
           cartCount={app.cartItems.length}

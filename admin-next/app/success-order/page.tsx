@@ -4,7 +4,7 @@
  * Order Success Page
  * Route: /success-order?orderId=X
  */
-import { Suspense } from 'react';
+import { Suspense, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useApp } from '../providers';
 import dynamic from 'next/dynamic';
@@ -17,6 +17,7 @@ export default function SuccessOrderPage() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get('orderId');
   const app = useApp();
+  const cartOpenRef = useRef<(() => void) | null>(null);
 
   return (
     <>
@@ -42,13 +43,14 @@ export default function SuccessOrderPage() {
           onCheckoutFromCart={app.handlers.handleCheckoutFromCart}
           productCatalog={app.products}
           orders={app.orders}
+          onCartOpenRef={(fn) => { cartOpenRef.current = fn; }}
         />
       </Suspense>
 
       <Suspense fallback={null}>
         <MobileBottomNav
           onHomeClick={() => router.push('/')}
-          onCartClick={() => {}}
+          onCartClick={() => cartOpenRef.current?.()}
           onAccountClick={() => app.user ? router.push('/profile') : app.setIsLoginOpen(true)}
           onMenuClick={() => router.push('/categories')}
           cartCount={app.cartItems.length}

@@ -4,7 +4,7 @@
  * Store Home Page - Main storefront
  * Maps to: / and /all-products
  */
-import { Suspense, useCallback } from 'react';
+import { Suspense, useCallback, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useApp } from './providers';
 import dynamic from 'next/dynamic';
@@ -45,6 +45,7 @@ export default function HomePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const app = useApp();
+  const cartOpenRef = useRef<(() => void) | null>(null);
 
   const categoryFilter = searchParams.get('category');
   const brandFilter = searchParams.get('brand');
@@ -123,14 +124,14 @@ export default function HomePage() {
           initialCategoryFilter={urlCategoryFilter}
           onCategoryFilterChange={handleCategoryFilterChange}
           onMobileMenuOpenRef={() => {}}
-          onCartOpenRef={() => {}}
+          onCartOpenRef={(fn) => { cartOpenRef.current = fn; }}
         />
       </Suspense>
 
       <Suspense fallback={null}>
         <MobileBottomNav
           onHomeClick={() => { window.scrollTo(0, 0); }}
-          onCartClick={() => {}}
+          onCartClick={() => cartOpenRef.current?.()}
           onAccountClick={() => app.user ? router.push('/profile') : app.setIsLoginOpen(true)}
           onMenuClick={() => router.push('/categories')}
           cartCount={app.cartItems.length}

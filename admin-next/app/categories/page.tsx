@@ -240,7 +240,7 @@ export default function CategoriesPage() {
       <Suspense fallback={null}>
         <MobileBottomNav
           onHomeClick={() => router.push('/')}
-          onCartClick={() => {}}
+          onCartClick={() => router.push('/')}
           onAccountClick={() => app.user ? router.push('/profile') : app.setIsLoginOpen(true)}
           onMenuClick={() => { window.scrollTo(0, 0); }}
           cartCount={app.cartItems.length}

@@ -55,6 +55,7 @@ interface CheckoutProps {
   onCheckoutFromCart?: (productId: number) => void;
   productCatalog?: Product[];
   orders?: Order[];
+  onCartOpenRef?: (openFn: () => void) => void;
 }
 
 type CheckoutFormState = {
@@ -105,7 +106,8 @@ const StoreCheckout = ({
   onToggleCart,
   onCheckoutFromCart,
   productCatalog,
-  orders = []
+  orders = [],
+  onCartOpenRef
 }: CheckoutProps) => {
   const [formData, setFormData] = useState<CheckoutFormState>({
     fullName: '',
@@ -482,6 +484,7 @@ const StoreCheckout = ({
           onToggleCart={onToggleCart}
           onCheckoutFromCart={onCheckoutFromCart}
           productCatalog={productCatalog}
+          onCartOpenRef={onCartOpenRef}
         />
       </Suspense>
 
