@@ -40,20 +40,6 @@ export const THEME_DEMO_IMAGES: Record<string, Record<string, string>> = {
     style4: 'https://hdnfltv.com/image/nitimages/product_card_-_4.webp',
     style5: 'https://hdnfltv.com/image/nitimages/product_card_-_5.webp',
   },
-  productSectionStyle: {
-    style1: '',
-    style2: '',
-    style3: '',
-    style4: '',
-    style5: '',
-  },
-  brandSectionStyle: {
-    style1: '',
-    style2: '',
-    style3: '',
-    style4: '',
-    style5: '',
-  },
   footerStyle: {
     style1: 'https://hdnfltv.com/image/nitimages/pasted_1773259417132.webp',
     style2: 'https://hdnfltv.com/image/nitimages/footer_-_2.webp',

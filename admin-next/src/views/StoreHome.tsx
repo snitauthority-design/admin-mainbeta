@@ -1,5 +1,5 @@
 
-import React, { lazy, Suspense, useCallback, useState, useEffect } from 'react';
+import React, { lazy, Suspense, useCallback, useState, useEffect, useMemo } from 'react';
 import type { Product, User, WebsiteConfig, Order, ProductVariantSelection } from '../types';
 import { noCacheFetchOptions } from '../utils/fetchHelpers';
 import { useLanguage } from '../context/LanguageContext';
@@ -259,6 +259,12 @@ const StoreHome: React.FC<StoreHomeProps> = ({
     initCustomLayout();
   }, [tenantId, checkAndUpdateCustomLayout]);
 
+  // Merge store studio style customizations with websiteConfig when studio is enabled
+  const effectiveWebsiteConfig = useMemo<WebsiteConfig | undefined>(() => {
+    if (!storeStudioEnabled || !storeStudioStyles) return websiteConfig;
+    return { ...websiteConfig, ...storeStudioStyles } as WebsiteConfig;
+  }, [websiteConfig, storeStudioStyles, storeStudioEnabled]);
+
   // === HANDLERS ===
   const selectInstantVariant = useCallback((product: Product): ProductVariantSelection => ({
     color: product.variantDefaults?.color || product.colors?.[0] || 'Default',
@@ -409,7 +415,7 @@ const StoreHome: React.FC<StoreHomeProps> = ({
             childCategories={childCategories}
             brands={brands}
             tags={tags}
-            websiteConfig={storeStudioStyles ? { ...websiteConfig, ...storeStudioStyles } as WebsiteConfig : websiteConfig}
+            websiteConfig={effectiveWebsiteConfig}
             logo={logo}
             onProductClick={onProductClick}
             onBuyNow={handleBuyNow}
