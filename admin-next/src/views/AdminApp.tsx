@@ -70,6 +70,9 @@ import AIChatAssistant from '../components/AIChatAssistant';
 
 import AdminDueList from './AdminDueList';
 import { FigmaDashboardPage as AdminDashboard, DashboardLayout } from '../components/dashboard';
+
+// Lazy load SuperAdminDashboard - only needed for super_admin users
+const SuperAdminDashboard = lazy(() => import(/* webpackChunkName: "super-admin-dashboard" */ './SuperAdminDashboard'));
 import SubscriptionRenewalPopup from '../components/SubscriptionRenewalPopup';
 import SubscriptionNotification from '../components/SubscriptionNotification';
 import { useSubscription } from '../hooks/useSubscription';
@@ -618,20 +621,32 @@ const AdminApp: React.FC<AdminAppProps> = ({
   // Subscription management - check tenant subscription status
   const {
     showNotification: showSubscriptionNotification,
-    showRenewalPopup,
+    showRenewalPopup: showSubscriptionRenewalPopup,
     dismissNotification: dismissSubscriptionNotification,
     dismissRenewalPopup,
-    canDismissPopup,
+    canDismissPopup: canDismissSubscriptionPopup,
     handleRenew,
     isBlocked: isSubscriptionBlocked,
     daysRemaining,
     daysOverdue,
-    expiryMessage,
+    expiryMessage: subscriptionExpiryMessage,
   } = useSubscription({
     tenantId: activeTenantId,
     subscription: selectedTenantRecord?.subscription as any,
     enabled: !!selectedTenantRecord && user?.role !== 'super_admin', // Don't show to super admin
   });
+
+  // Check if tenant is suspended/inactive by super admin - show non-closable modal
+  const isTenantSuspended = !platformOperator && 
+    (selectedTenantRecord?.status === 'suspended' || selectedTenantRecord?.status === 'inactive');
+  
+  // Combined popup logic: show if subscription expired OR tenant is suspended
+  const showRenewalPopup = showSubscriptionRenewalPopup || isTenantSuspended;
+  const canDismissPopup = isTenantSuspended ? false : canDismissSubscriptionPopup;
+  const isBlocked = isTenantSuspended || isSubscriptionBlocked;
+  const expiryMessage = isTenantSuspended 
+    ? 'Your store has been suspended by the platform administrator. Please contact support to reactivate your store.'
+    : subscriptionExpiryMessage;
 
   const handleAddRole = async (newRole: Omit<Role, '_id' | 'id'>) => {
     try {
@@ -754,18 +769,23 @@ const AdminApp: React.FC<AdminAppProps> = ({
 
   return (
     <LanguageProvider tenantId={activeTenantId}>
-      {/* Subscription Renewal Popup - shows when subscription expires */}
+      {/* Subscription/Suspension Renewal Popup - shows when subscription expires or store is suspended */}
       <SubscriptionRenewalPopup
         isOpen={showRenewalPopup}
         onClose={dismissRenewalPopup}
         onRenew={handleRenew}
         canDismiss={canDismissPopup}
         daysOverdue={daysOverdue}
-        isBlocked={isSubscriptionBlocked}
+        isBlocked={isBlocked}
         expiryMessage={expiryMessage}
       />
       
-      {adminSection === 'dashboard' ? (
+      {adminSection === 'dashboard' && platformOperator ? (
+        /* Super Admin Dashboard - shown when super_admin is on the dashboard page */
+        <Suspense fallback={<PageLoadingFallback section="dashboard" />}>
+          <SuperAdminDashboard />
+        </Suspense>
+      ) : adminSection === 'dashboard' ? (
         <>
           {/* Subscription Notification - shows in dashboard for days 27-30 */}
           {showSubscriptionNotification && (

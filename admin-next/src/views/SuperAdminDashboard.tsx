@@ -743,8 +743,22 @@ const SuperAdminDashboard: React.FC = () => {
   // Tenant status update handler
   const handleUpdateTenantStatus = useCallback(async (tenantId: string, status: Tenant['status'], reason?: string): Promise<void> => {
     try {
-      // In production, this would call an API
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // Map frontend status values to backend-supported enum
+      const backendStatus = status === 'inactive' ? 'suspended' : status;
+      
+      const response = await fetch(`${API_URL}/tenants/${tenantId}/status`, {
+        method: 'PATCH',
+        headers: {
+          ...getAuthHeader(),
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: backendStatus }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to update tenant status');
+      }
       
       const updatedTenants = tenants.map(t => 
         t.id === tenantId 
@@ -761,10 +775,10 @@ const SuperAdminDashboard: React.FC = () => {
       setTenants(updatedTenants);
       toast.success(`Tenant status updated to ${status}`);
     } catch (error) {
-      toast.error('Failed to update tenant status');
+      toast.error(error instanceof Error ? error.message : 'Failed to update tenant status');
       throw error;
     }
-  }, [tenants]);
+  }, [tenants, API_URL]);
 
   // Login as merchant handler
   const handleLoginAsMerchant = useCallback(async (tenantId: string): Promise<void> => {
@@ -1408,7 +1422,13 @@ const SuperAdminDashboard: React.FC = () => {
         case 'new-section':
       return (
         <React.Suspense fallback={<TabLoadingFallback />}>
-          <IsActiveTogglebtn onSelectTenant={undefined} />
+          <IsActiveTogglebtn 
+            tenants={tenants} 
+            onSelectTenant={async (tenant: Tenant, action: string) => {
+              const newStatus = action === 'activate' ? 'active' : 'suspended';
+              await handleUpdateTenantStatus(tenant.id || tenant._id || '', newStatus as Tenant['status']);
+            }}
+          />
         </React.Suspense>
       );
 
