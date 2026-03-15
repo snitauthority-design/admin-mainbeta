@@ -171,6 +171,7 @@ const StoreHome: React.FC<StoreHomeProps> = ({
   const [customLayoutData, setCustomLayoutData] = useState(null);
   const [storeStudioEnabled, setStoreStudioEnabled] = useState(false);
   const [productDisplayOrder, setProductDisplayOrder] = useState<number[]>([]);
+  const [storeStudioStyles, setStoreStudioStyles] = useState<Record<string, string> | null>(null);
 
   // Shared function to check and update custom layout state
   const checkAndUpdateCustomLayout = useCallback(async (logPrefix = '') => {
@@ -178,13 +179,13 @@ const StoreHome: React.FC<StoreHomeProps> = ({
     
     try {
       const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
-      // Check both store studio config and layout in parallel
-      const [configRes, layoutRes] = await Promise.all([
+      // Check store studio config, layout, and customization styles in parallel
+      const [configRes, layoutRes, stylesRes] = await Promise.all([
         fetch(`${API_BASE_URL}/api/tenant-data/${tenantId}/store_studio_config`, noCacheFetchOptions),
-        fetch(`${API_BASE_URL}/api/tenant-data/${tenantId}/store_layout`, noCacheFetchOptions)
+        fetch(`${API_BASE_URL}/api/tenant-data/${tenantId}/store_layout`, noCacheFetchOptions),
+        fetch(`${API_BASE_URL}/api/tenant-data/${tenantId}/store_customization`, noCacheFetchOptions)
       ]);
       
-      // Only use custom layout if store studio is enabled AND layout exists
       if (configRes.ok && layoutRes.ok) {
         const configContentType = configRes.headers.get('content-type') || '';
         const layoutContentType = layoutRes.headers.get('content-type') || '';
@@ -207,19 +208,37 @@ const StoreHome: React.FC<StoreHomeProps> = ({
         // Store the config and layout data to pass to StoreFrontRenderer
         setStoreStudioEnabled(isStoreStudioEnabled);
         setProductDisplayOrder(displayOrder);
+
+        // Fetch store studio style customizations
+        if (isStoreStudioEnabled && stylesRes.ok) {
+          try {
+            const stylesResult = await stylesRes.json();
+            if (stylesResult.data && typeof stylesResult.data === 'object') {
+              setStoreStudioStyles(stylesResult.data);
+            }
+          } catch {
+            console.warn('[StoreHome] Failed to parse store_customization styles');
+          }
+        } else {
+          setStoreStudioStyles(null);
+        }
         
-        if (isStoreStudioEnabled && hasCustomLayout) {
-          setCustomLayoutData(layoutResult.data);
+        // When store studio is enabled, always use StoreFrontRenderer
+        // (blank page if no layout configured, custom layout if configured)
+        // When disabled, fallback to admin customization config
+        if (isStoreStudioEnabled) {
+          setCustomLayoutData(hasCustomLayout ? layoutResult.data : { sections: [] });
           setUseCustomLayout(true);
-          console.log(`[StoreHome]${logPrefix} Using custom layout from Store Studio`);
+          if (hasCustomLayout) {
+            console.log(`[StoreHome]${logPrefix} Using custom layout from Store Studio`);
+          } else {
+            console.log(`[StoreHome]${logPrefix} Store Studio enabled but no layout configured, showing blank`);
+          }
         } else {
           setCustomLayoutData(null);
           setUseCustomLayout(false);
-          if (!isStoreStudioEnabled) {
-            console.log(`[StoreHome]${logPrefix} Store Studio is disabled, using default layout`);
-          } else {
-            console.log(`[StoreHome]${logPrefix} No custom layout, using default`);
-          }
+          setStoreStudioStyles(null);
+          console.log(`[StoreHome]${logPrefix} Store Studio is disabled, using default layout`);
         }
       }
     } catch (e) {
@@ -390,7 +409,7 @@ const StoreHome: React.FC<StoreHomeProps> = ({
             childCategories={childCategories}
             brands={brands}
             tags={tags}
-            websiteConfig={websiteConfig}
+            websiteConfig={storeStudioStyles ? { ...websiteConfig, ...storeStudioStyles } as WebsiteConfig : websiteConfig}
             logo={logo}
             onProductClick={onProductClick}
             onBuyNow={handleBuyNow}

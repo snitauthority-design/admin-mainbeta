@@ -854,7 +854,13 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
     );
   }
 
-  // If no custom layout or error, return null (let parent component handle default rendering)
+  // If store studio is enabled but no sections configured, show blank page
+  // This ensures only what the tenant designs in store studio will show
+  if (storeStudioEnabled && !layout?.sections?.length) {
+    return <div className="min-h-[60vh]" />;
+  }
+
+  // If no custom layout and store studio is not enabled, return null (let parent handle default)
   if (!layout?.sections?.length) {
     return null;
   }
