@@ -50,7 +50,7 @@ export default function SuccessOrderPage() {
           onHomeClick={() => router.push('/')}
           onCartClick={() => {}}
           onAccountClick={() => app.user ? router.push('/profile') : app.setIsLoginOpen(true)}
-          onMenuClick={() => {}}
+          onMenuClick={() => router.push('/categories')}
           cartCount={app.cartItems.length}
           websiteConfig={app.websiteConfig}
           onChatClick={app.handleOpenChat}

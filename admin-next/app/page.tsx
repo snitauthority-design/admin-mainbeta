@@ -132,7 +132,7 @@ export default function HomePage() {
           onHomeClick={() => { window.scrollTo(0, 0); }}
           onCartClick={() => {}}
           onAccountClick={() => app.user ? router.push('/profile') : app.setIsLoginOpen(true)}
-          onMenuClick={() => {}}
+          onMenuClick={() => router.push('/categories')}
           cartCount={app.cartItems.length}
           websiteConfig={app.websiteConfig}
           onChatClick={app.handleOpenChat}

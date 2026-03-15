@@ -61,7 +61,7 @@ export default function ProfilePage() {
           onHomeClick={() => router.push('/')}
           onCartClick={() => {}}
           onAccountClick={() => {}}
-          onMenuClick={() => {}}
+          onMenuClick={() => router.push('/categories')}
           cartCount={app.cartItems.length}
           websiteConfig={app.websiteConfig}
           onChatClick={app.handleOpenChat}
