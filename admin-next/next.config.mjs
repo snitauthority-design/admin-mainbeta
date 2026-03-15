@@ -49,6 +49,7 @@ const nextConfig = {
         'import.meta.env.VITE_CDN_STATIC_URL': JSON.stringify(process.env.NEXT_PUBLIC_CDN_STATIC_URL || ''),
         'import.meta.env.VITE_DEFAULT_TENANT_SLUG': JSON.stringify(process.env.NEXT_PUBLIC_DEFAULT_TENANT_SLUG || ''),
         'import.meta.env.VITE_PRIMARY_DOMAIN': JSON.stringify(process.env.NEXT_PUBLIC_PRIMARY_DOMAIN || ''),
+        'import.meta.env.VITE_ADDITIONAL_DOMAINS': JSON.stringify(process.env.NEXT_PUBLIC_ADDITIONAL_DOMAINS || ''),
         'import.meta.env.VITE_REMOTE_SAVE_DEBOUNCE_MS': JSON.stringify(process.env.NEXT_PUBLIC_REMOTE_SAVE_DEBOUNCE_MS || '1200'),
         'import.meta.env.VITE_DISABLE_REMOTE_SAVE': JSON.stringify(process.env.NEXT_PUBLIC_DISABLE_REMOTE_SAVE || ''),
         'import.meta.env.VITE_GEMINI_API_KEY': JSON.stringify(process.env.NEXT_PUBLIC_GEMINI_API_KEY || ''),
@@ -68,6 +69,7 @@ const nextConfig = {
       ...(process.env.NEXT_PUBLIC_PRIMARY_DOMAIN
         ? [{ protocol: 'https', hostname: `**.${process.env.NEXT_PUBLIC_PRIMARY_DOMAIN}` }]
         : []),
+      ...((process.env.NEXT_PUBLIC_ADDITIONAL_DOMAINS || '').split(',').filter(Boolean).map(d => ({ protocol: 'https', hostname: `**.${d.trim()}` }))),
       { protocol: 'https', hostname: 'imagedelivery.net' },
     ],
   },

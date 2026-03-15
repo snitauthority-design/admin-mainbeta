@@ -9,8 +9,10 @@ import type { NextRequest } from 'next/server';
 
 // Build known base domains from env var + defaults
 const primaryDomain = process.env.NEXT_PUBLIC_PRIMARY_DOMAIN || '';
+const additionalDomains = (process.env.NEXT_PUBLIC_ADDITIONAL_DOMAINS || '').split(',').map(d => d.trim()).filter(Boolean);
 const KNOWN_BASE_DOMAINS = [
   ...(primaryDomain ? [primaryDomain] : []),
+  ...additionalDomains,
   'localhost'
 ].filter(Boolean);
 const SYSTEM_SUBDOMAINS = ['admin', 'superadmin', 'www', 'api'];

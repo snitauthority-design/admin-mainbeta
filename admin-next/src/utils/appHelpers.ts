@@ -20,6 +20,8 @@ export const SESSION_STORAGE_KEY = 'admin_auth_user';
 export const ACTIVE_TENANT_STORAGE_KEY = 'seven-days-active-tenant';
 export const CART_STORAGE_KEY = 'seven-days-cart';
 export const PRIMARY_TENANT_DOMAIN = normalizeDomainValue(import.meta.env.VITE_PRIMARY_DOMAIN);
+export const ADDITIONAL_DOMAINS = (import.meta.env.VITE_ADDITIONAL_DOMAINS || '').split(',').map((d: string) => normalizeDomainValue(d)).filter(Boolean);
+export const ALL_KNOWN_DOMAINS = [PRIMARY_TENANT_DOMAIN, ...ADDITIONAL_DOMAINS].filter(Boolean);
 export const DEFAULT_TENANT_SLUG = sanitizeSubdomainSlug(import.meta.env.VITE_DEFAULT_TENANT_SLUG);
 
 // --- Domain/Tenant utilities ---
@@ -67,22 +69,24 @@ export function getHostTenantSlug(): string | null {
     return DEFAULT_TENANT_SLUG || null;
   }
 
-  if (PRIMARY_TENANT_DOMAIN) {
-    if (hostname === PRIMARY_TENANT_DOMAIN || hostname === `www.${PRIMARY_TENANT_DOMAIN}`) {
+  for (const knownDomain of ALL_KNOWN_DOMAINS) {
+    if (!knownDomain) continue;
+    if (hostname === knownDomain || hostname === `www.${knownDomain}`) {
       return DEFAULT_TENANT_SLUG || null;
     }
-    if (hostname.endsWith(`.${PRIMARY_TENANT_DOMAIN}`)) {
-      const subdomain = hostname.slice(0, hostname.length - (PRIMARY_TENANT_DOMAIN.length + 1));
+    if (hostname.endsWith(`.${knownDomain}`)) {
+      const subdomain = hostname.slice(0, hostname.length - (knownDomain.length + 1));
       const candidate = sanitizeSubdomainSlug(subdomain);
       if (!candidate || isReservedTenantSlug(candidate)) return null;
       return candidate;
     }
   }
 
-  // Check for custom domain (not subdomain of primary domain)
-  const isCustomDomain = !hostname.endsWith(`.${PRIMARY_TENANT_DOMAIN}`) && 
-                         hostname !== PRIMARY_TENANT_DOMAIN &&
-                         hostname !== `www.${PRIMARY_TENANT_DOMAIN}` &&
+  // Check for custom domain (not subdomain of any known domain)
+  const isKnownDomain = ALL_KNOWN_DOMAINS.some(d => d && (
+    hostname === d || hostname === `www.${d}` || hostname.endsWith(`.${d}`)
+  ));
+  const isCustomDomain = !isKnownDomain &&
                          !isLocalhost &&
                          hostSegments.length >= 2;
   
@@ -120,11 +124,11 @@ export function isCustomDomain(): boolean {
   const hostname = window.location.hostname?.toLowerCase() || '';
   const isLocalhost = hostname === 'localhost' || hostname.endsWith('.localhost') || hostname.startsWith('127.');
   if (isLocalhost) return false;
-  if (!PRIMARY_TENANT_DOMAIN) return false;
+  if (!ALL_KNOWN_DOMAINS.length) return false;
   
-  return !hostname.endsWith(`.${PRIMARY_TENANT_DOMAIN}`) && 
-         hostname !== PRIMARY_TENANT_DOMAIN &&
-         hostname !== `www.${PRIMARY_TENANT_DOMAIN}`;
+  return !ALL_KNOWN_DOMAINS.some(d => d && (
+    hostname === d || hostname === `www.${d}` || hostname.endsWith(`.${d}`)
+  ));
 }
 
 // Get cached custom domain tenant info

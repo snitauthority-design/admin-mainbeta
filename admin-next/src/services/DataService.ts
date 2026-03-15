@@ -429,6 +429,9 @@ const deduplicateRequest = async <T>(
 };
 
 class DataServiceImpl {
+  getTutorials(tenantId: string) {
+    throw new Error('Method not implemented.');
+  }
   async setupCustomDomain(tenantId: string, domain: string) {
     return this.requestTenantApi(`/api/tenants/${tenantId}/setup-domain`, {
       method: 'POST',
