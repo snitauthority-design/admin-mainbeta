@@ -26,7 +26,7 @@ const ProductCardStyle2: React.FC<ProductCardProps> = ({ product, onClick, onBuy
     >
       {/* ইমেজ সেকশন */}
       <div 
-        className="relative m-1 mb-0 overflow-hidden rounded-lg sm:rounded-xl bg-[#f8f8f8] group-hover:opacity-95 transition-opacity"
+        className="relative overflow-hidden rounded-t-lg sm:rounded-t-xl bg-[#f8f8f8] group-hover:opacity-95 transition-opacity"
         style={{ aspectRatio: '1.2/1' }} 
         onClick={() => onClick?.(product)}
       >
@@ -50,11 +50,11 @@ const ProductCardStyle2: React.FC<ProductCardProps> = ({ product, onClick, onBuy
           />
         </button>
 
-        <div className="flex h-[130px] sm:h-[150px] md:h-[210px] w-full items-center justify-center overflow-hidden px-1 py-0.5 sm:px-1.5 sm:py-1">
+        <div className="flex h-[130px] sm:h-[150px] md:h-[210px] w-full items-center justify-center overflow-hidden">
           <img 
             src={getImage(product)}
             alt={product?.name || 'Product'} 
-            className="max-h-full max-w-full object-contain"
+            className="w-full h-full object-cover"
             loading="lazy"
           />
         </div>
@@ -83,7 +83,7 @@ const ProductCardStyle2: React.FC<ProductCardProps> = ({ product, onClick, onBuy
         </div>
         {/* প্রোডাক্ট নাম */}
         <h3 
-        className="mb-0.5 h-[33px] overflow-hidden text-ellipsis text-left text-[13px] sm:text-[14px] font-medium leading-[1.25] text-black line-clamp-2"
+        className="mb-0.5 overflow-hidden text-ellipsis text-left text-[11px] sm:text-[13px] font-medium leading-[1.25] text-black line-clamp-1 md:line-clamp-2"
           onClick={() => onClick?.(product)}
         >
           {String(product?.name || 'Unknown Product')}
@@ -92,7 +92,7 @@ const ProductCardStyle2: React.FC<ProductCardProps> = ({ product, onClick, onBuy
         {/* প্রাইজ সেকশন */}
         <div className="mt-auto flex flex-col items-left justify-center space-y-0.5 sm:space-y-0.5">
           <div className="flex flex-wrap items-baseline gap-2">
-          <span className="text-[#2F3485] font-bold text-[16px] text-center font-roboto ">
+          <span className="text-[#FF6F00] font-bold text-[16px] text-center font-roboto ">
             ৳{Number(price).toLocaleString()}
           </span>
           {originalPrice > 0 && originalPrice !== price && (
