@@ -232,7 +232,7 @@ tenantDataRouter.get('/:tenantId/store_studio_batch', async (req, res, next) => 
     const tenantId = await resolveTenantId(rawTenantId);
 
     // Check Redis cache first
-    const cacheKey = `tenant:${tenantId}:store_studio_batch`;
+    const cacheKey = CacheKeys.storeStudioBatch(tenantId);
     const cached = await getCached<unknown>(cacheKey);
     if (cached !== null) {
       res.set({ 'Cache-Control': 'public, max-age=30, stale-while-revalidate=60' });
@@ -347,7 +347,7 @@ tenantDataRouter.put('/:tenantId/store_studio_config', authenticateToken, requir
     await setTenantData(tenantId, 'store_studio_config', config);
     
     // Invalidate store studio batch cache so storefront gets fresh data
-    await deleteCached(`tenant:${tenantId}:store_studio_batch`);
+    await deleteCached(CacheKeys.storeStudioBatch(tenantId));
     
     // Emit real-time update
     emitDataUpdate(req, tenantId, 'store_studio_config', config);
@@ -424,7 +424,7 @@ tenantDataRouter.put('/:tenantId/product_display_order', authenticateToken, requ
     await setTenantData(tenantId, 'store_studio_config', existingConfig);
     
     // Invalidate store studio batch cache
-    await deleteCached(`tenant:${tenantId}:store_studio_batch`);
+    await deleteCached(CacheKeys.storeStudioBatch(tenantId));
     
     // Emit real-time update
     emitDataUpdate(req, tenantId, 'store_studio_config', existingConfig);
@@ -546,7 +546,7 @@ tenantDataRouter.put('/:tenantId/:key', authenticateToken, (req, res, next) => {
     }
     // Invalidate store studio batch cache when any studio data changes
     if (STORE_STUDIO_KEYS.includes(key)) {
-      await deleteCached(`tenant:${tenantId}:store_studio_batch`);
+      await deleteCached(CacheKeys.storeStudioBatch(tenantId));
     }
     
     // Emit real-time update via Socket.IO
