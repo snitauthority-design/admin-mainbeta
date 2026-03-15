@@ -30,13 +30,13 @@ const LoginModal = dynamic(() =>
 
 function StorePageSkeleton() {
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 animate-pulse">
-      <div className="h-16 bg-white dark:bg-gray-800 shadow" />
+    <div className="min-h-screen bg-gray-50 animate-pulse">
+      <div className="h-16 bg-white shadow" />
       <div className="max-w-7xl mx-auto px-4 py-8 space-y-6">
-        <div className="h-64 bg-gray-200 dark:bg-gray-700 rounded-xl" />
+        <div className="h-64 bg-gray-200 rounded-xl" />
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[1, 2, 3, 4].map(i => (
-            <div key={i} className="h-72 bg-gray-200 dark:bg-gray-700 rounded-lg" />
+            <div key={i} className="h-72 bg-gray-200 rounded-lg" />
           ))}
         </div>
       </div>

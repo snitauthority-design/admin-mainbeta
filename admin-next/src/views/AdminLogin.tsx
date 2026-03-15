@@ -156,8 +156,8 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
             {/* <div className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl shadow-lg mb-6 bg-gradient-to-br ${brand.gradientFrom} ${brand.gradientTo} ${brand.shadowColor}`}>
               {brand.icon}
             </div> */}
-            <h1 className="text-2xl font-semibold tracking-tight text-gray-900 mb-2">{brand.title}</h1>
-            <p className="text-gray-900 text-sm">{brand.subtitle}</p>
+            <h1 className="text-2xl font-semibold tracking-tight text-gray-900 dark:text-white mb-2">{brand.title}</h1>
+            <p className="text-gray-900 dark:text-gray-100 text-sm">{brand.subtitle}</p>
           </div>
 
           <form onSubmit={handleSubmit} className="p-8 space-y-6">
@@ -169,14 +169,14 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
             )}
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-900">Email Address</label>
+              <label className="text-sm font-medium text-gray-900 dark:text-gray-100">Email Address</label>
               <div className="relative">
                 <Mail size={18} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className={`w-full pl-12 pr-4 py-3.5 bg-white/8 border border-white/12 rounded-xl focus:outline-none focus:ring-2 ${brand.ringColor} ${brand.borderColor} text-gray-900 placeholder:text-gray-900 transition-colors duration-200`}
+                  className={`w-full pl-12 pr-4 py-3.5 bg-white/8 dark:bg-white/10 border border-white/12 dark:border-white/20 rounded-xl focus:outline-none focus:ring-2 ${brand.ringColor} ${brand.borderColor} text-gray-900 dark:text-white placeholder:text-gray-900 dark:placeholder:text-gray-300 transition-colors duration-200`}
                   placeholder="admin@example.com"
                   disabled={isLoading}
                 />
@@ -184,21 +184,21 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-900">Password</label>
+              <label className="text-sm font-medium text-gray-900 dark:text-gray-100">Password</label>
               <div className="relative">
                 <Lock size={18} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className={`w-full pl-12 pr-12 py-3.5 bg-white/8 border border-white/12 rounded-xl focus:outline-none focus:ring-2 ${brand.ringColor} ${brand.borderColor} text-gray-900 placeholder:text-gray-500 transition-colors duration-200`}
+                  className={`w-full pl-12 pr-12 py-3.5 bg-white/8 dark:bg-white/10 border border-white/12 dark:border-white/20 rounded-xl focus:outline-none focus:ring-2 ${brand.ringColor} ${brand.borderColor} text-gray-900 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 transition-colors duration-200`}
                   placeholder="••••••••"
                   disabled={isLoading}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-900 transition-colors"
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-900 dark:hover:text-gray-200 transition-colors"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -208,7 +208,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full flex items-center justify-center gap-2 py-3.5 bg-gradient-to-r ${brand.btnFrom} ${brand.btnTo} ${brand.btnHoverFrom} ${brand.btnHoverTo} text-gray-900 font-semibold rounded-xl transition-all duration-200 shadow-lg ${brand.btnShadow} disabled:opacity-60`}
+              className={`w-full flex items-center justify-center gap-2 py-3.5 bg-gradient-to-r ${brand.btnFrom} ${brand.btnTo} ${brand.btnHoverFrom} ${brand.btnHoverTo} text-gray-900 dark:text-white font-semibold rounded-xl transition-all duration-200 shadow-lg ${brand.btnShadow} disabled:opacity-60`}
             >
               {isLoading ? <Loader2 size={20} className="animate-spin" /> : <LogIn size={20} />}
               {isLoading ? 'Signing in...' : (isTenantLoginPortal ? 'Sign In to Dashboard' : 'Sign In')}
