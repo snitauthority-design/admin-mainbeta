@@ -32,7 +32,7 @@ export const StoreStudioManager: React.FC<StoreStudioManagerProps> = ({
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState<'settings' | 'styles' | 'layout' | 'products'>('styles');
+  const [activeTab, setActiveTab] = useState<'settings' | 'styles' | 'layout' | 'products'>('layout');
   
   // Ref to store the config before toggle for proper rollback
   const configBeforeToggleRef = useRef<StoreStudioConfig | null>(null);

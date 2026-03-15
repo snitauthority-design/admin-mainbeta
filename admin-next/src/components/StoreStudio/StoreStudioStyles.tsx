@@ -51,6 +51,16 @@ const STYLE_CATEGORIES: StyleCategory[] = [
   },
 ];
 
+// Readable labels for config keys
+const CONFIG_KEY_LABELS: Record<string, string> = {
+  headerStyle: 'Header',
+  mobileHeaderStyle: 'Mobile Header',
+  categorySectionStyle: 'Category Section',
+  productCardStyle: 'Product Card',
+  footerStyle: 'Footer',
+  bottomNavStyle: 'Mobile Navigation',
+};
+
 interface StoreStudioStylesProps {
   tenantId: string;
 }
@@ -108,7 +118,7 @@ export const StoreStudioStyles: React.FC<StoreStudioStylesProps> = ({ tenantId }
       });
 
       if (saveRes.ok) {
-        const label = configKey.replace(/Style$/, '').replace(/([A-Z])/g, ' $1').trim();
+        const label = CONFIG_KEY_LABELS[configKey] || configKey;
         toast.success(`${label} updated to ${styleValue}`);
         // Clear server cache so store reflects the style change immediately
         try {
