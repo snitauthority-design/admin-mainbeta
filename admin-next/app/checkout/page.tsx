@@ -13,6 +13,7 @@ import dynamic from 'next/dynamic';
 const StoreCheckout = dynamic(() => import('@/views/StoreCheckout'), { ssr: false });
 const LoginModal = dynamic(() => import('@/components/store/LoginModal').then(m => ({ default: m.LoginModal })), { ssr: false });
 const StoreChatModal = dynamic(() => import('@/components/store/StoreChatModal').then(m => ({ default: m.StoreChatModal })), { ssr: false });
+const MobileBottomNav = dynamic(() => import('@/components/store/MobileBottomNav').then(m => ({ default: m.MobileBottomNav })), { ssr: false });
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -100,6 +101,20 @@ export default function CheckoutPage() {
           onEditMessage={app.handleEditChatMessage}
           onDeleteMessage={app.handleDeleteChatMessage}
           onLoginClick={() => app.setIsLoginOpen(true)}
+        />
+      </Suspense>
+
+      <Suspense fallback={null}>
+        <MobileBottomNav
+          onHomeClick={() => router.push('/')}
+          onCartClick={() => {}}
+          onAccountClick={() => app.user ? router.push('/profile') : app.setIsLoginOpen(true)}
+          onMenuClick={() => {}}
+          cartCount={app.cartItems.length}
+          websiteConfig={app.websiteConfig}
+          onChatClick={app.handleOpenChat}
+          user={app.user}
+          onLogoutClick={app.handleLogout}
         />
       </Suspense>
     </>
