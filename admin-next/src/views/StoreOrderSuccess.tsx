@@ -27,6 +27,7 @@ interface SuccessProps {
   productCatalog?: Product[];
   orderId?: string;
   orders?: Order[];
+  onCartOpenRef?: (openFn: () => void) => void;
 }
 
 const crystalPanelClass = 'rounded-2xl border border-sky-100/80 bg-white/80 backdrop-blur-sm shadow-[0_20px_80px_rgba(14,116,144,0.12)] p-5 sm:p-7 lg:p-8';
@@ -34,7 +35,7 @@ const actionButtonBaseClass = 'w-full py-3.5 rounded-xl font-semibold flex items
 const primaryActionButtonClass = `${actionButtonBaseClass} bg-gradient-to-r from-sky-600 to-sky-500 text-white shadow-[0_8px_22px_rgba(2,132,199,0.35)] hover:from-sky-700 hover:to-sky-600`;
 const secondaryActionButtonClass = `${actionButtonBaseClass} border border-orange-300 text-orange-700 bg-orange-50 hover:bg-orange-100`;
 
-const StoreOrderSuccess = ({ onHome, user, onLoginClick, onLogoutClick, onProfileClick, logo, websiteConfig, searchValue, onSearchChange, onImageSearchClick, onOpenChat, tenantId, cart, onToggleCart, onCheckoutFromCart, productCatalog, orderId: propsOrderId, orders = [] }: SuccessProps) => {
+const StoreOrderSuccess = ({ onHome, user, onLoginClick, onLogoutClick, onProfileClick, logo, websiteConfig, searchValue, onSearchChange, onImageSearchClick, onOpenChat, tenantId, cart, onToggleCart, onCheckoutFromCart, productCatalog, orderId: propsOrderId, orders = [], onCartOpenRef }: SuccessProps) => {
   const [copied, setCopied] = React.useState(false);
   const [isTrackOrderOpen, setIsTrackOrderOpen] = useState(false);
   
@@ -75,6 +76,7 @@ const StoreOrderSuccess = ({ onHome, user, onLoginClick, onLogoutClick, onProfil
           onToggleCart={onToggleCart}
           onCheckoutFromCart={onCheckoutFromCart}
           productCatalog={productCatalog}
+          onCartOpenRef={onCartOpenRef}
         />
       </Suspense>
       

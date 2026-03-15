@@ -4,7 +4,7 @@
  * Profile Page
  * Route: /profile
  */
-import { Suspense } from 'react';
+import { Suspense, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useApp } from '../providers';
 import dynamic from 'next/dynamic';
@@ -15,6 +15,7 @@ const MobileBottomNav = dynamic(() => import('@/components/store/MobileBottomNav
 export default function ProfilePage() {
   const router = useRouter();
   const app = useApp();
+  const cartOpenRef = useRef<(() => void) | null>(null);
 
   if (!app.user) {
     return (
@@ -52,16 +53,16 @@ export default function ProfilePage() {
           }}
           onCheckoutFromCart={app.handlers.handleCheckoutFromCart}
           productCatalog={app.products}
-          onCartOpenRef={() => {}}
+          onCartOpenRef={(fn) => { cartOpenRef.current = fn; }}
         />
       </Suspense>
 
       <Suspense fallback={null}>
         <MobileBottomNav
           onHomeClick={() => router.push('/')}
-          onCartClick={() => {}}
+          onCartClick={() => cartOpenRef.current?.()}
           onAccountClick={() => {}}
-          onMenuClick={() => {}}
+          onMenuClick={() => router.push('/categories')}
           cartCount={app.cartItems.length}
           websiteConfig={app.websiteConfig}
           onChatClick={app.handleOpenChat}
