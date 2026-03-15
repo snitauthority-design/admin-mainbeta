@@ -12,7 +12,7 @@ import { getStoreUrl } from '../../utils/appHelpers';
 const BROKEN_IMAGE_PLACEHOLDER = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23ddd" width="100" height="100"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" text-anchor="middle" dominant-baseline="middle"%3EBroken Image%3C/text%3E%3C/svg%3E';
 
 // Types
-type SectionType = 'announcement-bar' | 'header' | 'hero' | 'featured-collection' | 'rich-text' | 'image-with-text' | 'image-banner' | 'slideshow' | 'video' | 'newsletter' | 'collection-list' | 'product-grid' | 'testimonials' | 'contact-form' | 'map' | 'multicolumn' | 'collapsible-content' | 'custom-html' | 'footer' | 'featured-product' | 'blog-posts' | 'brand-list' | 'flash-sale' | 'categories' | 'brands' | 'tags-products' | 'showcaseSection';
+type SectionType = 'announcement-bar' | 'header' | 'hero' | 'featured-collection' | 'rich-text' | 'image-with-text' | 'image-banner' | 'slideshow' | 'video' | 'newsletter' | 'collection-list' | 'product-grid' | 'testimonials' | 'contact-form' | 'map' | 'multicolumn' | 'collapsible-content' | 'custom-html' | 'footer' | 'featured-product' | 'blog-posts' | 'brand-list' | 'flash-sale' | 'categories' | 'brands' | 'tags-products' | 'showcaseSection' | 'photo-gallery' | 'video-gallery';
 type BlockType = 'heading' | 'text' | 'button' | 'image' | 'link' | 'product' | 'collection' | 'video' | 'icon' | 'price' | 'quantity' | 'divider';
 
 interface Block { id: string; type: BlockType; settings: Record<string, any>; }
@@ -55,6 +55,9 @@ const Icons = {
   Zap: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polygon points="13,2 3,14 12,14 11,22 21,10 12,10" strokeWidth="2"/></svg>,
   Tag: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z" strokeWidth="2"/><line x1="7" y1="7" x2="7.01" y2="7" strokeWidth="2"/></svg>,
   Check: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12" strokeWidth="2"/></svg>,
+  Camera: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" strokeWidth="2"/><circle cx="12" cy="13" r="4" strokeWidth="2"/></svg>,
+  Film: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2.18" strokeWidth="2"/><line x1="7" y1="2" x2="7" y2="22" strokeWidth="2"/><line x1="17" y1="2" x2="17" y2="22" strokeWidth="2"/><line x1="2" y1="12" x2="22" y2="12" strokeWidth="2"/><line x1="2" y1="7" x2="7" y2="7" strokeWidth="2"/><line x1="2" y1="17" x2="7" y2="17" strokeWidth="2"/><line x1="17" y1="7" x2="22" y2="7" strokeWidth="2"/><line x1="17" y1="17" x2="22" y2="17" strokeWidth="2"/></svg>,
+  Palette: () => <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r="0.5" fill="currentColor" strokeWidth="2"/><circle cx="17.5" cy="10.5" r="0.5" fill="currentColor" strokeWidth="2"/><circle cx="8.5" cy="7.5" r="0.5" fill="currentColor" strokeWidth="2"/><circle cx="6.5" cy="12.5" r="0.5" fill="currentColor" strokeWidth="2"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 011.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z" strokeWidth="2"/></svg>,
 };
 
 // Section definitions with proper settings for each type
@@ -84,7 +87,10 @@ const SECTION_DEFINITIONS: Partial<Record<SectionType, { icon: JSX.Element; labe
   'footer': { icon: <Icons.Layout />, label: 'Footer', category: 'footer', description: 'Site footer', allowedBlocks: ['link', 'text', 'image'], defaultSettings: { showNewsletter: true, showSocial: true, showPaymentIcons: true, copyrightText: '© 2024 Store. All rights reserved.', columns: 4 } },
   'featured-product': { icon: <Icons.Star />, label: 'Featured product', category: 'sections', description: 'Highlight a single product', allowedBlocks: ['heading', 'text', 'button', 'price'], defaultSettings: { productId: '', showQuantity: true, showVariants: true, mediaSize: 'medium' } },
   'blog-posts': { icon: <Icons.FileText />, label: 'Blog posts', category: 'sections', description: 'Display blog posts', allowedBlocks: ['heading'], defaultSettings: { heading: 'Latest Posts', postsToShow: 3, showDate: true, showAuthor: true, showExcerpt: true } },
-  'brand-list': { icon: <Icons.Grid />, label: 'Brand list', category: 'sections', description: 'Logo carousel/grid', allowedBlocks: ['image'], defaultSettings: { heading: 'Our Partners', logos: [], columns: 6, grayscale: true } }
+  'brand-list': { icon: <Icons.Grid />, label: 'Brand list', category: 'sections', description: 'Logo carousel/grid', allowedBlocks: ['image'], defaultSettings: { heading: 'Our Partners', logos: [], columns: 6, grayscale: true } },
+  'photo-gallery': { icon: <Icons.Camera />, label: 'Photo Gallery', category: 'sections', description: 'Display a gallery of photos', allowedBlocks: ['image'], defaultSettings: { heading: 'Gallery', columns: 3, gap: 8, imageRadius: '8px', hoverEffect: 'zoom', images: [], aspectRatio: 'square', showCaptions: false, backgroundColor: '#ffffff', padding: '24px', margin: '0px' } },
+  'video-gallery': { icon: <Icons.Film />, label: 'Video Gallery', category: 'sections', description: 'Showcase video content', allowedBlocks: ['video'], defaultSettings: { heading: 'Videos', columns: 2, gap: 16, videos: [], autoplay: false, muted: true, backgroundColor: '#f9fafb', padding: '24px', margin: '0px', borderRadius: '12px' } },
+  'showcaseSection': { icon: <Icons.Star />, label: 'Showcase', category: 'sections', description: 'Featured product showcase', allowedBlocks: ['heading', 'product'], defaultSettings: { heading: 'Featured Collection', productsToShow: 4, columns: 4, backgroundColor: '#ffffff' } },
 
 
 };
@@ -163,6 +169,34 @@ const SortableSectionItem: React.FC<{
   );
 };
 
+// Helper to build inline styles from section settings
+const buildSectionStyle = (settings: Record<string, any>): React.CSSProperties => {
+  const style: React.CSSProperties = {};
+  if (settings.padding) style.padding = settings.padding;
+  if (settings.paddingTop) style.paddingTop = settings.paddingTop;
+  if (settings.paddingBottom) style.paddingBottom = settings.paddingBottom;
+  if (settings.paddingLeft) style.paddingLeft = settings.paddingLeft;
+  if (settings.paddingRight) style.paddingRight = settings.paddingRight;
+  if (settings.margin) style.margin = settings.margin;
+  if (settings.marginTop) style.marginTop = settings.marginTop;
+  if (settings.marginBottom) style.marginBottom = settings.marginBottom;
+  if (settings.backgroundColor) style.backgroundColor = settings.backgroundColor;
+  if (settings.textColor) style.color = settings.textColor;
+  if (settings.fontSize) style.fontSize = settings.fontSize;
+  if (settings.fontWeight) style.fontWeight = settings.fontWeight;
+  if (settings.letterSpacing) style.letterSpacing = settings.letterSpacing;
+  if (settings.lineHeight) style.lineHeight = settings.lineHeight;
+  if (settings.borderRadius) style.borderRadius = settings.borderRadius;
+  if (settings.borderWidth) style.borderWidth = settings.borderWidth;
+  if (settings.borderColor) { style.borderColor = settings.borderColor; style.borderStyle = 'solid'; }
+  if (settings.boxShadow && settings.boxShadow !== 'none') style.boxShadow = settings.boxShadow;
+  if (settings.maxWidth) style.maxWidth = settings.maxWidth;
+  if (settings.minHeight) style.minHeight = settings.minHeight;
+  if (settings.overflow) style.overflow = settings.overflow as any;
+  if (settings.textAlign) style.textAlign = settings.textAlign as any;
+  return style;
+};
+
 // StorePreview Component
 const StorePreview: React.FC<{ sections: PlacedSection[]; selectedSectionId: string | null; devicePreview: 'desktop' | 'tablet' | 'mobile'; onSelectSection: (id: string) => void; tenantId?: string; hoverPreviewImage?: string | null }> = ({ sections, selectedSectionId, devicePreview, onSelectSection, tenantId, hoverPreviewImage }) => {
   const deviceWidths = { desktop: '100%', tablet: '768px', mobile: '375px' };
@@ -171,35 +205,312 @@ const StorePreview: React.FC<{ sections: PlacedSection[]; selectedSectionId: str
   const renderSection = (section: PlacedSection) => {
     const isSelected = selectedSectionId === section.id;
     const baseClass = `relative transition-all cursor-pointer ${isSelected ? 'ring-2 ring-blue-500 ring-offset-2' : 'hover:ring-2 hover:ring-blue-200'}`;
+    const customStyle = buildSectionStyle(section.settings);
     
     switch (section.type) {
       case 'announcement-bar':
-        return <div className={`${baseClass} py-2 px-4 text-center text-sm`} style={{ backgroundColor: section.settings.backgroundColor, color: section.settings.textColor }}>{section.settings.text}</div>;
-      case 'header':
-        return <div className={`${baseClass} flex items-center justify-between px-4 sm:px-6 py-4 bg-white border-b`}><div className="text-lg sm:text-xl font-bold">{section.settings.logoText}</div><div className="hidden sm:flex gap-3 sm:gap-4 lg:gap-6 text-sm"><span className="text-gray-600">Shop</span><span className="text-gray-600">About</span><span className="text-gray-600">Contact</span></div><div className="flex gap-4"><Icons.Search /><Icons.ShoppingBag /></div></div>;
-      case 'hero':
-        return <div className={`${baseClass} relative ${section.settings.height === 'large' ? 'min-h-[300px] sm:min-h-[400px]' : section.settings.height === 'medium' ? 'min-h-[200px] sm:min-h-[300px]' : 'min-h-[150px] sm:min-h-[200px]'} flex items-center justify-center bg-gradient-to-r from-purple-600 to-blue-600 text-white`}><div className="text-center px-4 sm:px-8"><h1 className="text-2xl sm:text-3xl font-bold mb-3">{section.settings.heading}</h1><p className="text-base sm:text-lg text-white/80 mb-4">{section.settings.subheading}</p>{section.settings.buttonText && <button className="px-4 sm:px-6 py-2 bg-white text-purple-600 rounded-lg font-medium text-sm sm:text-base">{section.settings.buttonText}</button>}</div></div>;
-      case 'categories':
-        return <div className={`${baseClass} py-6 sm:py-8 px-4 sm:px-6`}><h2 className="text-lg sm:text-xl font-bold text-center mb-4 sm:mb-6">{section.settings.title}</h2><div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">{[1,2,3,4].map(i => <div key={i} className="bg-gray-100 rounded-lg p-3 sm:p-4 text-center"><div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-200 rounded-full mx-auto mb-2" /><span className="text-xs sm:text-sm font-medium">Category {i}</span></div>)}</div></div>;
-      case 'flash-sale':
-        return <div className={`${baseClass} py-6 sm:py-8 px-4 sm:px-6 bg-gradient-to-r from-red-500 to-orange-500`}><div className="flex items-center justify-between mb-4"><h2 className="text-lg sm:text-xl font-bold text-white">{section.settings.title}</h2>{section.settings.showCountdown && <div className="text-white text-xs sm:text-sm">⏰ 23:59:59</div>}</div><div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">{[1,2,3,4].map(i => <div key={i} className="bg-white rounded-lg p-2 sm:p-3"><div className="bg-gray-100 aspect-square rounded mb-2" /><div className="h-2 sm:h-3 bg-gray-100 rounded w-3/4 mb-1" /><div className="h-2 sm:h-3 bg-gray-100 rounded w-1/2" /></div>)}</div></div>;
-      case 'product-grid':
-        const responsiveColumns = window.innerWidth < 640 ? Math.min(section.settings.columns, 2) : section.settings.columns;
-        return <div className={`${baseClass} py-6 sm:py-8 px-4 sm:px-6`}><h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6">{section.settings.heading}</h2><div className="grid gap-3 sm:gap-4" style={{ gridTemplateColumns: `repeat(${responsiveColumns}, 1fr)` }}>{Array(section.settings.productsToShow > 8 ? 8 : section.settings.productsToShow).fill(0).map((_, i) => <div key={i} className="bg-gray-50 rounded-lg p-2 sm:p-3"><div className="bg-gray-100 aspect-square rounded mb-2" /><div className="h-2 sm:h-3 bg-gray-100 rounded w-3/4 mb-1" /><div className="h-2 sm:h-3 bg-gray-200 rounded w-1/2" /></div>)}</div></div>;
-      case 'brands':
-        return <div className={`${baseClass} py-6 sm:py-8 px-4 sm:px-6`}><h2 className="text-base sm:text-lg font-bold text-center mb-4 sm:mb-6">{section.settings.title}</h2><div className="flex justify-center gap-4 sm:gap-8 overflow-x-auto">{[1,2,3,4,5,6].map(i => <div key={i} className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-xs flex-shrink-0">Brand {i}</div>)}</div></div>;
+        return <div className={`${baseClass} py-2 px-4 text-center text-sm`} style={{ backgroundColor: section.settings.backgroundColor, color: section.settings.textColor, fontSize: section.settings.fontSize || undefined, ...customStyle }}>{section.settings.text}{section.settings.linkUrl && <span className="ml-2 underline text-xs opacity-80">→</span>}</div>;
+      case 'header': {
+        const headerStyle: React.CSSProperties = {
+          backgroundColor: section.settings.headerBackgroundColor || '#ffffff',
+          color: section.settings.headerTextColor || undefined,
+          height: section.settings.headerHeight || undefined,
+          ...customStyle,
+        };
+        return (
+          <div className={`${baseClass} flex items-center justify-between px-4 sm:px-6 py-4 border-b`} style={headerStyle}>
+            <div style={{ fontSize: section.settings.logoFontSize || '20px', fontWeight: 'bold' }}>
+              {section.settings.logoImage ? <img src={section.settings.logoImage} alt="Logo" className="h-8 object-contain" onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }} /> : section.settings.logoText}
+            </div>
+            <div className="hidden sm:flex text-sm" style={{ gap: section.settings.navItemSpacing || '20px' }}>
+              <span className="opacity-70 hover:opacity-100 transition">Shop</span>
+              <span className="opacity-70 hover:opacity-100 transition">About</span>
+              <span className="opacity-70 hover:opacity-100 transition">Contact</span>
+            </div>
+            <div className="flex gap-4">
+              {section.settings.showSearch !== false && <Icons.Search />}
+              {section.settings.showCart !== false && <Icons.ShoppingBag />}
+            </div>
+          </div>
+        );
+      }
+      case 'hero': {
+        const heroHeight = section.settings.height === 'full' ? 'min-h-[500px] sm:min-h-[600px]' : section.settings.height === 'large' ? 'min-h-[300px] sm:min-h-[400px]' : section.settings.height === 'medium' ? 'min-h-[200px] sm:min-h-[300px]' : 'min-h-[150px] sm:min-h-[200px]';
+        const gradientClass = section.settings.bgGradient && section.settings.bgGradient !== 'custom' ? `bg-gradient-to-r ${section.settings.bgGradient}` : '';
+        const heroStyle: React.CSSProperties = { ...customStyle };
+        if (section.settings.bgGradient === 'custom' && section.settings.bgColor1 && section.settings.bgColor2) {
+          heroStyle.background = `linear-gradient(to right, ${section.settings.bgColor1}, ${section.settings.bgColor2})`;
+        }
+        if (section.settings.imageUrl) {
+          heroStyle.backgroundImage = `url(${section.settings.imageUrl})`;
+          heroStyle.backgroundSize = 'cover';
+          heroStyle.backgroundPosition = 'center';
+        }
+        const alignment = section.settings.alignment || 'center';
+        const textAlignClass = alignment === 'left' ? 'text-left items-start' : alignment === 'right' ? 'text-right items-end' : 'text-center items-center';
+        return (
+          <div className={`${baseClass} relative ${heroHeight} flex ${textAlignClass} justify-center ${gradientClass} text-white`} style={heroStyle}>
+            {section.settings.imageUrl && <div className="absolute inset-0 bg-black" style={{ opacity: (section.settings.overlayOpacity || 40) / 100 }} />}
+            <div className={`relative z-10 px-4 sm:px-8 ${alignment === 'center' ? 'text-center' : ''}`}>
+              <h1 className="font-bold mb-3" style={{ fontSize: section.settings.headingSize || '32px', color: section.settings.headingColor || 'white' }}>{section.settings.heading}</h1>
+              <p className="text-white/80 mb-4" style={{ fontSize: section.settings.subheadingSize || '16px' }}>{section.settings.subheading}</p>
+              {section.settings.buttonText && (
+                <button className="px-4 sm:px-6 py-2 rounded-lg font-medium text-sm sm:text-base" style={{
+                  backgroundColor: section.settings.buttonBgColor || 'white',
+                  color: section.settings.buttonTextColor || '#7c3aed',
+                  borderRadius: section.settings.buttonRadius || '8px',
+                }}>{section.settings.buttonText}</button>
+              )}
+            </div>
+          </div>
+        );
+      }
+      case 'categories': {
+        const cardShapeClass = section.settings.cardShape === 'circle' ? 'rounded-full' : section.settings.cardShape === 'square' ? 'rounded-none' : section.settings.cardShape === 'pill' ? 'rounded-full' : 'rounded-lg';
+        const cols = section.settings.columns || 4;
+        return (
+          <div className={`${baseClass} py-6 sm:py-8 px-4 sm:px-6`} style={customStyle}>
+            <h2 className="text-lg sm:text-xl font-bold text-center mb-4 sm:mb-6" style={{ color: section.settings.titleColor }}>{section.settings.title}</h2>
+            <div className="grid gap-3 sm:gap-4" style={{ gridTemplateColumns: `repeat(${Math.min(cols, 4)}, 1fr)`, gap: section.settings.gap ? `${section.settings.gap}px` : undefined }}>
+              {[1,2,3,4].map(i => (
+                <div key={i} className={`${cardShapeClass} p-3 sm:p-4 text-center transition-transform hover:scale-105`} style={{ backgroundColor: section.settings.cardBgColor || '#f3f4f6', color: section.settings.cardTextColor }}>
+                  <div className={`w-12 h-12 sm:w-16 sm:h-16 bg-gray-200 ${section.settings.cardShape === 'circle' ? 'rounded-full' : 'rounded-lg'} mx-auto mb-2`} />
+                  <span className="text-xs sm:text-sm font-medium">Category {i}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      }
+      case 'flash-sale': {
+        const gradientClass = section.settings.bgGradient && section.settings.bgGradient !== 'custom' ? `bg-gradient-to-r ${section.settings.bgGradient}` : 'bg-gradient-to-r from-red-500 to-orange-500';
+        const flashStyle: React.CSSProperties = { ...customStyle };
+        if (section.settings.bgGradient === 'custom' && section.settings.bgColor1 && section.settings.bgColor2) {
+          flashStyle.background = `linear-gradient(to right, ${section.settings.bgColor1}, ${section.settings.bgColor2})`;
+        }
+        return (
+          <div className={`${baseClass} py-6 sm:py-8 px-4 sm:px-6 ${section.settings.bgGradient === 'custom' ? '' : gradientClass}`} style={flashStyle}>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg sm:text-xl font-bold" style={{ color: section.settings.titleColor || 'white' }}>{section.settings.title}</h2>
+              {section.settings.showCountdown && (
+                <div className="text-xs sm:text-sm px-3 py-1 rounded-lg" style={{ backgroundColor: section.settings.countdownBg || 'rgba(255,255,255,0.2)', color: section.settings.countdownColor || 'white' }}>
+                  ⏰ 23:59:59
+                </div>
+              )}
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+              {[1,2,3,4].map(i => (
+                <div key={i} className="bg-white rounded-lg p-2 sm:p-3" style={{ borderRadius: section.settings.cardStyle === 'minimal' ? '4px' : '8px', boxShadow: section.settings.cardStyle === 'shadow' ? '0 4px 6px rgba(0,0,0,0.1)' : undefined }}>
+                  <div className="relative">
+                    <div className="bg-gray-100 aspect-square rounded mb-2" />
+                    {section.settings.badgeColor && <div className="absolute top-1 left-1 px-1.5 py-0.5 rounded text-[10px] text-white font-bold" style={{ backgroundColor: section.settings.badgeColor }}>SALE</div>}
+                  </div>
+                  <div className="h-2 sm:h-3 bg-gray-100 rounded w-3/4 mb-1" />
+                  <div className="h-2 sm:h-3 bg-gray-100 rounded w-1/2" />
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      }
+      case 'product-grid': {
+        const cols = typeof section.settings.columns === 'string' ? parseInt(section.settings.columns) : section.settings.columns;
+        const responsiveColumns = typeof window !== 'undefined' && window.innerWidth < 640 ? Math.min(cols, 2) : cols;
+        const gridGap = section.settings.gap ? `${section.settings.gap}px` : undefined;
+        return (
+          <div className={`${baseClass} py-6 sm:py-8 px-4 sm:px-6`} style={customStyle}>
+            <div className="flex items-center justify-between mb-4 sm:mb-6">
+              <h2 className="text-lg sm:text-xl font-bold" style={{ color: section.settings.headingColor }}>{section.settings.heading}</h2>
+              {section.settings.showViewAll && <span className="text-blue-600 text-sm cursor-pointer hover:underline">View All →</span>}
+            </div>
+            <div className="grid gap-3 sm:gap-4" style={{ gridTemplateColumns: `repeat(${responsiveColumns}, 1fr)`, gap: gridGap }}>
+              {Array(Math.min(section.settings.productsToShow, 8)).fill(0).map((_, i) => (
+                <div key={i} className="rounded-lg p-2 sm:p-3 transition-all" style={{
+                  backgroundColor: section.settings.cardBgColor || '#f9fafb',
+                  borderRadius: section.settings.cardBorderRadius || '8px',
+                  boxShadow: section.settings.cardShadow === 'sm' ? '0 1px 2px rgba(0,0,0,0.05)' : section.settings.cardShadow === 'md' ? '0 4px 6px rgba(0,0,0,0.1)' : section.settings.cardShadow === 'lg' ? '0 10px 15px rgba(0,0,0,0.1)' : undefined,
+                }}>
+                  <div className="bg-gray-100 aspect-square rounded mb-2" />
+                  <div className="h-2 sm:h-3 bg-gray-100 rounded w-3/4 mb-1" />
+                  {section.settings.showPrice !== false && <div className="h-2 sm:h-3 bg-gray-200 rounded w-1/2 mb-2" />}
+                  {section.settings.showAddToCart !== false && <div className="h-6 bg-blue-100 rounded w-full" />}
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      }
+      case 'brands': {
+        const logoSize = section.settings.logoSize || '64px';
+        return (
+          <div className={`${baseClass} py-6 sm:py-8 px-4 sm:px-6`} style={customStyle}>
+            <h2 className="text-base sm:text-lg font-bold text-center mb-4 sm:mb-6" style={{ color: section.settings.titleColor }}>{section.settings.title}</h2>
+            <div className="flex justify-center gap-4 sm:gap-8 overflow-x-auto">
+              {[1,2,3,4,5,6].map(i => (
+                <div key={i} className="flex items-center justify-center text-gray-400 text-xs flex-shrink-0 transition-all hover:opacity-100" style={{
+                  width: logoSize, height: logoSize,
+                  backgroundColor: section.settings.logoBgColor || '#f3f4f6',
+                  borderRadius: section.settings.logoBorderRadius || '8px',
+                  filter: section.settings.grayscale ? 'grayscale(100%)' : undefined,
+                }}>B{i}</div>
+              ))}
+            </div>
+          </div>
+        );
+      }
+      case 'tags-products':
+        return (
+          <div className={`${baseClass} py-6 sm:py-8 px-4 sm:px-6`} style={customStyle}>
+            <div className="flex items-center gap-2 mb-4 sm:mb-6">
+              <h2 className="text-lg sm:text-xl font-bold" style={{ color: section.settings.titleColor }}>{section.settings.title || 'Tagged Products'}</h2>
+              {section.settings.tagName && (
+                <span className="px-2 py-1 text-xs text-white font-medium" style={{
+                  backgroundColor: section.settings.tagColor || '#6366f1',
+                  borderRadius: section.settings.tagShape === 'pill' ? '20px' : section.settings.tagShape === 'square' ? '2px' : '6px',
+                }}>{section.settings.tagName}</span>
+              )}
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {[1,2,3,4].map(i => <div key={i} className="bg-gray-50 rounded-lg p-2 sm:p-3"><div className="bg-gray-100 aspect-square rounded mb-2" /><div className="h-2 bg-gray-100 rounded w-3/4 mb-1" /><div className="h-2 bg-gray-200 rounded w-1/2" /></div>)}
+            </div>
+          </div>
+        );
       case 'newsletter':
-        return <div className={`${baseClass} py-8 sm:py-10 px-4 sm:px-6 text-center`} style={{ backgroundColor: section.settings.backgroundColor }}><h2 className="text-lg sm:text-xl font-bold mb-2">{section.settings.heading}</h2><p className="text-gray-600 mb-4 text-sm">{section.settings.subheading}</p><div className="flex flex-col sm:flex-row max-w-md mx-auto gap-2"><input className="flex-1 px-4 py-2 border rounded-lg sm:rounded-l-lg sm:rounded-r-none text-sm" placeholder="Enter your email" /><button className="px-4 py-2 bg-gray-900 text-white rounded-lg sm:rounded-r-lg sm:rounded-l-none text-sm">{section.settings.buttonText}</button></div></div>;
-      case 'footer':
-        return <div className={`${baseClass} py-8 sm:py-10 px-4 sm:px-6 bg-gray-900 text-white`}><div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 mb-6">{[1,2,3,4].map(i => <div key={i}><div className="h-3 sm:h-4 bg-gray-700 rounded w-1/2 mb-3" /><div className="space-y-2">{[1,2,3].map(j => <div key={j} className="h-2 sm:h-3 bg-gray-700 rounded w-3/4" />)}</div></div>)}</div><div className="text-center text-gray-400 text-xs sm:text-sm pt-6 border-t border-gray-800">{section.settings.copyrightText}</div></div>;
+        return (
+          <div className={`${baseClass} py-8 sm:py-10 px-4 sm:px-6 text-center`} style={{ backgroundColor: section.settings.backgroundColor, ...customStyle }}>
+            <h2 className="text-lg sm:text-xl font-bold mb-2">{section.settings.heading}</h2>
+            <p className="text-gray-600 mb-4 text-sm">{section.settings.subheading}</p>
+            <div className="flex flex-col sm:flex-row max-w-md mx-auto gap-2">
+              <input className="flex-1 px-4 py-2 border rounded-lg sm:rounded-l-lg sm:rounded-r-none text-sm" style={{ borderRadius: section.settings.inputBorderRadius || undefined }} placeholder="Enter your email" />
+              <button className="px-4 py-2 rounded-lg sm:rounded-r-lg sm:rounded-l-none text-sm" style={{
+                backgroundColor: section.settings.buttonBgColor || '#111827',
+                color: section.settings.buttonTextColor || 'white',
+              }}>{section.settings.buttonText}</button>
+            </div>
+          </div>
+        );
+      case 'footer': {
+        const footerCols = typeof section.settings.columns === 'string' ? parseInt(section.settings.columns) : (section.settings.columns || 4);
+        return (
+          <div className={`${baseClass} py-8 sm:py-10 px-4 sm:px-6`} style={{ backgroundColor: section.settings.footerBgColor || '#111827', color: section.settings.footerTextColor || 'white', ...customStyle }}>
+            <div className="grid gap-4 sm:gap-6 mb-6" style={{ gridTemplateColumns: `repeat(${footerCols}, 1fr)` }}>
+              {Array(footerCols).fill(0).map((_, i) => (
+                <div key={i}>
+                  <div className="h-3 sm:h-4 rounded w-1/2 mb-3" style={{ backgroundColor: section.settings.footerHeadingColor || 'rgba(255,255,255,0.7)' }} />
+                  <div className="space-y-2">
+                    {[1,2,3].map(j => <div key={j} className="h-2 sm:h-3 rounded w-3/4" style={{ backgroundColor: section.settings.footerLinkColor || 'rgba(255,255,255,0.3)' }} />)}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="text-center text-xs sm:text-sm pt-6 border-t opacity-60" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>{section.settings.copyrightText}</div>
+          </div>
+        );
+      }
       case 'image-with-text':
-        return <div className={`${baseClass} py-6 sm:py-8 px-4 sm:px-6`}><div className={`flex flex-col sm:flex-row gap-6 sm:gap-8 items-center ${section.settings.imagePosition === 'right' ? 'sm:flex-row-reverse' : ''}`}><div className="w-full sm:flex-1 bg-gray-200 aspect-video rounded-lg" /><div className="w-full sm:flex-1"><h2 className="text-lg sm:text-xl font-bold mb-3">{section.settings.heading}</h2><p className="text-gray-600 text-sm mb-4">{section.settings.text}</p>{section.settings.buttonText && <button className="px-4 py-2 border border-gray-900 rounded-lg text-sm">{section.settings.buttonText}</button>}</div></div></div>;
+        return (
+          <div className={`${baseClass} py-6 sm:py-8 px-4 sm:px-6`} style={customStyle}>
+            <div className={`flex flex-col sm:flex-row gap-6 sm:gap-8 items-center ${section.settings.imagePosition === 'right' ? 'sm:flex-row-reverse' : ''}`}>
+              <div className="w-full sm:flex-1 bg-gray-200 aspect-video rounded-lg" style={{ borderRadius: section.settings.imageBorderRadius || '8px' }} />
+              <div className="w-full sm:flex-1">
+                <h2 className="text-lg sm:text-xl font-bold mb-3">{section.settings.heading}</h2>
+                <p className="text-gray-600 text-sm mb-4">{section.settings.text}</p>
+                {section.settings.buttonText && <button className="px-4 py-2 rounded-lg text-sm" style={{ backgroundColor: section.settings.buttonBgColor || 'transparent', border: section.settings.buttonBgColor ? 'none' : '1px solid #111827', color: section.settings.buttonBgColor ? 'white' : '#111827' }}>{section.settings.buttonText}</button>}
+              </div>
+            </div>
+          </div>
+        );
       case 'testimonials':
-        return <div className={`${baseClass} py-6 sm:py-8 px-4 sm:px-6 bg-gray-50`}><h2 className="text-lg sm:text-xl font-bold text-center mb-4 sm:mb-6">{section.settings.heading}</h2><div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">{[1,2,3].map(i => <div key={i} className="bg-white p-4 rounded-lg shadow-sm"><div className="flex gap-1 text-yellow-400 mb-3">{[1,2,3,4,5].map(s => <Icons.Star key={s} />)}</div><p className="text-gray-600 text-sm mb-3">"Amazing product!"</p><div className="flex items-center gap-2"><div className="w-8 h-8 bg-gray-200 rounded-full" /><span className="text-sm font-medium">Customer</span></div></div>)}</div></div>;
+        return (
+          <div className={`${baseClass} py-6 sm:py-8 px-4 sm:px-6`} style={{ backgroundColor: section.settings.backgroundColor || '#f9fafb', ...customStyle }}>
+            <h2 className="text-lg sm:text-xl font-bold text-center mb-4 sm:mb-6" style={{ color: section.settings.headingColor }}>{section.settings.heading}</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+              {[1,2,3].map(i => (
+                <div key={i} className="p-4 rounded-lg shadow-sm" style={{ backgroundColor: section.settings.cardBgColor || 'white' }}>
+                  <div className="flex gap-1 mb-3" style={{ color: section.settings.starColor || '#facc15' }}>{[1,2,3,4,5].map(s => <Icons.Star key={s} />)}</div>
+                  <p className="text-gray-600 text-sm mb-3">&quot;Amazing product!&quot;</p>
+                  <div className="flex items-center gap-2"><div className="w-8 h-8 bg-gray-200 rounded-full" /><span className="text-sm font-medium">Customer</span></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
       case 'rich-text':
-        return <div className={`${baseClass} py-6 sm:py-8 px-4 sm:px-6`} style={{ backgroundColor: section.settings.backgroundColor, textAlign: section.settings.textAlign as any }}><div className="max-w-2xl mx-auto text-gray-700 text-sm sm:text-base">{section.settings.content}</div></div>;
+        return <div className={`${baseClass} py-6 sm:py-8 px-4 sm:px-6`} style={{ backgroundColor: section.settings.backgroundColor, textAlign: section.settings.textAlign as any, color: section.settings.textColor, fontSize: section.settings.fontSize, ...customStyle }}><div className="max-w-2xl mx-auto">{section.settings.content}</div></div>;
+      case 'custom-html':
+        return (
+          <div className={`${baseClass} py-4 sm:py-6 px-4 sm:px-6`} style={customStyle}>
+            {section.settings.html ? (
+              <div className="border-2 border-dashed border-gray-200 rounded-lg p-4 text-center">
+                <Icons.FileText />
+                <p className="text-sm text-gray-500 mt-1">Custom HTML Section</p>
+                <p className="text-xs text-gray-400 mt-1 truncate max-w-xs mx-auto">{section.settings.html.substring(0, 100)}{section.settings.html.length > 100 ? '...' : ''}</p>
+              </div>
+            ) : (
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center text-gray-400">
+                <Icons.FileText />
+                <p className="text-sm mt-1">Add custom HTML code</p>
+              </div>
+            )}
+          </div>
+        );
+      case 'photo-gallery': {
+        const cols = typeof section.settings.columns === 'string' ? parseInt(section.settings.columns) : (section.settings.columns || 3);
+        const images = [section.settings.galleryImage1, section.settings.galleryImage2, section.settings.galleryImage3, section.settings.galleryImage4, section.settings.galleryImage5, section.settings.galleryImage6].filter(Boolean);
+        return (
+          <div className={`${baseClass} py-6 sm:py-8 px-4 sm:px-6`} style={customStyle}>
+            <h2 className="text-lg sm:text-xl font-bold text-center mb-4 sm:mb-6">{section.settings.heading}</h2>
+            <div className="grid" style={{ gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: `${section.settings.gap || 8}px` }}>
+              {(images.length > 0 ? images : [null, null, null, null, null, null]).slice(0, cols * 2).map((img, i) => (
+                <div key={i} className={`overflow-hidden transition-transform ${section.settings.hoverEffect === 'zoom' ? 'hover:scale-105' : ''}`} style={{
+                  borderRadius: section.settings.imageRadius || '8px',
+                  aspectRatio: section.settings.aspectRatio === 'portrait' ? '3/4' : section.settings.aspectRatio === 'landscape' ? '4/3' : section.settings.aspectRatio === 'auto' ? 'auto' : '1/1',
+                }}>
+                  {img ? (
+                    <img src={img} alt={`Gallery ${i + 1}`} className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = BROKEN_IMAGE_PLACEHOLDER; }} />
+                  ) : (
+                    <div className="w-full h-full bg-gray-100 flex items-center justify-center min-h-[80px]">
+                      <Icons.Camera />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      }
+      case 'video-gallery': {
+        const cols = typeof section.settings.columns === 'string' ? parseInt(section.settings.columns) : (section.settings.columns || 2);
+        const videos = [section.settings.videoUrl1, section.settings.videoUrl2, section.settings.videoUrl3].filter(Boolean);
+        return (
+          <div className={`${baseClass} py-6 sm:py-8 px-4 sm:px-6`} style={{ backgroundColor: section.settings.backgroundColor, ...customStyle }}>
+            <h2 className="text-lg sm:text-xl font-bold text-center mb-4 sm:mb-6">{section.settings.heading}</h2>
+            <div className="grid" style={{ gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: `${section.settings.gap || 16}px` }}>
+              {(videos.length > 0 ? videos : [null, null]).map((url, i) => (
+                <div key={i} className="overflow-hidden aspect-video" style={{ borderRadius: section.settings.borderRadius || '12px' }}>
+                  {url ? (
+                    <div className="w-full h-full bg-gray-900 flex items-center justify-center text-white">
+                      <div className="text-center">
+                        <Icons.Video />
+                        <p className="text-xs mt-1 opacity-60 truncate max-w-[120px]">{url}</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="w-full h-full bg-gray-800 flex items-center justify-center text-gray-400">
+                      <div className="text-center">
+                        <Icons.Film />
+                        <p className="text-xs mt-1">Add video URL</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      }
       default:
-        return <div className={`${baseClass} py-6 sm:py-8 px-4 sm:px-6 bg-gray-50 text-center`}><div className="text-gray-400">{SECTION_DEFINITIONS[section.type]?.icon}</div><p className="text-gray-500 mt-2 text-sm">{section.name}</p></div>;
+        return <div className={`${baseClass} py-6 sm:py-8 px-4 sm:px-6 bg-gray-50 text-center`} style={customStyle}><div className="text-gray-400">{SECTION_DEFINITIONS[section.type]?.icon}</div><p className="text-gray-500 mt-2 text-sm">{section.name}</p></div>;
     }
   };
   
@@ -276,7 +587,7 @@ const SettingsField: React.FC<{
               />
               <button
                 onClick={(e) => { e.stopPropagation(); handleChange(''); }}
-                className="absolute to p-2 right-2 bg-red-500 text-white p-1 rounded hover:bg-red-600"
+                className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded hover:bg-red-600"
                 type="button"
                 title="Remove image"
               >
@@ -397,8 +708,83 @@ const SettingsField: React.FC<{
   );
 });
 
+// DesignControls - Universal styling controls for all sections
+const DesignControls: React.FC<{
+  settings: Record<string, any>;
+  onChange: (name: string, value: any) => void;
+  tenantId: string;
+}> = React.memo(({ settings, onChange, tenantId }) => {
+  const [expandedGroup, setExpandedGroup] = useState<string | null>('spacing');
+  
+  const DesignGroup: React.FC<{ title: string; groupKey: string; icon: JSX.Element; children: React.ReactNode }> = ({ title, groupKey, icon, children }) => (
+    <div className="border border-gray-100 rounded-lg mb-2 overflow-hidden">
+      <button 
+        onClick={(e) => { e.stopPropagation(); setExpandedGroup(expandedGroup === groupKey ? null : groupKey); }}
+        className="w-full flex items-center gap-2 px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition"
+      >
+        <span className="text-gray-400">{icon}</span>
+        <span className="flex-1 text-left">{title}</span>
+        {expandedGroup === groupKey ? <Icons.ChevronDown /> : <Icons.ChevronRight />}
+      </button>
+      {expandedGroup === groupKey && <div className="px-3 pb-3 border-t border-gray-50">{children}</div>}
+    </div>
+  );
+  
+  return (
+    <div className="space-y-1">
+      <DesignGroup title="Spacing" groupKey="spacing" icon={<Icons.Layout />}>
+        <SettingsField label="Padding" name="padding" value={settings.padding} type="text" onChange={onChange} tenantId={tenantId} />
+        <SettingsField label="Padding Top" name="paddingTop" value={settings.paddingTop} type="text" onChange={onChange} tenantId={tenantId} />
+        <SettingsField label="Padding Bottom" name="paddingBottom" value={settings.paddingBottom} type="text" onChange={onChange} tenantId={tenantId} />
+        <SettingsField label="Padding Left" name="paddingLeft" value={settings.paddingLeft} type="text" onChange={onChange} tenantId={tenantId} />
+        <SettingsField label="Padding Right" name="paddingRight" value={settings.paddingRight} type="text" onChange={onChange} tenantId={tenantId} />
+        <SettingsField label="Margin" name="margin" value={settings.margin} type="text" onChange={onChange} tenantId={tenantId} />
+        <SettingsField label="Margin Top" name="marginTop" value={settings.marginTop} type="text" onChange={onChange} tenantId={tenantId} />
+        <SettingsField label="Margin Bottom" name="marginBottom" value={settings.marginBottom} type="text" onChange={onChange} tenantId={tenantId} />
+      </DesignGroup>
+      
+      <DesignGroup title="Colors" groupKey="colors" icon={<Icons.Palette />}>
+        <SettingsField label="Background Color" name="backgroundColor" value={settings.backgroundColor} type="color" onChange={onChange} tenantId={tenantId} />
+        <SettingsField label="Text Color" name="textColor" value={settings.textColor} type="color" onChange={onChange} tenantId={tenantId} />
+        <SettingsField label="Background Gradient" name="backgroundGradient" value={settings.backgroundGradient} type="text" onChange={onChange} tenantId={tenantId} />
+        <SettingsField label="Overlay Color" name="overlayColor" value={settings.overlayColor} type="color" onChange={onChange} tenantId={tenantId} />
+        <SettingsField label="Overlay Opacity" name="overlayOpacity" value={settings.overlayOpacity} type="number" onChange={onChange} tenantId={tenantId} />
+      </DesignGroup>
+      
+      <DesignGroup title="Typography" groupKey="typography" icon={<Icons.Type />}>
+        <SettingsField label="Font Size" name="fontSize" value={settings.fontSize} type="select" options={[{ value: '12px', label: 'Extra Small (12px)' }, { value: '14px', label: 'Small (14px)' }, { value: '16px', label: 'Base (16px)' }, { value: '18px', label: 'Medium (18px)' }, { value: '20px', label: 'Large (20px)' }, { value: '24px', label: 'XL (24px)' }, { value: '32px', label: '2XL (32px)' }, { value: '40px', label: '3XL (40px)' }, { value: '48px', label: '4XL (48px)' }]} onChange={onChange} tenantId={tenantId} />
+        <SettingsField label="Font Weight" name="fontWeight" value={settings.fontWeight} type="select" options={[{ value: '300', label: 'Light' }, { value: '400', label: 'Normal' }, { value: '500', label: 'Medium' }, { value: '600', label: 'Semi Bold' }, { value: '700', label: 'Bold' }, { value: '800', label: 'Extra Bold' }]} onChange={onChange} tenantId={tenantId} />
+        <SettingsField label="Text Align" name="textAlign" value={settings.textAlign} type="select" options={[{ value: 'left', label: 'Left' }, { value: 'center', label: 'Center' }, { value: 'right', label: 'Right' }]} onChange={onChange} tenantId={tenantId} />
+        <SettingsField label="Letter Spacing" name="letterSpacing" value={settings.letterSpacing} type="text" onChange={onChange} tenantId={tenantId} />
+        <SettingsField label="Line Height" name="lineHeight" value={settings.lineHeight} type="text" onChange={onChange} tenantId={tenantId} />
+      </DesignGroup>
+      
+      <DesignGroup title="Border & Shadow" groupKey="border" icon={<Icons.Grid />}>
+        <SettingsField label="Border Radius" name="borderRadius" value={settings.borderRadius} type="text" onChange={onChange} tenantId={tenantId} />
+        <SettingsField label="Border Width" name="borderWidth" value={settings.borderWidth} type="text" onChange={onChange} tenantId={tenantId} />
+        <SettingsField label="Border Color" name="borderColor" value={settings.borderColor} type="color" onChange={onChange} tenantId={tenantId} />
+        <SettingsField label="Box Shadow" name="boxShadow" value={settings.boxShadow} type="select" options={[{ value: 'none', label: 'None' }, { value: '0 1px 3px rgba(0,0,0,0.12)', label: 'Small' }, { value: '0 4px 6px rgba(0,0,0,0.1)', label: 'Medium' }, { value: '0 10px 15px rgba(0,0,0,0.1)', label: 'Large' }, { value: '0 20px 25px rgba(0,0,0,0.15)', label: 'Extra Large' }]} onChange={onChange} tenantId={tenantId} />
+      </DesignGroup>
+      
+      <DesignGroup title="Animation" groupKey="animation" icon={<Icons.Zap />}>
+        <SettingsField label="Animation" name="animation" value={settings.animation} type="select" options={[{ value: 'none', label: 'None' }, { value: 'fadeIn', label: 'Fade In' }, { value: 'slideUp', label: 'Slide Up' }, { value: 'slideDown', label: 'Slide Down' }, { value: 'slideLeft', label: 'Slide Left' }, { value: 'slideRight', label: 'Slide Right' }, { value: 'zoomIn', label: 'Zoom In' }, { value: 'bounce', label: 'Bounce' }, { value: 'pulse', label: 'Pulse' }]} onChange={onChange} tenantId={tenantId} />
+        <SettingsField label="Animation Duration" name="animationDuration" value={settings.animationDuration} type="select" options={[{ value: '0.2s', label: 'Fast (0.2s)' }, { value: '0.5s', label: 'Normal (0.5s)' }, { value: '1s', label: 'Slow (1s)' }, { value: '2s', label: 'Very Slow (2s)' }]} onChange={onChange} tenantId={tenantId} />
+        <SettingsField label="Hover Effect" name="hoverEffect" value={settings.hoverEffect} type="select" options={[{ value: 'none', label: 'None' }, { value: 'zoom', label: 'Zoom' }, { value: 'lift', label: 'Lift Up' }, { value: 'glow', label: 'Glow' }, { value: 'darken', label: 'Darken' }, { value: 'brighten', label: 'Brighten' }]} onChange={onChange} tenantId={tenantId} />
+      </DesignGroup>
+      
+      <DesignGroup title="Layout" groupKey="layout" icon={<Icons.Layers />}>
+        <SettingsField label="Width" name="maxWidth" value={settings.maxWidth} type="select" options={[{ value: '100%', label: 'Full Width' }, { value: '1400px', label: 'Extra Wide (1400px)' }, { value: '1200px', label: 'Wide (1200px)' }, { value: '1024px', label: 'Medium (1024px)' }, { value: '800px', label: 'Narrow (800px)' }, { value: '640px', label: 'Compact (640px)' }]} onChange={onChange} tenantId={tenantId} />
+        <SettingsField label="Min Height" name="minHeight" value={settings.minHeight} type="text" onChange={onChange} tenantId={tenantId} />
+        <SettingsField label="Overflow" name="overflow" value={settings.overflow} type="select" options={[{ value: 'visible', label: 'Visible' }, { value: 'hidden', label: 'Hidden' }, { value: 'auto', label: 'Auto' }]} onChange={onChange} tenantId={tenantId} />
+        <SettingsField label="Display" name="sectionDisplay" value={settings.sectionDisplay} type="select" options={[{ value: 'block', label: 'Block' }, { value: 'flex', label: 'Flexbox' }, { value: 'grid', label: 'Grid' }]} onChange={onChange} tenantId={tenantId} />
+      </DesignGroup>
+    </div>
+  );
+});
+
 // SectionSettings Component
 const SectionSettings: React.FC<{ section: PlacedSection; onUpdate: (settings: Record<string, any>) => void; tenantId: string }> = ({ section, onUpdate, tenantId }) => {
+  const [activeTab, setActiveTab] = useState<'content' | 'design'>('content');
   // Use refs to avoid re-creating callback on every settings change
   const sectionRef = useRef(section);
   const onUpdateRef = useRef(onUpdate);
@@ -416,25 +802,230 @@ const SectionSettings: React.FC<{ section: PlacedSection; onUpdate: (settings: R
   
   const renderFields = () => {
     switch (section.type) {
-      case 'announcement-bar': return <><SettingsField key="text" label="Text" name="text" value={section.settings.text} type="text" onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="backgroundColor" label="Background Color" name="backgroundColor" value={section.settings.backgroundColor} type="color" onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="textColor" label="Text Color" name="textColor" value={section.settings.textColor} type="color" onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="dismissible" label="Dismissible" name="dismissible" value={section.settings.dismissible} type="checkbox" onChange={handleFieldChange} tenantId={tenantId} /></>;
-      case 'header': return <><SettingsField key="logoText" label="Logo Text" name="logoText" value={section.settings.logoText} type="text" onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="sticky" label="Sticky Header" name="sticky" value={section.settings.sticky} type="checkbox" onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="transparent" label="Transparent" name="transparent" value={section.settings.transparent} type="checkbox" onChange={handleFieldChange} tenantId={tenantId} /></>;
-      case 'hero': return <><SettingsField key="heading" label="Heading" name="heading" value={section.settings.heading} type="text" onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="subheading" label="Subheading" name="subheading" value={section.settings.subheading} type="text" onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="buttonText" label="Button Text" name="buttonText" value={section.settings.buttonText} type="text" onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="buttonLink" label="Button Link" name="buttonLink" value={section.settings.buttonLink} type="text" onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="imageUrl" label="Image URL" name="imageUrl" value={section.settings.imageUrl} type="image" onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="height" label="Height" name="height" value={section.settings.height} type="select" options={[{ value: 'small', label: 'Small' }, { value: 'medium', label: 'Medium' }, { value: 'large', label: 'Large' }]} onChange={handleFieldChange} tenantId={tenantId} /></>;
-      case 'categories': return <><SettingsField key="title" label="Title" name="title" value={section.settings.title} type="text" onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="style" label="Style" name="style" value={section.settings.style} type="select" options={[{ value: 'grid', label: 'Grid' }, { value: 'carousel', label: 'Carousel' }, { value: 'list', label: 'List' }]} onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="columns" label="Columns" name="columns" value={section.settings.columns} type="number" onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="showSubcategories" label="Show Subcategories" name="showSubcategories" value={section.settings.showSubcategories} type="checkbox" onChange={handleFieldChange} tenantId={tenantId} /></>;
-      case 'flash-sale': return <><SettingsField key="title" label="Title" name="title" value={section.settings.title} type="text" onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="showCountdown" label="Show Countdown" name="showCountdown" value={section.settings.showCountdown} type="checkbox" onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="productsToShow" label="Products to Show" name="productsToShow" value={section.settings.productsToShow} type="number" onChange={handleFieldChange} tenantId={tenantId} /></>;
-      case 'product-grid': return <><SettingsField key="heading" label="Heading" name="heading" value={section.settings.heading} type="text" onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="productsToShow" label="Products to Show" name="productsToShow" value={section.settings.productsToShow} type="number" onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="columns" label="Columns" name="columns" value={section.settings.columns} type="select" options={[{ value: '2', label: '2' }, { value: '3', label: '3' }, { value: '4', label: '4' }, { value: '5', label: '5' }]} onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="filterType" label="Filter Type" name="filterType" value={section.settings.filterType} type="select" options={[{ value: 'all', label: 'All Products' }, { value: 'featured', label: 'Featured Only' }, { value: 'bestseller', label: 'Best Sellers' }, { value: 'new', label: 'New Arrivals' }]} onChange={handleFieldChange} tenantId={tenantId} /></>;
-      case 'brands': return <><SettingsField key="title" label="Title" name="title" value={section.settings.title} type="text" onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="style" label="Style" name="style" value={section.settings.style} type="select" options={[{ value: 'grid', label: 'Grid' }, { value: 'carousel', label: 'Carousel' }]} onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="grayscale" label="Grayscale" name="grayscale" value={section.settings.grayscale} type="checkbox" onChange={handleFieldChange} tenantId={tenantId} /></>;
-      case 'newsletter': return <><SettingsField key="heading" label="Heading" name="heading" value={section.settings.heading} type="text" onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="subheading" label="Subheading" name="subheading" value={section.settings.subheading} type="text" onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="buttonText" label="Button Text" name="buttonText" value={section.settings.buttonText} type="text" onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="backgroundColor" label="Background Color" name="backgroundColor" value={section.settings.backgroundColor} type="color" onChange={handleFieldChange} tenantId={tenantId} /></>;
-      case 'footer': return <><SettingsField key="copyrightText" label="Copyright Text" name="copyrightText" value={section.settings.copyrightText} type="text" onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="showNewsletter" label="Show Newsletter" name="showNewsletter" value={section.settings.showNewsletter} type="checkbox" onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="showSocial" label="Show Social Links" name="showSocial" value={section.settings.showSocial} type="checkbox" onChange={handleFieldChange} tenantId={tenantId} /></>;
-      case 'image-with-text': return <><SettingsField key="heading" label="Heading" name="heading" value={section.settings.heading} type="text" onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="text" label="Text" name="text" value={section.settings.text} type="textarea" onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="imageUrl" label="Image URL" name="imageUrl" value={section.settings.imageUrl} type="image" onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="imagePosition" label="Image Position" name="imagePosition" value={section.settings.imagePosition} type="select" options={[{ value: 'left', label: 'Left' }, { value: 'right', label: 'Right' }]} onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="buttonText" label="Button Text" name="buttonText" value={section.settings.buttonText} type="text" onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="buttonLink" label="Button Link" name="buttonLink" value={section.settings.buttonLink} type="text" onChange={handleFieldChange} tenantId={tenantId} /></>;
-      case 'image-banner': return <><SettingsField key="imageUrl" label="Image URL" name="imageUrl" value={section.settings.imageUrl} type="image" onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="heading" label="Heading" name="heading" value={section.settings.heading} type="text" onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="subheading" label="Subheading" name="subheading" value={section.settings.subheading} type="text" onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="buttonText" label="Button Text" name="buttonText" value={section.settings.buttonText} type="text" onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="buttonLink" label="Button Link" name="buttonLink" value={section.settings.buttonLink} type="text" onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="height" label="Height" name="height" value={section.settings.height} type="select" options={[{ value: 'small', label: 'Small' }, { value: 'medium', label: 'Medium' }, { value: 'large', label: 'Large' }]} onChange={handleFieldChange} tenantId={tenantId} /></>;
-      case 'video': return <><SettingsField key="videoUrl" label="Video URL" name="videoUrl" value={section.settings.videoUrl} type="video" onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="heading" label="Heading" name="heading" value={section.settings.heading} type="text" onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="autoplay" label="Autoplay" name="autoplay" value={section.settings.autoplay} type="checkbox" onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="muted" label="Muted" name="muted" value={section.settings.muted} type="checkbox" onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="loop" label="Loop" name="loop" value={section.settings.loop} type="checkbox" onChange={handleFieldChange} tenantId={tenantId} /></>;
-      case 'testimonials': return <><SettingsField key="heading" label="Heading" name="heading" value={section.settings.heading} type="text" onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="showRatings" label="Show Ratings" name="showRatings" value={section.settings.showRatings} type="checkbox" onChange={handleFieldChange} tenantId={tenantId} /></>;
-      case 'rich-text': return <><SettingsField key="content" label="Content" name="content" value={section.settings.content} type="textarea" onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="textAlign" label="Text Align" name="textAlign" value={section.settings.textAlign} type="select" options={[{ value: 'left', label: 'Left' }, { value: 'center', label: 'Center' }, { value: 'right', label: 'Right' }]} onChange={handleFieldChange} tenantId={tenantId} /><SettingsField key="backgroundColor" label="Background Color" name="backgroundColor" value={section.settings.backgroundColor} type="color" onChange={handleFieldChange} tenantId={tenantId} /></>;
-      default: return Object.keys(section.settings).map(key => <SettingsField key={key} label={key.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase())} name={key} value={section.settings[key]} type="text" onChange={handleFieldChange} tenantId={tenantId} />);
+      case 'announcement-bar': return <>
+        <SettingsField key="text" label="Text" name="text" value={section.settings.text} type="text" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="backgroundColor" label="Background Color" name="backgroundColor" value={section.settings.backgroundColor} type="color" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="textColor" label="Text Color" name="textColor" value={section.settings.textColor} type="color" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="fontSize-ann" label="Font Size" name="fontSize" value={section.settings.fontSize} type="select" options={[{ value: '12px', label: 'Small' }, { value: '14px', label: 'Medium' }, { value: '16px', label: 'Large' }]} onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="dismissible" label="Dismissible" name="dismissible" value={section.settings.dismissible} type="checkbox" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="link-ann" label="Link URL" name="linkUrl" value={section.settings.linkUrl} type="text" onChange={handleFieldChange} tenantId={tenantId} />
+      </>;
+      case 'header': return <>
+        <SettingsField key="logoText" label="Logo Text" name="logoText" value={section.settings.logoText} type="text" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="logoImage" label="Logo Image" name="logoImage" value={section.settings.logoImage} type="image" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="headerBg" label="Background Color" name="headerBackgroundColor" value={section.settings.headerBackgroundColor} type="color" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="headerText" label="Text Color" name="headerTextColor" value={section.settings.headerTextColor} type="color" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="headerFontSize" label="Logo Font Size" name="logoFontSize" value={section.settings.logoFontSize} type="select" options={[{ value: '16px', label: 'Small' }, { value: '20px', label: 'Medium' }, { value: '24px', label: 'Large' }, { value: '28px', label: 'X-Large' }]} onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="headerHeight" label="Header Height" name="headerHeight" value={section.settings.headerHeight} type="select" options={[{ value: '48px', label: 'Compact' }, { value: '64px', label: 'Normal' }, { value: '80px', label: 'Tall' }, { value: '96px', label: 'Extra Tall' }]} onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="sticky" label="Sticky Header" name="sticky" value={section.settings.sticky} type="checkbox" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="transparent" label="Transparent" name="transparent" value={section.settings.transparent} type="checkbox" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="showSearch" label="Show Search" name="showSearch" value={section.settings.showSearch !== false} type="checkbox" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="showCart" label="Show Cart Icon" name="showCart" value={section.settings.showCart !== false} type="checkbox" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="menuStyle" label="Navigation Style" name="menuStyle" value={section.settings.menuStyle} type="select" options={[{ value: 'horizontal', label: 'Horizontal' }, { value: 'dropdown', label: 'Dropdown' }, { value: 'mega', label: 'Mega Menu' }]} onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="navItemSpacing" label="Nav Item Spacing" name="navItemSpacing" value={section.settings.navItemSpacing} type="select" options={[{ value: '12px', label: 'Compact' }, { value: '20px', label: 'Normal' }, { value: '32px', label: 'Spacious' }]} onChange={handleFieldChange} tenantId={tenantId} />
+      </>;
+      case 'hero': return <>
+        <SettingsField key="heading" label="Heading" name="heading" value={section.settings.heading} type="text" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="headingSize" label="Heading Size" name="headingSize" value={section.settings.headingSize} type="select" options={[{ value: '24px', label: 'Small' }, { value: '32px', label: 'Medium' }, { value: '40px', label: 'Large' }, { value: '48px', label: 'X-Large' }, { value: '56px', label: '2X-Large' }]} onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="headingColor" label="Heading Color" name="headingColor" value={section.settings.headingColor} type="color" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="subheading" label="Subheading" name="subheading" value={section.settings.subheading} type="text" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="subheadingSize" label="Subheading Size" name="subheadingSize" value={section.settings.subheadingSize} type="select" options={[{ value: '14px', label: 'Small' }, { value: '16px', label: 'Medium' }, { value: '18px', label: 'Large' }, { value: '22px', label: 'X-Large' }]} onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="buttonText" label="Button Text" name="buttonText" value={section.settings.buttonText} type="text" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="buttonLink" label="Button Link" name="buttonLink" value={section.settings.buttonLink} type="text" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="buttonBgColor" label="Button Color" name="buttonBgColor" value={section.settings.buttonBgColor} type="color" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="buttonTextColor" label="Button Text Color" name="buttonTextColor" value={section.settings.buttonTextColor} type="color" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="buttonRadius" label="Button Border Radius" name="buttonRadius" value={section.settings.buttonRadius} type="text" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="imageUrl" label="Background Image" name="imageUrl" value={section.settings.imageUrl} type="image" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="bgGradient" label="Background Gradient" name="bgGradient" value={section.settings.bgGradient} type="select" options={[{ value: 'from-purple-600 to-blue-600', label: 'Purple → Blue' }, { value: 'from-green-400 to-blue-500', label: 'Green → Blue' }, { value: 'from-pink-500 to-yellow-500', label: 'Pink → Yellow' }, { value: 'from-gray-900 to-gray-600', label: 'Dark Gradient' }, { value: 'from-indigo-500 to-purple-600', label: 'Indigo → Purple' }, { value: 'from-red-500 to-orange-500', label: 'Red → Orange' }, { value: 'custom', label: 'Custom Colors' }]} onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="bgColor1" label="Gradient Start Color" name="bgColor1" value={section.settings.bgColor1} type="color" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="bgColor2" label="Gradient End Color" name="bgColor2" value={section.settings.bgColor2} type="color" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="height" label="Height" name="height" value={section.settings.height} type="select" options={[{ value: 'small', label: 'Small (200px)' }, { value: 'medium', label: 'Medium (350px)' }, { value: 'large', label: 'Large (500px)' }, { value: 'full', label: 'Full Screen' }]} onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="alignment" label="Content Alignment" name="alignment" value={section.settings.alignment} type="select" options={[{ value: 'left', label: 'Left' }, { value: 'center', label: 'Center' }, { value: 'right', label: 'Right' }]} onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="overlayOpacity" label="Overlay Opacity (%)" name="overlayOpacity" value={section.settings.overlayOpacity} type="number" onChange={handleFieldChange} tenantId={tenantId} />
+      </>;
+      case 'categories': return <>
+        <SettingsField key="title" label="Title" name="title" value={section.settings.title} type="text" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="titleColor" label="Title Color" name="titleColor" value={section.settings.titleColor} type="color" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="style" label="Layout Style" name="style" value={section.settings.style} type="select" options={[{ value: 'grid', label: 'Grid' }, { value: 'carousel', label: 'Carousel' }, { value: 'list', label: 'List' }, { value: 'circular', label: 'Circular Icons' }, { value: 'cards', label: 'Cards with Image' }]} onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="columns" label="Columns" name="columns" value={section.settings.columns} type="number" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="cardShape" label="Card Shape" name="cardShape" value={section.settings.cardShape} type="select" options={[{ value: 'rounded', label: 'Rounded' }, { value: 'circle', label: 'Circle' }, { value: 'square', label: 'Square' }, { value: 'pill', label: 'Pill' }]} onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="cardBgColor" label="Card Background" name="cardBgColor" value={section.settings.cardBgColor} type="color" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="cardTextColor" label="Card Text Color" name="cardTextColor" value={section.settings.cardTextColor} type="color" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="gap" label="Gap (px)" name="gap" value={section.settings.gap} type="number" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="showSubcategories" label="Show Subcategories" name="showSubcategories" value={section.settings.showSubcategories} type="checkbox" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="catAnimation" label="Animation" name="animation" value={section.settings.animation} type="select" options={[{ value: 'none', label: 'None' }, { value: 'fadeIn', label: 'Fade In' }, { value: 'slideUp', label: 'Slide Up' }, { value: 'zoomIn', label: 'Zoom In' }]} onChange={handleFieldChange} tenantId={tenantId} />
+      </>;
+      case 'flash-sale': return <>
+        <SettingsField key="title" label="Title" name="title" value={section.settings.title} type="text" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="titleColor" label="Title Color" name="titleColor" value={section.settings.titleColor} type="color" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="bgGradient" label="Background Gradient" name="bgGradient" value={section.settings.bgGradient} type="select" options={[{ value: 'from-red-500 to-orange-500', label: 'Red → Orange' }, { value: 'from-purple-600 to-pink-500', label: 'Purple → Pink' }, { value: 'from-blue-600 to-cyan-500', label: 'Blue → Cyan' }, { value: 'from-green-500 to-emerald-500', label: 'Green' }, { value: 'from-gray-900 to-gray-700', label: 'Dark' }, { value: 'custom', label: 'Custom' }]} onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="bgColor1" label="Gradient Start" name="bgColor1" value={section.settings.bgColor1} type="color" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="bgColor2" label="Gradient End" name="bgColor2" value={section.settings.bgColor2} type="color" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="showCountdown" label="Show Countdown" name="showCountdown" value={section.settings.showCountdown} type="checkbox" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="countdownBg" label="Countdown Background" name="countdownBg" value={section.settings.countdownBg} type="color" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="countdownColor" label="Countdown Text Color" name="countdownColor" value={section.settings.countdownColor} type="color" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="productsToShow" label="Products to Show" name="productsToShow" value={section.settings.productsToShow} type="number" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="columns" label="Columns" name="columns" value={section.settings.columns || 4} type="number" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="cardStyle" label="Card Style" name="cardStyle" value={section.settings.cardStyle} type="select" options={[{ value: 'default', label: 'Default' }, { value: 'minimal', label: 'Minimal' }, { value: 'shadow', label: 'Shadow' }, { value: 'bordered', label: 'Bordered' }]} onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="badgeColor" label="Sale Badge Color" name="badgeColor" value={section.settings.badgeColor} type="color" onChange={handleFieldChange} tenantId={tenantId} />
+      </>;
+      case 'product-grid': return <>
+        <SettingsField key="heading" label="Heading" name="heading" value={section.settings.heading} type="text" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="headingColor" label="Heading Color" name="headingColor" value={section.settings.headingColor} type="color" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="productsToShow" label="Products to Show" name="productsToShow" value={section.settings.productsToShow} type="number" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="columns" label="Columns" name="columns" value={section.settings.columns} type="select" options={[{ value: '2', label: '2 Columns' }, { value: '3', label: '3 Columns' }, { value: '4', label: '4 Columns' }, { value: '5', label: '5 Columns' }]} onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="filterType" label="Filter Type" name="filterType" value={section.settings.filterType} type="select" options={[{ value: 'all', label: 'All Products' }, { value: 'featured', label: 'Featured Only' }, { value: 'bestseller', label: 'Best Sellers' }, { value: 'new', label: 'New Arrivals' }]} onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="cardBgColor" label="Card Background" name="cardBgColor" value={section.settings.cardBgColor} type="color" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="cardBorderRadius" label="Card Border Radius" name="cardBorderRadius" value={section.settings.cardBorderRadius} type="text" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="cardShadow" label="Card Shadow" name="cardShadow" value={section.settings.cardShadow} type="select" options={[{ value: 'none', label: 'None' }, { value: 'sm', label: 'Small' }, { value: 'md', label: 'Medium' }, { value: 'lg', label: 'Large' }]} onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="cardHover" label="Card Hover Effect" name="cardHover" value={section.settings.cardHover} type="select" options={[{ value: 'none', label: 'None' }, { value: 'lift', label: 'Lift' }, { value: 'zoom', label: 'Zoom Image' }, { value: 'shadow', label: 'Grow Shadow' }]} onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="showPrice" label="Show Price" name="showPrice" value={section.settings.showPrice !== false} type="checkbox" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="showAddToCart" label="Show Add to Cart" name="showAddToCart" value={section.settings.showAddToCart !== false} type="checkbox" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="showViewAll" label="Show View All Button" name="showViewAll" value={section.settings.showViewAll} type="checkbox" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="gap" label="Grid Gap (px)" name="gap" value={section.settings.gap} type="number" onChange={handleFieldChange} tenantId={tenantId} />
+      </>;
+      case 'brands': return <>
+        <SettingsField key="title" label="Title" name="title" value={section.settings.title} type="text" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="titleColor" label="Title Color" name="titleColor" value={section.settings.titleColor} type="color" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="style" label="Display Style" name="style" value={section.settings.style} type="select" options={[{ value: 'grid', label: 'Grid' }, { value: 'carousel', label: 'Carousel' }, { value: 'marquee', label: 'Marquee (Auto Scroll)' }]} onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="columns" label="Columns" name="columns" value={section.settings.columns || 6} type="number" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="logoSize" label="Logo Size" name="logoSize" value={section.settings.logoSize} type="select" options={[{ value: '48px', label: 'Small' }, { value: '64px', label: 'Medium' }, { value: '80px', label: 'Large' }, { value: '96px', label: 'X-Large' }]} onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="logoBgColor" label="Logo Background" name="logoBgColor" value={section.settings.logoBgColor} type="color" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="logoBorderRadius" label="Logo Border Radius" name="logoBorderRadius" value={section.settings.logoBorderRadius} type="text" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="grayscale" label="Grayscale" name="grayscale" value={section.settings.grayscale} type="checkbox" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="hoverEffect" label="Hover Effect" name="hoverEffect" value={section.settings.hoverEffect} type="select" options={[{ value: 'none', label: 'None' }, { value: 'color', label: 'Show Color on Hover' }, { value: 'zoom', label: 'Zoom' }, { value: 'lift', label: 'Lift' }]} onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="marqueeSpeed" label="Marquee Speed" name="marqueeSpeed" value={section.settings.marqueeSpeed} type="select" options={[{ value: 'slow', label: 'Slow' }, { value: 'normal', label: 'Normal' }, { value: 'fast', label: 'Fast' }]} onChange={handleFieldChange} tenantId={tenantId} />
+      </>;
+      case 'tags-products': return <>
+        <SettingsField key="tagName" label="Tag Name" name="tagName" value={section.settings.tagName} type="text" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="title" label="Section Title" name="title" value={section.settings.title} type="text" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="titleColor" label="Title Color" name="titleColor" value={section.settings.titleColor} type="color" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="productsToShow" label="Products to Show" name="productsToShow" value={section.settings.productsToShow} type="number" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="columns" label="Columns" name="columns" value={section.settings.columns} type="number" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="tagShape" label="Tag Badge Shape" name="tagShape" value={section.settings.tagShape} type="select" options={[{ value: 'rounded', label: 'Rounded' }, { value: 'pill', label: 'Pill' }, { value: 'square', label: 'Square' }]} onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="tagColor" label="Tag Badge Color" name="tagColor" value={section.settings.tagColor} type="color" onChange={handleFieldChange} tenantId={tenantId} />
+      </>;
+      case 'newsletter': return <>
+        <SettingsField key="heading" label="Heading" name="heading" value={section.settings.heading} type="text" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="subheading" label="Subheading" name="subheading" value={section.settings.subheading} type="text" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="buttonText" label="Button Text" name="buttonText" value={section.settings.buttonText} type="text" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="buttonBgColor" label="Button Color" name="buttonBgColor" value={section.settings.buttonBgColor} type="color" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="buttonTextColor" label="Button Text Color" name="buttonTextColor" value={section.settings.buttonTextColor} type="color" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="backgroundColor" label="Background Color" name="backgroundColor" value={section.settings.backgroundColor} type="color" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="inputBorderRadius" label="Input Border Radius" name="inputBorderRadius" value={section.settings.inputBorderRadius} type="text" onChange={handleFieldChange} tenantId={tenantId} />
+      </>;
+      case 'footer': return <>
+        <SettingsField key="copyrightText" label="Copyright Text" name="copyrightText" value={section.settings.copyrightText} type="text" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="footerBg" label="Background Color" name="footerBgColor" value={section.settings.footerBgColor} type="color" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="footerText" label="Text Color" name="footerTextColor" value={section.settings.footerTextColor} type="color" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="footerLinkColor" label="Link Color" name="footerLinkColor" value={section.settings.footerLinkColor} type="color" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="footerHeadingColor" label="Heading Color" name="footerHeadingColor" value={section.settings.footerHeadingColor} type="color" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="columns" label="Columns" name="columns" value={section.settings.columns} type="select" options={[{ value: '2', label: '2 Columns' }, { value: '3', label: '3 Columns' }, { value: '4', label: '4 Columns' }]} onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="showNewsletter" label="Show Newsletter" name="showNewsletter" value={section.settings.showNewsletter} type="checkbox" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="showSocial" label="Show Social Links" name="showSocial" value={section.settings.showSocial} type="checkbox" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="showPaymentIcons" label="Show Payment Icons" name="showPaymentIcons" value={section.settings.showPaymentIcons} type="checkbox" onChange={handleFieldChange} tenantId={tenantId} />
+      </>;
+      case 'image-with-text': return <>
+        <SettingsField key="heading" label="Heading" name="heading" value={section.settings.heading} type="text" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="text" label="Text" name="text" value={section.settings.text} type="textarea" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="imageUrl" label="Image" name="imageUrl" value={section.settings.imageUrl} type="image" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="imagePosition" label="Image Position" name="imagePosition" value={section.settings.imagePosition} type="select" options={[{ value: 'left', label: 'Left' }, { value: 'right', label: 'Right' }]} onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="imageBorderRadius" label="Image Border Radius" name="imageBorderRadius" value={section.settings.imageBorderRadius} type="text" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="buttonText" label="Button Text" name="buttonText" value={section.settings.buttonText} type="text" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="buttonLink" label="Button Link" name="buttonLink" value={section.settings.buttonLink} type="text" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="buttonBgColor" label="Button Color" name="buttonBgColor" value={section.settings.buttonBgColor} type="color" onChange={handleFieldChange} tenantId={tenantId} />
+      </>;
+      case 'image-banner': return <>
+        <SettingsField key="imageUrl" label="Banner Image" name="imageUrl" value={section.settings.imageUrl} type="image" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="heading" label="Heading" name="heading" value={section.settings.heading} type="text" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="subheading" label="Subheading" name="subheading" value={section.settings.subheading} type="text" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="textColor" label="Text Color" name="textColor" value={section.settings.textColor} type="color" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="buttonText" label="Button Text" name="buttonText" value={section.settings.buttonText} type="text" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="buttonLink" label="Button Link" name="buttonLink" value={section.settings.buttonLink} type="text" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="height" label="Height" name="height" value={section.settings.height} type="select" options={[{ value: 'small', label: 'Small' }, { value: 'medium', label: 'Medium' }, { value: 'large', label: 'Large' }]} onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="overlayOpacity" label="Overlay Opacity (%)" name="overlayOpacity" value={section.settings.overlayOpacity} type="number" onChange={handleFieldChange} tenantId={tenantId} />
+      </>;
+      case 'video': return <>
+        <SettingsField key="videoUrl" label="Video URL" name="videoUrl" value={section.settings.videoUrl} type="video" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="heading" label="Heading" name="heading" value={section.settings.heading} type="text" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="aspectRatio" label="Aspect Ratio" name="aspectRatio" value={section.settings.aspectRatio} type="select" options={[{ value: '16:9', label: '16:9' }, { value: '4:3', label: '4:3' }, { value: '1:1', label: 'Square' }, { value: '9:16', label: 'Portrait' }]} onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="autoplay" label="Autoplay" name="autoplay" value={section.settings.autoplay} type="checkbox" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="muted" label="Muted" name="muted" value={section.settings.muted} type="checkbox" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="loop" label="Loop" name="loop" value={section.settings.loop} type="checkbox" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="posterImage" label="Poster Image" name="posterImage" value={section.settings.posterImage} type="image" onChange={handleFieldChange} tenantId={tenantId} />
+      </>;
+      case 'testimonials': return <>
+        <SettingsField key="heading" label="Heading" name="heading" value={section.settings.heading} type="text" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="headingColor" label="Heading Color" name="headingColor" value={section.settings.headingColor} type="color" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="cardBg" label="Card Background" name="cardBgColor" value={section.settings.cardBgColor} type="color" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="starColor" label="Star Color" name="starColor" value={section.settings.starColor} type="color" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="showRatings" label="Show Ratings" name="showRatings" value={section.settings.showRatings} type="checkbox" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="columns" label="Columns" name="columns" value={section.settings.columns || 3} type="number" onChange={handleFieldChange} tenantId={tenantId} />
+      </>;
+      case 'rich-text': return <>
+        <SettingsField key="content" label="Content" name="content" value={section.settings.content} type="textarea" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="textAlign" label="Text Align" name="textAlign" value={section.settings.textAlign} type="select" options={[{ value: 'left', label: 'Left' }, { value: 'center', label: 'Center' }, { value: 'right', label: 'Right' }]} onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="backgroundColor" label="Background Color" name="backgroundColor" value={section.settings.backgroundColor} type="color" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="textColor" label="Text Color" name="textColor" value={section.settings.textColor} type="color" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="fontSize" label="Font Size" name="fontSize" value={section.settings.fontSize} type="select" options={[{ value: '14px', label: 'Small' }, { value: '16px', label: 'Base' }, { value: '18px', label: 'Large' }, { value: '20px', label: 'X-Large' }]} onChange={handleFieldChange} tenantId={tenantId} />
+      </>;
+      case 'custom-html': return <>
+        <SettingsField key="html" label="Custom HTML Code" name="html" value={section.settings.html} type="textarea" onChange={handleFieldChange} tenantId={tenantId} />
+        <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-700 mb-3">
+          <p className="font-medium mb-1">⚠️ HTML Tips</p>
+          <p>You can use any valid HTML, including inline styles and CSS classes. Avoid external scripts for security.</p>
+        </div>
+      </>;
+      case 'photo-gallery': return <>
+        <SettingsField key="heading" label="Gallery Title" name="heading" value={section.settings.heading} type="text" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="columns" label="Columns" name="columns" value={section.settings.columns} type="select" options={[{ value: '2', label: '2' }, { value: '3', label: '3' }, { value: '4', label: '4' }, { value: '5', label: '5' }]} onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="gap" label="Gap (px)" name="gap" value={section.settings.gap} type="number" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="imageRadius" label="Image Border Radius" name="imageRadius" value={section.settings.imageRadius} type="text" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="aspectRatio" label="Aspect Ratio" name="aspectRatio" value={section.settings.aspectRatio} type="select" options={[{ value: 'square', label: 'Square' }, { value: 'portrait', label: 'Portrait' }, { value: 'landscape', label: 'Landscape' }, { value: 'auto', label: 'Auto' }]} onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="hoverEffect" label="Hover Effect" name="hoverEffect" value={section.settings.hoverEffect} type="select" options={[{ value: 'none', label: 'None' }, { value: 'zoom', label: 'Zoom' }, { value: 'darken', label: 'Darken' }, { value: 'brighten', label: 'Brighten' }]} onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="showCaptions" label="Show Captions" name="showCaptions" value={section.settings.showCaptions} type="checkbox" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="img1" label="Image 1" name="galleryImage1" value={section.settings.galleryImage1} type="image" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="img2" label="Image 2" name="galleryImage2" value={section.settings.galleryImage2} type="image" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="img3" label="Image 3" name="galleryImage3" value={section.settings.galleryImage3} type="image" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="img4" label="Image 4" name="galleryImage4" value={section.settings.galleryImage4} type="image" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="img5" label="Image 5" name="galleryImage5" value={section.settings.galleryImage5} type="image" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="img6" label="Image 6" name="galleryImage6" value={section.settings.galleryImage6} type="image" onChange={handleFieldChange} tenantId={tenantId} />
+      </>;
+      case 'video-gallery': return <>
+        <SettingsField key="heading" label="Gallery Title" name="heading" value={section.settings.heading} type="text" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="columns" label="Columns" name="columns" value={section.settings.columns} type="select" options={[{ value: '1', label: '1' }, { value: '2', label: '2' }, { value: '3', label: '3' }]} onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="gap" label="Gap (px)" name="gap" value={section.settings.gap} type="number" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="videoRadius" label="Video Border Radius" name="borderRadius" value={section.settings.borderRadius} type="text" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="video1" label="Video 1 URL" name="videoUrl1" value={section.settings.videoUrl1} type="video" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="video2" label="Video 2 URL" name="videoUrl2" value={section.settings.videoUrl2} type="video" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="video3" label="Video 3 URL" name="videoUrl3" value={section.settings.videoUrl3} type="video" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="autoplay" label="Autoplay" name="autoplay" value={section.settings.autoplay} type="checkbox" onChange={handleFieldChange} tenantId={tenantId} />
+        <SettingsField key="muted" label="Muted" name="muted" value={section.settings.muted} type="checkbox" onChange={handleFieldChange} tenantId={tenantId} />
+      </>;
+      default: return Object.keys(section.settings).filter(key => !['padding', 'paddingTop', 'paddingBottom', 'paddingLeft', 'paddingRight', 'margin', 'marginTop', 'marginBottom', 'borderRadius', 'borderWidth', 'borderColor', 'boxShadow', 'animation', 'animationDuration', 'hoverEffect', 'maxWidth', 'minHeight', 'overflow', 'sectionDisplay', 'fontSize', 'fontWeight', 'letterSpacing', 'lineHeight', 'backgroundGradient', 'overlayColor'].includes(key)).map(key => <SettingsField key={key} label={key.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase())} name={key} value={section.settings[key]} type="text" onChange={handleFieldChange} tenantId={tenantId} />);
     }
   };
   
-  return <div>{renderFields()}</div>;
+  return (
+    <div>
+      {/* Content/Design Tabs */}
+      <div className="flex border-b border-gray-200 mb-3">
+        <button
+          onClick={(e) => { e.stopPropagation(); setActiveTab('content'); }}
+          className={`flex-1 px-3 py-2 text-xs font-medium transition-colors ${activeTab === 'content' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+        >
+          Content
+        </button>
+        <button
+          onClick={(e) => { e.stopPropagation(); setActiveTab('design'); }}
+          className={`flex-1 px-3 py-2 text-xs font-medium transition-colors ${activeTab === 'design' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+        >
+          Design
+        </button>
+      </div>
+      {activeTab === 'content' ? renderFields() : <DesignControls settings={section.settings} onChange={handleFieldChange} tenantId={tenantId} />}
+    </div>
+  );
 };
 
 // AddSectionModal Component
@@ -844,7 +1435,7 @@ const PageBuilder: React.FC<PageBuilderProps> = ({ tenantId }) => {
 
       {/* Save Message Toast */}
       {saveMessage && (
-        <div className={`fixed to p-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 ${saveMessage.type === 'success' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}`}>
+        <div className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg flex items-center gap-2 ${saveMessage.type === 'success' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'}`}>
           {saveMessage.type === 'success' ? <Icons.Check /> : <Icons.X />}
           {saveMessage.text}
         </div>
@@ -867,11 +1458,10 @@ const PageBuilder: React.FC<PageBuilderProps> = ({ tenantId }) => {
             w-80 bg-white border-r flex flex-col h-full overflow-hidden
             transform transition-transform duration-200 ease-in-out
             ${isLeftSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-            to p-14 lg:to p-0
+            top-14 lg:top-0
           `}>
             {/* Mobile close button */}
-            <div className="lg:hidden absolute to p-2 right-2 z-10">
-              <button 
+            <div className="lg:hidden absolute top-2 right-2 z-10">              <button 
                 onClick={() => setIsLeftSidebarOpen(false)} 
                 className="p-2 hover:bg-gray-100 rounded-lg"
                 aria-label="Close sections menu"
@@ -981,10 +1571,10 @@ const PageBuilder: React.FC<PageBuilderProps> = ({ tenantId }) => {
           w-full sm:w-96 lg:w-80 xl:w-96 bg-white border-l flex flex-col h-full
           transform transition-transform duration-200 ease-in-out
           ${isRightSidebarOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}
-          to p-14 lg:to p-0
+          top-14 lg:top-0
         `}>
           {/* Mobile close button */}
-          <div className="lg:hidden absolute to p-2 right-2 z-10">
+          <div className="lg:hidden absolute top-2 right-2 z-10">
             <button 
               onClick={() => setIsRightSidebarOpen(false)} 
               className="p-2 hover:bg-gray-100 rounded-lg"
