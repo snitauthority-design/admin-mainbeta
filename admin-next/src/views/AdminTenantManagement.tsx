@@ -59,19 +59,6 @@ const sanitizeSubdomain = (value: string) =>
 
 const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 
-const getPrimaryDomain = () => {
-  const envDomain = import.meta.env.VITE_PRIMARY_DOMAIN;
-  if (envDomain) {
-    return envDomain.replace(/^https?:\/\//, '').replace(/\/$/, '');
-  }
-  if (typeof window !== 'undefined') {
-    const host = window.location.hostname;
-    const parts = host.split('.');
-    return parts.length > 2 ? parts.slice(1).join('.') : host;
-  }
-  return getPrimaryDomain() || 'localhost';
-};
-
 const AdminTenantManagement: React.FC<AdminTenantManagementProps> = ({
   tenants,
   onCreateTenant,
