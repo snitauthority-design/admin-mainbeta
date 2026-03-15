@@ -59,9 +59,10 @@ export default function CategoriesPage() {
   const [filterLabel, setFilterLabel] = useState<string>('');
 
   // Auto-select first category on mount
-  const effectiveFilterName = filterName || (activeCategories.length > 0 ? activeCategories[0].name : null);
-  const effectiveFilterLabel = filterLabel || (activeCategories.length > 0 ? activeCategories[0].name : '');
-  const effectiveExpandedCatId = expandedCatId ?? (activeCategories.length > 0 ? activeCategories[0].id : null);
+  const firstCategory = activeCategories.length > 0 ? activeCategories[0] : null;
+  const effectiveFilterName = filterName || firstCategory?.name || null;
+  const effectiveFilterLabel = filterLabel || firstCategory?.name || '';
+  const effectiveExpandedCatId = expandedCatId ?? firstCategory?.id ?? null;
 
   // --- helpers ---
   const getSubsForCategory = useCallback((catId: string) => {
@@ -168,9 +169,9 @@ export default function CategoriesPage() {
                   {/* Category image */}
                   <div className="w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center overflow-hidden bg-gray-100 dark:bg-gray-700">
                     {category.image ? (
-                      <img src={normalizeImageUrl(category.image)} alt="" className="w-full h-full object-cover" loading="lazy" />
+                      <img src={normalizeImageUrl(category.image)} alt={category.name} className="w-full h-full object-cover" loading="lazy" />
                     ) : category.icon ? (
-                      <img src={normalizeImageUrl(category.icon)} alt="" className="w-4 h-4 object-contain" loading="lazy" />
+                      <img src={normalizeImageUrl(category.icon)} alt={category.name} className="w-4 h-4 object-contain" loading="lazy" />
                     ) : (
                       <Package size={14} className="text-gray-400" />
                     )}
