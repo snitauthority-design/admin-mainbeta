@@ -1064,7 +1064,7 @@ const StoreCheckout = ({
                   <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-50 rounded border border-gray-200 p-0.5 sm:p-1 flex-shrink-0">
                     <img src={normalizeImageUrl(item.product.galleryImages?.[0] || item.product.image)} alt={item.product.name} className="w-full h-full object-contain" />
                   </div>
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     <div className="flex justify-between items-start">
                       <h4 className="text-xs font-bold text-gray-800 line-clamp-1">{item.product.name}</h4>
                       <button type="button" className="text-gray-400 hover:text-red-500" onClick={() => setAdditionalItems(prev => prev.filter((_, i) => i !== idx))}>
