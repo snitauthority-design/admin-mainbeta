@@ -84,6 +84,16 @@ export const StoreStudioManager: React.FC<StoreStudioManagerProps> = ({
 
       if (response.ok) {
         toast.success('Store studio configuration saved successfully!');
+        // Clear server cache so store reflects changes immediately
+        try {
+          await fetch(`${API_BASE_URL}/api/tenant-data/${tenantId}/clear-cache`, {
+            method: 'POST',
+            headers: getAuthHeader(),
+          });
+          console.log('[StoreStudio] Cache cleared after config save');
+        } catch (cacheErr) {
+          console.warn('[StoreStudio] Failed to clear cache:', cacheErr);
+        }
       } else {
         const errorData = await response.json().catch(() => ({}));
         const errorMessage = errorData.message || errorData.error || 'Failed to save configuration';
@@ -135,6 +145,16 @@ export const StoreStudioManager: React.FC<StoreStudioManagerProps> = ({
       if (response.ok) {
         toast.success(`Store Studio ${newConfig.enabled ? 'enabled' : 'disabled'}!`);
         configBeforeToggleRef.current = null;
+        // Clear server cache so store reflects the toggle immediately
+        try {
+          await fetch(`${API_BASE_URL}/api/tenant-data/${tenantId}/clear-cache`, {
+            method: 'POST',
+            headers: getAuthHeader(),
+          });
+          console.log('[StoreStudio] Cache cleared after toggle');
+        } catch (cacheErr) {
+          console.warn('[StoreStudio] Failed to clear cache:', cacheErr);
+        }
       } else {
         const errorData = await response.json().catch(() => ({}));
         const errorMessage = errorData.message || errorData.error || 'Failed to save configuration';
@@ -171,6 +191,17 @@ export const StoreStudioManager: React.FC<StoreStudioManagerProps> = ({
         productDisplayOrder: order,
         updatedAt: new Date().toISOString()
       }));
+
+      // Clear server cache so store reflects the product order immediately
+      try {
+        await fetch(`${API_BASE_URL}/api/tenant-data/${tenantId}/clear-cache`, {
+          method: 'POST',
+          headers: getAuthHeader(),
+        });
+        console.log('[StoreStudio] Cache cleared after product order save');
+      } catch (cacheErr) {
+        console.warn('[StoreStudio] Failed to clear cache:', cacheErr);
+      }
     } catch (error) {
       console.error('Failed to save product order:', error);
       throw error;

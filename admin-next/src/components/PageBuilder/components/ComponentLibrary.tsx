@@ -43,7 +43,7 @@ const getStyleValue = (variantId: string): string => {
   return match ? `style${match[1]}` : 'style1';
 };
 
-// Variant Preview Card - shows text label for theme styles, image for others
+// Variant Preview Card - shows style name and description; selecting shows live preview
 const VariantPreviewCard: React.FC<{ 
   variant: SectionVariant; 
   onAdd: () => void;
@@ -55,18 +55,9 @@ const VariantPreviewCard: React.FC<{
   const handleClick = () => {
     if (isStyleSelector && onSelectStyle) {
       onSelectStyle();
-      // Show preview of selected style
-      if (variant.thumbnail && onHoverPreview) {
-        onHoverPreview(variant.thumbnail);
-      }
     } else {
       onAdd();
     }
-  };
-
-  // Get the display label for theme style cards (e.g., "Select Header Style 1")
-  const getStyleLabel = (): string => {
-    return variant.name;
   };
   
   return (
@@ -78,14 +69,14 @@ const VariantPreviewCard: React.FC<{
         {/* Preview Area */}
         <div className={`${isStyleSelector ? 'h-16' : 'h-20'} relative overflow-hidden`}>
           {isStyleSelector ? (
-            /* Theme styles: show text label instead of image */
+            /* Theme styles: show name and description as label */
             <div className={`w-full h-full flex flex-col items-center justify-center gap-1 px-2 ${
               isSelected 
                 ? 'bg-indigo-50' 
                 : 'bg-gradient-to-br from-gray-50 to-gray-100 hover:from-indigo-50 hover:to-blue-50'
             }`}>
               <span className={`text-xs font-semibold text-center ${isSelected ? 'text-indigo-700' : 'text-gray-600'}`}>
-                {getStyleLabel()}
+                {variant.name}
               </span>
               <span className="text-[10px] text-gray-400 text-center leading-tight">{variant.description}</span>
             </div>
@@ -185,20 +176,24 @@ const CategoryAccordion: React.FC<{
             </div>
           )}
           
-          {/* Show preview of currently selected style */}
+          {/* Show actual store preview of currently selected style */}
           {hasThemeStyles && selectedStyleId && (() => {
             const selectedVariant = filteredVariants.find(v => v.id === selectedStyleId);
             if (selectedVariant?.thumbnail) {
               return (
                 <div className="mb-3 rounded-lg overflow-hidden border border-indigo-200 shadow-sm">
+                  <div className="px-2 py-1 bg-indigo-50 text-[10px] text-indigo-600 font-medium flex items-center gap-1">
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" strokeWidth="2"/><circle cx="12" cy="12" r="3" strokeWidth="2"/></svg>
+                    Live Preview — How it looks in your store
+                  </div>
                   <img 
                     src={selectedVariant.thumbnail} 
-                    alt={selectedVariant.name}
+                    alt={`${selectedVariant.name} — Store Preview`}
                     className="w-full h-auto object-cover"
                     loading="lazy"
                   />
                   <div className="px-2 py-1.5 bg-indigo-50 text-xs text-indigo-700 font-medium text-center">
-                    Preview: {selectedVariant.name}
+                    {selectedVariant.name} — Currently Applied
                   </div>
                 </div>
               );
