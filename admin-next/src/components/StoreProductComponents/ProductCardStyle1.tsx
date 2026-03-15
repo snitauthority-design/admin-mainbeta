@@ -47,7 +47,7 @@ const ProductCardStyle1: React.FC<ProductCardProps> = ({ product, onClick, onBuy
         <LazyImage
           src={getImage(product)}
           alt={product.name}
-          className="w-full h-full object-contain p-1 group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           width={400}
           height={400}
         />
@@ -67,12 +67,12 @@ const ProductCardStyle1: React.FC<ProductCardProps> = ({ product, onClick, onBuy
           )}
         </div>
 
-        <h3 className="font-medium text-gray-800 text-[11px] md:text-[13px] leading-[1.3] line-clamp-2 cursor-pointer hover:text-theme-primary transition-colors" onClick={() => onClick(product)}>
+        <h3 className="font-medium text-gray-800 text-[10px] md:text-[13px] leading-[1.3] line-clamp-1 md:line-clamp-2 cursor-pointer hover:text-theme-primary transition-colors" onClick={() => onClick(product)}>
           {product.name}
         </h3>
 
         <div className="flex items-baseline gap-1.5 mt-auto">
-          <span className="text-[14px] md:text-base font-bold text-theme-primary leading-none">৳{product.price?.toLocaleString()}</span>
+          <span className="text-[14px] md:text-base font-bold text-[#FF6F00] leading-none">৳{product.price?.toLocaleString()}</span>
           {product.originalPrice && product.originalPrice > product.price && (
             <span className="text-[10px] md:text-[11px] text-gray-400 line-through font-medium leading-none">৳{product.originalPrice?.toLocaleString()}</span>
           )}
