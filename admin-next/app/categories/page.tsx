@@ -242,7 +242,7 @@ export default function CategoriesPage() {
           onHomeClick={() => router.push('/')}
           onCartClick={() => {}}
           onAccountClick={() => app.user ? router.push('/profile') : app.setIsLoginOpen(true)}
-          onMenuClick={() => {}}
+          onMenuClick={() => { window.scrollTo(0, 0); }}
           cartCount={app.cartItems.length}
           websiteConfig={app.websiteConfig}
           onChatClick={app.handleOpenChat}
