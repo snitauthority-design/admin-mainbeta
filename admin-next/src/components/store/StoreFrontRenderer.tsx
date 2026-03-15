@@ -687,7 +687,13 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
 
       case 'custom-html':
         return (
-          <section key={key} className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
+          <section key={key} className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8"
+            style={{
+              padding: settings?.padding || undefined,
+              margin: settings?.margin || undefined,
+              backgroundColor: settings?.backgroundColor || undefined,
+            }}
+          >
             {settings?.html ? (
               <div dangerouslySetInnerHTML={{ __html: settings.html }} />
             ) : (
@@ -695,6 +701,110 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
                 <p className="text-gray-400">Custom HTML - Add HTML code</p>
               </div>
             )}
+          </section>
+        );
+
+      case 'photo-gallery': {
+        const galleryCols = typeof settings?.columns === 'string' ? parseInt(settings.columns) : (settings?.columns || 3);
+        const galleryImages = [
+          settings?.galleryImage1, settings?.galleryImage2, settings?.galleryImage3,
+          settings?.galleryImage4, settings?.galleryImage5, settings?.galleryImage6
+        ].filter(Boolean);
+        if (galleryImages.length === 0) return null;
+        return (
+          <section key={key} className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8"
+            style={{
+              padding: settings?.padding || undefined,
+              backgroundColor: settings?.backgroundColor || undefined,
+            }}
+          >
+            {settings?.heading && (
+              <h2 className="text-xl sm:text-2xl font-bold text-center mb-4 sm:mb-6">{settings.heading}</h2>
+            )}
+            <div className="grid" style={{
+              gridTemplateColumns: `repeat(${galleryCols}, 1fr)`,
+              gap: `${settings?.gap || 8}px`,
+            }}>
+              {galleryImages.map((imgUrl: string, i: number) => (
+                <div key={i} className={`overflow-hidden ${settings?.hoverEffect === 'zoom' ? 'hover:scale-105 transition-transform duration-300' : ''}`}
+                  style={{
+                    borderRadius: settings?.imageRadius || '8px',
+                    aspectRatio: settings?.aspectRatio === 'portrait' ? '3/4' : settings?.aspectRatio === 'landscape' ? '4/3' : settings?.aspectRatio === 'auto' ? 'auto' : '1/1',
+                  }}
+                >
+                  <img src={imgUrl} alt={settings?.showCaptions ? `Gallery image ${i + 1}` : ''} className="w-full h-full object-cover" loading="lazy" />
+                </div>
+              ))}
+            </div>
+          </section>
+        );
+      }
+
+      case 'video-gallery': {
+        const videoCols = typeof settings?.columns === 'string' ? parseInt(settings.columns) : (settings?.columns || 2);
+        const videoUrls = [settings?.videoUrl1, settings?.videoUrl2, settings?.videoUrl3].filter(Boolean);
+        if (videoUrls.length === 0) return null;
+        const getEmbedUrl = (url: string) => {
+          if (url.includes('youtube.com/watch?v=')) {
+            const videoId = url.split('v=')[1]?.split('&')[0];
+            return `https://www.youtube.com/embed/${videoId}`;
+          }
+          if (url.includes('youtu.be/')) {
+            const videoId = url.split('youtu.be/')[1]?.split('?')[0];
+            return `https://www.youtube.com/embed/${videoId}`;
+          }
+          if (url.includes('vimeo.com/')) {
+            const videoId = url.split('vimeo.com/')[1]?.split('?')[0];
+            return `https://player.vimeo.com/video/${videoId}`;
+          }
+          return url;
+        };
+        return (
+          <section key={key} className="max-w-[1500px] mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8"
+            style={{
+              padding: settings?.padding || undefined,
+              backgroundColor: settings?.backgroundColor || undefined,
+            }}
+          >
+            {settings?.heading && (
+              <h2 className="text-xl sm:text-2xl font-bold text-center mb-4 sm:mb-6">{settings.heading}</h2>
+            )}
+            <div className="grid" style={{
+              gridTemplateColumns: `repeat(${videoCols}, 1fr)`,
+              gap: `${settings?.gap || 16}px`,
+            }}>
+              {videoUrls.map((url: string, i: number) => (
+                <div key={i} className="overflow-hidden aspect-video" style={{ borderRadius: settings?.borderRadius || '12px' }}>
+                  <iframe
+                    src={getEmbedUrl(url)}
+                    className="w-full h-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    loading="lazy"
+                    title={`Video ${i + 1}`}
+                  />
+                </div>
+              ))}
+            </div>
+          </section>
+        );
+      }
+
+      case 'showcaseSection':
+        return (
+          <section key={key} className="max-w-[1500px] mx-auto px-2 sm:px-4 lg:px-8 py-2 sm:py-3" style={{
+            backgroundColor: settings?.backgroundColor || undefined,
+            padding: settings?.padding || undefined,
+          }}>
+            <Suspense fallback={<ShowcaseSkeleton />}>
+              <ShowcaseSection
+                products={activeProducts.slice(0, settings?.productsToShow || 8)}
+                onProductClick={onProductClick}
+                onBuyNow={onBuyNow}
+                onQuickView={onQuickView}
+                onAddToCart={(product: Product) => onAddToCart?.({ product, quantity: 1, variant: {} })}
+              />
+            </Suspense>
           </section>
         );
 
