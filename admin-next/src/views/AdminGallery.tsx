@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import { GalleryItem } from '../types';
 import { DataService } from '../services/DataService';
-import { uploadImageToServer } from '../services/imageUploadService';
+import { uploadPreparedImageToServer } from '../services/imageUploadService';
 import { normalizeImageUrl } from '../utils/imageUrlHelper';
 import { ImageGridSkeleton } from '../components/SkeletonLoaders';
 import toast from 'react-hot-toast';
@@ -456,7 +456,7 @@ const AdminGallery: React.FC = () => {
 
     const uploadPromises = Array.from(files).map(async (file) => {
       try {
-        const imageUrl = await uploadImageToServer(file, tenantId);
+        const imageUrl = await uploadPreparedImageToServer(file, tenantId, 'gallery');
         const newItem: GalleryItem = {
           id: Date.now() + Math.random(),
           title: file.name.split('.')[0],
@@ -526,7 +526,7 @@ const AdminGallery: React.FC = () => {
 
     const uploadPromises = imageFiles.map(async (file) => {
       try {
-        const imageUrl = await uploadImageToServer(file, tenantId);
+        const imageUrl = await uploadPreparedImageToServer(file, tenantId, 'gallery');
         const newItem: GalleryItem = {
           id: Date.now() + Math.random(),
           title: file.name.split('.')[0],
