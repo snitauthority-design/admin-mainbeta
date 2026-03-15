@@ -11,14 +11,14 @@ import { useStoreStudioLayout } from '../hooks/useStoreStudioLayout';
 // Critical above-the-fold component
 import { StoreHeader } from '../components/StoreHeader';
 
-// Extracted sub-components
-import { StoreHomeModals } from '../components/store/StoreHomeModals';
+// Scroll-to-top is tiny, keep eager
 import { ScrollToTopButton } from '../components/store/ScrollToTopButton';
 
 // Skeletons
 import { SectionSkeleton, StoreHomeSkeleton } from '../components/store/skeletons';
 
-// Lazy loaded layout components
+// Lazy loaded components — deferred until needed
+const StoreHomeModals = lazy(() => import('../components/store/StoreHomeModals').then(m => ({ default: m.StoreHomeModals })));
 const StoreHomeDefaultLayout = lazy(() => import('../components/store/StoreHomeDefaultLayout').then(m => ({ default: m.StoreHomeDefaultLayout })));
 const StoreCategoryProducts = lazy(() => import('../components/StoreCategoryProducts'));
 const StorePopup = lazy(() => import('../components/StorePopup').then(m => ({ default: m.StorePopup })));
@@ -265,19 +265,23 @@ const StoreHome: React.FC<StoreHomeProps> = ({
         tenantId={tenantId}
       />
       
-      {/* Modals */}
-      <StoreHomeModals
-        isTrackOrderOpen={isTrackOrderOpen}
-        onCloseTrackOrder={() => setIsTrackOrderOpen(false)}
-        orders={orders}
-        quickViewProduct={quickViewProduct}
-        onCloseQuickView={() => setQuickViewProduct(null)}
-        onQuickViewOrder={handleQuickViewOrder}
-        onViewDetails={(product) => {
-          setQuickViewProduct(null);
-          onProductClick(product);
-        }}
-      />
+      {/* Modals — lazy loaded, only rendered when a modal is open */}
+      {(isTrackOrderOpen || quickViewProduct) && (
+        <Suspense fallback={null}>
+          <StoreHomeModals
+            isTrackOrderOpen={isTrackOrderOpen}
+            onCloseTrackOrder={() => setIsTrackOrderOpen(false)}
+            orders={orders}
+            quickViewProduct={quickViewProduct}
+            onCloseQuickView={() => setQuickViewProduct(null)}
+            onQuickViewOrder={handleQuickViewOrder}
+            onViewDetails={(product) => {
+              setQuickViewProduct(null);
+              onProductClick(product);
+            }}
+          />
+        </Suspense>
+      )}
       
       {/* Conditional: Custom Layout vs Default Layout */}
       {customLayoutLoading ? (

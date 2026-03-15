@@ -11,7 +11,6 @@ import {
   ProductGridSkeleton,
   SearchResultsSkeleton,
 } from './skeletons';
-import { TagProductSections } from './TagProductSections';
 
 // Near-fold lazy components
 const FlashSalesSection = lazy(() => import('./FlashSalesSection').then(m => ({ default: m.FlashSalesSection })));
@@ -21,6 +20,7 @@ const BrandSection = lazy(() => import('./BrandSection').then(m => ({ default: m
 const LazySection = lazy(() => import('./LazySection').then(m => ({ default: m.LazySection })));
 const StoreFooter = lazy(() => import('./StoreFooter').then(m => ({ default: m.StoreFooter })));
 const SearchResultsSection = lazy(() => import('./SearchResultsSection').then(m => ({ default: m.SearchResultsSection })));
+const TagProductSections = lazy(() => import('./TagProductSections').then(m => ({ default: m.TagProductSections })));
 
 interface StoreHomeDefaultLayoutProps {
   // Data
@@ -236,18 +236,20 @@ export const StoreHomeDefaultLayout: React.FC<StoreHomeDefaultLayoutProps> = ({
             )}
 
             {/* Tag-based Product Sections */}
-            <TagProductSections
-              tags={tags}
-              activeProducts={activeProducts}
-              onProductClick={onProductClick}
-              onBuyNow={onBuyNow}
-              onQuickView={onQuickView}
-              onAddToCart={onAddToCart}
-              wishlist={wishlist}
-              onToggleWishlist={onToggleWishlist}
-              productCardStyle={websiteConfig?.productCardStyle}
-              productSectionStyle={websiteConfig?.productSectionStyle}
-            />
+            <Suspense fallback={<ProductGridSkeleton count={10} />}>
+              <TagProductSections
+                tags={tags}
+                activeProducts={activeProducts}
+                onProductClick={onProductClick}
+                onBuyNow={onBuyNow}
+                onQuickView={onQuickView}
+                onAddToCart={onAddToCart}
+                wishlist={wishlist}
+                onToggleWishlist={onToggleWishlist}
+                productCardStyle={websiteConfig?.productCardStyle}
+                productSectionStyle={websiteConfig?.productSectionStyle}
+              />
+            </Suspense>
 
             {/* All Products */}
             {activeProducts.length > 0 && (
