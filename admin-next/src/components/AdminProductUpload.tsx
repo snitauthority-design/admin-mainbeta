@@ -8,6 +8,7 @@ import { Product, Category, SubCategory, ChildCategory, Brand, Tag, User } from 
 import toast from 'react-hot-toast';
 import { uploadImageToServer, deleteImageFromServer } from '../services/imageUploadService';
 import { slugify } from '../services/slugify';
+import { showErrorWithWhatsApp } from '../utils/errorReporter';
 
 interface AdminProductUploadProps {
   editingProduct?: Product | null;
@@ -230,7 +231,9 @@ const AdminProductUpload: React.FC<AdminProductUploadProps> = ({
       toast.success('Upload successful', { id: loadingToast });
     } catch (error) {
       console.error('Upload error:', error);
-      toast.error('Upload failed', { id: loadingToast });
+      toast.dismiss(loadingToast);
+      const msg = error instanceof Error ? error.message : 'Unknown error';
+      showErrorWithWhatsApp('Product Upload', `Upload failed: ${msg}`);
     } finally {
       setIsUploading(false);
       if (e.target) e.target.value = '';
