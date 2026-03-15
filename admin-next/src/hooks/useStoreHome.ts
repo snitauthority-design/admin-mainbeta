@@ -125,7 +125,10 @@ export const useStoreHome = ({
         setSelectedCategoryView(initialCategoryFilter);
         return;
       }
-      const category = categories?.find(c => slugify(c.name) === initialCategoryFilter);
+      const category = categories?.find(c => 
+        slugify(c.name) === initialCategoryFilter || 
+        c.slug === initialCategoryFilter
+      );
       if (category) {
         setSelectedCategoryView(category.name);
       }
