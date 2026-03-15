@@ -295,6 +295,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
 const adminUrlMap: Record<string, string> = {
   'dashboard': '/dashboard',
   'orders': '/orders',
+  'all_orders': '/orders',
   'products': '/products',
   'inventory': '/inventory',
   'customers_reviews': '/customers',
@@ -361,6 +362,7 @@ const canAccessPage = (page: string, user?: User | null, permissions?: Permissio
       const pageResourceMap: Record<string, string> = {
         'dashboard': 'dashboard',
         'orders': 'orders',
+        'all_orders': 'orders',
         'incomplete_orders': 'orders',
         'products': 'products',
         'product-upload': 'products',
@@ -812,7 +814,7 @@ const AdminApp: React.FC<AdminAppProps> = ({
         <Suspense fallback={<PageLoadingFallback section={adminSection} />}>
           {
             adminSection === 'incomplete_orders' ? <IncompleteOrder tenantId={activeTenantId} /> :
-            adminSection === 'orders' ? <FigmaOrderList orders={orders} courierConfig={courierConfig} onUpdateOrder={onUpdateOrder} products={products} tenantId={activeTenantId} onNewOrder={onAddOrder} initialSelectedOrderId={selectedOrderIdFromNotification} onClearSelectedOrderId={() => setSelectedOrderIdFromNotification(null)} incomplete={function (): void {
+            adminSection === 'orders' || adminSection === 'all_orders' ? <FigmaOrderList orders={orders} courierConfig={courierConfig} onUpdateOrder={onUpdateOrder} products={products} tenantId={activeTenantId} onNewOrder={onAddOrder} initialSelectedOrderId={selectedOrderIdFromNotification} onClearSelectedOrderId={() => setSelectedOrderIdFromNotification(null)} incomplete={function (): void {
                     throw new Error('Function not implemented.');
                   } } /> :
               adminSection === 'products' ? <FigmaProductList products={products} categories={categories} brands={brands} onAddProduct={() => { setEditingProduct(null); setAdminSection('product-upload'); }} onEditProduct={(p) => { setEditingProduct(p); setAdminSection('product-upload'); }} onDeleteProduct={onDeleteProduct} onCloneProduct={(p) => onAddProduct({ ...p, id: Date.now(), name: p.name + ' (Copy)' })} onBulkDelete={onBulkDeleteProducts} onBulkStatusUpdate={(ids, status) => onBulkUpdateProducts(ids, { status })} onBulkFlashSale={onBulkFlashSale} onBulkImport={onBulkAddProducts} tenantId={activeTenantId} tenantSubdomain={selectedTenantRecord?.subdomain || ""} onProductOrderChange={onProductOrderChange} onQuickUpdate={(id, updates) => onBulkUpdateProducts([id], updates)} tags={tags} /> :
