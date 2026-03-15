@@ -101,6 +101,24 @@ const categorySectionVariants: SectionVariant[] = [
   { id: 'category-style5', name: 'Category Style 5', description: 'Modern slider categories', thumbnail: THEME_DEMO_IMAGES.categorySectionStyle.style5, settings: { categorySectionStyle: 'style5' } },
 ];
 
+// Product Section Style Variants (5 styles)
+const productSectionVariants: SectionVariant[] = [
+  { id: 'product-section-style1', name: 'Product Section 1', description: 'Standard grid layout', settings: { productSectionStyle: 'style1' } },
+  { id: 'product-section-style2', name: 'Product Section 2', description: 'Compact grid with borders', settings: { productSectionStyle: 'style2' } },
+  { id: 'product-section-style3', name: 'Product Section 3', description: 'Cards with shadow', settings: { productSectionStyle: 'style3' } },
+  { id: 'product-section-style4', name: 'Product Section 4', description: 'Minimal clean layout', settings: { productSectionStyle: 'style4' } },
+  { id: 'product-section-style5', name: 'Product Section 5', description: 'Modern with animations', settings: { productSectionStyle: 'style5' } },
+];
+
+// Brand Section Style Variants (5 styles)
+const brandSectionVariants: SectionVariant[] = [
+  { id: 'brand-section-style1', name: 'Brand Style 1', description: 'Marquee auto-scroll logos', settings: { brandSectionStyle: 'style1' } },
+  { id: 'brand-section-style2', name: 'Brand Style 2', description: 'Grid with hover effects', settings: { brandSectionStyle: 'style2' } },
+  { id: 'brand-section-style3', name: 'Brand Style 3', description: 'Horizontal scroll strip', settings: { brandSectionStyle: 'style3' } },
+  { id: 'brand-section-style4', name: 'Brand Style 4', description: 'Card-based brand display', settings: { brandSectionStyle: 'style4' } },
+  { id: 'brand-section-style5', name: 'Brand Style 5', description: 'Circular brand badges', settings: { brandSectionStyle: 'style5' } },
+];
+
 // Footer Style Variants (5 styles)
 const footerVariants: SectionVariant[] = [
   { id: 'footer-style1', name: 'Footer Style 1', description: 'Classic multi-column footer', thumbnail: THEME_DEMO_IMAGES.footerStyle.style1, settings: { footerStyle: 'style1' } },
@@ -202,7 +220,9 @@ export const sectionCategories: SectionCategory[] = [
   { id: 'category-section', name: 'Category Sections', icon: 'grid', variants: categorySectionVariants },
   { id: 'special-offers', name: 'Special Offers', icon: 'zap', variants: specialOffersVariants },
   { id: 'product-card', name: 'Product Card Styles', icon: 'shopping-bag', variants: productCardVariants },
+  { id: 'product-section', name: 'Product Section Styles', icon: 'grid', variants: productSectionVariants },
   { id: 'product-grid', name: 'Product Grids', icon: 'grid', variants: productGridVariants },
+  { id: 'brand-section', name: 'Brand Section Styles', icon: 'layers', variants: brandSectionVariants },
   { id: 'trust-badges', name: 'Trust Badges', icon: 'shield', variants: trustBadgesVariants },
   { id: 'reviews', name: 'Reviews', icon: 'message', variants: reviewsVariants },
   { id: 'brand-showcase', name: 'Brand Showcase', icon: 'layers', variants: brandShowcaseVariants },
@@ -222,7 +242,9 @@ export const variantToSectionType: Record<string, string> = {
   'category-style1': 'categories', 'category-style2': 'categories', 'category-style3': 'categories', 'category-style4': 'categories', 'category-style5': 'categories',
   'special-1': 'flash-sale', 'special-2': 'flash-sale', 'special-3': 'flash-sale', 'special-4': 'flash-sale', 'special-5': 'flash-sale',
   'product-card-style1': 'product-grid', 'product-card-style2': 'product-grid', 'product-card-style3': 'product-grid', 'product-card-style4': 'product-grid', 'product-card-style5': 'product-grid',
+  'product-section-style1': 'product-grid', 'product-section-style2': 'product-grid', 'product-section-style3': 'product-grid', 'product-section-style4': 'product-grid', 'product-section-style5': 'product-grid',
   'product-grid-1': 'product-grid', 'product-grid-2': 'product-grid', 'product-grid-3': 'product-grid', 'product-grid-4': 'product-grid',
+  'brand-section-style1': 'brands', 'brand-section-style2': 'brands', 'brand-section-style3': 'brands', 'brand-section-style4': 'brands', 'brand-section-style5': 'brands',
   'trust-1': 'multicolumn', 'trust-2': 'multicolumn', 'trust-3': 'multicolumn',
   'reviews-1': 'testimonials', 'reviews-2': 'testimonials', 'reviews-3': 'testimonials',
   'brand-1': 'brand-list', 'brand-2': 'brand-list', 'brand-3': 'brand-list',
@@ -236,7 +258,9 @@ export const variantToThemeConfigKey: Record<string, string> = {
   'header-style1': 'headerStyle', 'header-style2': 'headerStyle', 'header-style3': 'headerStyle', 'header-style4': 'headerStyle', 'header-style5': 'headerStyle', 'header-style6': 'headerStyle',
   'mobile-header-style1': 'mobileHeaderStyle', 'mobile-header-style2': 'mobileHeaderStyle', 'mobile-header-style3': 'mobileHeaderStyle', 'mobile-header-style4': 'mobileHeaderStyle', 'mobile-header-style5': 'mobileHeaderStyle', 'mobile-header-style6': 'mobileHeaderStyle',
   'product-card-style1': 'productCardStyle', 'product-card-style2': 'productCardStyle', 'product-card-style3': 'productCardStyle', 'product-card-style4': 'productCardStyle', 'product-card-style5': 'productCardStyle',
+  'product-section-style1': 'productSectionStyle', 'product-section-style2': 'productSectionStyle', 'product-section-style3': 'productSectionStyle', 'product-section-style4': 'productSectionStyle', 'product-section-style5': 'productSectionStyle',
   'category-style1': 'categorySectionStyle', 'category-style2': 'categorySectionStyle', 'category-style3': 'categorySectionStyle', 'category-style4': 'categorySectionStyle', 'category-style5': 'categorySectionStyle',
+  'brand-section-style1': 'brandSectionStyle', 'brand-section-style2': 'brandSectionStyle', 'brand-section-style3': 'brandSectionStyle', 'brand-section-style4': 'brandSectionStyle', 'brand-section-style5': 'brandSectionStyle',
   'footer-style1': 'footerStyle', 'footer-style2': 'footerStyle', 'footer-style3': 'footerStyle', 'footer-style4': 'footerStyle', 'footer-style5': 'footerStyle',
   'bottom-nav-style1': 'bottomNavStyle', 'bottom-nav-style2': 'bottomNavStyle', 'bottom-nav-style3': 'bottomNavStyle', 'bottom-nav-style4': 'bottomNavStyle', 'bottom-nav-style5': 'bottomNavStyle',
 };
