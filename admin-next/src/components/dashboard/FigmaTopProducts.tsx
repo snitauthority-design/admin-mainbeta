@@ -31,7 +31,7 @@ const FigmaTopProducts: React.FC<FigmaTopProductsProps> = ({
       {/* Header */}
       <div className="w-full flex flex-col justify-start items-start gap-2 xs:gap-3">
         <div className="w-full flex justify-start items-center gap-2 xs:gap-3">
-          <div className="flex-1 justify-start text-zinc-800 dark:text-white text-base sm:text-lg font-bold font-family: Poppins, Helvetica, sans-serif">Top Products</div>
+          <div className="flex-1 justify-start text-zinc-800 dark:text-white text-sm sm:text-base font-bold font-family: Poppins, Helvetica, sans-serif">Top Products</div>
           {/* <button 
             onClick={onAllProductsClick}
             className="justify-start text-sky-400 text-xs font-normal font-family: Poppins, Helvetica, sans-serif cursor-pointer hover:underline bg-transparent border-none"
@@ -82,12 +82,12 @@ const FigmaTopProducts: React.FC<FigmaTopProductsProps> = ({
 
               {/* Product Info */}
               <div className="flex-1 flex flex-col justify-center items-start gap-0.5 sm:gap-1 overflow-hidden min-w-0">
-                <div className="w-full truncate text-teal-950 dark:text-white text-sm sm:text-base font-medium font-family: Poppins, Helvetica, sans-serif">{product.name}</div>
-                <div className="text-neutral-400 dark:text-gray-500 text-[10px] sm:text-xs font-normal font-family: Poppins, Helvetica, sans-serif">Item: {product.itemCode}</div>
+                <div className="w-full truncate text-teal-950 dark:text-white text-xs sm:text-sm font-medium font-family: Poppins, Helvetica, sans-serif">{product.name}</div>
+                <div className="text-neutral-400 dark:text-gray-500 text-[9px] sm:text-[11px] font-normal font-family: Poppins, Helvetica, sans-serif">Item: {product.itemCode}</div>
               </div>
 
               {/* Price */}
-              <div className="text-right whitespace-nowrap text-teal-950 dark:text-white text-sm sm:text-base font-bold font-family: Poppins, Helvetica, sans-serif leading-5">{product.price}</div>
+              <div className="text-right whitespace-nowrap text-teal-950 dark:text-white text-xs sm:text-sm font-bold font-family: Poppins, Helvetica, sans-serif leading-5">{product.price}</div>
             </div>
           ))
         )}

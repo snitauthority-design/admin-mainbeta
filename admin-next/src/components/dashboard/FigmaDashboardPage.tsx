@@ -53,8 +53,6 @@ const FigmaDashboardPage: React.FC<FigmaDashboardPageProps> = ({
   permissions
 }) => {
   const { language, setLanguage } = useLanguage();
-  const [timeFilter, setTimeFilter] = useState<'day' | 'month' | 'year' | 'all' | 'custom'>('year');
-  const [selectedMonth, setSelectedMonth] = useState<Date>(new Date());
   const [currentPage, setCurrentPage] = useState<string>('dashboard');
   const [resolvedSubdomain, setResolvedSubdomain] = useState<string>(tenantSubdomain);
 
@@ -231,7 +229,7 @@ const FigmaDashboardPage: React.FC<FigmaDashboardPageProps> = ({
         <div className={`grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-4 ${contentWrapClass}`}>
           {/* Sales Performance Chart - Left Side */}
           <div className="lg:col-span-8">
-            <FigmaSalesPerformance orders={orders} timeFilter={timeFilter} selectedMonth={selectedMonth} />
+            <FigmaSalesPerformance orders={orders} />
           </div>
 
           {/* Sales by Category Pie Chart - Right Side */}

@@ -1,5 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
+import { ChevronDown } from 'lucide-react';
 import { Order } from '../../types';
+import CustomDateRangePicker, { DateRange } from './CustomDateRangePicker';
 
 interface ChartData {
   label: string;
@@ -7,6 +9,14 @@ interface ChartData {
   delivered: number;
   canceled: number;
 }
+
+type TimeFilterType = 'day' | 'week' | 'year' | 'custom';
+
+const DATE_RANGE_OPTIONS: { id: TimeFilterType; label: string }[] = [
+  { id: 'day', label: 'Day' },
+  { id: 'week', label: 'Week' },
+  { id: 'year', label: 'Year' },
+];
 
 interface FigmaSalesPerformanceProps {
   orders?: Order[];
@@ -18,9 +28,14 @@ interface FigmaSalesPerformanceProps {
 const FigmaSalesPerformance: React.FC<FigmaSalesPerformanceProps> = ({
   orders = [],
   data: propData,
-  timeFilter = 'year',
-  selectedMonth = new Date()
+  timeFilter: externalTimeFilter,
+  selectedMonth: externalSelectedMonth
 }) => {
+  const [internalTimeFilter, setInternalTimeFilter] = useState<TimeFilterType>('year');
+  const [showCustomDatePicker, setShowCustomDatePicker] = useState(false);
+  const [customDateRange, setCustomDateRange] = useState<DateRange>({ startDate: null, endDate: null });
+
+  const timeFilter = internalTimeFilter;
 
   // Last 5 years for yearly view
   const last5Years = useMemo(() => {
@@ -55,32 +70,122 @@ const FigmaSalesPerformance: React.FC<FigmaSalesPerformanceProps> = ({
       });
 
       return yearStats;
-    } else if (timeFilter === 'month' || timeFilter === 'custom') {
-      // Show days of selected month
-      const targetYear = selectedMonth.getFullYear();
-      const targetMonthNum = selectedMonth.getMonth();
-      const daysInMonth = new Date(targetYear, targetMonthNum + 1, 0).getDate();
-      
-      const dailyStats: ChartData[] = Array.from({ length: daysInMonth }, (_, i) => ({
-        label: String(i + 1),
-        placedOrder: 0,
-        delivered: 0,
-        canceled: 0
-      }));
+    } else if (timeFilter === 'week') {
+      // Show last 7 days
+      const weekStats: ChartData[] = [];
+      const dayTimestamps: number[] = [];
+      for (let i = 6; i >= 0; i--) {
+        const date = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+        date.setHours(0, 0, 0, 0);
+        dayTimestamps.push(date.getTime());
+        weekStats.push({
+          label: date.toLocaleDateString('en-GB', { weekday: 'short' }),
+          placedOrder: 0,
+          delivered: 0,
+          canceled: 0
+        });
+      }
 
       orders.forEach(order => {
         const orderDate = order.createdAt ? new Date(order.createdAt) : (order.date ? new Date(order.date) : null);
-        if (!orderDate || orderDate.getMonth() !== targetMonthNum || orderDate.getFullYear() !== targetYear) return;
+        if (!orderDate) return;
         
-        const dayIndex = orderDate.getDate() - 1;
-        if (dayIndex >= 0 && dayIndex < daysInMonth) {
-          dailyStats[dayIndex].placedOrder++;
-          if (order.status === 'Delivered') dailyStats[dayIndex].delivered++;
-          if (order.status === 'Cancelled') dailyStats[dayIndex].canceled++;
+        const normalizedOrder = new Date(orderDate.getFullYear(), orderDate.getMonth(), orderDate.getDate()).getTime();
+        const idx = dayTimestamps.indexOf(normalizedOrder);
+        if (idx >= 0) {
+          weekStats[idx].placedOrder++;
+          if (order.status === 'Delivered') weekStats[idx].delivered++;
+          if (order.status === 'Cancelled') weekStats[idx].canceled++;
         }
       });
 
-      return dailyStats;
+      return weekStats;
+    } else if (timeFilter === 'custom') {
+      // Show custom date range
+      if (!customDateRange.startDate || !customDateRange.endDate) {
+        return [{ label: '-', placedOrder: 0, delivered: 0, canceled: 0 }];
+      }
+
+      const start = new Date(customDateRange.startDate);
+      start.setHours(0, 0, 0, 0);
+      const end = new Date(customDateRange.endDate);
+      end.setHours(23, 59, 59, 999);
+      
+      const diffDays = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+
+      if (diffDays <= 1) {
+        // Single day - show hours
+        const hourStats: ChartData[] = Array.from({ length: 24 }, (_, i) => ({
+          label: `${i}:00`,
+          placedOrder: 0,
+          delivered: 0,
+          canceled: 0
+        }));
+
+        orders.forEach(order => {
+          const orderDate = order.createdAt ? new Date(order.createdAt) : (order.date ? new Date(order.date) : null);
+          if (!orderDate || orderDate < start || orderDate > end) return;
+          const hour = orderDate.getHours();
+          hourStats[hour].placedOrder++;
+          if (order.status === 'Delivered') hourStats[hour].delivered++;
+          if (order.status === 'Cancelled') hourStats[hour].canceled++;
+        });
+        return hourStats;
+      } else if (diffDays <= 31) {
+        // Up to a month - show each day
+        const dailyStats: ChartData[] = [];
+        const startTime = start.getTime();
+        for (let dayOffset = 0; dayOffset <= diffDays; dayOffset++) {
+          const d = new Date(startTime + dayOffset * 86400000);
+          dailyStats.push({
+            label: `${d.getDate()}/${d.getMonth() + 1}`,
+            placedOrder: 0,
+            delivered: 0,
+            canceled: 0
+          });
+        }
+
+        orders.forEach(order => {
+          const orderDate = order.createdAt ? new Date(order.createdAt) : (order.date ? new Date(order.date) : null);
+          if (!orderDate || orderDate < start || orderDate > end) return;
+          
+          const dayDiff = Math.floor((orderDate.getTime() - startTime) / 86400000);
+          if (dayDiff >= 0 && dayDiff < dailyStats.length) {
+            dailyStats[dayDiff].placedOrder++;
+            if (order.status === 'Delivered') dailyStats[dayDiff].delivered++;
+            if (order.status === 'Cancelled') dailyStats[dayDiff].canceled++;
+          }
+        });
+        return dailyStats;
+      } else {
+        // More than a month - show by month
+        const monthStats: ChartData[] = [];
+        const current = new Date(start.getFullYear(), start.getMonth(), 1);
+        const endMonth = new Date(end.getFullYear(), end.getMonth(), 1);
+        
+        while (current <= endMonth) {
+          monthStats.push({
+            label: current.toLocaleString('default', { month: 'short', year: '2-digit' }),
+            placedOrder: 0,
+            delivered: 0,
+            canceled: 0
+          });
+          current.setMonth(current.getMonth() + 1);
+        }
+
+        orders.forEach(order => {
+          const orderDate = order.createdAt ? new Date(order.createdAt) : (order.date ? new Date(order.date) : null);
+          if (!orderDate || orderDate < start || orderDate > end) return;
+          
+          const monthDiff = (orderDate.getFullYear() - start.getFullYear()) * 12 + (orderDate.getMonth() - start.getMonth());
+          if (monthDiff >= 0 && monthDiff < monthStats.length) {
+            monthStats[monthDiff].placedOrder++;
+            if (order.status === 'Delivered') monthStats[monthDiff].delivered++;
+            if (order.status === 'Cancelled') monthStats[monthDiff].canceled++;
+          }
+        });
+        return monthStats;
+      }
     } else if (timeFilter === 'day') {
       // Show hours of today
       const todayStats: ChartData[] = Array.from({ length: 24 }, (_, i) => ({
@@ -132,7 +237,7 @@ const FigmaSalesPerformance: React.FC<FigmaSalesPerformanceProps> = ({
 
       return monthStats;
     }
-  }, [orders, timeFilter, selectedMonth, last5Years]);
+  }, [orders, timeFilter, last5Years, customDateRange]);
 
   // Use chartData directly - flat (zero) values when no orders
   const displayData = chartData;
@@ -156,8 +261,53 @@ const FigmaSalesPerformance: React.FC<FigmaSalesPerformanceProps> = ({
   return (
     <div className="w-full h-64 sm:h-80 p-2.5 xs:p-3 sm:p-4 bg-white dark:bg-gray-800 rounded-xl border border-zinc-200 dark:border-gray-700 flex flex-col justify-start items-start gap-1.5 xs:gap-2 overflow-hidden">
       {/* Header */}
-      <div className="w-full flex justify-between items-center gap-2 xs:gap-2.5">
-        <div className="text-zinc-800 dark:text-white text-lg font-bold font-family: Poppins, Helvetica, sans-serif">Sale Performance</div>
+      <div className="w-full flex flex-wrap justify-between items-center gap-2 xs:gap-2.5">
+        <div className="text-zinc-800 dark:text-white text-sm sm:text-lg font-bold font-family: Poppins, Helvetica, sans-serif">Sale Performance</div>
+        <div className="flex items-center gap-1.5 sm:gap-2 relative">
+          {DATE_RANGE_OPTIONS.map(option => (
+            <button
+              key={option.id}
+              onClick={() => { setInternalTimeFilter(option.id); setShowCustomDatePicker(false); }}
+              className={`px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg font-medium font-['Poppins'] text-[10px] sm:text-[12px] cursor-pointer transition-colors ${
+                timeFilter === option.id
+                  ? 'bg-gradient-to-b from-[#ff6a00] to-[#ff9f1c] text-white'
+                  : 'bg-[#f9f9f9] text-[#a7a7a7] dark:bg-gray-700 dark:text-gray-400'
+              }`}
+            >
+              {option.label}
+            </button>
+          ))}
+          <div className="relative">
+            <button
+              onClick={() => {
+                if (timeFilter === 'custom') {
+                  setShowCustomDatePicker(!showCustomDatePicker);
+                } else {
+                  setInternalTimeFilter('custom');
+                  setShowCustomDatePicker(true);
+                }
+              }}
+              className={`px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg font-medium font-['Poppins'] text-[10px] sm:text-[12px] flex items-center gap-1 cursor-pointer transition-colors ${
+                timeFilter === 'custom'
+                  ? 'bg-gradient-to-b from-[#ff6a00] to-[#ff9f1c] text-white'
+                  : 'bg-[#f9f9f9] text-[#a7a7a7] dark:bg-gray-700 dark:text-gray-400'
+              }`}
+            >
+              Custom
+              <ChevronDown size={12} className={showCustomDatePicker ? 'rotate-180 transition-transform' : 'transition-transform'} />
+            </button>
+            <CustomDateRangePicker
+              isOpen={showCustomDatePicker}
+              onClose={() => setShowCustomDatePicker(false)}
+              onApply={(range) => {
+                setCustomDateRange(range);
+                setInternalTimeFilter('custom');
+                setShowCustomDatePicker(false);
+              }}
+              initialDateRange={customDateRange}
+            />
+          </div>
+        </div>
       </div>
 
       {/* Legend - Wrap on mobile */}
