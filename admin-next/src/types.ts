@@ -4,6 +4,16 @@ import React, { ReactNode } from 'react';
 export type TenantPlan = 'starter' | 'growth' | 'enterprise';
 export type TenantStatus = 'active' | 'trialing' | 'suspended' | 'archived' | 'inactive' | 'pending';
 
+export interface ShopStatus {
+  isTrialing: boolean;
+  isStartups: boolean;
+  isEnterprise: boolean;
+  isPremium: boolean;
+  isExpired: boolean;
+  isSuspended: boolean;
+  isBlocked: boolean;
+}
+
 export interface TenantBranding {
   logo?: string;
   primaryColor?: string;
@@ -73,6 +83,8 @@ export interface Tenant {
     lastNotificationShown?: string;
     renewalDismissedAt?: string;
   };
+  // Shop Status
+  shopStatus?: ShopStatus;
 }
 
 export interface CreateTenantPayload {
@@ -269,6 +281,14 @@ export interface User {
   lastLogin?: string;
   createdAt?: string; // Added for admin profile
   updatedAt?: string; // Added for admin profile
+  tenantDetails?: {
+    id: string;
+    name: string;
+    subdomain: string;
+    plan: string;
+    status: string;
+    shopStatus?: ShopStatus;
+  };
 }
 
 export type ResourceType = 

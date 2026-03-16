@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   Plus, Edit2, Trash2, DollarSign, TrendingUp, FileText, 
   Settings, Clock, CheckCircle, XCircle, AlertTriangle, RefreshCw,
   Users, Search, PlayCircle, Ban, Archive, RotateCcw, Store,
-  Loader2, X, ChevronRight, CreditCard
+  Loader2, X, ChevronRight, CreditCard, Package
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import type { 
@@ -12,7 +12,7 @@ import type {
   Invoice, 
   TrialSettings 
 } from './types';
-import type { Tenant, TenantStatus } from '../../types';
+import type { Tenant, TenantStatus, ShopStatus } from '../../types';
 import RenewSubscription from '../dashboard/RenewSubscription';
 
 interface SubscriptionsTabProps {
@@ -27,6 +27,7 @@ interface SubscriptionsTabProps {
   onUpdateTrialSettings: (settings: Partial<TrialSettings>) => Promise<void>;
   tenants?: Tenant[];
   onUpdateTenantStatus?: (tenantId: string, status: TenantStatus, reason?: string) => Promise<void>;
+  onUpdateShopStatus?: (tenantId: string, shopStatus: Partial<ShopStatus>) => Promise<void>;
 }
 
 const SubscriptionsTab: React.FC<SubscriptionsTabProps> = ({
@@ -40,9 +41,10 @@ const SubscriptionsTab: React.FC<SubscriptionsTabProps> = ({
   onLoadTrialSettings,
   onUpdateTrialSettings,
   tenants = [],
-  onUpdateTenantStatus
+  onUpdateTenantStatus,
+  onUpdateShopStatus
 }) => {
-  const [activeView, setActiveView] = useState<'plans' | 'billing' | 'invoices' | 'trials' | 'tenant-status'>('plans');
+  const [activeView, setActiveView] = useState<'plans' | 'billing' | 'invoices' | 'trials' | 'tenant-status' | 'shop-status'>('plans');
   const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
   const [transactions, setTransactions] = useState<BillingTransaction[]>([]);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
@@ -213,10 +215,21 @@ const SubscriptionsTab: React.FC<SubscriptionsTabProps> = ({
           <Clock className="w-4 h-4 inline mr-1 sm:mr-2" />
           Trials
         </button>
+        <button
+          onClick={() => setActiveView('shop-status')}
+          className={`px-3 sm:px-4 py-2 font-medium transition-colors whitespace-nowrap text-sm sm:text-base flex-shrink-0 ${
+            activeView === 'shop-status'
+              ? 'text-emerald-600 border-b-2 border-emerald-600'
+              : 'text-slate-600 hover:text-slate-800'
+          }`}
+        >
+          <Package className="w-4 h-4 inline mr-1 sm:mr-2" />
+          Shop Status
+        </button>
       </div>
 
       {/* Content */}
-      {loading && activeView !== 'tenant-status' ? (
+      {loading && activeView !== 'tenant-status' && activeView !== 'shop-status' ? (
         <div className="flex items-center justify-center min-h-[400px]">
           <RefreshCw className="w-8 h-8 text-emerald-500 animate-spin" />
         </div>
@@ -466,6 +479,14 @@ const SubscriptionsTab: React.FC<SubscriptionsTabProps> = ({
             <TenantStatusManager
               tenants={tenants}
               onUpdateTenantStatus={onUpdateTenantStatus}
+            />
+          )}
+
+          {/* Shop Status Management View */}
+          {activeView === 'shop-status' && (
+            <ShopStatusManager
+              tenants={tenants}
+              onUpdateShopStatus={onUpdateShopStatus}
             />
           )}
         </>
@@ -1192,6 +1213,159 @@ const TenantStatusManager: React.FC<{
           selectedPlan={renewTenant?.plan || 'starter'}
         />
       )}
+    </div>
+  );
+};
+
+// Shop Status Manager Component
+const SHOP_STATUS_COLOR_CLASSES: Record<string, { active: string; dot: string }> = {
+  amber: {
+    active: 'bg-amber-50 border-amber-300 text-amber-700',
+    dot: 'border-amber-500 bg-amber-500',
+  },
+  blue: {
+    active: 'bg-blue-50 border-blue-300 text-blue-700',
+    dot: 'border-blue-500 bg-blue-500',
+  },
+  purple: {
+    active: 'bg-purple-50 border-purple-300 text-purple-700',
+    dot: 'border-purple-500 bg-purple-500',
+  },
+  emerald: {
+    active: 'bg-emerald-50 border-emerald-300 text-emerald-700',
+    dot: 'border-emerald-500 bg-emerald-500',
+  },
+  orange: {
+    active: 'bg-orange-50 border-orange-300 text-orange-700',
+    dot: 'border-orange-500 bg-orange-500',
+  },
+  red: {
+    active: 'bg-red-50 border-red-300 text-red-700',
+    dot: 'border-red-500 bg-red-500',
+  },
+  gray: {
+    active: 'bg-gray-100 border-gray-300 text-gray-700',
+    dot: 'border-gray-500 bg-gray-500',
+  },
+};
+
+const SHOP_STATUS_FIELDS: { key: keyof ShopStatus; label: string; description: string; color: string }[] = [
+  { key: 'isTrialing', label: 'Trialing', description: 'Shop is on a trial period', color: 'amber' },
+  { key: 'isStartups', label: 'Startups', description: 'Startup package', color: 'blue' },
+  { key: 'isEnterprise', label: 'Enterprise', description: 'Enterprise package', color: 'purple' },
+  { key: 'isPremium', label: 'Premium', description: 'Premium package', color: 'emerald' },
+  { key: 'isExpired', label: 'Expired', description: 'Subscription expired', color: 'orange' },
+  { key: 'isSuspended', label: 'Suspended', description: 'Shop is suspended', color: 'red' },
+  { key: 'isBlocked', label: 'Blocked', description: 'Shop is blocked', color: 'gray' },
+];
+
+const ShopStatusManager: React.FC<{
+  tenants: Tenant[];
+  onUpdateShopStatus?: (tenantId: string, shopStatus: Partial<ShopStatus>) => Promise<void>;
+}> = ({ tenants, onUpdateShopStatus }) => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [updatingTenant, setUpdatingTenant] = useState<string | null>(null);
+
+  const filteredTenants = tenants.filter(t => {
+    if (!searchQuery) return true;
+    const q = searchQuery.toLowerCase();
+    return (
+      t.name?.toLowerCase().includes(q) ||
+      t.subdomain?.toLowerCase().includes(q) ||
+      t.contactEmail?.toLowerCase().includes(q)
+    );
+  });
+
+  const handleToggleStatus = useCallback(async (tenantId: string, field: keyof ShopStatus, currentValue: boolean) => {
+    if (!onUpdateShopStatus) return;
+    setUpdatingTenant(`${tenantId}-${field}`);
+    try {
+      await onUpdateShopStatus(tenantId, { [field]: !currentValue });
+    } catch (error) {
+      // Error is already handled in the parent
+    } finally {
+      setUpdatingTenant(null);
+    }
+  }, [onUpdateShopStatus]);
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-semibold text-slate-800">Shop Status Management</h3>
+      </div>
+
+      {/* Search */}
+      <div className="relative mb-4">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+        <input
+          type="text"
+          placeholder="Search by name, subdomain, or email..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+        />
+      </div>
+
+      {/* Tenant List */}
+      <div className="space-y-4">
+        {filteredTenants.length === 0 ? (
+          <div className="text-center py-8 text-slate-500">No tenants found</div>
+        ) : (
+          filteredTenants.map(tenant => {
+            const tenantId = tenant.id || tenant._id || '';
+            const shopStatus = tenant.shopStatus || {
+              isTrialing: false, isStartups: false, isEnterprise: false,
+              isPremium: false, isExpired: false, isSuspended: false, isBlocked: false
+            };
+
+            return (
+              <div key={tenantId} className="border border-slate-200 rounded-lg p-4">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center">
+                    <Store className="w-5 h-5 text-slate-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-slate-800">{tenant.name}</h4>
+                    <p className="text-xs text-slate-500">{tenant.subdomain} • {tenant.contactEmail}</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
+                  {SHOP_STATUS_FIELDS.map(({ key, label, description, color }) => {
+                    const isActive = shopStatus[key] ?? false;
+                    const isUpdating = updatingTenant === `${tenantId}-${key}`;
+                    const colorClasses = SHOP_STATUS_COLOR_CLASSES[color] || SHOP_STATUS_COLOR_CLASSES.gray;
+
+                    return (
+                      <button
+                        key={key}
+                        onClick={() => handleToggleStatus(tenantId, key, isActive)}
+                        disabled={isUpdating}
+                        title={description}
+                        className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-sm transition-all ${
+                          isActive
+                            ? colorClasses.active
+                            : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100'
+                        } ${isUpdating ? 'opacity-50' : ''}`}
+                      >
+                        {isUpdating ? (
+                          <Loader2 className="w-3.5 h-3.5 animate-spin flex-shrink-0" />
+                        ) : (
+                          <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
+                            isActive ? colorClasses.dot : 'border-slate-300'
+                          }`}>
+                            {isActive && <CheckCircle className="w-2.5 h-2.5 text-white" />}
+                          </div>
+                        )}
+                        <span className="truncate">{label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
     </div>
   );
 };

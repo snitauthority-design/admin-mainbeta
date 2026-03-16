@@ -42,6 +42,18 @@ export interface Tenant extends BaseModel {
     lastNotificationShown?: string; // Date when last daily notification was shown
     renewalDismissedAt?: string; // When user dismissed the renewal popup
   };
+  // Shop Status - managed by super admin
+  shopStatus?: ShopStatus;
+}
+
+export interface ShopStatus {
+  isTrialing: boolean;
+  isStartups: boolean;
+  isEnterprise: boolean;
+  isPremium: boolean;
+  isExpired: boolean;
+  isSuspended: boolean;
+  isBlocked: boolean;
 }
 
 export interface CreateTenantPayload {

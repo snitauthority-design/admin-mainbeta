@@ -4,7 +4,7 @@ import { DataService } from '../services/DataService';
 import { SubscriptionService } from '../services/SubscriptionService';
 import { getAuthHeader } from '../services/authService';
 import { getApiUrl, getPrimaryDomain } from '../utils/appHelpers';
-import { Tenant, CreateTenantPayload, TenantStatus } from '../types';
+import { Tenant, CreateTenantPayload, TenantStatus, ShopStatus } from '../types';
 import { toast } from 'react-hot-toast';
 import { SuperAdminTabSkeleton } from '../components/SkeletonLoaders';
 
@@ -786,6 +786,39 @@ const SuperAdminDashboard: React.FC = () => {
     }
   }, [tenants, API_URL]);
 
+  // Shop status update handler
+  const handleUpdateShopStatus = useCallback(async (tenantId: string, shopStatus: Partial<ShopStatus>): Promise<void> => {
+    if (!tenantId) {
+      toast.error('Invalid tenant ID');
+      return;
+    }
+    try {
+      const response = await fetch(`${API_URL}/tenants/${tenantId}/shop-status`, {
+        method: 'PATCH',
+        headers: getAuthHeader(),
+        body: JSON.stringify(shopStatus),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `Failed to update shop status (${response.status})`);
+      }
+
+      const result = await response.json();
+      const updatedTenants = tenants.map(t =>
+        (t.id === tenantId || t._id === tenantId)
+          ? { ...t, shopStatus: result.data.shopStatus }
+          : t
+      );
+
+      setTenants(updatedTenants);
+      toast.success('Shop status updated successfully');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to update shop status');
+      throw error;
+    }
+  }, [tenants, API_URL]);
+
   // Login as merchant handler
   const handleLoginAsMerchant = useCallback(async (tenantId: string): Promise<void> => {
     try {
@@ -1173,6 +1206,7 @@ const SuperAdminDashboard: React.FC = () => {
               }}
               tenants={tenants}
               onUpdateTenantStatus={handleUpdateTenantStatus}
+              onUpdateShopStatus={handleUpdateShopStatus}
             />
           </React.Suspense>
         );
