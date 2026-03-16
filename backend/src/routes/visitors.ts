@@ -354,7 +354,7 @@ router.get('/:tenantId/sources', async (req: Request, res: Response) => {
         $project: {
           referrer: '$_id',
           count: 1,
-          visitors: { $size: '$uniqueVisitors' },
+          uniqueVisitors: 1,
           _id: 0
         }
       },
@@ -362,7 +362,7 @@ router.get('/:tenantId/sources', async (req: Request, res: Response) => {
     ]).toArray();
 
     // Categorize referrers into sources
-    const sourceMap: Record<string, { count: number; visitors: number; referrers: string[] }> = {};
+    const sourceMap: Record<string, { count: number; visitorIds: Set<string>; referrers: string[] }> = {};
 
     const categorizeReferrer = (referrer: string | null | undefined): string => {
       if (!referrer || referrer === '' || referrer === 'null' || referrer === 'undefined') return 'Direct';
@@ -390,10 +390,15 @@ router.get('/:tenantId/sources', async (req: Request, res: Response) => {
     for (const item of referrerData) {
       const source = categorizeReferrer(item.referrer);
       if (!sourceMap[source]) {
-        sourceMap[source] = { count: 0, visitors: 0, referrers: [] };
+        sourceMap[source] = { count: 0, visitorIds: new Set(), referrers: [] };
       }
       sourceMap[source].count += item.count;
-      sourceMap[source].visitors += item.visitors;
+      // Collect unique visitor IDs using Set to avoid double-counting
+      if (item.uniqueVisitors) {
+        for (const vid of item.uniqueVisitors) {
+          sourceMap[source].visitorIds.add(vid);
+        }
+      }
       if (item.referrer && !sourceMap[source].referrers.includes(item.referrer)) {
         sourceMap[source].referrers.push(item.referrer);
       }
@@ -405,7 +410,7 @@ router.get('/:tenantId/sources', async (req: Request, res: Response) => {
       .map(([name, data]) => ({
         name,
         count: data.count,
-        visitors: data.visitors,
+        visitors: data.visitorIds.size,
         percentage: Math.round((data.count / totalViews) * 100),
         referrers: data.referrers.slice(0, 5) // Top 5 referrer URLs per source
       }))

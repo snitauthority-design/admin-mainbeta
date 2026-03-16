@@ -44,7 +44,7 @@ const VisitorCard = ({ icon, title, subtitle, value, bgColor, iconColor, titleCo
     onClick={onClick}
     role={onClick ? 'button' : undefined}
     tabIndex={onClick ? 0 : undefined}
-    onKeyDown={onClick ? (e) => { if (e.key === 'Enter' || e.key === ' ') onClick(); } : undefined}
+    onKeyDown={onClick ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } } : undefined}
   >
     <div
       className="absolute w-[160px] h-[160px] rounded-full opacity-10 pointer-events-none"
