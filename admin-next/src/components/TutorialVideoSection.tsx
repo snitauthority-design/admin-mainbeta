@@ -35,7 +35,7 @@ export const TutorialVideoSection: React.FC<TutorialVideoSectionProps> = ({ tena
     try {
       setLoading(true);
       const data = await DataService.getTutorials(tenantId);
-      setTutorials(data.filter((t: Tutorial) => t.isActive).sort((a, b) => a.order - b.order));
+      setTutorials(data.filter((t: Tutorial) => t.isActive).sort((a: { order: number; }, b: { order: number; }) => a.order - b.order));
     } catch (error) {
       console.error('Failed to load tutorials:', error);
       toast.error('Failed to load tutorials');

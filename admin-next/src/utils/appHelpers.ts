@@ -195,7 +195,8 @@ export function getStoreUrl(subdomain?: string): string {
 export function getApiUrl(): string {
   const envApi = import.meta.env.VITE_API_BASE_URL;
   if (envApi && /^https?:\/\/.+/.test(envApi)) {
-    return envApi.replace(/\/$/, '');
+    const base = envApi.replace(/\/$/, '');
+    return base.endsWith('/api') ? base : `${base}/api`;
   }
   if (typeof window === 'undefined') {
     const domain = PRIMARY_TENANT_DOMAIN;

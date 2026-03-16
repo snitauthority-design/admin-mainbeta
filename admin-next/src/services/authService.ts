@@ -7,7 +7,10 @@ const getApiUrl = (): string => {
     // SSR: use env vars with defensive checks
     try {
       const envApi = process.env.NEXT_PUBLIC_API_BASE_URL;
-      if (envApi) return envApi.replace(/\/$/, '');
+        if (envApi) {
+          const base = envApi.replace(/\/$/, '');
+          return base.endsWith('/api') ? base : `${base}/api`;
+        }
       const primaryDomain = process.env.NEXT_PUBLIC_PRIMARY_DOMAIN;
       if (primaryDomain) return `https://${primaryDomain}/api`;
     } catch {

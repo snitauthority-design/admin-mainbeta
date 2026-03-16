@@ -429,6 +429,9 @@ const deduplicateRequest = async <T>(
 };
 
 class DataServiceImpl {
+  incrementTutorialViews(id: string, tenantId: string) {
+    throw new Error('Method not implemented.');
+  }
   getTutorials(tenantId: string) {
     throw new Error('Method not implemented.');
   }
