@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 
 interface FigmaAnalyticsChartProps {
   tenantId?: string;
+  onNavigate?: (page: string) => void;
 }
 
 /**
  * Main App Component
  * Displays a combined view of Visitor Statistics and Traffic Charts.
  */
-const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({ tenantId }) => {
+const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({ tenantId, onNavigate }) => {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({ 
     onlineNow: 0, 
@@ -166,10 +167,16 @@ const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({ tenantId }) =
       <div className="flex flex-col lg:flex-row w-full items-stretch gap-3 sm:gap-4 lg:gap-5 bg-white dark:bg-gray-800 p-3 sm:p-4 lg:p-6 rounded-2xl">
         {/* Visitor Stats Section - responsive width */}
         <section className="flex flex-row lg:flex-col gap-2 sm:gap-3 lg:gap-[15px] flex-shrink-0 lg:w-[340px] xl:w-[372px] overflow-x-auto lg:overflow-visible pb-1 lg:pb-0">
-          {statsData.map((stat) => (
+          {statsData.map((stat) => {
+            const isClickable = stat.id === 'online-now' && !!onNavigate;
+            return (
             <article
               key={stat.id}
-              className={`relative flex-1 lg:flex-1 min-w-[160px] sm:min-w-0 rounded-lg overflow-hidden shadow-[0px_2px_4px_#0000000d] ${stat.bgGradient} transition-shadow hover:shadow-md active:scale-[0.98]`}
+              className={`relative flex-1 lg:flex-1 min-w-[160px] sm:min-w-0 rounded-lg overflow-hidden shadow-[0px_2px_4px_#0000000d] ${stat.bgGradient} transition-shadow hover:shadow-md active:scale-[0.98] ${isClickable ? 'cursor-pointer' : ''}`}
+              onClick={isClickable ? () => onNavigate('online_now') : undefined}
+              role={isClickable ? 'button' : undefined}
+              tabIndex={isClickable ? 0 : undefined}
+              onKeyDown={isClickable ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onNavigate('online_now'); } } : undefined}
             >
               <div className="flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 lg:p-3 min-h-[60px] sm:min-h-[70px] lg:min-h-[75px]">
                 <div
@@ -201,7 +208,8 @@ const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({ tenantId }) =
                 </div>
               </div>
             </article>
-          ))}
+            );
+          })}
         </section>
 
         {/* Traffic Chart Section - takes remaining width */}

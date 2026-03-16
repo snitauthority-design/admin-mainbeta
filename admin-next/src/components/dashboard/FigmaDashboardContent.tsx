@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import OrderAnalytics from './OrderAnalytics';
 import FigmaOrderStatus from './FigmaOrderStatus';
-import { VisitorAnalytics } from './VisitorAnalytics';
+import FigmaAnalyticsChart from './FigmaAnalyticsChart';
 import FigmaBestSellingProducts from './FigmaBestSellingProducts';
 import FigmaTopProducts from './FigmaTopProducts';
 import FigmaSalesPerformance from './FigmaSalesPerformance';
@@ -84,7 +84,7 @@ const FigmaDashboardContent: React.FC<FigmaDashboardContentProps> = ({
       </div>
 
       {/* Visitor Analytics */}
-      <VisitorAnalytics tenantId={tenantId} />
+      <FigmaAnalyticsChart tenantId={tenantId} onNavigate={onNavigate} />
 
       {/* Order Status Row */}
       <FigmaOrderStatus
