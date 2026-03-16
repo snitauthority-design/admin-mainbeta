@@ -11,7 +11,8 @@ import {
   updateTenant,
   updateTenantShopStatus,
   getTenantUsers,
-  getTenantStats
+  getTenantStats,
+  getDashboardStats
 } from '../services/tenantsService';
 import { getTenantData, setTenantData } from '../services/tenantDataService';
 import { env } from '../config/env';
@@ -220,6 +221,50 @@ tenantsRouter.get('/', authenticateToken, requireAdmin,
     try {
       const tenants = await listTenants();
       res.json({ data: tenants });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+// GET /api/tenants/dashboard-stats - Get aggregated dashboard stats (super_admin)
+tenantsRouter.get('/dashboard-stats', authenticateToken, requireRole('super_admin'),
+  async (_req, res, next) => {
+    try {
+      const stats = await getDashboardStats();
+      res.json({ data: stats });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
+// GET /api/tenants/export - Export tenants as CSV (super_admin)
+tenantsRouter.get('/export', authenticateToken, requireRole('super_admin'),
+  async (_req, res, next) => {
+    try {
+      const tenants = await listTenants();
+      
+      // Generate CSV
+      const headers = ['Name', 'Subdomain', 'Contact Email', 'Plan', 'Status', 'Created At'];
+      const csvRows = [headers.join(',')];
+      
+      for (const tenant of tenants) {
+        const row = [
+          `"${(tenant.name || '').replace(/"/g, '""')}"`,
+          tenant.subdomain || '',
+          tenant.contactEmail || '',
+          tenant.plan || 'starter',
+          tenant.status || 'active',
+          tenant.createdAt || ''
+        ];
+        csvRows.push(row.join(','));
+      }
+      
+      const csv = csvRows.join('\n');
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', `attachment; filename="tenants-${new Date().toISOString().split('T')[0]}.csv"`);
+      res.send(csv);
     } catch (error) {
       next(error);
     }
