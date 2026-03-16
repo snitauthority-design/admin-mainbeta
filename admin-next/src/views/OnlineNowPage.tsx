@@ -68,7 +68,7 @@ const OnlineNowPage: React.FC<OnlineNowPageProps> = ({ tenantId, onBack }) => {
 
     try {
       const hostname = window.location.hostname;
-      const isLocal = hostname === 'localhost' || hostname === '127.0.0.1';
+      const isLocal = hostname.includes('localhost') || hostname === '127.0.0.1';
       const apiUrl = isLocal ? 'http://localhost:5001' : `${window.location.protocol}//${hostname.split('.').slice(-2).join('.')}`;
 
       const res = await fetch(`${apiUrl}/api/visitors/${activeTenantId}/sources?period=${period}`);
