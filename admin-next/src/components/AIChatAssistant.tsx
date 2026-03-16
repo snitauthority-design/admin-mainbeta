@@ -49,6 +49,7 @@ interface Message {
   imageOptions?: boolean;
   chartData?: ChartData;
   navigation?: { section: string; action: string };
+  toolAction?: { type: string; url: string; label: string; sectionId?: string };
 }
 
 interface ChartData {
@@ -81,8 +82,8 @@ interface ImageAnalysis {
 const SUGGESTED_QUESTIONS = [
   { icon: Package, text: "Show me my inventory report", category: "inventory" },
   { icon: ClipboardList, text: "What are my recent orders?", category: "orders" },
-  { icon: TrendingUp, text: "Give me a business summary", category: "reports" },
-  { icon: ShoppingBag, text: "Which products need restocking?", category: "inventory" },
+  { icon: TrendingUp, text: "Analyze my store performance for the last 7 days", category: "analytics" },
+  { icon: ShoppingBag, text: "Create a hero section for my landing page", category: "builder" },
 ];
 
 const SKILLS = [
@@ -554,6 +555,7 @@ export const AIChatAssistant: React.FC<AIChatAssistantProps> = ({ tenantId, shop
         topics: data.analysis?.topics?.map((t: string) => t.charAt(0).toUpperCase() + t.slice(1)) || extractTopics(data.response || ''),
         chartData: data.chartData,
         navigation: data.navigation,
+        toolAction: data.toolAction,
       };
       setMessages(prev => [...prev, assistantMessage]);
       
@@ -695,6 +697,20 @@ export const AIChatAssistant: React.FC<AIChatAssistantProps> = ({ tenantId, shop
                             <Sparkles size={14} />
                             {message.navigation.action}
                           </p>
+                        </div>
+                      )}
+                      {message.toolAction && (
+                        <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+                          <p className="text-sm text-green-800 font-medium flex items-center gap-2 mb-2">
+                            <Sparkles size={14} />
+                            ✅ Landing page section created successfully!
+                          </p>
+                          <a
+                            href={message.toolAction.url}
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
+                          >
+                            {message.toolAction.label}
+                          </a>
                         </div>
                       )}
                       <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-200">
