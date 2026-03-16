@@ -12,6 +12,12 @@ interface ChartData {
 
 type TimeFilterType = 'day' | 'week' | 'year' | 'custom';
 
+const DATE_RANGE_OPTIONS: { id: TimeFilterType; label: string }[] = [
+  { id: 'day', label: 'Day' },
+  { id: 'week', label: 'Week' },
+  { id: 'year', label: 'Year' },
+];
+
 interface FigmaSalesPerformanceProps {
   orders?: Order[];
   data?: ChartData[];
@@ -30,12 +36,6 @@ const FigmaSalesPerformance: React.FC<FigmaSalesPerformanceProps> = ({
   const [customDateRange, setCustomDateRange] = useState<DateRange>({ startDate: null, endDate: null });
 
   const timeFilter = internalTimeFilter;
-
-  const dateRangeOptions: { id: TimeFilterType; label: string }[] = [
-    { id: 'day', label: 'Day' },
-    { id: 'week', label: 'Week' },
-    { id: 'year', label: 'Year' },
-  ];
 
   // Last 5 years for yearly view
   const last5Years = useMemo(() => {
@@ -73,8 +73,11 @@ const FigmaSalesPerformance: React.FC<FigmaSalesPerformanceProps> = ({
     } else if (timeFilter === 'week') {
       // Show last 7 days
       const weekStats: ChartData[] = [];
+      const dayTimestamps: number[] = [];
       for (let i = 6; i >= 0; i--) {
         const date = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+        date.setHours(0, 0, 0, 0);
+        dayTimestamps.push(date.getTime());
         weekStats.push({
           label: date.toLocaleDateString('en-GB', { weekday: 'short' }),
           placedOrder: 0,
@@ -87,17 +90,12 @@ const FigmaSalesPerformance: React.FC<FigmaSalesPerformanceProps> = ({
         const orderDate = order.createdAt ? new Date(order.createdAt) : (order.date ? new Date(order.date) : null);
         if (!orderDate) return;
         
-        for (let i = 6; i >= 0; i--) {
-          const checkDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
-          if (orderDate.getDate() === checkDate.getDate() && 
-              orderDate.getMonth() === checkDate.getMonth() && 
-              orderDate.getFullYear() === checkDate.getFullYear()) {
-            const idx = 6 - i;
-            weekStats[idx].placedOrder++;
-            if (order.status === 'Delivered') weekStats[idx].delivered++;
-            if (order.status === 'Cancelled') weekStats[idx].canceled++;
-            break;
-          }
+        const normalizedOrder = new Date(orderDate.getFullYear(), orderDate.getMonth(), orderDate.getDate()).getTime();
+        const idx = dayTimestamps.indexOf(normalizedOrder);
+        if (idx >= 0) {
+          weekStats[idx].placedOrder++;
+          if (order.status === 'Delivered') weekStats[idx].delivered++;
+          if (order.status === 'Cancelled') weekStats[idx].canceled++;
         }
       });
 
@@ -136,7 +134,9 @@ const FigmaSalesPerformance: React.FC<FigmaSalesPerformanceProps> = ({
       } else if (diffDays <= 31) {
         // Up to a month - show each day
         const dailyStats: ChartData[] = [];
-        for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+        const startTime = start.getTime();
+        for (let dayOffset = 0; dayOffset <= diffDays; dayOffset++) {
+          const d = new Date(startTime + dayOffset * 86400000);
           dailyStats.push({
             label: `${d.getDate()}/${d.getMonth() + 1}`,
             placedOrder: 0,
@@ -149,7 +149,7 @@ const FigmaSalesPerformance: React.FC<FigmaSalesPerformanceProps> = ({
           const orderDate = order.createdAt ? new Date(order.createdAt) : (order.date ? new Date(order.date) : null);
           if (!orderDate || orderDate < start || orderDate > end) return;
           
-          const dayDiff = Math.floor((orderDate.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+          const dayDiff = Math.floor((orderDate.getTime() - startTime) / 86400000);
           if (dayDiff >= 0 && dayDiff < dailyStats.length) {
             dailyStats[dayDiff].placedOrder++;
             if (order.status === 'Delivered') dailyStats[dayDiff].delivered++;
@@ -264,7 +264,7 @@ const FigmaSalesPerformance: React.FC<FigmaSalesPerformanceProps> = ({
       <div className="w-full flex flex-wrap justify-between items-center gap-2 xs:gap-2.5">
         <div className="text-zinc-800 dark:text-white text-sm sm:text-lg font-bold font-family: Poppins, Helvetica, sans-serif">Sale Performance</div>
         <div className="flex items-center gap-1.5 sm:gap-2 relative">
-          {dateRangeOptions.map(option => (
+          {DATE_RANGE_OPTIONS.map(option => (
             <button
               key={option.id}
               onClick={() => { setInternalTimeFilter(option.id); setShowCustomDatePicker(false); }}
