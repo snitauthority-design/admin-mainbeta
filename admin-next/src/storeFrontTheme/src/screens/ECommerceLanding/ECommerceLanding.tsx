@@ -1,11 +1,17 @@
 import { BestSellingProductsSection } from "./sections/BestSellingProductsSection";
 import { CallToActionSection } from "./sections/CallToActionSection";
-import { CustomerReviewsSection } from "./sections/CustomerReviewsSection";
 import { FeaturedCategoriesSection } from "./sections/FeaturedCategoriesSection";
 import { FeaturedDealsSection } from "./sections/FeaturedDealsSection";
 import { FooterSection } from "./sections/FooterSection";
 import { HeroBannerSection } from "./sections/HeroBannerSection";
 import { TrendingProductSection } from "./sections/TrendingProductSection";
+import dynamic from 'next/dynamic';
+import { DynamicLoadingFallback } from '../../../../components/store/skeletons/DynamicLoadingFallback';
+
+const CustomerReviewsSection = dynamic(
+  () => import('./sections/CustomerReviewsSection').then(m => ({ default: m.CustomerReviewsSection })),
+  { ssr: false, loading: () => <DynamicLoadingFallback variant="reviews" /> }
+);
 
 const navigationLinks = [
   { label: "Home", active: true },

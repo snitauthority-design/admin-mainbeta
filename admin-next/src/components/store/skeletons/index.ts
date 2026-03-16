@@ -8,3 +8,4 @@ export {
   SearchResultsSkeleton
 } from './StoreSectionSkeletons';
 export { StoreHomeSkeleton } from './StoreHomeSkeleton';
+export { DynamicLoadingFallback } from './DynamicLoadingFallback';

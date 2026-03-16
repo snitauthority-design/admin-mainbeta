@@ -1,13 +1,24 @@
 
 import React, { useState, useEffect, useMemo, lazy, Suspense, memo, useCallback, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import { Product, User, WebsiteConfig, Order, ProductVariantSelection, Category, ProductVariantGroup, ProductVariantOption } from '../types';
+import { DynamicLoadingFallback } from '../components/store/skeletons/DynamicLoadingFallback';
 
 // Lazy load heavy layout components and modals from individual files
 const StoreHeader = lazy(() => import('../components/StoreHeader').then(m => ({ default: m.StoreHeader })));
 const StoreFooter = lazy(() => import('../components/store/StoreFooter').then(m => ({ default: m.StoreFooter })));
 const AddToCartSuccessModal = lazy(() => import('../components/store/AddToCartSuccessModal').then(m => ({ default: m.AddToCartSuccessModal })));
 const MobileBottomNav = lazy(() => import('../components/store/MobileBottomNav').then(m => ({ default: m.MobileBottomNav })));
-const ProductReviews = lazy(() => import('../components/store/ProductReviews').then(m => ({ default: m.ProductReviews })));
+
+// Dynamic imports with next/dynamic for better code splitting and Core Web Vitals
+const ProductReviews = dynamic(
+  () => import('../components/store/ProductReviews').then(m => ({ default: m.ProductReviews })),
+  { ssr: false, loading: () => <DynamicLoadingFallback variant="reviews" /> }
+);
+const RelatedProductsSection = dynamic(
+  () => import('../components/store/RelatedProductsSection').then(m => ({ default: m.RelatedProductsSection })),
+  { ssr: false, loading: () => <DynamicLoadingFallback variant="related-products" /> }
+);
 
 // Lazy load visitor tracking
 const getTrackPageView = () => import('../hooks/useVisitorStats').then(m => m.trackPageView);
@@ -117,12 +128,6 @@ const MATCH_PRIORITY: Record<MatchType, number> = {
   compatible: 3,
   complementary: 2,
   behavioral: 1,
-};
-
-const MATCH_BADGE: Record<MatchType, { label: string; className: string }> = {
-  compatible: { label: 'Compatible', className: 'bg-emerald-50 text-emerald-700 border border-emerald-100' },
-  complementary: { label: 'Complements', className: 'bg-sky-50 text-sky-700 border border-sky-100' },
-  behavioral: { label: 'Trending', className: 'bg-gray-50 text-gray-600 border border-gray-100' },
 };
 
 const COMPLEMENTARY_CATEGORY_MAP: Record<string, string[]> = {
@@ -949,19 +954,13 @@ const StoreProductDetail = ({
                     <p className="text-sm italic text-gray-500">Experience premium quality with our latest collection. This product features state-of-the-art technology, ergonomic design for comfort, and durable materials that last. Perfect for daily use or special occasions.</p>
                   </div>
                 ) : (
-                  <Suspense fallback={
-                    <div className="flex items-center justify-center py-12">
-                      <div className="w-10 h-10 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin" />
-                    </div>
-                  }>
-                    <ProductReviews
+                  <ProductReviews
                       productId={product.id}
                       productName={product.name}
                       tenantId={tenantId || ''}
                       user={user || null}
                       onLoginClick={onLoginClick || (() => {})}
                     />
-                  </Suspense>
                 )}
               </div>
             </div>
@@ -971,92 +970,11 @@ const StoreProductDetail = ({
           <aside className="w-full lg:w-80 space-y-4">
 
             {/* Related Products Widget */}
-            <div className="bg-white/80 backdrop-blur-xl rounded-[24px] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 animate-slide-up transition-all duration-500 hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)]">
-  {/* হেডার সেকশন - Minimalist Luxury Style */}
-  <div className="flex items-center justify-between mb-6">
-    <h3 className="font-black text-[11px] uppercase tracking-[0.2em] text-slate-400 flex items-center gap-2">
-      <span className="w-1.5 h-1.5 rounded-full bg-theme-primary"></span>
-      Related Products
-    </h3>
-    <div className="h-[1px] flex-1 bg-slate-100 ml-4"></div>
-  </div>
-
-  <div className="space-y-5">
-    {isLoading ? (
-      [...Array(3)].map((_, i) => (
-        <div key={`skeleton-${i}`} className="flex gap-4 animate-pulse">
-          <div className="w-20 h-20 bg-slate-100 rounded-2xl" />
-          <div className="flex-1 space-y-2 py-1">
-            <div className="h-3 bg-slate-100 rounded w-3/4" />
-            <div className="h-3 bg-slate-100 rounded w-1/2" />
-            <div className="h-3 bg-slate-100 rounded w-1/4 mt-4" />
-          </div>
-        </div>
-      ))
-    ) : (
-      relatedProducts.map(({ product: related, matchType, reason, stockCount }) => (
-        <div
-          key={related.id}
-          onClick={() => onProductClick(related)}
-          className="group relative flex gap-4 p-2 -m-2 rounded-[20px] transition-all duration-300 cursor-pointer hover:bg-slate-50 active:scale-[0.98]"
-        >
-          {/* ইমেজ কন্টেইনার - Enhanced Shadow on Hover */}
-          <div className="relative w-20 h-20 bg-white rounded-2xl border border-slate-100 overflow-hidden flex-shrink-0 group-hover:shadow-lg group-hover:shadow-black/5 transition-all duration-500">
-            <LazyImage 
-              src={normalizeImageUrl(related.image)} 
-              alt={related.name} 
-              className="w-full h-full object-contain p-2 transform group-hover:scale-110 transition-transform duration-700" 
+            <RelatedProductsSection
+              relatedProducts={relatedProducts}
+              isLoading={isLoading}
+              onProductClick={onProductClick}
             />
-          </div>
-
-          {/* কন্টেন্ট এরিয়া */}
-          <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
-            <div>
-              <div className="flex items-start justify-between gap-2 mb-1">
-                <h4 className="text-[13px] font-bold text-slate-800 line-clamp-2 leading-snug group-hover:text-theme-primary transition-colors duration-300">
-                  {related.name}
-                </h4>
-                {/* ম্যাচ ব্যাজ - More Refined Design */}
-                <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-lg whitespace-nowrap shadow-sm border border-black/5 ${MATCH_BADGE[matchType].className}`}>
-                  {MATCH_BADGE[matchType].label}
-                </span>
-              </div>
-              
-              {/* Reason Text */}
-              <p className="text-[11px] text-slate-400 line-clamp-1 italic group-hover:text-slate-500 transition-colors">
-                {reason}
-              </p>
-            </div>
-
-            {/* প্রাইজ এবং স্টক ইনফো */}
-            <div className="flex items-center justify-between mt-2">
-              <span className="text-slate-900 font-extrabold text-[14px]">
-                ৳ {formatCurrency(related.price)}
-              </span>
-              
-              {/* স্টক ইন্ডিকেটর */}
-              <div className="flex items-center gap-1.5">
-                <div className={`w-1 h-1 rounded-full ${stockCount > 0 ? 'bg-green-500' : 'bg-amber-500'}`}></div>
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">
-                  {stockCount > 0 ? `${stockCount} In Stock` : 'Restocking'}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* হোভার অ্যারো - Subtle interaction */}
-          <div className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-300">
-            <div className="p-1 rounded-full bg-white shadow-md text-theme-primary">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M9 18l6-6-6-6"/>
-              </svg>
-            </div>
-          </div>
-        </div>
-      ))
-    )}
-  </div>
-</div>
 
             {/* Category Widget */}
             <div className="bg-white rounded-[24px] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-500">

@@ -1,8 +1,13 @@
 import React, { Suspense, lazy } from 'react';
+import dynamic from 'next/dynamic';
 import type { Product } from '../../../types';
 import type { CatalogGroup, HeaderSearchProps } from './headerTypes';
+import { DynamicLoadingFallback } from '../skeletons/DynamicLoadingFallback';
 
-const CartModal = lazy(() => import('./CartModal'));
+const CartModal = dynamic(() => import('./CartModal'), {
+  ssr: false,
+  loading: () => <DynamicLoadingFallback variant="cart-drawer" />,
+});
 const Wishlist = lazy(() => import('./Wishlist'));
 const MobileMenu = lazy(() => import('./MobileMenu'));
 const MobileSearchModal = lazy(() => import('./MobileSearchModal'));
@@ -80,7 +85,6 @@ export const StoreHeaderModals: React.FC<StoreHeaderModalsProps> = ({
     )}
 
     {isCartDrawerOpen && (
-      <Suspense fallback={null}>
         <CartModal
           isOpen={isCartDrawerOpen}
           onClose={onCartClose}
@@ -89,7 +93,6 @@ export const StoreHeaderModals: React.FC<StoreHeaderModalsProps> = ({
           onToggleCart={onCartToggle}
           onCheckout={onCheckoutFromCart}
         />
-      </Suspense>
     )}
 
     {isMobileMenuOpen && (
