@@ -58,7 +58,6 @@ const AdminBilling = lazy(() => import(/* webpackChunkName: "admin-billing" */ '
 const AdminTutorial = lazy(() => import(/* webpackChunkName: "admin-tutorial" */ './AdminTutorial'));
 const AdminSMSMarketing = lazy(() => import(/* webpackChunkName: "admin-sms-marketing" */ './AdminSMSMarketing'));
 const AdminActivityLog = lazy(() => import(/* webpackChunkName: "admin-activity-log" */ './AdminActivityLog'));
-const AdminProfile = lazy(() => import(/* webpackChunkName: "admin-profile" */ './AdminProfile'));
 const AdminShopDomain = lazy(() => import(/* webpackChunkName: "admin-shop-domain" */ './AdminShopDomain'));
 const AdminRewardPointSettings = lazy(() => import(/* webpackChunkName: "admin-reward-settings" */ './AdminRewardPointSettings'));
 const AdminExpenses = lazy(() => import(/* webpackChunkName: "admin-expenses" */ './AdminExpenses'));
@@ -323,7 +322,8 @@ const adminUrlMap: Record<string, string> = {
   'activity_log': '/activity',
   'support': '/support',
   'tutorial': '/tutorial',
-  'profile': '/profile',
+  'profile': '/settings/profile',
+  'settings_profile': '/settings/profile',
   'settings': '/settings',
   'catalog_categories': '/catalog/categories',
   'catalog_subcategories': '/catalog/subcategories',
@@ -359,7 +359,7 @@ const canAccessPage = (page: string, user?: User | null, permissions?: Permissio
   // Staff - check permissions
   if (role === 'staff') {
     // Support, tutorial, profile are always accessible for staff
-    if (['support', 'tutorial', 'profile'].includes(page)) return true;
+    if (['support', 'tutorial', 'profile', 'settings_profile'].includes(page)) return true;
 
     // Check permissions map
     if (permissions) {
@@ -398,6 +398,7 @@ const canAccessPage = (page: string, user?: User | null, permissions?: Permissio
         'purchases': 'purchases',
         'due_book': 'due_book',
         'settings': 'settings',
+        'settings_profile': 'settings',
         'manage_shop': 'settings',
         'settings_delivery': 'settings',
         'settings_payment': 'settings',
@@ -852,9 +853,8 @@ const AdminApp: React.FC<AdminAppProps> = ({
                                   adminSection === 'billing' ? <AdminBilling tenant={selectedTenantRecord} onUpgrade={() => setAdminSection('settings')} /> :
                                     adminSection === 'tutorial' ? <AdminTutorial /> :
                                       adminSection === 'activity_log' ? <AdminActivityLog tenantId={activeTenantId} /> :
-                                        adminSection === 'profile' ? <AdminProfile user={user} onUpdateProfile={onUpdateProfile} activeTenant={selectedTenantRecord} /> :
-                                          adminSection === 'manage_shop' ? <AdminManageShop onNavigate={setAdminSection} tenantId={activeTenantId} websiteConfig={websiteConfig} tenantSubdomain={selectedTenantRecord?.subdomain} /> :
-                                            adminSection === 'settings' ? <AdminSettings courierConfig={courierConfig} onUpdateCourierConfig={onUpdateCourierConfig} onNavigate={setAdminSection} activeTenant={selectedTenantRecord} logo={logo} onUpdateLogo={onUpdateLogo} currentUser={user || undefined} onUpdateProfile={onUpdateProfile} /> :
+                                        adminSection === 'manage_shop' ? <AdminManageShop onNavigate={setAdminSection} tenantId={activeTenantId} websiteConfig={websiteConfig} tenantSubdomain={selectedTenantRecord?.subdomain} /> :
+                                          (adminSection === 'settings' || adminSection === 'settings_profile' || adminSection === 'profile') ? <AdminSettings courierConfig={courierConfig} onUpdateCourierConfig={onUpdateCourierConfig} onNavigate={setAdminSection} activeTenant={selectedTenantRecord} logo={logo} onUpdateLogo={onUpdateLogo} currentUser={user || undefined} onUpdateProfile={onUpdateProfile} initialTab={adminSection === 'settings_profile' || adminSection === 'profile' ? 'profile_details' : 'manage_shop'} /> :
                                               adminSection === 'sms_marketing' ? <AdminSMSMarketing tenantId={activeTenantId} onBack={() => setAdminSection('manage_shop')} /> :
                                                 adminSection === 'support' ? <AdminSupport user={user} activeTenant={selectedTenantRecord} /> :
                                                   adminSection === 'settings_delivery' ? <AdminDeliverySettings configs={deliveryConfig} onSave={onUpdateDeliveryConfig} onBack={() => setAdminSection('settings')} /> :

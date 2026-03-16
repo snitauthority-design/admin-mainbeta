@@ -216,6 +216,7 @@ interface AdminSettingsNewProps {
     createdAt?: string;
   };
   onUpdateProfile?: (updates: any) => void;
+  initialTab?: 'manage_shop' | 'profile_details';
 }
 
 // Figma Design Styles
@@ -497,11 +498,11 @@ const createFigmaStyles = (isDark: boolean) => ({
   },
 });
 
-const AdminSettingsNew: React.FC<AdminSettingsNewProps> = ({ onNavigate, currentUser, onUpdateProfile, activeTenant }) => {
+const AdminSettingsNew: React.FC<AdminSettingsNewProps> = ({ onNavigate, currentUser, onUpdateProfile, activeTenant, initialTab }) => {
   const { isDarkMode } = useDarkMode();
   const figmaStyles = createFigmaStyles(isDarkMode);
   const authState = useAuth();
-  const [activeTab, setActiveTab] = useState<'manage_shop' | 'profile_details'>('manage_shop');
+  const [activeTab, setActiveTab] = useState<'manage_shop' | 'profile_details'>(initialTab || 'manage_shop');
   const { showComingSoon, ComingSoonPopup } = useComingSoon();
   const [profileForm, setProfileForm] = useState({
     name: currentUser?.name || '',

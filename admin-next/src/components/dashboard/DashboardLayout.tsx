@@ -61,90 +61,92 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   };
 
   return (
-    <div className={`flex h-[100dvh] min-h-screen bg-[#F8FAFC] dark:bg-gray-900 transition-colors duration-300 ${className}`}>
-      {/* Mobile Overlay */}
-      {sidebarOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden backdrop-blur-sm"
-          onClick={handleOverlayClick}
-        />
-      )}
-
-      {/* Sidebar - Hidden on mobile, slide-in drawer */}
-      <div className={`
-        fixed lg:relative inset-y-0 left-0 z-50
-        transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0
-        transition-transform duration-300 ease-in-out
-        flex-shrink-0 w-[85vw] max-w-[280px] sm:w-[280px] lg:w-[250px] bg-white dark:bg-gray-800 shadow-lg lg:shadow-sm border-r border-gray-100 dark:border-gray-700
-      `}>
-        <div className="sticky top-0 h-screen overflow-y-auto">
-          {/* Logo + Close Button (mobile) */}
-          <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
-            <div className="flex items-center gap-1.5 xs:gap-2">
-              
-              <span className="text-lg font-semibold text-gray-900 dark:text-white font-['Poppins']">
-              <img src="https://hdnfltv.com/image/nitimages/04aad350-812e-4678-a009-7d576378b603.webp" alt="System Next IT" className="w-full h-auto" /> 
-              </span>
-            </div>
-            {/* Close button - only on mobile */}
-            <button 
-              onClick={() => setSidebarOpen(false)}
-              className="lg:hidden p-2 -mr-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
-              aria-label="Close sidebar"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-          <DashboardSidebar
-            {...sidebarProps}
-            className="p-3 sm:p-4"
-            onNavigate={(item) => {
-              sidebarProps.onNavigate?.(item);
-              // Close sidebar on mobile after navigation
-              if (window.innerWidth < 1024) {
-                setSidebarOpen(false);
-              }
-            }}
+    <>
+      <div className={`flex h-[100dvh] min-h-screen bg-[#F8FAFC] dark:bg-gray-900 transition-colors duration-300 ${className}`}>
+        {/* Mobile Overlay */}
+        {sidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-black/50 z-40 lg:hidden backdrop-blur-sm"
+            onClick={handleOverlayClick}
           />
-        </div>
-      </div>
+        )}
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 bg-[#F8FAFC] dark:bg-gray-900">
-        {/* Header with burger menu */}
-        <div className="sticky top-0 z-30 flex-shrink-0 flex items-center bg-[#F8FAFC]/95 dark:bg-gray-900/95 backdrop-blur-sm">
-          {/* Burger Menu Button - only on mobile */}
-          <button 
-            onClick={() => setSidebarOpen(true)}
-            className="lg:hidden p-2 sm:p-3 m-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-            aria-label="Open sidebar"
-          >
-            <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
-          </button>
-          <div className="flex-1">
-            <FigmaDashboardHeader
-              {...headerProps}
-              searchQuery={(headerProps as any).searchQuery ?? ""}
-              onSearchChange={(headerProps as any).onSearchChange ?? (() => {})}
+        {/* Sidebar - Hidden on mobile, slide-in drawer */}
+        <div className={`
+          fixed lg:relative inset-y-0 left-0 z-50
+          transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0
+          transition-transform duration-300 ease-in-out
+          flex-shrink-0 w-[85vw] max-w-[280px] sm:w-[280px] lg:w-[250px] bg-white dark:bg-gray-800 shadow-lg lg:shadow-sm border-r border-gray-100 dark:border-gray-700
+        `}>
+          <div className="sticky top-0 h-screen overflow-y-auto">
+            {/* Logo + Close Button (mobile) */}
+            <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between">
+              <div className="flex items-center gap-1.5 xs:gap-2">
+                
+                <span className="text-lg font-semibold text-gray-900 dark:text-white font-['Poppins']">
+                <img src="https://hdnfltv.com/image/nitimages/04aad350-812e-4678-a009-7d576378b603.webp" alt="System Next IT" className="w-full h-auto" /> 
+                </span>
+              </div>
+              {/* Close button - only on mobile */}
+              <button 
+                onClick={() => setSidebarOpen(false)}
+                className="lg:hidden p-2 -mr-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+                aria-label="Close sidebar"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <DashboardSidebar
+              {...sidebarProps}
+              className="p-3 sm:p-4"
+              onNavigate={(item) => {
+                sidebarProps.onNavigate?.(item);
+                // Close sidebar on mobile after navigation
+                if (window.innerWidth < 1024) {
+                  setSidebarOpen(false);
+                }
+              }}
             />
           </div>
         </div>
 
-        {/* Content */}
-        <div className="flex-1 overflow-y-auto">
-          <div className="space-y-3 sm:space-y-4 lg:space-y-5 p-2 sm:p-3 md:p-4 lg:p-5 xl:p-6 pb-20 lg:pb-6">
-            {children}
+        {/* Main Content Area */}
+        <div className="flex-1 flex flex-col min-w-0 bg-[#F8FAFC] dark:bg-gray-900">
+          {/* Header with burger menu */}
+          <div className="sticky top-0 z-30 flex-shrink-0 flex items-center bg-[#F8FAFC]/95 dark:bg-gray-900/95 backdrop-blur-sm">
+            {/* Burger Menu Button - only on mobile */}
+            <button 
+              onClick={() => setSidebarOpen(true)}
+              className="lg:hidden p-2 sm:p-3 m-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              aria-label="Open sidebar"
+            >
+              <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
+            </button>
+            <div className="flex-1">
+              <FigmaDashboardHeader
+                {...headerProps}
+                searchQuery={(headerProps as any).searchQuery ?? ""}
+                onSearchChange={(headerProps as any).onSearchChange ?? (() => {})}
+              />
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className="flex-1 overflow-y-auto">
+            <div className="space-y-3 sm:space-y-4 lg:space-y-5 p-2 sm:p-3 md:p-4 lg:p-5 xl:p-6 pb-20 lg:pb-6">
+              {children}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Mobile Bottom Navigation */}
+      {/* Mobile Bottom Navigation - rendered outside flex container for proper fixed positioning */}
       <AdminBottomNav
         activeItem={sidebarProps.activeItem}
         onNavigate={(page) => sidebarProps.onNavigate?.(page)}
         onMenuClick={() => setSidebarOpen(true)}
       />
-    </div>
+    </>
   );
 };
 
