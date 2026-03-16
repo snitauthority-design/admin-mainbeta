@@ -105,8 +105,8 @@ const PaymentCard: React.FC<{
   children?: React.ReactNode;
 }> = ({ title, subtitle, logo, enabled, onToggle, children }) => (
   <div className="bg-white rounded-lg shadow-[0_2px_6px_rgba(0,0,0,0.03)] px-3 py-2">
-    <div className="flex items-center justify-between py-2 pr-2">
-      <div className="flex flex-col gap-0.5 w-[553px]">
+    <div className="flex items-start sm:items-center justify-between gap-3 py-2">
+      <div className="flex flex-col gap-0.5 min-w-0 flex-1">
         {logo ? (
           <img src={logo} alt={title} className="h-7 w-auto object-contain max-w-[120px]" />
         ) : (
@@ -366,8 +366,8 @@ const AdminPaymentSettingsNew: React.FC<AdminPaymentSettingsNewProps> = ({
   if (loading) {
     return (
       <div className="w-full max-w-[1146px] mx-auto">
-        <div className="bg-white rounded-lg px-[18px]py-4 sm:py-6">
-          <div className="flex items-center gap-3.5 h-[42px] mb-6">
+        <div className="bg-white rounded-lg px-3 sm:px-4 py-4 sm:py-5">
+          <div className="flex items-center gap-3.5 min-h-[42px] mb-4">
             <div className="w-4 h-4 bg-gray-200 rounded animate-pulse" />
             <div className="flex flex-col gap-1">
               <div className="h-6 w-48 bg-gray-200 rounded animate-pulse" />
@@ -401,10 +401,10 @@ const AdminPaymentSettingsNew: React.FC<AdminPaymentSettingsNewProps> = ({
         </div>
       )}
       {/* Main Content Card */}
-      <div className="bg-white rounded-lg px-[18px]py-4 sm:py-6">
-        <div className="flex flex-col gap-3 sm:gap-4 lg:gap-6">
+      <div className="bg-white rounded-lg px-3 sm:px-4 py-4 sm:py-5">
+        <div className="flex flex-col gap-3 sm:gap-4 lg:gap-5">
           {/* Header */}
-          <div className="flex items-center gap-3.5 h-[42px]">
+          <div className="flex items-center gap-3.5 min-h-[42px]">
             <button 
               onClick={onBack}
               className="flex items-center justify-center rotate-180"
@@ -442,45 +442,45 @@ const AdminPaymentSettingsNew: React.FC<AdminPaymentSettingsNewProps> = ({
               enabled={settings.bkash.enabled}
               onToggle={(v) => updateNestedSettings('bkash', 'enabled', v)}
             >
-              <div className="flex flex-col gap-5 w-full">
+              <div className="flex flex-col gap-4 w-full">
                 <p className="text-xs text-[#6f6f6f] w-full">
                   Please provide your bKash credentials to integrate bKash merchant
                 </p>
                 <div className="flex flex-col gap-3">
                   {/* Row 1: App Key, Secret Key */}
-                  <div className="flex gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <input
                       type="text"
-                      placeholder="Marchant App Key"
-                      className="bg-[#f9f9f9] rounded-lg h-10 px-3 text-sm text-[#a2a2a2] w-[429px] focus:outline-none focus:ring-1 focus:ring-[#1e90ff]"
+                      placeholder="Merchant App Key"
+                      className="bg-[#f9f9f9] rounded-lg h-10 px-3 text-sm text-[#a2a2a2] w-full focus:outline-none focus:ring-1 focus:ring-[#1e90ff]"
                       value={settings.bkash.appKey || ''}
                       onChange={(e) => updateNestedSettings('bkash', 'appKey', e.target.value)}
                     />
                     <input
                       type="text"
-                      placeholder="Marchant Secret Key"
+                      placeholder="Merchant Secret Key"
                       className="bg-[#f9f9f9] rounded-lg h-10 px-3 text-sm text-[#a2a2a2] flex-1 focus:outline-none focus:ring-1 focus:ring-[#1e90ff]"
                       value={settings.bkash.secretKey || ''}
                       onChange={(e) => updateNestedSettings('bkash', 'secretKey', e.target.value)}
                     />
                   </div>
                   {/* Row 2: Username, Password, Save */}
-                  <div className="flex gap-3 items-start">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_auto] gap-3 items-start">
                     <input
                       type="text"
-                      placeholder="Marchant Username"
-                      className="bg-[#f9f9f9] rounded-lg h-10 px-3 text-sm text-[#a2a2a2] w-[429px] focus:outline-none focus:ring-1 focus:ring-[#1e90ff]"
+                      placeholder="Merchant Username"
+                      className="bg-[#f9f9f9] rounded-lg h-10 px-3 text-sm text-[#a2a2a2] w-full focus:outline-none focus:ring-1 focus:ring-[#1e90ff]"
                       value={settings.bkash.username || ''}
                       onChange={(e) => updateNestedSettings('bkash', 'username', e.target.value)}
                     />
                     <input
                       type="password"
-                      placeholder="Marchant Password"
+                      placeholder="Merchant Password"
                       className="bg-[#f9f9f9] rounded-lg h-10 px-3 text-sm text-[#a2a2a2] flex-1 focus:outline-none focus:ring-1 focus:ring-[#1e90ff]"
                       value={settings.bkash.password || ''}
                       onChange={(e) => updateNestedSettings('bkash', 'password', e.target.value)}
                     />
-                    <button className="bg-[#1e90ff] border border-[#1e90ff] rounded-lg px-4 py-2 h-10 w-[120px] flex items-center justify-center">
+                    <button className="bg-[#1e90ff] border border-[#1e90ff] rounded-lg px-4 py-2 h-10 w-full sm:w-[120px] flex items-center justify-center">
                       <span className="text-white text-sm font-semibold font-['Lato']">Save</span>
                     </button>
                   </div>
@@ -491,8 +491,8 @@ const AdminPaymentSettingsNew: React.FC<AdminPaymentSettingsNewProps> = ({
             {/* Self MFS */}
             <div className="bg-white rounded-lg shadow-[0_2px_6px_rgba(0,0,0,0.03)] px-3 py-4 sm:py-6">
               {/* Self MFS Header */}
-              <div className="flex items-center justify-between pr-2 py-4">
-                <div className="flex flex-col gap-0.5 w-[553px]">
+              <div className="flex items-start sm:items-center justify-between gap-3 py-2">
+                <div className="flex flex-col gap-0.5 min-w-0 flex-1">
                   <h4 className="text-lg font-bold text-black tracking-tight">Manual Payment (Self MFS)</h4>
                   <p className="text-xs text-[#6f6f6f]">Merchant API না থাকলে এখানে manual payment instruction দিন - এটি checkout এ customer দেখবে</p>
                 </div>
@@ -505,9 +505,9 @@ const AdminPaymentSettingsNew: React.FC<AdminPaymentSettingsNewProps> = ({
               {settings.selfMfs.enabled && (
                 <>
                   {/* Provider Selection & Phone Number */}
-                  <div className="flex items-center justify-between w-full mb-4">
+                  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 w-full mb-3">
                     {/* Provider Pills */}
-                    <div className="flex gap-3 items-center">
+                    <div className="flex gap-2 sm:gap-3 items-center flex-wrap">
                       {MFS_PROVIDERS.map((provider) => {
                         const isSelected = settings.selfMfs.selectedProviders.includes(provider.id);
                         return (
@@ -527,9 +527,9 @@ const AdminPaymentSettingsNew: React.FC<AdminPaymentSettingsNewProps> = ({
                     </div>
 
                     {/* Phone Number */}
-                    <div className="flex gap-3 items-center text-sm font-['Lato']">
-                      <span className="text-black">Phone Number</span>
-                      <div className="bg-[#f9f9f9] rounded-lg h-[39px] w-[273px] px-[19px] flex items-center">
+                    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 sm:items-center text-sm font-['Lato'] w-full lg:w-auto">
+                      <span className="text-black whitespace-nowrap">Phone Number</span>
+                      <div className="bg-[#f9f9f9] rounded-lg h-[39px] w-full sm:w-[273px] px-[19px] flex items-center">
                         <span className="text-black">+88</span>
                         <input
                           type="text"
@@ -543,7 +543,7 @@ const AdminPaymentSettingsNew: React.FC<AdminPaymentSettingsNewProps> = ({
                   </div>
 
                   {/* MFS Type, Payment Instruction, QR Code */}
-                  <div className="flex gap-4">
+                  <div className="flex flex-col lg:flex-row gap-4">
                     {/* Left Column: MFS Type & Payment Instruction */}
                     <div className="flex-1 flex flex-col gap-4">
                       {/* MFS Type */}
@@ -590,7 +590,7 @@ const AdminPaymentSettingsNew: React.FC<AdminPaymentSettingsNewProps> = ({
                     </div>
 
                     {/* Right Column: QR Code Upload */}
-                    <div className="w-[330px] h-[330px] border border-dashed border-[#d7d7d7] rounded-lg bg-white flex items-center justify-center">
+                    <div className="w-full lg:w-[300px] min-h-[240px] lg:min-h-[300px] border border-dashed border-[#d7d7d7] rounded-lg bg-white flex items-center justify-center p-3">
                       {settings.selfMfs.qrCodeUrl ? (
                         <div className="relative">
                           <img 
@@ -608,12 +608,12 @@ const AdminPaymentSettingsNew: React.FC<AdminPaymentSettingsNewProps> = ({
                       ) : (
                         <div className="flex flex-col items-center gap-3">
                           <p className="text-base font-medium text-black font-['Lato']">Add QR Code</p>
-                          <div className="w-[105px] h-[105px] bg-gray-100 rounded-lg flex items-center justify-center">
+                          <div className="w-20 h-20 sm:w-[105px] sm:h-[105px] bg-gray-100 rounded-lg flex items-center justify-center">
                             <Upload size={40} className="text-gray-400" />
                           </div>
                           <div className="flex flex-col items-center gap-1 text-[#a2a2a2]">
-                            <p className="text-sm font-['Lato']">Drag and drop image here, or click add image.</p>
-                            <p className="text-[10px] text-center w-[264px] font-['Lato']">
+                            <p className="text-sm font-['Lato'] text-center">Drag and drop image here, or click add image.</p>
+                            <p className="text-[10px] text-center w-full max-w-[264px] font-['Lato']">
                               Supported formats: JPG, PNG, Max size: 4MB.<br />
                               Note: Use images with a 1:1 aspect ratio (150×150 pixels.)
                             </p>
@@ -658,24 +658,6 @@ const AdminPaymentSettingsNew: React.FC<AdminPaymentSettingsNewProps> = ({
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Save Button */}
-      <div className="flex items-center justify-end w-full mt-5">
-        {/* <button 
-          onClick={handleSave}
-          disabled={saving || loading}
-          className="bg-[#1e90ff] border border-[#1e90ff] rounded-lg px-4 py-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-        > */}
-          {/* {saving ? (
-            <>
-              <Loader2 size={16} className="animate-spin text-white" />
-              <span className="text-white text-sm font-medium font-['Lato']"></span>
-            </>
-          ) : (
-            <span className="text-white text-sm font-medium font-['Lato']"></span>
-          )}
-        </button> */}
       </div>
     </div>
   );
