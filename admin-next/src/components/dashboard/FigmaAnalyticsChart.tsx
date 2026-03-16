@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 
 interface FigmaAnalyticsChartProps {
   tenantId?: string;
+  onNavigate?: (page: string) => void;
 }
 
 /**
  * Main App Component
  * Displays a combined view of Visitor Statistics and Traffic Charts.
  */
-const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({ tenantId }) => {
+const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({ tenantId, onNavigate }) => {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({ 
     onlineNow: 0, 
@@ -169,7 +170,11 @@ const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({ tenantId }) =
           {statsData.map((stat) => (
             <article
               key={stat.id}
-              className={`relative flex-1 lg:flex-1 min-w-[160px] sm:min-w-0 rounded-lg overflow-hidden shadow-[0px_2px_4px_#0000000d] ${stat.bgGradient} transition-shadow hover:shadow-md active:scale-[0.98]`}
+              className={`relative flex-1 lg:flex-1 min-w-[160px] sm:min-w-0 rounded-lg overflow-hidden shadow-[0px_2px_4px_#0000000d] ${stat.bgGradient} transition-shadow hover:shadow-md active:scale-[0.98] ${stat.id === 'online-now' && onNavigate ? 'cursor-pointer' : ''}`}
+              onClick={stat.id === 'online-now' && onNavigate ? () => onNavigate('online_now') : undefined}
+              role={stat.id === 'online-now' && onNavigate ? 'button' : undefined}
+              tabIndex={stat.id === 'online-now' && onNavigate ? 0 : undefined}
+              onKeyDown={stat.id === 'online-now' && onNavigate ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onNavigate('online_now'); } } : undefined}
             >
               <div className="flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 lg:p-3 min-h-[60px] sm:min-h-[70px] lg:min-h-[75px]">
                 <div

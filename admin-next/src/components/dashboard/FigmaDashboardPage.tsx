@@ -10,7 +10,6 @@ import {
   FigmaOrderList
 } from './index';
 import OrderAnalytics from './OrderAnalytics';
-import { VisitorAnalytics } from './VisitorAnalytics';
 import { Order, Product } from '../../types';
 import { useNotifications } from '../../hooks/useNotifications';
 import { useTenant } from '../../hooks/useTenant';
@@ -213,12 +212,7 @@ const FigmaDashboardPage: React.FC<FigmaDashboardPageProps> = ({
 
         {/* Analytics Bar Chart */}
         <div className={contentWrapClass}>
-          <FigmaAnalyticsChart tenantId={tenantId} />
-        </div>
-
-        {/* Visitor Analytics */}
-        <div className={contentWrapClass}>
-          <VisitorAnalytics tenantId={tenantId} onNavigate={onNavigate} />
+          <FigmaAnalyticsChart tenantId={tenantId} onNavigate={onNavigate} />
         </div>
 
         {/* Order Status Row */}
