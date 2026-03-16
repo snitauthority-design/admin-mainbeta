@@ -56,7 +56,7 @@ export interface OrderAnalyticsProps {
   toBeReviewed: number;
   reservedPrice?: number;
   netProfit?: number;
-  notifications?: Array<{ id: string; image: string; title: string }>;
+  notifications?: Array<{ id: string; image: string; title: string; linkUrl?: string }>;
 }
 
 export interface VisitorStatsProps {

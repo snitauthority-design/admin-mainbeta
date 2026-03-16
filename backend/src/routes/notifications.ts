@@ -2,8 +2,129 @@ import { Router } from "express";
 import { z } from "zod";
 import { Notification } from "../models/Notification";
 import { authenticateToken, requireAdmin, requireRole } from '../middleware/auth';
+import { getDatabase } from '../db/mongo';
 
 export const notificationsRouter = Router();
+
+// ========== DASHBOARD NOTIFICATION BANNERS (Super Admin) ==========
+
+// Get active dashboard notification banners (public - shown on all tenant dashboards)
+notificationsRouter.get("/dashboard-banners", async (req, res, next) => {
+  try {
+    const db = await getDatabase();
+    const banners = await db.collection("dashboard_banners")
+      .find({ isActive: true })
+      .sort({ order: 1, createdAt: -1 })
+      .toArray();
+    
+    res.json({ data: banners });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Get all dashboard notification banners (Super Admin)
+notificationsRouter.get("/dashboard-banners/all", authenticateToken, async (req, res, next) => {
+  try {
+    const db = await getDatabase();
+    const banners = await db.collection("dashboard_banners")
+      .find({})
+      .sort({ order: 1, createdAt: -1 })
+      .toArray();
+    
+    res.json({ data: banners });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Create a dashboard notification banner (Super Admin only)
+notificationsRouter.post("/dashboard-banners", authenticateToken, async (req, res, next) => {
+  try {
+    const schema = z.object({
+      imageUrl: z.string().url().min(1),
+      linkUrl: z.string().optional().default(""),
+      title: z.string().optional().default(""),
+      isActive: z.boolean().optional().default(true),
+      order: z.number().optional().default(0)
+    });
+    
+    const payload = schema.parse(req.body);
+    const db = await getDatabase();
+    
+    const banner = {
+      ...payload,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    
+    const result = await db.collection("dashboard_banners").insertOne(banner);
+    
+    res.status(201).json({ 
+      data: { ...banner, _id: result.insertedId }
+    });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ error: error.message });
+    }
+    next(error);
+  }
+});
+
+// Update a dashboard notification banner (Super Admin only)
+notificationsRouter.put("/dashboard-banners/:bannerId", authenticateToken, async (req, res, next) => {
+  try {
+    const { bannerId } = req.params;
+    const schema = z.object({
+      imageUrl: z.string().url().min(1).optional(),
+      linkUrl: z.string().optional(),
+      title: z.string().optional(),
+      isActive: z.boolean().optional(),
+      order: z.number().optional()
+    });
+    
+    const payload = schema.parse(req.body);
+    const db = await getDatabase();
+    const { ObjectId } = await import('mongodb');
+    
+    const result = await db.collection("dashboard_banners").updateOne(
+      { _id: new ObjectId(bannerId) },
+      { $set: { ...payload, updatedAt: new Date() } }
+    );
+    
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ error: "Banner not found" });
+    }
+    
+    res.json({ success: true });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ error: error.message });
+    }
+    next(error);
+  }
+});
+
+// Delete a dashboard notification banner (Super Admin only)
+notificationsRouter.delete("/dashboard-banners/:bannerId", authenticateToken, async (req, res, next) => {
+  try {
+    const { bannerId } = req.params;
+    const db = await getDatabase();
+    const { ObjectId } = await import('mongodb');
+    
+    const result = await db.collection("dashboard_banners").deleteOne(
+      { _id: new ObjectId(bannerId) }
+    );
+    
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: "Banner not found" });
+    }
+    
+    res.json({ success: true });
+  } catch (error) {
+    next(error);
+  }
+});
 
 // Get notifications for a tenant
 notificationsRouter.get("/:tenantId", async (req, res, next) => {

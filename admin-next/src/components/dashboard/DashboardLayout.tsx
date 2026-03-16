@@ -3,7 +3,7 @@ import { DashboardSidebar } from './DashboardSidebar';
 import FigmaDashboardHeader from './FigmaDashboardHeader';
 import { AdminBottomNav } from './AdminBottomNav';
 import { SidebarProps, DashboardHeaderProps } from './types';
-import { Menu, X } from 'lucide-react';
+import { X } from 'lucide-react';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -112,16 +112,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col min-w-0 bg-[#F8FAFC] dark:bg-gray-900">
-          {/* Header with burger menu */}
+          {/* Header */}
           <div className="sticky top-0 z-30 flex-shrink-0 flex items-center bg-[#F8FAFC]/95 dark:bg-gray-900/95 backdrop-blur-sm">
-            {/* Burger Menu Button - only on mobile */}
-            <button 
-              onClick={() => setSidebarOpen(true)}
-              className="lg:hidden p-2 sm:p-3 m-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-              aria-label="Open sidebar"
-            >
-              <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
-            </button>
             <div className="flex-1">
               <FigmaDashboardHeader
                 {...headerProps}

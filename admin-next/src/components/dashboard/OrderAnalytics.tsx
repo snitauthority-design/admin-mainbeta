@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLanguage, formatNumber } from '../../context/LanguageContext';
 import type { Language } from '../../context/LanguageContext';
 import { OrderAnalyticsProps } from './types';
+import { getApiUrl } from '../../utils/appHelpers';
 
 // Figma icon assets (hosted on CDN)
 const ICONS = {
@@ -51,16 +52,45 @@ const OrderAnalytics: React.FC<OrderAnalyticsProps> = ({
 }) => {
   const { language, setLanguage: setLang, t } = useLanguage();
   const [currentNotificationIndex, setCurrentNotificationIndex] = useState(0);
+  const [bannerNotifications, setBannerNotifications] = useState<Array<{ id: string; image: string; title: string; linkUrl?: string }>>([]);
 
   const now = new Date();
   const currentDay = now.toLocaleDateString('en-US', { weekday: 'short' });
   const currentDate = now.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' });
   const netProfitValue = typeof netProfit === 'number' ? netProfit : totalRevenue - reservedPrice;
 
+  // Fetch dashboard banners from API
+  useEffect(() => {
+    const fetchBanners = async () => {
+      try {
+        const apiUrl = getApiUrl();
+        const response = await fetch(`${apiUrl}/notifications/dashboard-banners`);
+        if (response.ok) {
+          const result = await response.json();
+          if (result.data && result.data.length > 0) {
+            const mapped = result.data.map((b: any) => ({
+              id: b._id || b.id || String(Math.random()),
+              image: b.imageUrl,
+              title: b.title || '',
+              linkUrl: b.linkUrl || ''
+            }));
+            setBannerNotifications(mapped);
+          }
+        }
+      } catch (error) {
+        // Silently fail - will show prop notifications or default
+      }
+    };
+    fetchBanners();
+  }, []);
+
+  // Use fetched banners first, then prop notifications, then fallback default
   const displayNotifications =
-    notifications.length > 0
-      ? notifications
-      : [{ id: '1', image: 'https://hdnfltv.com/image/nitimages/pasted_1770753032030.webp', title: 'গ্রিপ দিল পাতা' }];
+    bannerNotifications.length > 0
+      ? bannerNotifications
+      : notifications.length > 0
+        ? notifications
+        : [{ id: '1', image: 'https://hdnfltv.com/image/nitimages/pasted_1770753032030.webp', title: 'গ্রিপ দিল পাতা' }];
 
   useEffect(() => {
     if (displayNotifications.length <= 1) return;
@@ -179,16 +209,34 @@ const OrderAnalytics: React.FC<OrderAnalyticsProps> = ({
             </span>
 
             {/* White notification card */}
-            <div className="bg-white dark:bg-gray-600 rounded-[8px] overflow-hidden flex-1 flex flex-col items-center justify-center">
+            <div className="bg-white dark:bg-gray-600 rounded-[8px] overflow-hidden flex-1 flex flex-col items-center justify-center min-h-[120px]">
               {displayNotifications[currentNotificationIndex]?.image ? (
-                <img
-                  src={displayNotifications[currentNotificationIndex].image}
-                  alt="notification"
-                  className="w-full h-full object-contain p-2"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = 'none';
-                  }}
-                />
+                displayNotifications[currentNotificationIndex]?.linkUrl ? (
+                  <a
+                    href={displayNotifications[currentNotificationIndex].linkUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full h-full flex items-center justify-center cursor-pointer"
+                  >
+                    <img
+                      src={displayNotifications[currentNotificationIndex].image}
+                      alt={displayNotifications[currentNotificationIndex]?.title || 'notification'}
+                      className="w-full h-full object-contain p-2"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = 'none';
+                      }}
+                    />
+                  </a>
+                ) : (
+                  <img
+                    src={displayNotifications[currentNotificationIndex].image}
+                    alt={displayNotifications[currentNotificationIndex]?.title || 'notification'}
+                    className="w-full h-full object-contain p-2"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = 'none';
+                    }}
+                  />
+                )
               ) : (
                 <span className="text-[11px] text-gray-400 p-2">
                   {displayNotifications[currentNotificationIndex]?.title}
