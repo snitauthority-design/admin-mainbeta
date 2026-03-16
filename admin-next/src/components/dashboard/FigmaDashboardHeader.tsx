@@ -219,7 +219,7 @@ const FigmaDashboardHeader: React.FC<DashboardHeaderProps> = ({
       onLogout?.();
       return;
     }
-    onNavigate?.(action);
+    onNavigate?.(action === 'profile' ? 'settings_profile' : action);
   };
 
   // Filter menu items based on search query
