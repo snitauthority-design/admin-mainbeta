@@ -110,5 +110,3 @@ export const RelatedProductsSection: React.FC<RelatedProductsSectionProps> = ({
     </div>
   </div>
 );
-
-export default RelatedProductsSection;

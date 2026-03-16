@@ -111,5 +111,3 @@ export const DynamicLoadingFallback: React.FC<DynamicLoadingFallbackProps> = ({ 
 
   return wrapperClass ? <div className={wrapperClass}>{content}</div> : content;
 };
-
-export default DynamicLoadingFallback;
