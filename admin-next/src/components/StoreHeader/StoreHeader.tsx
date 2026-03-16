@@ -10,6 +10,8 @@ import { ImageSearchModal } from '../store/header/ImageSearchModal';
 import type { CatalogGroup, HeaderSearchProps } from '../store/header/headerTypes';
 import { resolveTenantHeaderLogo, getTenantLogoKey } from '../../utils/tenantBrandingHelper';
 
+const getTrackVisitorEvent = () => import('../../hooks/useVisitorStats').then(m => m.trackVisitorEvent);
+
 // Lazy load toast - avoid sync import of heavy dependency
 const showToast = {
   error: (msg: string) => import('react-hot-toast').then(m => m.toast.error(msg)),
@@ -147,6 +149,7 @@ export const StoreHeader: React.FC<StoreHeaderProps> = (props) => {
   }, [onCartOpenRef]);
 
   const [supportsVoiceSearch, setSupportsVoiceSearch] = useState(false);
+  const lastTrackedSearchKeyRef = useRef('');
   const [isListening, setIsListening] = useState(false);
   const [liveTranscript, setLiveTranscript] = useState('');
   const [typedSearchValue, setTypedSearchValue] = useState(searchValue ?? '');
@@ -386,6 +389,44 @@ export const StoreHeader: React.FC<StoreHeaderProps> = (props) => {
   useEffect(() => {
     setTypedSearchValue(searchValue ?? '');
   }, [searchValue]);
+
+  useEffect(() => {
+    if (!tenantId || typeof window === 'undefined') return;
+
+    const query = activeSearchValue.trim();
+    if (query.length < 2) {
+      lastTrackedSearchKeyRef.current = '';
+      return;
+    }
+
+    const page = window.location.pathname || '/';
+    const trackingKey = `${page}:${query.toLowerCase()}`;
+    const timeoutId: ReturnType<typeof window.setTimeout> = window.setTimeout(() => {
+      if (lastTrackedSearchKeyRef.current === trackingKey) {
+        return;
+      }
+
+      lastTrackedSearchKeyRef.current = trackingKey;
+      getTrackVisitorEvent()
+        .then(trackVisitorEvent =>
+          trackVisitorEvent(
+            tenantId,
+            'search',
+            {
+              query,
+              results: searchSuggestions.length,
+              contextPage: page
+            },
+            `${tenantId}:search:${trackingKey}`
+          )
+        )
+        .catch((error) => {
+          console.warn('Failed to track search event:', error);
+        });
+    }, 700);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [tenantId, activeSearchValue, searchSuggestions.length]);
 
   useEffect(() => {
     setIsSearchSuggestionsOpen(searchSuggestions.length > 0 && activeSearchValue.trim().length > 0);

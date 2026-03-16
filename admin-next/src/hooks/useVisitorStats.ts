@@ -82,6 +82,79 @@ export const useVisitorStats = (options: UseVisitorStatsOptions = {}) => {
 // Throttle tracking to prevent excessive API calls
 const lastPageViewTrack = new Map<string, number>();
 const PAGE_VIEW_THROTTLE_MS = 5000; // Only track same page once per 5 seconds
+const lastEventTrack = new Map<string, number>();
+const EVENT_THROTTLE_MS = 8000;
+const SUPPORTED_VISITOR_EVENTS = new Set(['search', 'checkout_start']);
+
+const getVisitorId = () => {
+  let visitorId = localStorage.getItem('_vid');
+  if (!visitorId) {
+    const randomSegment =
+      typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+        ? crypto.randomUUID().replace(/-/g, '').slice(0, 12)
+        : Math.random().toString(36).slice(2, 14);
+    visitorId = `v_${Date.now()}_${randomSegment}`;
+    localStorage.setItem('_vid', visitorId);
+  }
+  return visitorId;
+};
+
+const getDeviceType = (userAgent: string) => {
+  if (/tablet|ipad|playbook|silk/i.test(userAgent)) {
+    return 'Tablet';
+  }
+
+  if (/mobile|iphone|ipod|android|blackberry|opera mini|iemobile/i.test(userAgent)) {
+    return 'Mobile';
+  }
+
+  return 'Desktop';
+};
+
+const getBrowserName = (userAgent: string) => {
+  if (userAgent.includes('Edg')) return 'Edge';
+  if (userAgent.includes('Chrome')) return 'Chrome';
+  if (userAgent.includes('Safari')) return 'Safari';
+  if (userAgent.includes('Firefox')) return 'Firefox';
+  return 'Other';
+};
+
+const buildVisitorContext = () => {
+  const userAgent = navigator.userAgent;
+
+  return {
+    visitorId: getVisitorId(),
+    userAgent,
+    device: getDeviceType(userAgent),
+    browser: getBrowserName(userAgent)
+  };
+};
+
+const sanitizeMetadata = (metadata: Record<string, unknown>) =>
+  Object.entries(metadata).reduce<Record<string, string | number | boolean>>((accumulator, [key, value]) => {
+      const safeKey = key.replace(/[^\w.-]/g, '').slice(0, 40);
+      if (!safeKey) return accumulator;
+
+      if (typeof value === 'string') {
+        const trimmedValue = value.trim();
+        if (trimmedValue) {
+          accumulator[safeKey] = trimmedValue.slice(0, 200);
+        }
+        return accumulator;
+      }
+
+      if (typeof value === 'number' && Number.isFinite(value)) {
+        accumulator[safeKey] = value;
+        return accumulator;
+      }
+
+      if (typeof value === 'boolean') {
+        accumulator[safeKey] = value;
+        return accumulator;
+      }
+
+      return accumulator;
+    }, {});
 
 export const trackPageView = async (tenantId: string, page: string) => {
   if (!tenantId) return;
@@ -95,28 +168,7 @@ export const trackPageView = async (tenantId: string, page: string) => {
   }
   lastPageViewTrack.set(throttleKey, now);
   
-  // Get or create visitor ID
-  let visitorId = localStorage.getItem('_vid');
-  if (!visitorId) {
-    visitorId = `v_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    localStorage.setItem('_vid', visitorId);
-  }
-  
-  // Detect device
-  const ua = navigator.userAgent;
-  let device = 'Desktop';
-  if (/tablet|ipad|playbook|silk/i.test(ua)) {
-    device = 'Tablet';
-  } else if (/mobile|iphone|ipod|android|blackberry|opera mini|iemobile/i.test(ua)) {
-    device = 'Mobile';
-  }
-  
-  // Detect browser
-  let browser = 'Other';
-  if (ua.includes('Chrome')) browser = 'Chrome';
-  else if (ua.includes('Safari')) browser = 'Safari';
-  else if (ua.includes('Firefox')) browser = 'Firefox';
-  else if (ua.includes('Edge')) browser = 'Edge';
+  const { visitorId, userAgent, device, browser } = buildVisitorContext();
   
   try {
     const res = await fetch(`${API_BASE}/api/visitors/${tenantId}/track`, {
@@ -126,7 +178,7 @@ export const trackPageView = async (tenantId: string, page: string) => {
         visitorId,
         page,
         referrer: document.referrer,
-        userAgent: ua,
+        userAgent,
         device,
         browser
       })
@@ -136,6 +188,50 @@ export const trackPageView = async (tenantId: string, page: string) => {
     }
   } catch (err) {
     console.warn('Failed to track page view:', err);
+  }
+};
+
+export const trackVisitorEvent = async (
+  tenantId: string,
+  eventType: 'search' | 'checkout_start',
+  metadata: Record<string, unknown> = {},
+  throttleKey?: string
+) => {
+  if (!tenantId || typeof window === 'undefined' || !SUPPORTED_VISITOR_EVENTS.has(eventType)) return;
+
+  const now = Date.now();
+  const resolvedThrottleKey =
+    throttleKey || `${tenantId}:${eventType}:${window.location.pathname}:${JSON.stringify(metadata)}`;
+  const lastTrack = lastEventTrack.get(resolvedThrottleKey) || 0;
+
+  if (now - lastTrack < EVENT_THROTTLE_MS) {
+    return;
+  }
+
+  lastEventTrack.set(resolvedThrottleKey, now);
+
+  try {
+    const { visitorId, userAgent, device, browser } = buildVisitorContext();
+    const res = await fetch(`${API_BASE}/api/visitors/${tenantId}/events`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        visitorId,
+        eventType,
+        page: window.location.pathname || '/',
+        referrer: document.referrer,
+        userAgent,
+        device,
+        browser,
+        metadata: sanitizeMetadata(metadata)
+      })
+    });
+
+    if (!res.ok) {
+      console.warn(`Visitor event tracking returned ${res.status}`);
+    }
+  } catch (err) {
+    console.warn('Failed to track visitor event:', err);
   }
 };
 

@@ -61,7 +61,34 @@ const ensureIndexes = async (db: Db) => {
       { background: true }
     );
     
-    console.log('[mongo] Indexes ensured for tenant_data, expenses, incomes');
+    await db.collection('visitors').createIndex(
+      { tenantId: 1, visitorId: 1 },
+      { unique: true, background: true }
+    );
+    await db.collection('visitors').createIndex(
+      { tenantId: 1, lastVisit: -1 },
+      { background: true }
+    );
+
+    await db.collection('page_views').createIndex(
+      { tenantId: 1, timestamp: -1 },
+      { background: true }
+    );
+    await db.collection('page_views').createIndex(
+      { tenantId: 1, visitorId: 1, timestamp: -1 },
+      { background: true }
+    );
+
+    await db.collection('visitor_events').createIndex(
+      { tenantId: 1, eventType: 1, timestamp: -1 },
+      { background: true }
+    );
+    await db.collection('visitor_events').createIndex(
+      { tenantId: 1, visitorId: 1, timestamp: -1 },
+      { background: true }
+    );
+    
+    console.log('[mongo] Indexes ensured for tenant_data, expenses, incomes, visitors, page_views, visitor_events');
   } catch (error: any) {
     // Code 48 = index already exists (not an error)
     if (error?.code === 48) {

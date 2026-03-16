@@ -31,6 +31,8 @@ import {
 import { formatCurrency } from '../utils/format';
 import { getCurrencySymbol } from '../utils/currencyHelper';
 
+const getTrackPageView = () => import('../hooks/useVisitorStats').then(m => m.trackPageView);
+
 interface CheckoutProps {
   product: Product;
   quantity: number;
@@ -166,6 +168,21 @@ const StoreCheckout = ({
     const timer = setTimeout(() => setIsLoading(false), 600);
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    if (!tenantId || !product) return;
+
+    const trackCheckoutVisit = async () => {
+      try {
+        const trackPageView = await getTrackPageView();
+        trackPageView(tenantId, '/checkout');
+      } catch (error) {
+        console.warn('Failed to track checkout view:', error);
+      }
+    };
+
+    trackCheckoutVisit();
+  }, [tenantId, product?.id]);
 
   useEffect(() => {
     if (deliveryConfigs && deliveryConfigs.length) {
