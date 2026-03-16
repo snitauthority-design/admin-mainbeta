@@ -17,8 +17,8 @@ export const VisitorsSidebarPanels: React.FC<VisitorsSidebarPanelsProps> = ({
   formatTimeAgo
 }) => (
   <div className="space-y-3 xl:col-span-4">
-    <div className="rounded-2xl border border-orange-100 bg-white p-3 shadow-[0_18px_48px_-38px_rgba(249,115,22,0.45)] dark:border-slate-700 dark:bg-slate-900">
-      <div className="mb-3 flex items-center justify-between">
+    <div className="overflow-hidden rounded-2xl border border-orange-100 bg-white p-3 shadow-[0_18px_48px_-38px_rgba(249,115,22,0.45)] dark:border-slate-700 dark:bg-slate-900">
+      <div className="mb-3 flex items-center justify-between gap-2">
         <h2 className="text-sm font-semibold text-slate-900 dark:text-white sm:text-base">Online by Source</h2>
         <div className="flex items-center gap-1.5 rounded-full border border-orange-200 bg-orange-50 px-2 py-1 dark:border-orange-500/20 dark:bg-orange-500/10">
           <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
@@ -60,7 +60,7 @@ export const VisitorsSidebarPanels: React.FC<VisitorsSidebarPanelsProps> = ({
       )}
     </div>
 
-    <div className="rounded-2xl border border-sky-100 bg-white p-3 shadow-[0_18px_48px_-38px_rgba(37,99,235,0.45)] dark:border-slate-700 dark:bg-slate-900">
+    <div className="overflow-hidden rounded-2xl border border-sky-100 bg-white p-3 shadow-[0_18px_48px_-38px_rgba(37,99,235,0.45)] dark:border-slate-700 dark:bg-slate-900">
       <div className="mb-3 flex items-center justify-between gap-2">
         <div>
           <h2 className="text-sm font-semibold text-slate-900 dark:text-white sm:text-base">Active Visitors</h2>
