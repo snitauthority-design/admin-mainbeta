@@ -263,24 +263,24 @@ const AdminWebsiteContent: React.FC<AdminWebsiteContentProps> = ({
 
   if (isLoading) {
     return (
-      <div className="w-full px-2 sm:px-3 md:px-4 py-2 sm:py-3 space-y-2 sm:space-y-3 bg-[#F8F9FB] min-h-screen">
+      <div className="w-full px-1.5 sm:px-2.5 md:px-4 py-1.5 sm:py-2.5 space-y-1.5 sm:space-y-2.5 bg-[#F8F9FB] dark:bg-gray-900 min-h-screen">
         <MetricsSkeleton />
       </div>
     );
   }
 
   return (
-    <div className="w-full px-2 sm:px-3 md:px-4 py-2 sm:py-3 space-y-2 sm:space-y-3 bg-[#F8F9FB] min-h-screen">
+    <div className="w-full px-1.5 sm:px-2.5 md:px-4 py-1.5 sm:py-2.5 space-y-1.5 sm:space-y-2.5 bg-[#F8F9FB] dark:bg-gray-900 min-h-screen transition-colors duration-200">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center gap-2 bg-white rounded-lg p-3 sm:p-4 border border-gray-100 shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-2 bg-white dark:bg-gray-800 rounded-lg p-2.5 sm:p-3.5 border border-gray-100 dark:border-gray-700 shadow-sm">
         <div className="flex-1 min-w-0">
-          <h2 className="text-lg sm:text-xl font-bold text-gray-800 truncate font-['Lato']">Website Content</h2>
-          <p className="text-gray-500 text-xs mt-0.5 truncate font-['Poppins']">Manage carousel, campaigns, popups, website info and chat settings</p>
+          <h2 className="text-base sm:text-xl font-bold text-gray-800 dark:text-white truncate font-['Lato']">Website Content</h2>
+          <p className="text-gray-500 dark:text-gray-300 text-[11px] sm:text-xs mt-0.5 truncate font-['Poppins']">Manage carousel, campaigns, popups, website info and chat settings</p>
         </div>
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex items-center gap-0.5 bg-gray-100 rounded-lg p-0.5 overflow-x-auto scrollbar-hide">
+      <div className="flex items-center gap-0.5 bg-gray-100 dark:bg-gray-700 rounded-lg p-0.5 overflow-x-auto scrollbar-hide">
         <TabButton id="website_info" label="Website" icon={<Globe size={16} />} activeTab={activeTab} onTabChange={setActiveTab} />
         <TabButton id="carousel" label="Carousel" icon={<ImageIcon size={16} />} activeTab={activeTab} onTabChange={setActiveTab} />
         <TabButton id="campaigns" label="Campaigns" icon={<CalendarDays size={16} />} activeTab={activeTab} onTabChange={setActiveTab} />
@@ -290,7 +290,7 @@ const AdminWebsiteContent: React.FC<AdminWebsiteContentProps> = ({
       </div>
 
       {/* Tab Content */}
-      <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-2 sm:p-3 md:p-4">
+      <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-100 dark:border-gray-700 shadow-sm p-1.5 sm:p-2.5 md:p-3.5 transition-colors duration-200">
         {activeTab === 'carousel' && (
           <CarouselTab
             websiteConfiguration={websiteConfiguration}

@@ -27,8 +27,8 @@ const FigmaBestSellingProducts: React.FC<FigmaBestSellingProductsProps> = ({
   onProductClick
 }) => {
   return (
-    <div className="w-full px-3 xs:px-4 sm:px-5 py-3 xs:py-4 sm:py-[18px] bg-white dark:bg-gray-800 rounded-xl border border-zinc-200 dark:border-gray-700 flex flex-col justify-start items-start gap-2 xs:gap-3 overflow-hidden">
-      <div className="w-full flex flex-col justify-start items-end gap-3 xs:gap-4 sm:gap-5">
+    <div className="w-full px-2.5 xs:px-3 sm:px-4 py-2.5 xs:py-3 sm:py-4 bg-white dark:bg-gray-800 rounded-xl border border-zinc-200 dark:border-gray-700 flex flex-col justify-start items-start gap-2 xs:gap-2.5 overflow-hidden">
+      <div className="w-full flex flex-col justify-start items-end gap-2 xs:gap-3 sm:gap-4">
         {/* Header */}
         <div className="w-full h-8 flex justify-start items-center gap-2.5">
           <div className="justify-start text-zinc-800 dark:text-white text-base sm:text-lg font-bold  font-family: Poppins, Helvetica, sans-serif">Best Selling Product</div>
@@ -36,7 +36,7 @@ const FigmaBestSellingProducts: React.FC<FigmaBestSellingProductsProps> = ({
 
         {/* Table - Scroll on mobile */}
         <div className="w-full overflow-x-auto -mx-2 xs:-mx-3 sm:mx-0 px-2 xs:px-3 sm:px-0 scrollbar-hide">
-          <div className="min-w-[400px] xs:min-w-[450px] sm:min-w-[500px] flex flex-col justify-start items-end gap-2 xs:gap-3">
+          <div className="min-w-[400px] xs:min-w-[450px] sm:min-w-[500px] flex flex-col justify-start items-end gap-1.5 xs:gap-2">
           {/* Table Header */}
           <div className="self-stretch bg-blue-50 dark:bg-gray-700 rounded-lg border-b inline-flex justify-start items-center">
             <div className="w-36 xs:w-44 sm:w-52 lg:w-60 self-stretch px-2 xs:px-3 sm:px-5 py-2 border-zinc-300 dark:border-gray-600 flex justify-start items-center gap-1">
@@ -54,7 +54,7 @@ const FigmaBestSellingProducts: React.FC<FigmaBestSellingProductsProps> = ({
           </div>
 
           {/* Table Rows */}
-          <div className="self-stretch flex flex-col justify-start items-start gap-1">
+          <div className="self-stretch flex flex-col justify-start items-start gap-0.5 xs:gap-1">
             {products.map((product) => (
               <div 
                 key={product.id} 

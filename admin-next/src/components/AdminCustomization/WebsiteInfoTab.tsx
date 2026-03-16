@@ -871,9 +871,9 @@ export const WebsiteInfoTab: React.FC<WebsiteInfoTabProps> = ({
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
+    <div className="w-full text-gray-900 dark:text-gray-100" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {/* Logo Upload Section */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
         <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
           <LogoUploadCard
             title="Primary Store Logo (Fallback)"
@@ -907,9 +907,9 @@ export const WebsiteInfoTab: React.FC<WebsiteInfoTabProps> = ({
       </div>
 
       {/* Input Fields Section */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         {/* Row 1: Announcement & Email */}
-        <div style={{ display: 'flex', gap: '16px' }}>
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
           <FigmaInput
             label="Announcement"
             value={websiteConfiguration.adminNoticeText || ''}
@@ -917,7 +917,7 @@ export const WebsiteInfoTab: React.FC<WebsiteInfoTabProps> = ({
             placeholder="Text"
             flex
           />
-          <div style={{ width: '304px' }}>
+          <div style={{ width: '304px', maxWidth: '100%', flex: '1 1 260px' }}>
             <FigmaInput
               label="Email"
               value={websiteConfiguration.emails?.[0] || ''}
@@ -929,7 +929,7 @@ export const WebsiteInfoTab: React.FC<WebsiteInfoTabProps> = ({
         </div>
 
         {/* Row 2: Branding Text & Address */}
-        <div style={{ display: 'flex', gap: '16px' }}>
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
           <FigmaInput
             label="Branding Text"
             value={websiteConfiguration.brandingText || ''}

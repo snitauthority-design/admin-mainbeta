@@ -128,14 +128,14 @@ const FigmaSalesByCategory: React.FC<FigmaSalesByCategoryProps> = ({
   };
 
   return (
-    <div className="w-full h-auto min-h-[380px] sm:h-[402px] p-4 sm:p-5 bg-white dark:bg-gray-800 rounded-xl border border-zinc-200 dark:border-gray-700 overflow-hidden flex flex-col">
+    <div className="w-full h-auto p-3 sm:p-4 bg-white dark:bg-gray-800 rounded-xl border border-zinc-200 dark:border-gray-700 overflow-hidden flex flex-col">
       {/* Title */}
-      <div className="mb-4">
+      <div className="mb-2 sm:mb-3">
         <div className="text-zinc-800 dark:text-white text-lg font-bold font-family: Poppins, Helvetica, sans-serif">Sale By Category</div>
       </div>
 
       {/* Pie Chart - Donut style */}
-      <div className="flex-shrink-0 w-36 h-36 sm:w-48 sm:h-48 mx-auto overflow-hidden">
+      <div className="flex-shrink-0 w-32 h-32 sm:w-44 sm:h-44 mx-auto overflow-hidden">
         <svg width="100%" height="100%" viewBox="0 0 200 200" className="transform -rotate-90">
           {segments.map((segment, index) => (
             <path
@@ -148,7 +148,7 @@ const FigmaSalesByCategory: React.FC<FigmaSalesByCategoryProps> = ({
       </div>
 
       {/* Legend - Responsive grid */}
-      <div className="mt-2 sm:mt-3 grid grid-cols-2 gap-x-1.5 gap-y-0.5 xs:gap-x-2 xs:gap-y-1 sm:gap-x-4 sm:gap-y-1.5">
+      <div className="mt-1.5 sm:mt-2 grid grid-cols-2 gap-x-1.5 gap-y-0.5 xs:gap-x-2 xs:gap-y-1 sm:gap-x-3 sm:gap-y-1.5">
         {computedCategories.map((category, index) => (
           <div key={index} className="flex justify-start items-center gap-1 xs:gap-1.5 sm:gap-2.5">
             <div className={`w-2.5 h-2.5 sm:w-3 sm:h-3 ${category.bgColor} rounded-full flex-shrink-0`} />

@@ -780,6 +780,7 @@ const parsedDiscountValue = Number(newOrderForm.discountValue) || 0;
     { id: 'pathao', name: 'Pathao', logo: '/icons/pathao.png' },
     { id: 'redx', name: 'RedX', logo: '/icons/redx.png' },
   ];
+  const editModalFieldClass = 'w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none';
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl mx-1 xxs:mx-2 sm:mx-4 md:mx-6 p-2 xxs:p-3 sm:p-6 shadow-sm font-['Poppins']">
@@ -1108,7 +1109,22 @@ const parsedDiscountValue = Number(newOrderForm.discountValue) || 0;
                   <span className="text-xs text-gray-400">{order.date ? new Date(order.date).toLocaleDateString() : ''}</span>
                 </div>
                 <div className="flex items-center justify-between mt-2">
-                  <OrderStatusBadge status={order.status} className="inline-block" />
+                  <div className="flex items-center gap-2 min-w-0">
+                    <OrderStatusBadge status={order.status} className="inline-block" />
+                    <select
+                      aria-label="Change order status"
+                      value={order.status}
+                      onChange={(e) => handleStatusChange(order.id, e.target.value as Order['status'])}
+                      className="h-7 px-2 text-[11px] border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    >
+                      {NORMAL_STATUSES.map(status => (
+                        <option key={status} value={status}>{STATUS_LABELS[status]}</option>
+                      ))}
+                      {TERMINAL_STATUSES.map(status => (
+                        <option key={status} value={status}>{STATUS_LABELS[status]}</option>
+                      ))}
+                    </select>
+                  </div>
                   <div className="flex items-center gap-1">
                     <button 
                       onClick={() => { openOrderModal(order); }}
@@ -1289,50 +1305,50 @@ const parsedDiscountValue = Number(newOrderForm.discountValue) || 0;
                 {/* Left: Form Fields */}
                 <div className="lg:col-span-2 space-y-6">
                   {/* Customer Info */}
-                  <div className="bg-gray-50 p-3 sm:p-4 lg:p-4 xl:p-5 rounded-xl border">
-                    <h3 className="text-base font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                  <div className="bg-gray-50 dark:bg-gray-900 p-3 sm:p-4 lg:p-4 xl:p-5 rounded-xl border border-gray-200 dark:border-gray-700">
+                    <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
                       <div className="w-1 h-5 bg-blue-600 rounded-full"></div> Customer Information
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <label className="block space-y-1.5">
-                        <span className="text-xs font-semibold text-gray-500 uppercase">Customer Name</span>
+                        <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Customer Name</span>
                         <input 
-                          className="w-full px-3 py-2 bg-white border rounded-lg text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none"
+                          className={editModalFieldClass}
                           value={draftOrder.customer} 
                           onChange={(e) => handleDraftChange('customer', e.target.value)}
                         />
                       </label>
                       <label className="block space-y-1.5">
-                        <span className="text-xs font-semibold text-gray-500 uppercase">Phone</span>
+                        <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Phone</span>
                         <input 
-                          className="w-full px-3 py-2 bg-white border rounded-lg text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none"
+                          className={editModalFieldClass}
                           value={draftOrder.phone || ''} 
                           onChange={(e) => handleDraftChange('phone', e.target.value)}
                           maxLength={13}
                         />
                       </label>
                       <label className="block space-y-1.5">
-                        <span className="text-xs font-semibold text-gray-500 uppercase">Email</span>
+                        <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Email</span>
                         <input 
-                          className="w-full px-3 py-2 bg-white border rounded-lg text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none"
+                          className={editModalFieldClass}
                           value={draftOrder.email || ''} 
                           onChange={(e) => handleDraftChange('email', e.target.value)}
                         />
                       </label>
                       <label className="block space-y-1.5">
-                        <span className="text-xs font-semibold text-gray-500 uppercase">Division</span>
+                        <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Division</span>
                         <input 
-                          className="w-full px-3 py-2 bg-white border rounded-lg text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none"
+                          className={editModalFieldClass}
                           value={draftOrder.division || ''} 
                           onChange={(e) => handleDraftChange('division', e.target.value)}
                         />
                       </label>
                     </div>
                     <label className="block space-y-1.5 mt-4">
-                      <span className="text-xs font-semibold text-gray-500 uppercase">Delivery Address</span>
+                      <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Delivery Address</span>
                       <textarea
                         rows={2}
-                        className="w-full px-3 py-2 bg-white border rounded-lg text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none resize-none"
+                        className={`${editModalFieldClass} resize-none`}
                         value={draftOrder.location} 
                         onChange={(e) => handleDraftChange('location', e.target.value)}
                       />
@@ -1340,33 +1356,33 @@ const parsedDiscountValue = Number(newOrderForm.discountValue) || 0;
                   </div>
 
                   {/* Order Settings */}
-                  <div className="bg-gray-50 p-3 sm:p-4 lg:p-4 xl:p-5 rounded-xl border">
-                    <h3 className="text-base font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                  <div className="bg-gray-50 dark:bg-gray-900 p-3 sm:p-4 lg:p-4 xl:p-5 rounded-xl border border-gray-200 dark:border-gray-700">
+                    <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
                       <div className="w-1 h-5 bg-emerald-600 rounded-full"></div> Order Settings
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <label className="block space-y-1.5">
-                        <span className="text-xs font-semibold text-gray-500 uppercase">Amount (BDT)</span>
+                        <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Amount (BDT)</span>
                         <input 
                           type="number"
-                          className="w-full px-3 py-2 bg-white border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
+                          className={editModalFieldClass}
                           value={draftOrder.amount} 
                           onChange={(e) => handleDraftChange('amount', Number(e.target.value))}
                         />
                       </label>
                       <label className="block space-y-1.5">
-                        <span className="text-xs font-semibold text-gray-500 uppercase">Delivery Charge</span>
+                        <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Delivery Charge</span>
                         <input 
                           type="number"
-                          className="w-full px-3 py-2 bg-white border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
+                          className={editModalFieldClass}
                           value={draftOrder.deliveryCharge || 0} 
                           onChange={(e) => handleDraftChange('deliveryCharge', Number(e.target.value))}
                         />
                       </label>
                       <label className="block space-y-1.5">
-                        <span className="text-xs font-semibold text-gray-500 uppercase">Status</span>
+                        <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Status</span>
                         <select 
-                          className="w-full px-3 py-2 bg-white border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
+                          className={editModalFieldClass}
                           value={draftOrder.status} 
                           onChange={(e) => handleDraftChange('status', e.target.value as Order['status'])}
                         >
@@ -1379,9 +1395,9 @@ const parsedDiscountValue = Number(newOrderForm.discountValue) || 0;
                         </select>
                       </label>
                       <label className="block space-y-1.5">
-                        <span className="text-xs font-semibold text-gray-500 uppercase">Courier Provider</span>
+                        <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Courier Provider</span>
                         <select 
-                          className="w-full px-3 py-2 bg-white border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
+                          className={editModalFieldClass}
                           value={draftOrder.courierProvider || ''} 
                           onChange={(e) => handleDraftChange('courierProvider', (e.target.value || undefined) as Order['courierProvider'])}
                         >
@@ -1391,9 +1407,9 @@ const parsedDiscountValue = Number(newOrderForm.discountValue) || 0;
                         </select>
                       </label>
                       <label className="block space-y-1.5">
-                        <span className="text-xs font-semibold text-gray-500 uppercase">Tracking ID</span>
+                        <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Tracking ID</span>
                         <input
-                          className="w-full px-3 py-2 bg-white border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
+                          className={editModalFieldClass}
                           value={draftOrder.trackingId || ''}
                           onChange={(e) => handleDraftChange('trackingId', e.target.value)}
                         />
@@ -1417,11 +1433,11 @@ const parsedDiscountValue = Number(newOrderForm.discountValue) || 0;
                   </div>
 
                   {/* Fraud Check Card */}
-                  <div className="border rounded-xl p-5 bg-white">
+                  <div className="border border-gray-200 dark:border-gray-700 rounded-xl p-5 bg-white dark:bg-gray-900">
                     <div className="flex justify-between items-start mb-4">
                       <div>
-                        <p className="font-bold text-gray-900">Fraud Check</p>
-                        <p className="text-xs text-gray-500">Powered by Steadfast</p>
+                        <p className="font-bold text-gray-900 dark:text-gray-100">Fraud Check</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">Powered by Steadfast</p>
                       </div>
                       {fraudBadge && (
                         <div className={`flex items-center gap-1.5 text-xs font-bold px-2 py-1 rounded border bg-gray-50 ${fraudBadge.color}`}>
@@ -1431,15 +1447,15 @@ const parsedDiscountValue = Number(newOrderForm.discountValue) || 0;
                       )}
                     </div>
                     {fraudResult && (
-                      <div className="mb-4 p-3 bg-gray-50 rounded text-sm">
+                      <div className="mb-4 p-3 bg-gray-50 dark:bg-gray-800 rounded text-sm text-gray-800 dark:text-gray-200">
                         <p>Score: <span className="font-bold">{fraudResult.riskScore ?? 'N/A'}</span></p>
-                        {fraudResult.remarks && <p className="text-gray-600 text-xs mt-1">{fraudResult.remarks}</p>}
+                        {fraudResult.remarks && <p className="text-gray-600 dark:text-gray-300 text-xs mt-1">{fraudResult.remarks}</p>}
                       </div>
                     )}
                     <button
                       onClick={() => handleFraudCheck(draftOrder)}
                       disabled={isFraudChecking}
-                      className="w-full py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-xs font-bold uppercase"
+                      className="w-full py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-100 rounded-lg text-xs font-bold uppercase"
                     >
                       {isFraudChecking ? 'Checking...' : 'Run Analysis'}
                     </button>
@@ -1447,7 +1463,7 @@ const parsedDiscountValue = Number(newOrderForm.discountValue) || 0;
 
                   {/* Quick Actions */}
                   <div className="space-y-3">
-                    <p className="text-xs font-bold text-gray-400 uppercase tracking-wider ml-1">Quick Actions</p>
+                    <p className="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider ml-1">Quick Actions</p>
                     
                     {draftOrder.courierProvider === 'Steadfast' && draftOrder.trackingId ? (
                       <div className="w-full p-3 bg-emerald-50 border border-emerald-100 text-emerald-700 rounded-lg text-sm font-medium flex items-center justify-center gap-2">
@@ -1457,7 +1473,7 @@ const parsedDiscountValue = Number(newOrderForm.discountValue) || 0;
                       <button
                         onClick={() => handleSendToSteadfast(draftOrder)}
                         disabled={isSendingToSteadfast || !courierConfig.apiKey}
-                        className="w-full p-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-200 disabled:text-gray-400 text-white rounded-lg text-sm font-medium flex items-center justify-center gap-2"
+                        className="w-full p-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-200 dark:disabled:bg-gray-700 disabled:text-gray-400 dark:disabled:text-gray-300 text-white rounded-lg text-sm font-medium flex items-center justify-center gap-2"
                       >
                         {isSendingToSteadfast ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
                         Send to Steadfast
@@ -1472,7 +1488,7 @@ const parsedDiscountValue = Number(newOrderForm.discountValue) || 0;
                       <button
                         onClick={() => handleSendToPathao(draftOrder)}
                         disabled={isSendingToPathao || !pathaoConfig?.apiKey}
-                        className="w-full p-3 bg-red-600 hover:bg-red-700 disabled:bg-gray-200 disabled:text-gray-400 text-white rounded-lg text-sm font-medium flex items-center justify-center gap-2"
+                        className="w-full p-3 bg-red-600 hover:bg-red-700 disabled:bg-gray-200 dark:disabled:bg-gray-700 disabled:text-gray-400 dark:disabled:text-gray-300 text-white rounded-lg text-sm font-medium flex items-center justify-center gap-2"
                       >
                         {isSendingToPathao ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
                         Send to Pathao
@@ -1481,7 +1497,7 @@ const parsedDiscountValue = Number(newOrderForm.discountValue) || 0;
 
                     <button
                       onClick={() => handlePrintInvoice(draftOrder)}
-                      className="w-full p-3 border hover:bg-gray-50 text-gray-700 rounded-lg text-sm font-medium flex items-center justify-center gap-2"
+                      className="w-full p-3 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-100 rounded-lg text-sm font-medium flex items-center justify-center gap-2"
                     >
                       <Printer size={18} /> Print Invoice
                     </button>
@@ -1491,8 +1507,8 @@ const parsedDiscountValue = Number(newOrderForm.discountValue) || 0;
             </div>
 
             {/* Modal Footer */}
-            <div className="p-6 border-t bg-gray-50 flex justify-end gap-3">
-              <button onClick={closeOrderModal} className="px-5 py-2.5 rounded-lg border text-gray-700 font-medium hover:bg-gray-50">
+            <div className="p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 flex justify-end gap-3">
+              <button onClick={closeOrderModal} className="px-5 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-100 font-medium hover:bg-gray-50 dark:hover:bg-gray-700">
                 Cancel
               </button>
               <button

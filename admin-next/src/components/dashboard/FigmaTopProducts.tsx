@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React from 'react';
 import { normalizeImageUrl } from '../../utils/imageUrlHelper';
 
 interface TopProduct {
@@ -26,18 +26,8 @@ const FigmaTopProducts: React.FC<FigmaTopProductsProps> = ({
   onAllProductsClick,
   onProductClick
 }) => {
-  const [searchQuery, setSearchQuery] = useState('');
-
-  const filteredProducts = useMemo(() => {
-    if (!searchQuery.trim()) return products;
-    const query = searchQuery.toLowerCase();
-    return products.filter(p => 
-      p.name.toLowerCase().includes(query) || 
-      p.itemCode.toLowerCase().includes(query)
-    );
-  }, [products, searchQuery]);
   return (
-    <div className="w-full h-full px-3 xs:px-4 py-4 xs:py-5 bg-white dark:bg-gray-800 rounded-xl border border-zinc-200 dark:border-gray-700 flex flex-col justify-start items-start gap-3 xs:gap-4 overflow-hidden">
+    <div className="w-full h-full px-2.5 xs:px-3 py-2.5 xs:py-3 bg-white dark:bg-gray-800 rounded-xl border border-zinc-200 dark:border-gray-700 flex flex-col justify-start items-start gap-2 xs:gap-3 overflow-hidden">
       {/* Header */}
       <div className="w-full flex flex-col justify-start items-start gap-2 xs:gap-3">
         <div className="w-full flex justify-start items-center gap-2 xs:gap-3">
@@ -71,18 +61,18 @@ const FigmaTopProducts: React.FC<FigmaTopProductsProps> = ({
       </div>
 
       {/* Products List */}
-      <div className="w-full flex-1 flex flex-col justify-start items-start gap-3 sm:gap-4 overflow-y-auto pr-1 sm:pr-2">
-        {filteredProducts.length === 0 ? (
+      <div className="w-full flex-1 flex flex-col justify-start items-start gap-2 sm:gap-3 overflow-y-auto pr-1 sm:pr-2">
+        {products.length === 0 ? (
           <div className="w-full py-8 text-center text-neutral-400 dark:text-gray-500 text-sm">No products found</div>
         ) : (
-          filteredProducts.map((product) => (
+          products.map((product) => (
             <div 
               key={product.id} 
-              className="w-full pr-1 sm:pr-2 pb-2 border-b border-neutral-300 dark:border-gray-600 flex justify-start items-center gap-2 sm:gap-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer rounded"
+              className="w-full pr-1 sm:pr-2 pb-1.5 border-b border-neutral-300 dark:border-gray-600 flex justify-start items-center gap-2 sm:gap-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors cursor-pointer rounded"
               onClick={() => onProductClick?.(product.id)}
             >
               {/* Product Image */}
-              <div className="w-10 h-10 sm:w-14 sm:h-14 relative rounded-lg sm:rounded-xl overflow-hidden bg-zinc-100 dark:bg-gray-600 flex items-center justify-center flex-shrink-0">
+              <div className="w-9 h-9 sm:w-12 sm:h-12 relative rounded-lg sm:rounded-xl overflow-hidden bg-zinc-100 dark:bg-gray-600 flex items-center justify-center flex-shrink-0">
                 {product.image ? (
                   <img className="w-full h-full object-cover" src={normalizeImageUrl(product.image)} alt={product.name} />
                 ) : (

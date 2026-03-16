@@ -56,6 +56,8 @@ const AddOrderModal: React.FC<AddOrderModalProps> = ({
   handleCreateOrder,
 }) => {
   if (!showAddOrderModal) return null;
+  const labelClass = 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1';
+  const inputClass = 'w-full px-4 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100';
 
   return (
     <div
@@ -86,7 +88,7 @@ const AddOrderModal: React.FC<AddOrderModalProps> = ({
 
           {/* Customer Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className={labelClass}>
               Customer Name <span className="text-red-500">*</span>
             </label>
             <input
@@ -94,13 +96,13 @@ const AddOrderModal: React.FC<AddOrderModalProps> = ({
               value={newOrderForm.customer}
               onChange={(e) => setNewOrderForm(prev => ({ ...prev, customer: e.target.value }))}
               placeholder="Enter customer name"
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              className={inputClass}
             />
           </div>
 
           {/* Phone */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className={labelClass}>
               Phone Number <span className="text-red-500">*</span>
             </label>
             <input
@@ -109,13 +111,13 @@ const AddOrderModal: React.FC<AddOrderModalProps> = ({
               onChange={(e) => setNewOrderForm(prev => ({ ...prev, phone: e.target.value }))}
               placeholder="01XXXXXXXXX"
               maxLength={13}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              className={inputClass}
             />
           </div>
 
           {/* Address */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className={labelClass}>
               Delivery Address
             </label>
             <input
@@ -123,17 +125,17 @@ const AddOrderModal: React.FC<AddOrderModalProps> = ({
               value={newOrderForm.address}
               onChange={(e) => setNewOrderForm(prev => ({ ...prev, address: e.target.value }))}
               placeholder="Full address"
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              className={inputClass}
             />
           </div>
 
           {/* Division */}
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Division <span className="text-red-500">*</span>
               </label>
-              <label className="flex items-center gap-2 text-xs text-gray-600 cursor-pointer">
+              <label className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={useManualAddress}
@@ -150,7 +152,7 @@ const AddOrderModal: React.FC<AddOrderModalProps> = ({
                 value={newOrderForm.division}
                 onChange={(e) => setNewOrderForm(prev => ({ ...prev, division: e.target.value }))}
                 placeholder="Enter division manually"
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                className={inputClass}
               />
             ) : (
               <select
@@ -163,7 +165,7 @@ const AddOrderModal: React.FC<AddOrderModalProps> = ({
                     upazila: '',
                   }));
                 }}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
+                className={inputClass}
               >
                 <option value="">Select Division</option>
                 <option value="Dhaka">Dhaka</option>
@@ -181,7 +183,7 @@ const AddOrderModal: React.FC<AddOrderModalProps> = ({
           {/* District - Only shows when division is selected OR manual mode */}
           {(newOrderForm.division || useManualAddress) && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className={labelClass}>
                 District <span className="text-red-500">*</span>
               </label>
 
@@ -191,7 +193,7 @@ const AddOrderModal: React.FC<AddOrderModalProps> = ({
                   value={newOrderForm.district}
                   onChange={(e) => setNewOrderForm(prev => ({ ...prev, district: e.target.value }))}
                   placeholder="Enter district manually"
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  className={inputClass}
                 />
               ) : (
                 <select
@@ -203,7 +205,7 @@ const AddOrderModal: React.FC<AddOrderModalProps> = ({
                       upazila: '',
                     }));
                   }}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
+                  className={inputClass}
                 >
                   <option value="">Select District</option>
                   {Object.keys(BD_LOCATIONS[newOrderForm.division as Division] || {}).map((district) => (
@@ -217,7 +219,7 @@ const AddOrderModal: React.FC<AddOrderModalProps> = ({
           {/* Upazila/PS - Only shows when district is selected OR manual mode */}
           {(newOrderForm.district || useManualAddress) && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className={labelClass}>
                 Upazila/PS <span className="text-red-500">*</span>
               </label>
 
@@ -227,13 +229,13 @@ const AddOrderModal: React.FC<AddOrderModalProps> = ({
                   value={newOrderForm.upazila}
                   onChange={(e) => setNewOrderForm(prev => ({ ...prev, upazila: e.target.value }))}
                   placeholder="Enter upazila/PS manually"
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  className={inputClass}
                 />
               ) : (
                 <select
                   value={newOrderForm.upazila}
                   onChange={(e) => setNewOrderForm(prev => ({ ...prev, upazila: e.target.value }))}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
+                  className={inputClass}
                 >
                   <option value="">Select Upazila/PS</option>
                   {upazilaOptions.map((upazila: string) => (
@@ -246,7 +248,7 @@ const AddOrderModal: React.FC<AddOrderModalProps> = ({
 
           {/* Product Selection - Searchable */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className={labelClass}>
               Product <span className="text-red-500">*</span>
             </label>
             <div className="relative product-search-container">
@@ -264,13 +266,13 @@ const AddOrderModal: React.FC<AddOrderModalProps> = ({
                 }}
                 onFocus={() => setShowProductDropdown(true)}
                 placeholder="Search product by name..."
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                className={inputClass}
               />
               <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
 
               {/* Dropdown List */}
               {showProductDropdown && (
-                <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                <div className="absolute z-50 w-full mt-1 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg max-h-60 overflow-y-auto">
                   {filteredProducts.length > 0 ? (
                     filteredProducts.map((product, idx) => (
                       <button
@@ -281,19 +283,19 @@ const AddOrderModal: React.FC<AddOrderModalProps> = ({
                           setProductSearchTerm('');
                           setShowProductDropdown(false);
                         }}
-                        className="w-full text-left px-4 py-3 hover:bg-blue-50 border-b border-gray-100 last:border-b-0 transition-colors"
+                        className="w-full text-left px-4 py-3 hover:bg-blue-50 dark:hover:bg-gray-800 border-b border-gray-100 dark:border-gray-700 last:border-b-0 transition-colors"
                       >
                         <div className="flex items-center justify-between">
-                          <span className="font-medium text-gray-900">{product.name || 'Unnamed'}</span>
+                          <span className="font-medium text-gray-900 dark:text-gray-100">{product.name || 'Unnamed'}</span>
                           <span className="text-blue-600 font-semibold">৳{(product.price || 0).toLocaleString()}</span>
                         </div>
                         {product.sku && (
-                          <div className="text-xs text-gray-500 mt-1">SKU: {product.sku}</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">SKU: {product.sku}</div>
                         )}
                       </button>
                     ))
                   ) : (
-                    <div className="px-4 py-6 text-center text-gray-500 text-sm">
+                    <div className="px-4 py-6 text-center text-gray-500 dark:text-gray-400 text-sm">
                       No products found
                     </div>
                   )}
@@ -304,7 +306,7 @@ const AddOrderModal: React.FC<AddOrderModalProps> = ({
 
           {/* Selected Product Preview */}
           {selectedProductForOrder && (
-            <div className="bg-gray-50 rounded-lg p-3 flex items-center gap-3">
+            <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-3 flex items-center gap-3">
               <img
                 src={selectedProductForOrder.image || '/placeholder.png'}
                 alt={selectedProductForOrder.name || 'Product'}
@@ -312,7 +314,7 @@ const AddOrderModal: React.FC<AddOrderModalProps> = ({
                 onError={(e) => { (e.target as HTMLImageElement).src = '/placeholder.png'; }}
               />
               <div className="flex-1">
-                <p className="font-medium text-gray-900 text-sm">{selectedProductForOrder.name || 'Unnamed'}</p>
+                <p className="font-medium text-gray-900 dark:text-gray-100 text-sm">{selectedProductForOrder.name || 'Unnamed'}</p>
                 <p className="text-blue-600 font-semibold">৳{(selectedProductForOrder.price || 0).toLocaleString()}</p>
               </div>
             </div>
@@ -321,7 +323,7 @@ const AddOrderModal: React.FC<AddOrderModalProps> = ({
           {/* Quantity and Delivery Charge */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className={labelClass}>
                 Quantity
               </label>
               <input
@@ -329,11 +331,11 @@ const AddOrderModal: React.FC<AddOrderModalProps> = ({
                 min="1"
                 value={newOrderForm.quantity}
                 onChange={(e) => setNewOrderForm(prev => ({ ...prev, quantity: Math.max(1, parseInt(e.target.value) || 1) }))}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                className={inputClass}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className={labelClass}>
                 Delivery Charge
               </label>
               <input
@@ -341,14 +343,14 @@ const AddOrderModal: React.FC<AddOrderModalProps> = ({
                 min=""
                 value={newOrderForm.deliveryCharge}
                 onChange={(e) => setNewOrderForm(prev => ({ ...prev, deliveryCharge: Math.max(0, parseInt(e.target.value)) }))}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                className={inputClass}
               />
             </div>
           </div>
 
           {/* Discount Section */}
           <div className="border-t pt-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Discount (Optional)
             </label>
             <div className="grid grid-cols-2 gap-3 mb-3">
@@ -362,7 +364,7 @@ const AddOrderModal: React.FC<AddOrderModalProps> = ({
                 className={`px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
                   newOrderForm.discountType === 'percentage'
                     ? 'bg-blue-500 text-white border-blue-500'
-                    : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                    : 'bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800'
                 }`}
               >
                 Percentage %
@@ -377,7 +379,7 @@ const AddOrderModal: React.FC<AddOrderModalProps> = ({
                 className={`px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${
                   newOrderForm.discountType === 'taka'
                     ? 'bg-blue-500 text-white border-blue-500'
-                    : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                    : 'bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800'
                 }`}
               >
                 Fixed টাকা
@@ -404,15 +406,15 @@ const AddOrderModal: React.FC<AddOrderModalProps> = ({
                     }
                   }}
                   placeholder={newOrderForm.discountType === 'percentage' ? 'Enter percentage (0-100)' : 'Enter amount in টাকা'}
-                  className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  className={inputClass}
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 text-sm">
                   {newOrderForm.discountType === 'percentage' ? '%' : '৳'}
                 </span>
               </div>
             )}
             {newOrderForm.discountType === 'none' && (
-              <p className="text-xs text-gray-500 italic">Select a discount type above to apply discount</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 italic">Select a discount type above to apply discount</p>
             )}
           </div>
 
@@ -430,14 +432,14 @@ const AddOrderModal: React.FC<AddOrderModalProps> = ({
             const total = subtotalAfterDiscount + newOrderForm.deliveryCharge;
 
             return (
-              <div className="bg-blue-50 rounded-lg p-4 space-y-2">
+              <div className="bg-blue-50 dark:bg-blue-950/20 rounded-lg p-4 space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Subtotal:</span>
-                  <span className="font-medium">৳{subtotal.toLocaleString()}</span>
+                  <span className="text-gray-600 dark:text-gray-300">Subtotal:</span>
+                  <span className="font-medium text-gray-900 dark:text-gray-100">৳{subtotal.toLocaleString()}</span>
                 </div>
                 {newOrderForm.discountType !== 'none' && discountAmount > 0 && (
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">
+                    <span className="text-gray-600 dark:text-gray-300">
                       Discount ({newOrderForm.discountType === 'percentage'
                         ? `${newOrderForm.discountValue}%`
                         : `৳${newOrderForm.discountValue}`}):
@@ -446,11 +448,11 @@ const AddOrderModal: React.FC<AddOrderModalProps> = ({
                   </div>
                 )}
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Delivery:</span>
-                  <span className="font-medium">৳{newOrderForm.deliveryCharge.toLocaleString()}</span>
+                  <span className="text-gray-600 dark:text-gray-300">Delivery:</span>
+                  <span className="font-medium text-gray-900 dark:text-gray-100">৳{newOrderForm.deliveryCharge.toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between text-base font-semibold border-t border-blue-100 pt-2">
-                  <span className="text-gray-900">Total:</span>
+                <div className="flex justify-between text-base font-semibold border-t border-blue-100 dark:border-blue-900 pt-2">
+                  <span className="text-gray-900 dark:text-gray-100">Total:</span>
                   <span className="text-blue-600">৳{total.toLocaleString()}</span>
                 </div>
               </div>
@@ -459,10 +461,10 @@ const AddOrderModal: React.FC<AddOrderModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end gap-3 p-3 sm:p-4 lg:p-4 xl:p-5 border-t bg-gray-50 rounded-b-2xl">
+        <div className="flex justify-end gap-3 p-3 sm:p-4 lg:p-4 xl:p-5 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 rounded-b-2xl">
           <button
             onClick={() => setShowAddOrderModal(false)}
-            className="px-5 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-100 transition-colors"
+            className="px-5 py-2.5 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-100 font-medium hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
           >
             Cancel
           </button>
