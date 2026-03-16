@@ -2,7 +2,7 @@
 import React, { ReactNode } from 'react';
 
 export type TenantPlan = 'starter' | 'growth' | 'enterprise';
-export type TenantStatus = 'active' | 'trialing' | 'suspended' | 'inactive' | 'pending';
+export type TenantStatus = 'active' | 'trialing' | 'suspended' | 'archived' | 'inactive' | 'pending';
 
 export interface TenantBranding {
   logo?: string;

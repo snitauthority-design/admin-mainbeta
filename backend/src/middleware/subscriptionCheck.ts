@@ -18,6 +18,8 @@ const EXEMPT_ROUTES = [
   '/api/tenants/by-domain',
   '/api/subscription/status', // Allow checking subscription status
   '/api/subscription/check',
+  '/api/notifications/dashboard-banners', // Super admin banner management
+  '/api/notifications/broadcast', // Super admin broadcast notifications
   '/health',
   '/api/health',
 ];

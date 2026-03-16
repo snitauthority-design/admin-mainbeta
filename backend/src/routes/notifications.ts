@@ -221,7 +221,7 @@ notificationsRouter.delete("/:tenantId/cleanup", async (req, res, next) => {
 // ========== SUPER ADMIN BROADCAST NOTIFICATIONS ==========
 
 // Create a broadcast notification to all or selected tenants (Super Admin only)
-notificationsRouter.post("/broadcast", async (req, res, next) => {
+notificationsRouter.post("/broadcast", authenticateToken, requireRole('super_admin'), async (req, res, next) => {
   try {
     const schema = z.object({
       type: z.enum(["info", "warning", "success", "error"]),
@@ -293,7 +293,7 @@ notificationsRouter.post("/broadcast", async (req, res, next) => {
 });
 
 // Get all broadcast notifications (for Super Admin listing)
-notificationsRouter.get("/broadcast/history", async (req, res, next) => {
+notificationsRouter.get("/broadcast/history", authenticateToken, requireRole('super_admin'), async (req, res, next) => {
   try {
     const { limit = "50" } = req.query;
     
@@ -339,7 +339,7 @@ notificationsRouter.get("/broadcast/history", async (req, res, next) => {
 });
 
 // Delete a broadcast notification (removes from all tenants)
-notificationsRouter.delete("/broadcast/:notificationId", async (req, res, next) => {
+notificationsRouter.delete("/broadcast/:notificationId", authenticateToken, requireRole('super_admin'), async (req, res, next) => {
   try {
     const { notificationId } = req.params;
     
