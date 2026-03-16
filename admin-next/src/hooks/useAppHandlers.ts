@@ -10,6 +10,8 @@ import type { LandingCheckoutPayload } from '../components/LandingPageComponents
 import { DataService } from '../services/DataService';
 import { ensureUniqueProductSlug, ensureVariantSelection, isAdminRole } from '../utils/appHelpers';
 
+const getTrackVisitorEvent = () => import('./useVisitorStats').then(m => m.trackVisitorEvent);
+
 // Lazy load toast
 let toastModule: typeof import('react-hot-toast') | null = null;
 const getToast = async () => {
@@ -319,6 +321,30 @@ export function useAppHandlers(props: UseAppHandlersProps) {
 
   // === CHECKOUT HANDLERS ===
   const handleCheckoutStart = useCallback((product: Product, quantity: number = 1, variant?: ProductVariantSelection) => {
+    if (activeTenantId) {
+      const productPage = `/product/${product.slug || product.id}`;
+      const sourcePage = typeof window !== 'undefined' ? window.location.pathname || '/' : '/';
+      getTrackVisitorEvent()
+        .then(trackVisitorEvent =>
+          trackVisitorEvent(
+            activeTenantId,
+            'checkout_start',
+            {
+              productId: product.id,
+              productName: product.name,
+              productSlug: product.slug || '',
+              productPage,
+              sourcePage,
+              quantity
+            },
+            `${activeTenantId}:checkout_start:${product.id}:${sourcePage}`
+          )
+        )
+        .catch((error) => {
+          console.warn('Failed to track checkout start:', error);
+        });
+    }
+
     setSelectedProduct(product);
     setCheckoutQuantity(quantity);
     setSelectedVariant(ensureVariantSelection(product, variant));
@@ -329,7 +355,7 @@ export function useAppHandlers(props: UseAppHandlersProps) {
     if (typeof window !== 'undefined') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  }, [setSelectedProduct, setCheckoutQuantity, setSelectedVariant, setCurrentView, navigate]);
+  }, [activeTenantId, setSelectedProduct, setCheckoutQuantity, setSelectedVariant, setCurrentView, navigate]);
 
   const handleCheckoutFromCart = useCallback((productId: number) => {
     const targetProduct = products.find(p => p.id === productId);
