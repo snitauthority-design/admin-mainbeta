@@ -1218,6 +1218,37 @@ const TenantStatusManager: React.FC<{
 };
 
 // Shop Status Manager Component
+const SHOP_STATUS_COLOR_CLASSES: Record<string, { active: string; dot: string }> = {
+  amber: {
+    active: 'bg-amber-50 border-amber-300 text-amber-700',
+    dot: 'border-amber-500 bg-amber-500',
+  },
+  blue: {
+    active: 'bg-blue-50 border-blue-300 text-blue-700',
+    dot: 'border-blue-500 bg-blue-500',
+  },
+  purple: {
+    active: 'bg-purple-50 border-purple-300 text-purple-700',
+    dot: 'border-purple-500 bg-purple-500',
+  },
+  emerald: {
+    active: 'bg-emerald-50 border-emerald-300 text-emerald-700',
+    dot: 'border-emerald-500 bg-emerald-500',
+  },
+  orange: {
+    active: 'bg-orange-50 border-orange-300 text-orange-700',
+    dot: 'border-orange-500 bg-orange-500',
+  },
+  red: {
+    active: 'bg-red-50 border-red-300 text-red-700',
+    dot: 'border-red-500 bg-red-500',
+  },
+  gray: {
+    active: 'bg-gray-100 border-gray-300 text-gray-700',
+    dot: 'border-gray-500 bg-gray-500',
+  },
+};
+
 const SHOP_STATUS_FIELDS: { key: keyof ShopStatus; label: string; description: string; color: string }[] = [
   { key: 'isTrialing', label: 'Trialing', description: 'Shop is on a trial period', color: 'amber' },
   { key: 'isStartups', label: 'Startups', description: 'Startup package', color: 'blue' },
@@ -1256,11 +1287,6 @@ const ShopStatusManager: React.FC<{
       setUpdatingTenant(null);
     }
   }, [onUpdateShopStatus]);
-
-  const getStatusColor = (field: string) => {
-    const statusField = SHOP_STATUS_FIELDS.find(f => f.key === field);
-    return statusField?.color || 'gray';
-  };
 
   return (
     <div>
@@ -1307,6 +1333,7 @@ const ShopStatusManager: React.FC<{
                   {SHOP_STATUS_FIELDS.map(({ key, label, description, color }) => {
                     const isActive = shopStatus[key] ?? false;
                     const isUpdating = updatingTenant === `${tenantId}-${key}`;
+                    const colorClasses = SHOP_STATUS_COLOR_CLASSES[color] || SHOP_STATUS_COLOR_CLASSES.gray;
 
                     return (
                       <button
@@ -1316,7 +1343,7 @@ const ShopStatusManager: React.FC<{
                         title={description}
                         className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-sm transition-all ${
                           isActive
-                            ? `bg-${color}-50 border-${color}-300 text-${color}-700`
+                            ? colorClasses.active
                             : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100'
                         } ${isUpdating ? 'opacity-50' : ''}`}
                       >
@@ -1324,7 +1351,7 @@ const ShopStatusManager: React.FC<{
                           <Loader2 className="w-3.5 h-3.5 animate-spin flex-shrink-0" />
                         ) : (
                           <div className={`w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
-                            isActive ? `border-${color}-500 bg-${color}-500` : 'border-slate-300'
+                            isActive ? colorClasses.dot : 'border-slate-300'
                           }`}>
                             {isActive && <CheckCircle className="w-2.5 h-2.5 text-white" />}
                           </div>

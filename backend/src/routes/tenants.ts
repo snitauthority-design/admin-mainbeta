@@ -15,8 +15,18 @@ import {
 } from '../services/tenantsService';
 import { getTenantData, setTenantData } from '../services/tenantDataService';
 import { env } from '../config/env';
-import type { CreateTenantPayload } from '../types/tenant';
+import type { CreateTenantPayload, ShopStatus } from '../types/tenant';
 import { authenticateToken, requireAdmin, requireRole } from '../middleware/auth';
+
+const DEFAULT_SHOP_STATUS: ShopStatus = {
+  isTrialing: false,
+  isStartups: false,
+  isEnterprise: false,
+  isPremium: false,
+  isExpired: false,
+  isSuspended: false,
+  isBlocked: false,
+};
 
 const createTenantSchema = z.object({
   name: z.string().min(2),
@@ -341,16 +351,7 @@ tenantsRouter.patch('/:id/shop-status', authenticateToken, requireRole('super_ad
       if (!tenant) {
         return res.status(404).json({ error: 'Tenant not found' });
       }
-      const defaultShopStatus = {
-        isTrialing: false,
-        isStartups: false,
-        isEnterprise: false,
-        isPremium: false,
-        isExpired: false,
-        isSuspended: false,
-        isBlocked: false,
-      };
-      const updatedShopStatus = { ...defaultShopStatus, ...(tenant.shopStatus || {}), ...shopStatus };
+      const updatedShopStatus = { ...DEFAULT_SHOP_STATUS, ...(tenant.shopStatus || {}), ...shopStatus };
       await updateTenantShopStatus(req.params.id, updatedShopStatus);
       res.json({ data: { id: req.params.id, shopStatus: updatedShopStatus } });
     } catch (error) {
