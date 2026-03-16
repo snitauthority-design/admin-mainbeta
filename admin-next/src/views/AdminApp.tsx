@@ -167,7 +167,7 @@ interface AdminLayoutProps {
   activePage: string;
   onNavigate: (page: string) => void;
   logo: string | null;
-  user?: { name?: string; email?: string; avatar?: string; role?: string } | null;
+  user?: { name?: string; email?: string; avatar?: string; image?: string; role?: string } | null;
   onLogout?: () => void;
   tenants?: Tenant[];
   activeTenantId?: string;
@@ -267,6 +267,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
         onSearchChange: () => {},
         onSearch: () => {},
         onNavigate: onNavigate,
+        onLogout,
         // Notification props
         notificationCount: unreadCount,
         notifications: notifications,

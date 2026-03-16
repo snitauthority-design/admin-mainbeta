@@ -17,7 +17,9 @@ import {
   ChevronDown,
   Building2,
   Check,
-  Loader2
+  Loader2,
+  User,
+  LogOut
 } from 'lucide-react';
 import { useDarkMode } from '../../context/DarkModeContext';
 import { DashboardHeaderProps } from './types';
@@ -150,6 +152,7 @@ const FigmaDashboardHeader: React.FC<DashboardHeaderProps> = ({
   onSearchChange,
   onSearch,
   onNavigate,
+  onLogout,
   // Notification props
   notificationCount = 0,
   onNotificationClick,
@@ -172,9 +175,11 @@ const FigmaDashboardHeader: React.FC<DashboardHeaderProps> = ({
   const [localSearchQuery, setLocalSearchQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [showTenantDropdown, setShowTenantDropdown] = useState(false);
+  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [tenantSearch, setTenantSearch] = useState('');
   const notificationRef = useRef<HTMLDivElement>(null);
   const tenantDropdownRef = useRef<HTMLDivElement>(null);
+  const profileDropdownRef = useRef<HTMLDivElement>(null);
 
   const isSuperAdmin = userRole === 'super_admin';
   const selectedTenant = tenants.find(t => t.id === activeTenantId || t._id === activeTenantId);
@@ -194,8 +199,28 @@ const FigmaDashboardHeader: React.FC<DashboardHeaderProps> = ({
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showTenantDropdown]);
+  useEffect(() => {
+    if (!showProfileDropdown) return;
+    const handleClickOutside = (event: MouseEvent) => {
+      if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target as Node)) {
+        setShowProfileDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showProfileDropdown]);
   const searchRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const profileImage = user?.image || user?.avatar;
+
+  const handleProfileAction = (action: 'profile' | 'settings' | 'logout') => {
+    setShowProfileDropdown(false);
+    if (action === 'logout') {
+      onLogout?.();
+      return;
+    }
+    onNavigate?.(action);
+  };
 
   // Filter menu items based on search query
   const filteredItems = React.useMemo(() => {
@@ -630,20 +655,52 @@ const FigmaDashboardHeader: React.FC<DashboardHeaderProps> = ({
           </div>
 
           {/* User Profile */}
-          <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3 ml-1 sm:ml-2 pl-2 sm:pl-3 md:pl-4 border-l border-gray-200 dark:border-gray-700">
-            <div className="text-right hidden sm:block">
-              <div className="text-[10px] sm:text-xs text-gray-400 dark:text-gray-500 font-['Poppins']">Admin</div>
-              <div className="text-xs sm:text-sm font-medium text-gray-900 dark:text-white truncate max-w-[60px] sm:max-w-[80px] md:max-w-none font-['Poppins']">{user?.name || 'Yuvraj'}</div>
-            </div>
-            <div className="w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 bg-gradient-to-br from-orange-400 to-orange-500 rounded-full flex items-center justify-center overflow-hidden">
-              {user?.avatar ? (
-                <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
-              ) : (
-                <span className="text-xs sm:text-sm font-bold text-white">
-                  {(user?.name || 'Y').charAt(0).toUpperCase()}
-                </span>
-              )}
-            </div>
+          <div className="relative ml-1 sm:ml-2 pl-2 sm:pl-3 md:pl-4 border-l border-gray-200 dark:border-gray-700" ref={profileDropdownRef}>
+            <button
+              type="button"
+              onClick={() => setShowProfileDropdown(prev => !prev)}
+              className="flex items-center gap-1.5 sm:gap-2 md:gap-3 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg px-1.5 py-1 transition-colors"
+            >
+              <div className="text-right hidden sm:block">
+                <div className="text-[10px] sm:text-xs text-gray-400 dark:text-gray-500 font-['Poppins']">Admin</div>
+                <div className="text-xs sm:text-sm font-medium text-gray-900 dark:text-white truncate max-w-[60px] sm:max-w-[80px] md:max-w-none font-['Poppins']">{user?.name || 'Yuvraj'}</div>
+              </div>
+              <div className="w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 bg-gradient-to-br from-orange-400 to-orange-500 rounded-full flex items-center justify-center overflow-hidden">
+                {profileImage ? (
+                  <img src={profileImage} alt={user?.name || 'Profile'} className="w-full h-full object-cover" />
+                ) : (
+                  <span className="text-xs sm:text-sm font-bold text-white">
+                    {(user?.name || 'Y').charAt(0).toUpperCase()}
+                  </span>
+                )}
+              </div>
+              <ChevronDown className={`w-3.5 h-3.5 text-gray-500 dark:text-gray-400 transition-transform ${showProfileDropdown ? 'rotate-180' : ''}`} />
+            </button>
+            {showProfileDropdown && (
+              <div className="absolute right-0 top-full mt-2 w-44 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-100 dark:border-gray-700 z-50 overflow-hidden">
+                <button
+                  onClick={() => handleProfileAction('profile')}
+                  className="w-full px-3 py-2.5 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2"
+                >
+                  <User className="w-4 h-4" />
+                  Go to Profile
+                </button>
+                <button
+                  onClick={() => handleProfileAction('settings')}
+                  className="w-full px-3 py-2.5 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2"
+                >
+                  <Settings className="w-4 h-4" />
+                  Update Info
+                </button>
+                <button
+                  onClick={() => handleProfileAction('logout')}
+                  className="w-full px-3 py-2.5 text-left text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-2 border-t border-gray-100 dark:border-gray-700"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Logout
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
