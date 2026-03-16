@@ -2,7 +2,7 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { authenticateToken } from '../middleware/auth';
 import { getDatabase } from '../db/mongo';
 import { ObjectId } from 'mongodb';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenerativeAI, FunctionDeclaration } from '@google/generative-ai';
 import { getTenantData, getTenantDataBatch } from '../services/tenantDataService';
 import { KeyManager, backoffWithJitter } from '../utils/keyManager';
 
@@ -87,6 +87,13 @@ Guidelines:
 - Include specific examples when helpful
 - Currency should be in BDT (৳) when discussing money
 - When asked about dashboard features, provide specific, accurate information
+
+**TOOLS AVAILABLE:**
+You have access to the following tools that you MUST use when relevant:
+
+1. **get_tenant_analytics** — Use this tool when the user asks about performance, analytics, conversion rates, revenue trends, or how their store is doing over a time period (7d or 30d). This fetches REAL data from their database.
+
+2. **create_landing_page_section** — Use this tool when the user asks you to create, build, or generate a landing page section (hero, cta, or features). After creating a section, always include the preview URL: /dashboard/builder?preview=true in your response so the user can preview their new section.
 
 Keep responses focused and practical. If asked something outside your expertise (like medical/legal advice), politely redirect to the appropriate professional.`;
 
@@ -749,6 +756,179 @@ function isBusinessDataQuery(message: string): boolean {
   return isExplicitRequest || (hasActionKeyword && hasDataKeyword);
 }
 
+// ── Tool Declarations for Agentic System ────────────────────────────────────
+
+const getTenantAnalyticsTool: FunctionDeclaration = {
+  name: 'get_tenant_analytics',
+  description:
+    'Fetch real-time analytics and performance data for the current tenant store. Returns revenue, conversion rate, and low-performing pages. Use this when the user asks about performance, analytics, conversion, revenue trends, or how their store is doing.',
+  parameters: {
+    type: 'OBJECT' as any,
+    properties: {
+      timeframe: {
+        type: 'STRING' as any,
+        description: 'The time period to analyze. Use "7d" for the last 7 days or "30d" for the last 30 days.',
+        enum: ['7d', '30d'],
+      },
+    },
+    required: ['timeframe'],
+  } as any,
+};
+
+const createLandingPageSectionTool: FunctionDeclaration = {
+  name: 'create_landing_page_section',
+  description:
+    'Create a new landing page section for the tenant store. Use this when the user asks to create, build, or add a landing page section such as a hero banner, call-to-action, or features section.',
+  parameters: {
+    type: 'OBJECT' as any,
+    properties: {
+      type: {
+        type: 'STRING' as any,
+        description: 'The type of landing page section to create.',
+        enum: ['hero', 'cta', 'features'],
+      },
+      heading: {
+        type: 'STRING' as any,
+        description: 'The main heading text for the section.',
+      },
+      subheading: {
+        type: 'STRING' as any,
+        description: 'The subheading or supporting text for the section.',
+      },
+      buttonText: {
+        type: 'STRING' as any,
+        description: 'The call-to-action button text (e.g. "Shop Now", "Learn More").',
+      },
+    },
+    required: ['type', 'heading', 'subheading', 'buttonText'],
+  } as any,
+};
+
+/**
+ * Execute get_tenant_analytics tool: queries real data from the DB.
+ * Returns revenue, conversion rate, and low-performing pages for the given timeframe.
+ */
+async function executeTenantAnalytics(tenantId: string, timeframe: string): Promise<{
+  revenue: number;
+  totalOrders: number;
+  totalVisitors: number;
+  conversionRate: number;
+  averageOrderValue: number;
+  lowPerformingPages: Array<{ path: string; views: number; bounceRate: number }>;
+  timeframe: string;
+}> {
+  const db = await getDatabase();
+  const days = timeframe === '30d' ? 30 : 7;
+  const since = new Date();
+  since.setDate(since.getDate() - days);
+
+  // Fetch orders within timeframe
+  const orders = await db.collection('orders').find({
+    tenantId,
+    createdAt: { $gte: since },
+  }).toArray();
+
+  const completedOrders = orders.filter(
+    (o) => ['delivered', 'completed'].includes((o.status || '').toLowerCase())
+  );
+  const revenue = completedOrders.reduce((sum, o) => sum + (o.total || 0), 0);
+  const averageOrderValue = completedOrders.length > 0 ? revenue / completedOrders.length : 0;
+
+  // Fetch visitor data within timeframe
+  let totalVisitors = 0;
+  try {
+    totalVisitors = await db.collection('visitors').countDocuments({
+      tenantId,
+      lastVisit: { $gte: since },
+    });
+  } catch {
+    // visitors collection may not exist yet
+  }
+
+  // Fetch page views for low-performing analysis
+  let lowPerformingPages: Array<{ path: string; views: number; bounceRate: number }> = [];
+  try {
+    const pageViewsAgg = await db.collection('page_views').aggregate([
+      { $match: { tenantId, timestamp: { $gte: since } } },
+      {
+        $group: {
+          _id: '$path',
+          views: { $sum: 1 },
+          bounces: { $sum: { $cond: [{ $eq: ['$isBounce', true] }, 1, 0] } },
+        },
+      },
+      { $project: { path: '$_id', views: 1, bounceRate: { $cond: [{ $gt: ['$views', 0] }, { $multiply: [{ $divide: ['$bounces', '$views'] }, 100] }, 0] } } },
+      { $sort: { views: 1 } },
+      { $limit: 5 },
+    ]).toArray();
+
+    lowPerformingPages = pageViewsAgg.map((p) => ({
+      path: p.path || p._id || '/unknown',
+      views: p.views || 0,
+      bounceRate: Math.round((p.bounceRate || 0) * 100) / 100,
+    }));
+  } catch {
+    // page_views collection may not exist
+  }
+
+  const conversionRate = totalVisitors > 0
+    ? Math.round((orders.length / totalVisitors) * 10000) / 100
+    : 0;
+
+  return {
+    revenue,
+    totalOrders: orders.length,
+    totalVisitors,
+    conversionRate,
+    averageOrderValue: Math.round(averageOrderValue),
+    lowPerformingPages,
+    timeframe: `Last ${days} days`,
+  };
+}
+
+/**
+ * Execute create_landing_page_section tool: inserts a landing page section into the DB.
+ * Returns the created section data and a preview URL.
+ */
+async function executeCreateLandingPageSection(
+  tenantId: string,
+  type: string,
+  heading: string,
+  subheading: string,
+  buttonText: string
+): Promise<{ success: boolean; sectionId: string; previewUrl: string; section: Record<string, unknown> }> {
+  const db = await getDatabase();
+  const sectionId = new ObjectId().toString();
+
+  const section = {
+    id: sectionId,
+    type,
+    heading,
+    subheading,
+    buttonText,
+    createdAt: new Date().toISOString(),
+    status: 'draft',
+  };
+
+  // Store in the landing_pages collection under tenant_data
+  await db.collection('tenant_data').updateOne(
+    { tenantId, key: 'landing_pages' },
+    {
+      $push: { 'data.sections': section } as any,
+      $set: { updatedAt: new Date().toISOString() },
+      $setOnInsert: { createdAt: new Date().toISOString() },
+    },
+    { upsert: true }
+  );
+
+  return {
+    success: true,
+    sectionId,
+    previewUrl: '/dashboard/builder?preview=true',
+    section,
+  };
+}
+
 // Check if message is requesting navigation to a specific section
 function detectNavigationRequest(message: string): { navigate: boolean; section?: string; action?: string } {
   const lowerMessage = message.toLowerCase();
@@ -869,6 +1049,7 @@ aiAssistantRouter.post('/chat', async (req: Request, res: Response) => {
     let response: string | undefined;
     let navigationInfo = null;
     let chartData = null;
+    let toolAction: { type: string; url: string; label: string; sectionId?: string } | null = null;
 
     // Check for navigation request first
     const navRequest = detectNavigationRequest(message);
@@ -915,7 +1096,7 @@ aiAssistantRouter.post('/chat', async (req: Request, res: Response) => {
 
       // If no specific report was generated, use AI or fallback
       if (!response) {
-        // Try Gemini AI with multi-key failover
+        // Try Gemini AI with multi-key failover (with tool/function calling support)
         if (keyManager.hasKeys) {
           try {
             // Build conversation history for Gemini
@@ -944,7 +1125,18 @@ aiAssistantRouter.post('/chat', async (req: Request, res: Response) => {
                 continue;
               }
               try {
-                const model = entry.genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+                // Initialize model with tools for agentic function calling
+                const model = entry.genAI.getGenerativeModel({
+                  model: 'gemini-2.5-flash',
+                  tools: [
+                    {
+                      functionDeclarations: [
+                        getTenantAnalyticsTool,
+                        createLandingPageSectionTool,
+                      ],
+                    },
+                  ],
+                });
 
                 // Start chat with history - use higher token limit only when business data is included
                 const chat = model.startChat({
@@ -956,7 +1148,80 @@ aiAssistantRouter.post('/chat', async (req: Request, res: Response) => {
                 });
 
                 const result = await chat.sendMessage(fullPrompt);
-                response = result.response.text();
+
+                // Check if Gemini returned a function call
+                const functionCall = result.response.functionCalls()?.[0];
+
+                if (functionCall) {
+                  console.log(`[AI Assistant] Function call detected: ${functionCall.name}`);
+
+                  // ── get_tenant_analytics ─────────────────────────────────
+                  if (functionCall.name === 'get_tenant_analytics') {
+                    const args = functionCall.args as { timeframe?: string };
+                    const timeframe = args.timeframe || '7d';
+
+                    const analyticsResult = await executeTenantAnalytics(tenantId, timeframe);
+                    console.log('[AI Assistant] Analytics data fetched:', JSON.stringify(analyticsResult));
+
+                    // Send tool result back to Gemini for final response
+                    const fnResult = await chat.sendMessage([
+                      {
+                        functionResponse: {
+                          name: 'get_tenant_analytics',
+                          response: analyticsResult,
+                        },
+                      },
+                    ]);
+
+                    response = fnResult.response.text();
+                    console.log('[AI Assistant] Final response after analytics tool call generated');
+                  }
+
+                  // ── create_landing_page_section ─────────────────────────
+                  if (functionCall.name === 'create_landing_page_section') {
+                    const args = functionCall.args as {
+                      type?: string;
+                      heading?: string;
+                      subheading?: string;
+                      buttonText?: string;
+                    };
+
+                    const sectionResult = await executeCreateLandingPageSection(
+                      tenantId,
+                      args.type || 'hero',
+                      args.heading || 'Welcome',
+                      args.subheading || '',
+                      args.buttonText || 'Learn More'
+                    );
+                    console.log('[AI Assistant] Landing page section created:', sectionResult.sectionId);
+
+                    // Send tool result back to Gemini for final response
+                    const fnResult = await chat.sendMessage([
+                      {
+                        functionResponse: {
+                          name: 'create_landing_page_section',
+                          response: sectionResult,
+                        },
+                      },
+                    ]);
+
+                    response = fnResult.response.text();
+
+                    // Attach tool action for frontend to render a preview link
+                    toolAction = {
+                      type: 'landing_page_created',
+                      url: sectionResult.previewUrl,
+                      label: `Preview your new ${args.type || 'hero'} section`,
+                      sectionId: sectionResult.sectionId,
+                    };
+                    console.log('[AI Assistant] Final response after landing page tool call generated');
+                  }
+                }
+
+                // Standard text response (no function call)
+                if (!response) {
+                  response = result.response.text();
+                }
                 console.log('[AI Assistant] Gemini response generated successfully');
                 break; // success
               } catch (err: any) {
@@ -1010,7 +1275,8 @@ aiAssistantRouter.post('/chat', async (req: Request, res: Response) => {
       response,
       timestamp: new Date().toISOString(),
       navigation: navigationInfo,
-      chartData: chartData
+      chartData: chartData,
+      toolAction: toolAction
     });
   } catch (error) {
     console.error('[AI Assistant] Error:', error);
@@ -1078,7 +1344,9 @@ aiAssistantRouter.get('/suggestions', async (req: Request, res: Response) => {
       "Give me a business summary",
       "What are my recent orders?",
       "Which products need restocking?",
-      "How can I increase my sales?"
+      "How can I increase my sales?",
+      "Analyze my store performance for the last 7 days",
+      "Create a hero section for my landing page"
     ];
     
     res.json({
