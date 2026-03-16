@@ -1433,8 +1433,18 @@ const SuperAdminDashboard: React.FC = () => {
           <IsActiveTogglebtn 
             tenants={tenants} 
             onSelectTenant={async (tenant: Tenant, action: string) => {
-              const newStatus = action === 'activate' ? 'active' : 'suspended';
-              await handleUpdateTenantStatus(tenant.id || tenant._id || '', newStatus as Tenant['status']);
+              const statusMap: Record<string, Tenant['status']> = {
+                activate: 'active',
+                reactivate: 'active',
+                suspend: 'suspended',
+                block: 'archived',
+              };
+              const newStatus = statusMap[action] || 'suspended';
+              try {
+                await handleUpdateTenantStatus(tenant.id || tenant._id || '', newStatus);
+              } catch (err) {
+                console.error('[SuperAdmin] Tenant status update failed:', err);
+              }
             }}
           />
         </React.Suspense>

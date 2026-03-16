@@ -12,6 +12,7 @@ const STATUS_COLORS: Record<string, { bg: string; text: string; dot: string; bor
   active: { bg: 'bg-emerald-50', text: 'text-emerald-700', dot: 'bg-emerald-500', border: 'border-emerald-200' },
   trialing: { bg: 'bg-amber-50', text: 'text-amber-700', dot: 'bg-amber-500', border: 'border-amber-200' },
   suspended: { bg: 'bg-red-50', text: 'text-red-700', dot: 'bg-red-500', border: 'border-red-200' },
+  archived: { bg: 'bg-purple-50', text: 'text-purple-700', dot: 'bg-purple-500', border: 'border-purple-200' },
   inactive: { bg: 'bg-gray-100', text: 'text-gray-600', dot: 'bg-gray-400', border: 'border-gray-200' },
   pending: { bg: 'bg-blue-50', text: 'text-blue-700', dot: 'bg-blue-500', border: 'border-blue-200' },
 };
@@ -69,7 +70,7 @@ const IsActiveTogglebtn: React.FC<IsActiveTogglebtnProps> = ({
         { label: 'Block', action: 'block', icon: <XCircle className="w-3.5 h-3.5" />, color: 'bg-red-600 hover:bg-red-700 text-white' }
       );
     }
-    if (tenant.status === 'suspended' || tenant.status === 'inactive') {
+    if (tenant.status === 'suspended' || tenant.status === 'inactive' || tenant.status === 'archived') {
       actions.push({ label: 'Reactivate', action: 'reactivate', icon: <RotateCcw className="w-3.5 h-3.5" />, color: 'bg-blue-600 hover:bg-blue-700 text-white' });
     }
     return actions;
