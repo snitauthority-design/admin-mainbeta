@@ -60,6 +60,7 @@ const AdminSMSMarketing = lazy(() => import(/* webpackChunkName: "admin-sms-mark
 const AdminActivityLog = lazy(() => import(/* webpackChunkName: "admin-activity-log" */ './AdminActivityLog'));
 const AdminShopDomain = lazy(() => import(/* webpackChunkName: "admin-shop-domain" */ './AdminShopDomain'));
 const AdminRewardPointSettings = lazy(() => import(/* webpackChunkName: "admin-reward-settings" */ './AdminRewardPointSettings'));
+const OnlineNowPage = lazy(() => import(/* webpackChunkName: "online-now" */ './OnlineNowPage'));
 const AdminExpenses = lazy(() => import(/* webpackChunkName: "admin-expenses" */ './AdminExpenses'));
 const AdminIncome = lazy(() => import(/* webpackChunkName: "admin-income" */ './AdminIncome'));
 const AdminPurchase = lazy(() => import(/* webpackChunkName: "admin-purchase" */ './AdminPurchase'));
@@ -330,6 +331,7 @@ const adminUrlMap: Record<string, string> = {
   'catalog_childcategories': '/catalog/child-categories',
   'catalog_brands': '/catalog/brands',
   'catalog_tags': '/catalog/tags',
+  'online_now': '/online-now',
 };
 
 // Reverse map URL to page name
@@ -426,6 +428,7 @@ const canAccessPage = (page: string, user?: User | null, permissions?: Permissio
         'theme_view': 'customization',
         'theme_colors': 'customization',
         'tenants': 'tenants',
+        'online_now': 'dashboard',
       };
 
       const resource = pageResourceMap[page];
@@ -836,6 +839,7 @@ const AdminApp: React.FC<AdminAppProps> = ({
         <Suspense fallback={<PageLoadingFallback section={adminSection} />}>
           {
             adminSection === 'incomplete_orders' ? <IncompleteOrder tenantId={activeTenantId} /> :
+            adminSection === 'online_now' ? <OnlineNowPage tenantId={activeTenantId} onBack={() => setAdminSection('dashboard')} /> :
             adminSection === 'orders' || adminSection === 'all_orders' ? <FigmaOrderList orders={orders} courierConfig={courierConfig} onUpdateOrder={onUpdateOrder} products={products} tenantId={activeTenantId} onNewOrder={onAddOrder} initialSelectedOrderId={selectedOrderIdFromNotification} onClearSelectedOrderId={() => setSelectedOrderIdFromNotification(null)} incomplete={function (): void {
                     throw new Error('Function not implemented.');
                   } } /> :

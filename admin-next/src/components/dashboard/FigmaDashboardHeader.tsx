@@ -120,6 +120,9 @@ const SEARCHABLE_MENU_ITEMS: SearchMenuItem[] = [
   { id: 'settings', label: 'Settings', keywords: ['settings', 'configuration', 'preferences', 'setup'], category: 'System' },
   { id: 'admin_control', label: 'Admin Control', keywords: ['admin', 'control', 'staff', 'roles', 'permissions'], category: 'System' },
   { id: 'billing', label: 'Billing & Subscription', keywords: ['billing', 'subscription', 'payment', 'plan', 'upgrade'], category: 'System' },
+
+  // Analytics
+  { id: 'online_now', label: 'Online Now / Visitors Analysis', keywords: ['online', 'visitors', 'traffic', 'sources', 'referrer', 'analytics', 'facebook', 'google', 'live'], category: 'Analytics' },
 ];
 
 

@@ -27,7 +27,7 @@ const TotalVisitorsIcon = ({ color }: { color: string }) => (
 );
 
 // === Visitor Card ===
-const VisitorCard = ({ icon, title, subtitle, value, bgColor, iconColor, titleColor, loading }: {
+const VisitorCard = ({ icon, title, subtitle, value, bgColor, iconColor, titleColor, loading, onClick }: {
   icon: React.ReactNode;
   title: string;
   subtitle: string;
@@ -36,10 +36,15 @@ const VisitorCard = ({ icon, title, subtitle, value, bgColor, iconColor, titleCo
   iconColor: string;
   titleColor: string;
   loading?: boolean;
+  onClick?: () => void;
 }) => (
   <div
-    className="relative w-full h-[81px] lg:h-full rounded-2xl shadow-sm flex items-center px-4 sm:px-5 gap-3 sm:gap-4 overflow-hidden transition-all duration-200 hover:shadow-md active:scale-[0.98] lg:min-h-0"
+    className={`relative w-full h-[81px] lg:h-full rounded-2xl shadow-sm flex items-center px-4 sm:px-5 gap-3 sm:gap-4 overflow-hidden transition-all duration-200 hover:shadow-md active:scale-[0.98] lg:min-h-0 ${onClick ? 'cursor-pointer' : ''}`}
     style={{ backgroundColor: bgColor }}
+    onClick={onClick}
+    role={onClick ? 'button' : undefined}
+    tabIndex={onClick ? 0 : undefined}
+    onKeyDown={onClick ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } } : undefined}
   >
     <div
       className="absolute w-[160px] h-[160px] rounded-full opacity-10 pointer-events-none"
@@ -171,9 +176,10 @@ const TrafficChartSection = ({ chartData, loading }: { chartData: any[]; loading
 // === Main Component ===
 interface VisitorAnalyticsProps {
   tenantId?: string;
+  onNavigate?: (page: string) => void;
 }
 
-export const VisitorAnalytics: React.FC<VisitorAnalyticsProps> = ({ tenantId }) => {
+export const VisitorAnalytics: React.FC<VisitorAnalyticsProps> = ({ tenantId, onNavigate }) => {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({ onlineNow: 0, todayVisitors: 0, totalVisitors: 0, last7Days: 0, pageViews: 0 });
   const [chartData, setChartData] = useState<any[]>([]);
@@ -271,6 +277,7 @@ export const VisitorAnalytics: React.FC<VisitorAnalyticsProps> = ({ tenantId }) 
             iconColor="#0EA5E9"
             titleColor="#0369A1"
             loading={loading}
+            onClick={onNavigate ? () => onNavigate('online_now') : undefined}
           />
         </div>
         <div className="flex-1 min-w-[160px] sm:min-w-0">
