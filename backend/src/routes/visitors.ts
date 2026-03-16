@@ -367,22 +367,32 @@ router.get('/:tenantId/sources', async (req: Request, res: Response) => {
     const categorizeReferrer = (referrer: string | null | undefined): string => {
       if (!referrer || referrer === '' || referrer === 'null' || referrer === 'undefined') return 'Direct';
 
-      const ref = referrer.toLowerCase();
+      // Try to extract hostname from the referrer URL for accurate matching
+      let hostname = '';
+      try {
+        // Handle referrers that may or may not have a protocol
+        const urlStr = referrer.startsWith('http') ? referrer : `https://${referrer}`;
+        hostname = new URL(urlStr).hostname.toLowerCase();
+      } catch {
+        // If URL parsing fails, use the raw string lowercased
+        hostname = referrer.toLowerCase();
+      }
 
-      if (ref.includes('google.com') || ref.includes('google.co')) return 'Google Search';
-      if (ref.includes('facebook.com') || ref.includes('fb.com') || ref.includes('fb.me')) return 'Facebook';
-      if (ref.includes('instagram.com')) return 'Instagram';
-      if (ref.includes('youtube.com') || ref.includes('youtu.be')) return 'YouTube';
-      if (ref.includes('twitter.com') || ref.includes('x.com') || ref.includes('t.co')) return 'Twitter/X';
-      if (ref.includes('tiktok.com')) return 'TikTok';
-      if (ref.includes('linkedin.com')) return 'LinkedIn';
-      if (ref.includes('pinterest.com')) return 'Pinterest';
-      if (ref.includes('reddit.com')) return 'Reddit';
-      if (ref.includes('whatsapp.com') || ref.includes('wa.me')) return 'WhatsApp';
-      if (ref.includes('telegram.org') || ref.includes('t.me')) return 'Telegram';
-      if (ref.includes('bing.com')) return 'Bing';
-      if (ref.includes('yahoo.com')) return 'Yahoo';
-      if (ref.includes('baidu.com')) return 'Baidu';
+      // Match against known domains using hostname (prevents substring false positives)
+      if (hostname.endsWith('google.com') || hostname.endsWith('google.co.in') || hostname.endsWith('google.co.uk') || hostname.endsWith('google.co.jp') || hostname === 'google.com' || hostname.match(/^(www\.)?google\./)) return 'Google Search';
+      if (hostname.endsWith('facebook.com') || hostname.endsWith('fb.com') || hostname.endsWith('fb.me') || hostname === 'facebook.com') return 'Facebook';
+      if (hostname.endsWith('instagram.com') || hostname === 'instagram.com') return 'Instagram';
+      if (hostname.endsWith('youtube.com') || hostname.endsWith('youtu.be') || hostname === 'youtube.com') return 'YouTube';
+      if (hostname.endsWith('twitter.com') || hostname.endsWith('x.com') || hostname.endsWith('t.co') || hostname === 'twitter.com') return 'Twitter/X';
+      if (hostname.endsWith('tiktok.com') || hostname === 'tiktok.com') return 'TikTok';
+      if (hostname.endsWith('linkedin.com') || hostname === 'linkedin.com') return 'LinkedIn';
+      if (hostname.endsWith('pinterest.com') || hostname === 'pinterest.com') return 'Pinterest';
+      if (hostname.endsWith('reddit.com') || hostname === 'reddit.com') return 'Reddit';
+      if (hostname.endsWith('whatsapp.com') || hostname.endsWith('wa.me') || hostname === 'whatsapp.com') return 'WhatsApp';
+      if (hostname.endsWith('telegram.org') || hostname.endsWith('t.me') || hostname === 'telegram.org') return 'Telegram';
+      if (hostname.endsWith('bing.com') || hostname === 'bing.com') return 'Bing';
+      if (hostname.endsWith('yahoo.com') || hostname === 'yahoo.com') return 'Yahoo';
+      if (hostname.endsWith('baidu.com') || hostname === 'baidu.com') return 'Baidu';
 
       return 'Other';
     };
