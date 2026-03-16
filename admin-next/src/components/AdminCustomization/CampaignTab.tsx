@@ -219,11 +219,11 @@ export const CampaignTab: React.FC<CampaignTabProps> = ({
 
   return (
     <>
-      <div className="flex gap-4">
+      <div className="flex gap-3 sm:gap-4">
         {/* Main Content */}
-        <div className="flex-1 space-y-2 sm:space-y-3">
+        <div className="flex-1 space-y-1.5 sm:space-y-2.5">
         {/* Filters and Search */}
-        <div className="flex flex-col gap-2 sm:gap-3">
+        <div className="flex flex-col gap-1.5 sm:gap-2.5">
           {/* Status Filters */}
           <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-1 overflow-x-auto scrollbar-hide -mx-3 px-3 sm:mx-0 sm:px-1">
             {(['All', 'Publish', 'Draft'] as CampaignFilterStatus[]).map((status) => (
@@ -232,8 +232,8 @@ export const CampaignTab: React.FC<CampaignTabProps> = ({
                 onClick={() => { setCampaignFilterStatus(status); setCampaignCurrentPage(1); }}
                 className={`px-3 sm:px-4 py-1.5 rounded-md text-xs sm:text-sm font-medium transition whitespace-nowrap ${
                   campaignFilterStatus === status
-                    ? 'bg-white text-green-600 shadow-sm'
-                    : 'text-gray-500 hover:text-gray-700'
+                    ? 'bg-white dark:bg-gray-900 text-green-600 shadow-sm'
+                    : 'text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white'
                 }`}
               >
                 {status === 'All' ? 'All Status' : status}
@@ -250,14 +250,14 @@ export const CampaignTab: React.FC<CampaignTabProps> = ({
                 value={campaignSearchQuery}
                 onChange={(e) => { setCampaignSearchQuery(e.target.value); setCampaignCurrentPage(1); }}
                 placeholder="Search Category"
-                className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500"
+                className="w-full pl-10 pr-4 py-1.5 sm:py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-green-500"
               />
             </div>
             <div className="flex gap-2 sm:gap-3">
               <select
                 value={campaignItemsPerPage}
                 onChange={(e) => { setCampaignItemsPerPage(Number(e.target.value)); setCampaignCurrentPage(1); }}
-                className="border rounded-lg px-2 sm:px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 flex-1 sm:flex-none"
+                className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg px-2 sm:px-3 py-1.5 sm:py-2 text-sm focus:ring-2 focus:ring-green-500 flex-1 sm:flex-none"
               >
                 <option value={10}>10</option>
                 <option value={25}>25</option>
@@ -276,7 +276,7 @@ export const CampaignTab: React.FC<CampaignTabProps> = ({
         </div>
 
         {/* Campaign Table - Desktop / Cards - Mobile */}
-        <div className="overflow-visible border rounded-lg shadow-sm min-h-[400px]">
+        <div className="overflow-visible border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm min-h-[360px]">
           {/* Desktop Table View */}
           <div className="hidden lg:block overflow-x-auto">
             <table className="w-full text-sm text-left">

@@ -24,7 +24,7 @@ const styles = {
   container: {
     display: 'flex',
     flexDirection: 'column' as const,
-    gap: '17px',
+    gap: '12px',
     width: '100%',
   },
   header: {
@@ -41,15 +41,15 @@ const styles = {
   headerTitle: {
     fontFamily: "'Lato', sans-serif",
     fontWeight: 700,
-    fontSize: '22px',
-    color: '#023337',
+    fontSize: '20px',
+    color: '#111827',
     letterSpacing: '0.11px',
     margin: 0,
   },
   headerSubtitle: {
     fontFamily: "'Poppins', sans-serif",
     fontWeight: 400,
-    fontSize: '16px',
+    fontSize: '14px',
     color: '#777',
     margin: 0,
   },
@@ -79,7 +79,7 @@ const styles = {
     background: 'white',
     borderRadius: '8px',
     overflow: 'visible',
-    minHeight: '400px',
+    minHeight: '340px',
   },
   tableHeader: {
     display: 'grid',
@@ -520,14 +520,14 @@ export const PopupTab: React.FC<PopupTabProps> = ({
 
   return (
     <>
-      <div className="flex gap-3 sm:gap-4 lg:gap-6" style={{ width: '100%' }}>
+      <div className="flex flex-col lg:flex-row gap-2 sm:gap-3 lg:gap-4" style={{ width: '100%' }}>
         {/* Main Content */}
-        <div style={{ ...styles.container, flex: 1, minWidth: 0 }}>
+        <div className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl p-2 sm:p-3" style={{ ...styles.container, flex: 1, minWidth: 0 }}>
           {/* Header Section */}
           <div style={styles.header}>
             <div style={styles.headerLeft}>
-              <p style={styles.headerTitle}>Popup</p>
-              <p style={styles.headerSubtitle}>Create unlimited Popup</p>
+              <p className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white m-0">Popup</p>
+              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-300 m-0">Create unlimited Popup</p>
             </div>
             <button
               style={styles.createButton}
@@ -740,11 +740,9 @@ export const PopupTab: React.FC<PopupTabProps> = ({
       </div>
 
       {/* Preview Panel */}
-      <div className="hidden lg:block" style={{
+      <div className="hidden lg:block bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl" style={{
         width: '320px',
         flexShrink: 0,
-        background: 'white',
-        borderRadius: '12px',
         boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
         padding: '20px',
         height: 'fit-content',

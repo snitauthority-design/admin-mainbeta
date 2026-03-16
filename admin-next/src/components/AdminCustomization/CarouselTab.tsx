@@ -301,28 +301,28 @@ export const CarouselTab: React.FC<CarouselTabProps> = ({
 
   return (
     <>
-      <div className="flex gap-4">
+      <div className="flex gap-3 sm:gap-4">
         {/* Main Content */}
-        <div className="flex-1 space-y-2 sm:space-y-3">
+        <div className="flex-1 space-y-1.5 sm:space-y-2.5">
       {/* Filters and Search */}
-      <div className="flex flex-col gap-2 sm:gap-3">
+      <div className="flex flex-col gap-1.5 sm:gap-2.5">
         {/* Status Filters - Scrollable on mobile */}
-        <div className="flex bg-gray-100 rounded-lg p-0.5 overflow-x-auto scrollbar-hide">
+        <div className="flex bg-gray-100 dark:bg-gray-700 rounded-lg p-0.5 overflow-x-auto scrollbar-hide">
           {(['All', 'Publish', 'Draft', 'Trash'] as CarouselFilterStatus[]).map((status) => (
             <button
               key={status}
               onClick={() => setCarouselFilterStatus(status)}
               className={`px-3 sm:px-4 py-1.5 rounded-md text-xs sm:text-sm font-medium transition whitespace-nowrap ${
                 carouselFilterStatus === status
-                  ? 'bg-white text-green-600 shadow-sm'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
+                  ? 'bg-white dark:bg-gray-900 text-green-600 shadow-sm'
+                  : 'text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white'
+                }`}
+              >
               {status === 'All' ? 'All Data' : status}
               {status === 'All' && (
-                <span className="ml-1 text-xs bg-gray-200 px-1.5 rounded-full">
-                  {websiteConfiguration.carouselItems.length}
-                </span>
+                 <span className="ml-1 text-xs bg-gray-200 dark:bg-gray-600 px-1.5 rounded-full">
+                   {websiteConfiguration.carouselItems.length}
+                 </span>
               )}
             </button>
           ))}
@@ -334,7 +334,7 @@ export const CarouselTab: React.FC<CarouselTabProps> = ({
             <input
               type="text"
               placeholder="Search"
-              className="w-full pl-9 pr-3 py-1.5 bg-white border rounded-lg text-sm focus:ring-1 focus:ring-green-500"
+              className="w-full pl-9 pr-3 py-1.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-800 dark:text-gray-100 focus:ring-1 focus:ring-green-500"
               value={carouselSearchQuery}
               onChange={(e) => setCarouselSearchQuery(e.target.value)}
             />
@@ -351,11 +351,11 @@ export const CarouselTab: React.FC<CarouselTabProps> = ({
       </div>
 
       {/* Carousel Table - Mobile Card View / Desktop Table */}
-      <div className="overflow-hidden border rounded-lg shadow-sm">
+      <div className="overflow-hidden border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
         {/* Desktop Table View */}
         <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-sm text-left">
-            <thead className="bg-gray-50 text-gray-700 font-semibold text-xs uppercase border-b">
+            <thead className="bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-semibold text-xs uppercase border-b border-gray-200 dark:border-gray-600">
               <tr>
                 <th className="px-3 py-2 w-10">
                   <input type="checkbox" className="rounded" />
@@ -369,7 +369,7 @@ export const CarouselTab: React.FC<CarouselTabProps> = ({
                 <th className="px-3 py-2 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
               {filteredCarouselItems.map((item) => (
                 <tr 
                   key={item.id} 
