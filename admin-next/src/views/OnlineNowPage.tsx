@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { ArrowLeft, Globe, Users, Eye, TrendingUp, RefreshCw, Monitor, Smartphone, Tablet } from 'lucide-react';
+import { ArrowLeft, Globe, Users, Eye, TrendingUp, RefreshCw, Activity } from 'lucide-react';
 
 interface TrafficSource {
   name: string;
@@ -31,11 +31,31 @@ interface OnlineNowPageProps {
   onBack?: () => void;
 }
 
+interface SourceConfig {
+  color: string;
+  bgColor: string;
+  icon?: string;
+  image?: string;
+}
+
+const ICON_SIZE_CLASSES = {
+  sm: 'w-4 h-4',
+  md: 'w-5 h-5',
+  lg: 'w-6 h-6',
+};
+
+const SOURCE_IMAGE_ASSETS = {
+  facebook: 'https://hdnfltv.com/image/nitimages/fb-icon.webp',
+  google: 'https://hdnfltv.com/image/nitimages/google-icon.webp',
+  other: 'https://hdnfltv.com/image/nitimages/other.webp',
+  link: 'https://hdnfltv.com/image/nitimages/Link-icon.webp',
+};
+
 // Source icon/color mapping
-const SOURCE_CONFIG: Record<string, { color: string; bgColor: string; icon: string }> = {
-  'Direct': { color: '#6366F1', bgColor: 'rgba(99, 102, 241, 0.1)', icon: '🔗' },
-  'Google Search': { color: '#4285F4', bgColor: 'rgba(66, 133, 244, 0.1)', icon: '🔍' },
-  'Facebook': { color: '#1877F2', bgColor: 'rgba(24, 119, 242, 0.1)', icon: '📘' },
+const SOURCE_CONFIG: Record<string, SourceConfig> = {
+  'Direct': { color: '#2563EB', bgColor: 'rgba(37, 99, 235, 0.12)', image: SOURCE_IMAGE_ASSETS.link, icon: '🔗' },
+  'Google Search': { color: '#4285F4', bgColor: 'rgba(66, 133, 244, 0.12)', image: SOURCE_IMAGE_ASSETS.google, icon: '🔍' },
+  'Facebook': { color: '#1877F2', bgColor: 'rgba(24, 119, 242, 0.12)', image: SOURCE_IMAGE_ASSETS.facebook, icon: '📘' },
   'Instagram': { color: '#E4405F', bgColor: 'rgba(228, 64, 95, 0.1)', icon: '📷' },
   'YouTube': { color: '#FF0000', bgColor: 'rgba(255, 0, 0, 0.1)', icon: '▶️' },
   'Twitter/X': { color: '#1DA1F2', bgColor: 'rgba(29, 161, 242, 0.1)', icon: '🐦' },
@@ -48,10 +68,48 @@ const SOURCE_CONFIG: Record<string, { color: string; bgColor: string; icon: stri
   'Bing': { color: '#008373', bgColor: 'rgba(0, 131, 115, 0.1)', icon: '🔎' },
   'Yahoo': { color: '#6001D2', bgColor: 'rgba(96, 1, 210, 0.1)', icon: '🟣' },
   'Baidu': { color: '#2932E1', bgColor: 'rgba(41, 50, 225, 0.1)', icon: '🔵' },
-  'Other': { color: '#6B7280', bgColor: 'rgba(107, 114, 128, 0.1)', icon: '🌐' },
+  'Other': { color: '#F97316', bgColor: 'rgba(249, 115, 22, 0.12)', image: SOURCE_IMAGE_ASSETS.other, icon: '🌐' },
 };
 
-const getSourceConfig = (name: string) => SOURCE_CONFIG[name] || SOURCE_CONFIG['Other'];
+const resolveSourceKey = (name: string) => {
+  const normalized = name.toLowerCase();
+
+  if (normalized.includes('facebook')) return 'Facebook';
+  if (normalized.includes('google')) return 'Google Search';
+  if (normalized.includes('direct') || normalized.includes('link')) return 'Direct';
+  if (normalized.includes('other')) return 'Other';
+
+  return name;
+};
+
+const getSourceConfig = (name: string) => SOURCE_CONFIG[resolveSourceKey(name)] || SOURCE_CONFIG['Other'];
+
+const SourceAvatar: React.FC<{ source: string; size?: keyof typeof ICON_SIZE_CLASSES }> = ({
+  source,
+  size = 'md',
+}) => {
+  const config = getSourceConfig(source);
+  const [imageFailed, setImageFailed] = useState(false);
+
+  return (
+    <div
+      className={`flex items-center justify-center rounded-xl ${size === 'lg' ? 'w-10 h-10' : size === 'sm' ? 'w-8 h-8' : 'w-9 h-9'}`}
+      style={{ backgroundColor: config.bgColor }}
+    >
+      {config.image && !imageFailed ? (
+        <img
+          src={config.image}
+          alt={`${source} icon`}
+          className={`${ICON_SIZE_CLASSES[size]} object-contain`}
+          loading="lazy"
+          onError={() => setImageFailed(true)}
+        />
+      ) : (
+        <span className={size === 'lg' ? 'text-lg' : size === 'sm' ? 'text-sm' : 'text-base'}>{config.icon}</span>
+      )}
+    </div>
+  );
+};
 
 const OnlineNowPage: React.FC<OnlineNowPageProps> = ({ tenantId, onBack }) => {
   const [data, setData] = useState<SourcesData | null>(null);
@@ -151,29 +209,36 @@ const OnlineNowPage: React.FC<OnlineNowPageProps> = ({ tenantId, onBack }) => {
   const uniqueSourceCount = sources.length;
 
   return (
-    <div className="p-3 sm:p-4 lg:p-6 space-y-4 sm:space-y-5 max-w-[1400px] mx-auto">
+    <div className="mx-auto max-w-[1360px] space-y-3 p-3 sm:p-4 lg:p-5">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div className="rounded-2xl border border-sky-100 bg-white/95 p-3 shadow-[0_18px_48px_-36px_rgba(37,99,235,0.55)] backdrop-blur dark:border-slate-700 dark:bg-slate-900/90">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-center gap-3">
           <button
             onClick={onBack}
-            className="w-9 h-9 flex items-center justify-center rounded-lg bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-all text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-sky-100 bg-sky-50 text-sky-700 transition-all hover:border-sky-200 hover:bg-sky-100 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
           >
             <ArrowLeft size={18} />
           </button>
           <div>
-            <h1 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">
+            <div className="mb-1 flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-1 rounded-full border border-orange-200 bg-orange-50 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-orange-700 dark:border-orange-500/20 dark:bg-orange-500/10 dark:text-orange-300">
+                <Activity size={12} />
+                live insights
+              </span>
+            </div>
+            <h1 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white sm:text-xl">
               Visitors Analysis
             </h1>
-            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-              Real-time traffic sources & visitor insights
+            <p className="text-xs text-slate-500 dark:text-slate-400 sm:text-sm">
+              Compact real-time overview of traffic sources, page views, and active visitors.
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {/* Period Filter */}
-          <div className="flex bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
+          <div className="flex overflow-hidden rounded-xl border border-slate-200 bg-slate-50 p-1 dark:border-slate-700 dark:bg-slate-800/80">
             {[
               { label: '24h', value: '24h' },
               { label: '7d', value: '7d' },
@@ -183,10 +248,10 @@ const OnlineNowPage: React.FC<OnlineNowPageProps> = ({ tenantId, onBack }) => {
               <button
                 key={opt.value}
                 onClick={() => setPeriod(opt.value)}
-                className={`px-3 py-1.5 text-xs sm:text-sm font-medium transition-colors ${
+                className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-all sm:text-sm ${
                   period === opt.value
-                    ? 'bg-indigo-500 text-white'
-                    : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                    ? 'bg-sky-600 text-white shadow-sm'
+                    : 'text-slate-600 hover:bg-white hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-white'
                 }`}
               >
                 {opt.label}
@@ -197,137 +262,142 @@ const OnlineNowPage: React.FC<OnlineNowPageProps> = ({ tenantId, onBack }) => {
           <button
             onClick={handleRefresh}
             disabled={refreshing}
-            className="w-9 h-9 flex items-center justify-center rounded-lg bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-all text-gray-600 dark:text-gray-300"
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-orange-200 bg-orange-50 text-orange-600 transition-all hover:bg-orange-100 disabled:cursor-not-allowed disabled:opacity-70 dark:border-orange-500/20 dark:bg-orange-500/10 dark:text-orange-300 dark:hover:bg-orange-500/20"
           >
             <RefreshCw size={16} className={refreshing ? 'animate-spin' : ''} />
           </button>
         </div>
+        </div>
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {/* Online Now */}
-        <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl p-4 sm:p-5 border border-green-100 dark:border-green-800/30">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-8 h-8 rounded-lg bg-green-100 dark:bg-green-800/40 flex items-center justify-center">
-              <div className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse" />
+        <div className="rounded-2xl border border-sky-100 bg-sky-50/90 p-3 shadow-[0_18px_40px_-34px_rgba(37,99,235,0.55)] dark:border-sky-500/20 dark:bg-sky-500/10">
+          <div className="mb-2 flex items-center gap-2">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/80 dark:bg-slate-900/60">
+              <div className="h-2.5 w-2.5 animate-pulse rounded-full bg-emerald-500" />
             </div>
-            <span className="text-xs sm:text-sm font-medium text-green-700 dark:text-green-400">Online Now</span>
+            <span className="text-xs font-semibold uppercase tracking-[0.14em] text-sky-700 dark:text-sky-300">Online Now</span>
           </div>
-          <div className="text-2xl sm:text-3xl font-bold text-green-800 dark:text-green-300 tabular-nums">
+          <div className="text-2xl font-bold tabular-nums text-slate-900 dark:text-white sm:text-3xl">
             {onlineCount}
           </div>
-          <p className="text-[10px] sm:text-xs text-green-600 dark:text-green-500 mt-1">Active in last 5 min</p>
+          <p className="mt-1 text-[11px] text-sky-700/80 dark:text-sky-200/80">Active in the last 5 minutes</p>
         </div>
 
         {/* Total Views */}
-        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-4 sm:p-5 border border-blue-100 dark:border-blue-800/30">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-800/40 flex items-center justify-center">
-              <Eye size={16} className="text-blue-600 dark:text-blue-400" />
+        <div className="rounded-2xl border border-orange-100 bg-orange-50/90 p-3 shadow-[0_18px_40px_-34px_rgba(249,115,22,0.55)] dark:border-orange-500/20 dark:bg-orange-500/10">
+          <div className="mb-2 flex items-center gap-2">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/80 dark:bg-slate-900/60">
+              <Eye size={16} className="text-orange-600 dark:text-orange-300" />
             </div>
-            <span className="text-xs sm:text-sm font-medium text-blue-700 dark:text-blue-400">Page Views</span>
+            <span className="text-xs font-semibold uppercase tracking-[0.14em] text-orange-700 dark:text-orange-300">Page Views</span>
           </div>
-          <div className="text-2xl sm:text-3xl font-bold text-blue-800 dark:text-blue-300 tabular-nums">
+          <div className="text-2xl font-bold tabular-nums text-slate-900 dark:text-white sm:text-3xl">
             {totalViews.toLocaleString()}
           </div>
-          <p className="text-[10px] sm:text-xs text-blue-600 dark:text-blue-500 mt-1">In selected period</p>
+          <p className="mt-1 text-[11px] text-orange-700/80 dark:text-orange-200/80">Across the selected range</p>
         </div>
 
         {/* Top Source */}
-        <div className="bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-violet-900/20 rounded-xl p-4 sm:p-5 border border-purple-100 dark:border-purple-800/30">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-8 h-8 rounded-lg bg-purple-100 dark:bg-purple-800/40 flex items-center justify-center">
-              <TrendingUp size={16} className="text-purple-600 dark:text-purple-400" />
+        <div className="rounded-2xl border border-sky-100 bg-sky-50/90 p-3 shadow-[0_18px_40px_-34px_rgba(37,99,235,0.55)] dark:border-sky-500/20 dark:bg-sky-500/10">
+          <div className="mb-2 flex items-center gap-2">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/80 dark:bg-slate-900/60">
+              <TrendingUp size={16} className="text-sky-600 dark:text-sky-300" />
             </div>
-            <span className="text-xs sm:text-sm font-medium text-purple-700 dark:text-purple-400">Top Source</span>
+            <span className="text-xs font-semibold uppercase tracking-[0.14em] text-sky-700 dark:text-sky-300">Top Source</span>
           </div>
-          <div className="text-lg sm:text-xl font-bold text-purple-800 dark:text-purple-300 truncate">
+          <div className="truncate text-lg font-bold text-slate-900 dark:text-white sm:text-xl">
             {topSource}
           </div>
-          <p className="text-[10px] sm:text-xs text-purple-600 dark:text-purple-500 mt-1">
+          <p className="mt-1 text-[11px] text-sky-700/80 dark:text-sky-200/80">
             {sources[0]?.percentage || 0}% of traffic
           </p>
         </div>
 
         {/* Total Sources */}
-        <div className="bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 rounded-xl p-4 sm:p-5 border border-orange-100 dark:border-orange-800/30">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-8 h-8 rounded-lg bg-orange-100 dark:bg-orange-800/40 flex items-center justify-center">
-              <Globe size={16} className="text-orange-600 dark:text-orange-400" />
+        <div className="rounded-2xl border border-orange-100 bg-orange-50/90 p-3 shadow-[0_18px_40px_-34px_rgba(249,115,22,0.55)] dark:border-orange-500/20 dark:bg-orange-500/10">
+          <div className="mb-2 flex items-center gap-2">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/80 dark:bg-slate-900/60">
+              <Globe size={16} className="text-orange-600 dark:text-orange-300" />
             </div>
-            <span className="text-xs sm:text-sm font-medium text-orange-700 dark:text-orange-400">Sources</span>
+            <span className="text-xs font-semibold uppercase tracking-[0.14em] text-orange-700 dark:text-orange-300">Sources</span>
           </div>
-          <div className="text-2xl sm:text-3xl font-bold text-orange-800 dark:text-orange-300 tabular-nums">
+          <div className="text-2xl font-bold tabular-nums text-slate-900 dark:text-white sm:text-3xl">
             {uniqueSourceCount}
           </div>
-          <p className="text-[10px] sm:text-xs text-orange-600 dark:text-orange-500 mt-1">Unique traffic sources</p>
+          <p className="mt-1 text-[11px] text-orange-700/80 dark:text-orange-200/80">Unique traffic channels</p>
         </div>
       </div>
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-5">
+      <div className="grid grid-cols-1 gap-3 xl:grid-cols-12">
         {/* Traffic Sources Breakdown */}
-        <div className="lg:col-span-7 bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 sm:p-5">
-          <h2 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white mb-4">
-            Traffic Sources
-          </h2>
+        <div className="rounded-2xl border border-sky-100 bg-white p-3 shadow-[0_18px_48px_-38px_rgba(37,99,235,0.45)] dark:border-slate-700 dark:bg-slate-900 xl:col-span-8">
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <div>
+              <h2 className="text-sm font-semibold text-slate-900 dark:text-white sm:text-base">
+                Traffic Sources
+              </h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Compact breakdown of where visitors are coming from.
+              </p>
+            </div>
+            <div className="rounded-full border border-sky-100 bg-sky-50 px-2.5 py-1 text-xs font-semibold text-sky-700 dark:border-sky-500/20 dark:bg-sky-500/10 dark:text-sky-300">
+              {uniqueSourceCount} sources
+            </div>
+          </div>
 
           {sources.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-gray-400">
+            <div className="flex flex-col items-center justify-center py-10 text-slate-400">
               <Globe size={40} className="mb-3 opacity-50" />
               <p className="text-sm">No visitor data yet</p>
               <p className="text-xs mt-1">Traffic sources will appear as visitors arrive</p>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2">
               {sources.map((source, idx) => {
                 const config = getSourceConfig(source.name);
                 return (
-                  <div key={idx} className="group">
-                    <div className="flex items-center gap-3 p-2.5 sm:p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                      {/* Source Icon */}
-                      <div
-                        className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center text-base sm:text-lg flex-shrink-0"
-                        style={{ backgroundColor: config.bgColor }}
-                      >
-                        {config.icon}
-                      </div>
+                  <div
+                    key={idx}
+                    className="rounded-2xl border border-slate-100 bg-slate-50/80 p-2.5 transition-colors hover:border-slate-200 hover:bg-white dark:border-slate-800 dark:bg-slate-800/70 dark:hover:border-slate-700 dark:hover:bg-slate-800"
+                  >
+                    <div className="flex items-center gap-3">
+                      <SourceAvatar source={source.name} />
 
-                      {/* Source Info */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-1.5">
-                          <span className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                            {source.name}
-                          </span>
-                          <div className="flex items-center gap-2 flex-shrink-0 ml-2">
-                            <span className="text-xs text-gray-500 dark:text-gray-400">
-                              {source.visitors} visitors
+                      <div className="min-w-0 flex-1">
+                        <div className="mb-1.5 flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <span className="block truncate text-sm font-semibold text-slate-900 dark:text-white">
+                              {source.name}
                             </span>
-                            <span
-                              className="text-xs font-semibold px-2 py-0.5 rounded-full"
-                              style={{ color: config.color, backgroundColor: config.bgColor }}
-                            >
-                              {source.percentage}%
+                            <span className="text-[11px] text-slate-500 dark:text-slate-400">
+                              {source.visitors} visitors • {source.count.toLocaleString()} views
                             </span>
                           </div>
+                          <span
+                            className="rounded-full px-2 py-0.5 text-[11px] font-semibold"
+                            style={{ color: config.color, backgroundColor: config.bgColor }}
+                          >
+                            {source.percentage}%
+                          </span>
                         </div>
 
-                        {/* Progress Bar */}
-                        <div className="w-full h-1.5 sm:h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
-                          <div
-                            className="h-full rounded-full transition-all duration-500 ease-out"
-                            style={{
-                              width: `${source.percentage}%`,
-                              backgroundColor: config.color,
-                              minWidth: source.percentage > 0 ? '4px' : '0'
-                            }}
-                          />
-                        </div>
-
-                        <div className="flex items-center justify-between mt-1">
-                          <span className="text-[10px] sm:text-xs text-gray-400 dark:text-gray-500">
-                            {source.count.toLocaleString()} page views
+                        <div className="flex items-center gap-2">
+                          <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
+                            <div
+                              className="h-full rounded-full transition-all duration-500 ease-out"
+                              style={{
+                                width: `${source.percentage}%`,
+                                backgroundColor: config.color,
+                                minWidth: source.percentage > 0 ? '4px' : '0'
+                              }}
+                            />
+                          </div>
+                          <span className="w-9 text-right text-[11px] font-semibold text-slate-500 dark:text-slate-400">
+                            #{idx + 1}
                           </span>
                         </div>
                       </div>
@@ -340,23 +410,23 @@ const OnlineNowPage: React.FC<OnlineNowPageProps> = ({ tenantId, onBack }) => {
         </div>
 
         {/* Right Column */}
-        <div className="lg:col-span-5 space-y-4 sm:space-y-5">
+        <div className="space-y-3 xl:col-span-4">
           {/* Online Now by Source */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 sm:p-5">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white">
+          <div className="rounded-2xl border border-orange-100 bg-white p-3 shadow-[0_18px_48px_-38px_rgba(249,115,22,0.45)] dark:border-slate-700 dark:bg-slate-900">
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="text-sm font-semibold text-slate-900 dark:text-white sm:text-base">
                 Online by Source
               </h2>
-              <div className="flex items-center gap-1.5">
-                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                <span className="text-xs font-medium text-green-600 dark:text-green-400">
+              <div className="flex items-center gap-1.5 rounded-full border border-orange-200 bg-orange-50 px-2 py-1 dark:border-orange-500/20 dark:bg-orange-500/10">
+                <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-[11px] font-semibold text-orange-700 dark:text-orange-300">
                   {onlineCount} online
                 </span>
               </div>
             </div>
 
             {Object.keys(onlineBySource).length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-8 text-gray-400">
+              <div className="flex flex-col items-center justify-center py-8 text-slate-400">
                 <Users size={32} className="mb-2 opacity-50" />
                 <p className="text-xs">No visitors online right now</p>
               </div>
@@ -368,11 +438,14 @@ const OnlineNowPage: React.FC<OnlineNowPageProps> = ({ tenantId, onBack }) => {
                     const config = getSourceConfig(source);
                     const pct = onlineCount > 0 ? Math.round((count / onlineCount) * 100) : 0;
                     return (
-                      <div key={source} className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                        <span className="text-base flex-shrink-0">{config.icon}</span>
-                        <span className="text-sm text-gray-700 dark:text-gray-300 flex-1 truncate">{source}</span>
-                        <span className="text-sm font-semibold text-gray-900 dark:text-white tabular-nums">{count}</span>
-                        <span className="text-[10px] text-gray-400 w-8 text-right">{pct}%</span>
+                      <div
+                        key={source}
+                        className="flex items-center gap-2 rounded-2xl border border-slate-100 bg-slate-50/80 p-2 transition-colors hover:border-slate-200 hover:bg-white dark:border-slate-800 dark:bg-slate-800/70 dark:hover:border-slate-700"
+                      >
+                        <SourceAvatar source={source} size="sm" />
+                        <span className="flex-1 truncate text-sm font-medium text-slate-700 dark:text-slate-300">{source}</span>
+                        <span className="text-sm font-semibold tabular-nums text-slate-900 dark:text-white">{count}</span>
+                        <span className="w-8 text-right text-[11px] font-medium text-slate-400">{pct}%</span>
                       </div>
                     );
                   })}
@@ -381,38 +454,45 @@ const OnlineNowPage: React.FC<OnlineNowPageProps> = ({ tenantId, onBack }) => {
           </div>
 
           {/* Active Visitors */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 sm:p-5">
-            <h2 className="text-sm sm:text-base font-semibold text-gray-900 dark:text-white mb-4">
-              Active Visitors
-            </h2>
+          <div className="rounded-2xl border border-sky-100 bg-white p-3 shadow-[0_18px_48px_-38px_rgba(37,99,235,0.45)] dark:border-slate-700 dark:bg-slate-900">
+            <div className="mb-3 flex items-center justify-between gap-2">
+              <div>
+                <h2 className="text-sm font-semibold text-slate-900 dark:text-white sm:text-base">
+                  Active Visitors
+                </h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Latest pages visitors are viewing right now.</p>
+              </div>
+              <div className="rounded-full border border-sky-100 bg-sky-50 px-2 py-1 text-[11px] font-semibold text-sky-700 dark:border-sky-500/20 dark:bg-sky-500/10 dark:text-sky-300">
+                {onlineVisitors.length}
+              </div>
+            </div>
 
             {onlineVisitors.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-8 text-gray-400">
+              <div className="flex flex-col items-center justify-center py-8 text-slate-400">
                 <Users size={32} className="mb-2 opacity-50" />
                 <p className="text-xs">No active visitors</p>
               </div>
             ) : (
-              <div className="space-y-1.5 max-h-[300px] overflow-y-auto">
+              <div className="max-h-[280px] space-y-1.5 overflow-y-auto pr-1">
                 {onlineVisitors.slice(0, 20).map((visitor, idx) => {
-                  const config = getSourceConfig(visitor.source);
                   return (
                     <div
                       key={idx}
-                      className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
+                      className="flex items-center gap-2 rounded-2xl border border-slate-100 bg-slate-50/80 p-2 transition-colors hover:border-slate-200 hover:bg-white dark:border-slate-800 dark:bg-slate-800/70 dark:hover:border-slate-700"
                     >
-                      <div className="w-7 h-7 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
-                        <Users size={12} className="text-gray-500 dark:text-gray-400" />
+                      <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-orange-50 text-orange-600 dark:bg-orange-500/10 dark:text-orange-300">
+                        <Users size={13} />
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-xs font-medium text-gray-700 dark:text-gray-300 truncate">
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate text-xs font-semibold text-slate-700 dark:text-slate-200">
                           {visitor.page || '/'}
                         </div>
-                        <div className="flex items-center gap-1.5 mt-0.5">
-                          <span className="text-[10px]">{config.icon}</span>
-                          <span className="text-[10px] text-gray-400 dark:text-gray-500">{visitor.source}</span>
+                        <div className="mt-1 flex items-center gap-1.5">
+                          <SourceAvatar source={visitor.source} size="sm" />
+                          <span className="truncate text-[11px] text-slate-500 dark:text-slate-400">{visitor.source}</span>
                         </div>
                       </div>
-                      <span className="text-[10px] text-gray-400 dark:text-gray-500 flex-shrink-0">
+                      <span className="flex-shrink-0 text-[10px] font-medium text-slate-400 dark:text-slate-500">
                         {formatTimeAgo(visitor.lastSeen)}
                       </span>
                     </div>
