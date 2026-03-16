@@ -302,4 +302,207 @@ router.get('/:tenantId/online', async (req: Request, res: Response) => {
   }
 });
 
+// Get traffic sources (referrer analysis)
+router.get('/:tenantId/sources', async (req: Request, res: Response) => {
+  try {
+    const { tenantId } = req.params;
+    const { period = '7d' } = req.query;
+
+    const db = await getDatabase();
+    const pageViewsCollection = db.collection<PageViewDoc>('page_views');
+
+    // Calculate date range
+    const now = new Date();
+    let startDate = new Date();
+
+    switch (period) {
+      case 'day':
+      case '24h':
+        startDate.setHours(startDate.getHours() - 24);
+        break;
+      case 'month':
+      case '30d':
+        startDate.setDate(startDate.getDate() - 30);
+        break;
+      case 'year':
+      case '365d':
+        startDate.setFullYear(startDate.getFullYear() - 1);
+        break;
+      case 'all':
+        startDate = new Date(0);
+        break;
+      default:
+        startDate.setDate(startDate.getDate() - 7);
+    }
+
+    // Aggregate referrers
+    const referrerData = await pageViewsCollection.aggregate([
+      {
+        $match: {
+          tenantId,
+          timestamp: { $gte: startDate }
+        }
+      },
+      {
+        $group: {
+          _id: '$referrer',
+          count: { $sum: 1 },
+          uniqueVisitors: { $addToSet: '$visitorId' }
+        }
+      },
+      {
+        $project: {
+          referrer: '$_id',
+          count: 1,
+          visitors: { $size: '$uniqueVisitors' },
+          _id: 0
+        }
+      },
+      { $sort: { count: -1 } }
+    ]).toArray();
+
+    // Categorize referrers into sources
+    const sourceMap: Record<string, { count: number; visitors: number; referrers: string[] }> = {};
+
+    const categorizeReferrer = (referrer: string | null | undefined): string => {
+      if (!referrer || referrer === '' || referrer === 'null' || referrer === 'undefined') return 'Direct';
+
+      const ref = referrer.toLowerCase();
+
+      if (ref.includes('google.com') || ref.includes('google.co')) return 'Google Search';
+      if (ref.includes('facebook.com') || ref.includes('fb.com') || ref.includes('fb.me')) return 'Facebook';
+      if (ref.includes('instagram.com')) return 'Instagram';
+      if (ref.includes('youtube.com') || ref.includes('youtu.be')) return 'YouTube';
+      if (ref.includes('twitter.com') || ref.includes('x.com') || ref.includes('t.co')) return 'Twitter/X';
+      if (ref.includes('tiktok.com')) return 'TikTok';
+      if (ref.includes('linkedin.com')) return 'LinkedIn';
+      if (ref.includes('pinterest.com')) return 'Pinterest';
+      if (ref.includes('reddit.com')) return 'Reddit';
+      if (ref.includes('whatsapp.com') || ref.includes('wa.me')) return 'WhatsApp';
+      if (ref.includes('telegram.org') || ref.includes('t.me')) return 'Telegram';
+      if (ref.includes('bing.com')) return 'Bing';
+      if (ref.includes('yahoo.com')) return 'Yahoo';
+      if (ref.includes('baidu.com')) return 'Baidu';
+
+      return 'Other';
+    };
+
+    for (const item of referrerData) {
+      const source = categorizeReferrer(item.referrer);
+      if (!sourceMap[source]) {
+        sourceMap[source] = { count: 0, visitors: 0, referrers: [] };
+      }
+      sourceMap[source].count += item.count;
+      sourceMap[source].visitors += item.visitors;
+      if (item.referrer && !sourceMap[source].referrers.includes(item.referrer)) {
+        sourceMap[source].referrers.push(item.referrer);
+      }
+    }
+
+    // Convert to array and calculate percentages
+    const totalViews = Object.values(sourceMap).reduce((sum, s) => sum + s.count, 0) || 1;
+    const sources = Object.entries(sourceMap)
+      .map(([name, data]) => ({
+        name,
+        count: data.count,
+        visitors: data.visitors,
+        percentage: Math.round((data.count / totalViews) * 100),
+        referrers: data.referrers.slice(0, 5) // Top 5 referrer URLs per source
+      }))
+      .sort((a, b) => b.count - a.count);
+
+    // Daily source breakdown for chart
+    const dailySources = await pageViewsCollection.aggregate([
+      {
+        $match: {
+          tenantId,
+          timestamp: { $gte: startDate }
+        }
+      },
+      {
+        $group: {
+          _id: {
+            date: { $dateToString: { format: '%Y-%m-%d', date: '$timestamp' } },
+            referrer: '$referrer'
+          },
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $group: {
+          _id: '$_id.date',
+          referrers: {
+            $push: {
+              referrer: '$_id.referrer',
+              count: '$count'
+            }
+          },
+          total: { $sum: '$count' }
+        }
+      },
+      { $sort: { _id: 1 } }
+    ]).toArray();
+
+    // Transform daily data with categorized sources
+    const dailySourceData = dailySources.map((day: any) => {
+      const daySources: Record<string, number> = {};
+      for (const ref of day.referrers) {
+        const source = categorizeReferrer(ref.referrer);
+        daySources[source] = (daySources[source] || 0) + ref.count;
+      }
+      return {
+        date: day._id,
+        total: day.total,
+        ...daySources
+      };
+    });
+
+    // Get online visitors with their referrer info
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+    const onlineVisitors = await pageViewsCollection.aggregate([
+      {
+        $match: {
+          tenantId,
+          timestamp: { $gte: fiveMinutesAgo }
+        }
+      },
+      {
+        $sort: { timestamp: -1 }
+      },
+      {
+        $group: {
+          _id: '$visitorId',
+          lastPage: { $first: '$page' },
+          referrer: { $first: '$referrer' },
+          lastSeen: { $first: '$timestamp' }
+        }
+      }
+    ]).toArray();
+
+    const onlineBySource: Record<string, number> = {};
+    for (const v of onlineVisitors) {
+      const source = categorizeReferrer(v.referrer);
+      onlineBySource[source] = (onlineBySource[source] || 0) + 1;
+    }
+
+    res.json({
+      sources,
+      dailySourceData,
+      onlineCount: onlineVisitors.length,
+      onlineBySource,
+      onlineVisitors: onlineVisitors.map((v: any) => ({
+        visitorId: v._id,
+        page: v.lastPage,
+        source: categorizeReferrer(v.referrer),
+        lastSeen: v.lastSeen
+      })),
+      totalViews,
+      period
+    });
+  } catch (error) {
+    console.error('Error getting traffic sources:', error);
+    res.status(500).json({ error: 'Failed to get traffic sources' });
+  }
+});
+
 export const visitorsRouter = router;

@@ -10,12 +10,12 @@ import {
   FigmaOrderList
 } from './index';
 import OrderAnalytics from './OrderAnalytics';
+import { VisitorAnalytics } from './VisitorAnalytics';
 import { Order, Product } from '../../types';
 import { useNotifications } from '../../hooks/useNotifications';
 import { useTenant } from '../../hooks/useTenant';
 import { useLanguage } from '../../context/LanguageContext';
 import { DataService } from '../../services/DataService';
-// import { VisitorStatsSection } from './VisitorAnalytics/src/screens/FrameScreen/sections/VisitorStatsSection';
 
 type PermissionMap = Record<string, string[]>;
 
@@ -214,6 +214,11 @@ const FigmaDashboardPage: React.FC<FigmaDashboardPageProps> = ({
         {/* Analytics Bar Chart */}
         <div className={contentWrapClass}>
           <FigmaAnalyticsChart tenantId={tenantId} />
+        </div>
+
+        {/* Visitor Analytics */}
+        <div className={contentWrapClass}>
+          <VisitorAnalytics tenantId={tenantId} onNavigate={onNavigate} />
         </div>
 
         {/* Order Status Row */}
