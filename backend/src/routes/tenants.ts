@@ -9,6 +9,7 @@ import {
   getTenantByCustomDomain,
   updateTenantStatus,
   updateTenant,
+  updateTenantShopStatus,
   getTenantUsers,
   getTenantStats
 } from '../services/tenantsService';
@@ -60,6 +61,16 @@ const updateTenantSchema = z.object({
 
 const updateStatusSchema = z.object({
   status: z.enum(['trialing', 'active', 'suspended', 'archived'])
+});
+
+const updateShopStatusSchema = z.object({
+  isTrialing: z.boolean().optional(),
+  isStartups: z.boolean().optional(),
+  isEnterprise: z.boolean().optional(),
+  isPremium: z.boolean().optional(),
+  isExpired: z.boolean().optional(),
+  isSuspended: z.boolean().optional(),
+  isBlocked: z.boolean().optional(),
 });
 
 export const tenantsRouter = Router();
@@ -312,6 +323,36 @@ tenantsRouter.patch('/:id/status', authenticateToken, requireRole('super_admin')
       const { status } = updateStatusSchema.parse(req.body);
       await updateTenantStatus(req.params.id, status);
       res.json({ data: { id: req.params.id, status } });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: error.errors });
+      }
+      next(error);
+    }
+  }
+);
+
+// PATCH /api/tenants/:id/shop-status - Update tenant shop status (super admin only)
+tenantsRouter.patch('/:id/shop-status', authenticateToken, requireRole('super_admin'),
+  async (req, res, next) => {
+    try {
+      const shopStatus = updateShopStatusSchema.parse(req.body);
+      const tenant = await getTenantById(req.params.id);
+      if (!tenant) {
+        return res.status(404).json({ error: 'Tenant not found' });
+      }
+      const defaultShopStatus = {
+        isTrialing: false,
+        isStartups: false,
+        isEnterprise: false,
+        isPremium: false,
+        isExpired: false,
+        isSuspended: false,
+        isBlocked: false,
+      };
+      const updatedShopStatus = { ...defaultShopStatus, ...(tenant.shopStatus || {}), ...shopStatus };
+      await updateTenantShopStatus(req.params.id, updatedShopStatus);
+      res.json({ data: { id: req.params.id, shopStatus: updatedShopStatus } });
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ error: error.errors });

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Eye, EyeOff, Lock, Mail, Loader2, AlertCircle, LogIn, Shield, Store, LayoutDashboard } from 'lucide-react';
 import toast from 'react-hot-toast';
 import * as authService from '../services/authService';
-import { User } from '../types';
+import { User, ShopStatus } from '../types';
 
 // Check if we're on the superadmin subdomain
 const isSuperAdminSubdomain = typeof window !== 'undefined' && 
@@ -61,10 +61,34 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
         }
       }
 
+      // Check shop status for non-super_admin users
+      const shopStatus: ShopStatus | undefined = user?.tenantDetails?.shopStatus;
+      if (shopStatus && user?.role !== 'super_admin') {
+        if (shopStatus.isBlocked) {
+          setError('Your shop is blocked. Please contact admin.');
+          authService.logout();
+          setIsLoading(false);
+          return;
+        }
+        if (shopStatus.isSuspended) {
+          setError('Your shop is suspended. Please contact admin.');
+          authService.logout();
+          setIsLoading(false);
+          return;
+        }
+        if (shopStatus.isExpired) {
+          setError('Your subscription is expired. Please renew your subscription to continue.');
+          authService.logout();
+          setIsLoading(false);
+          return;
+        }
+      }
+
       toast.success('Login successful!');
       if (onLoginSuccess) onLoginSuccess(user as User);
-    } catch (err: any) {
-      setError(err?.message || 'Login failed. Please check your credentials.');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Login failed. Please check your credentials.';
+      setError(message);
     } finally {
       setIsLoading(false);
     }

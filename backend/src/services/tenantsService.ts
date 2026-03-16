@@ -2,7 +2,7 @@ import { ObjectId, type Filter } from 'mongodb';
 import bcrypt from 'bcryptjs';
 import { getDatabase } from '../db/mongo';
 import { User } from '../models/User';
-import type { CreateTenantPayload, Tenant } from '../types/tenant';
+import type { CreateTenantPayload, Tenant, ShopStatus } from '../types/tenant';
 
 const sanitizeSubdomain = (value: string) =>
   value
@@ -280,6 +280,15 @@ export const updateTenantStatus = async (id: string, status: Tenant['status']) =
   await db.collection<Tenant>(collectionName).updateOne(
     { _id: new ObjectId(id) },
     { $set: { status, updatedAt: new Date().toISOString() } }
+  );
+};
+
+// Update tenant shop status
+export const updateTenantShopStatus = async (id: string, shopStatus: ShopStatus) => {
+  const db = await getDatabase();
+  await db.collection<Tenant>(collectionName).updateOne(
+    { _id: new ObjectId(id) },
+    { $set: { shopStatus, updatedAt: new Date().toISOString() } }
   );
 };
 

@@ -14,6 +14,8 @@ import {
   JWTPayload 
 } from '../middleware/auth';
 import { getTenantById, getTenantBySubdomain } from '../services/tenantsService';
+import { calculateTenantSubscriptionStatus } from '../utils/subscriptionUtils';
+import type { ShopStatus } from '../types/tenant';
 import { createAuditLog } from './auditLogs';
 
 export const authRouter = Router();
@@ -93,18 +95,34 @@ const generateToken = (user: IUser): string => {
   return jwt.sign(payload, env.jwtSecret, signOptions);
 };
 
-// Helper to get tenant details
+// Helper to get tenant details including shop status
 const getTenantDetails = async (tenantId?: string) => {
   if (!tenantId) return null;
   try {
     const tenant = await getTenantById(tenantId);
     if (!tenant) return null;
+
+    // Compute shop status from tenant data
+    const subscriptionStatus = calculateTenantSubscriptionStatus(tenant);
+    const storedShopStatus = tenant.shopStatus;
+
+    const shopStatus: ShopStatus = {
+      isTrialing: storedShopStatus?.isTrialing ?? tenant.status === 'trialing',
+      isStartups: storedShopStatus?.isStartups ?? false,
+      isEnterprise: storedShopStatus?.isEnterprise ?? tenant.plan === 'enterprise',
+      isPremium: storedShopStatus?.isPremium ?? false,
+      isExpired: storedShopStatus?.isExpired ?? subscriptionStatus.isExpired,
+      isSuspended: storedShopStatus?.isSuspended ?? tenant.status === 'suspended',
+      isBlocked: storedShopStatus?.isBlocked ?? subscriptionStatus.isBlocked,
+    };
+
     return {
       id: tenant._id,
       name: tenant.name,
       subdomain: tenant.subdomain,
       plan: tenant.plan,
-      status: tenant.status
+      status: tenant.status,
+      shopStatus
     };
   } catch {
     return null;
