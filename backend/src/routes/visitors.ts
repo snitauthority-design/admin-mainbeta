@@ -378,21 +378,25 @@ router.get('/:tenantId/sources', async (req: Request, res: Response) => {
         hostname = referrer.toLowerCase();
       }
 
-      // Match against known domains using hostname (prevents substring false positives)
-      if (hostname.endsWith('google.com') || hostname.endsWith('google.co.in') || hostname.endsWith('google.co.uk') || hostname.endsWith('google.co.jp') || hostname === 'google.com' || hostname.match(/^(www\.)?google\./)) return 'Google Search';
-      if (hostname.endsWith('facebook.com') || hostname.endsWith('fb.com') || hostname.endsWith('fb.me') || hostname === 'facebook.com') return 'Facebook';
-      if (hostname.endsWith('instagram.com') || hostname === 'instagram.com') return 'Instagram';
-      if (hostname.endsWith('youtube.com') || hostname.endsWith('youtu.be') || hostname === 'youtube.com') return 'YouTube';
-      if (hostname.endsWith('twitter.com') || hostname.endsWith('x.com') || hostname.endsWith('t.co') || hostname === 'twitter.com') return 'Twitter/X';
-      if (hostname.endsWith('tiktok.com') || hostname === 'tiktok.com') return 'TikTok';
-      if (hostname.endsWith('linkedin.com') || hostname === 'linkedin.com') return 'LinkedIn';
-      if (hostname.endsWith('pinterest.com') || hostname === 'pinterest.com') return 'Pinterest';
-      if (hostname.endsWith('reddit.com') || hostname === 'reddit.com') return 'Reddit';
-      if (hostname.endsWith('whatsapp.com') || hostname.endsWith('wa.me') || hostname === 'whatsapp.com') return 'WhatsApp';
-      if (hostname.endsWith('telegram.org') || hostname.endsWith('t.me') || hostname === 'telegram.org') return 'Telegram';
-      if (hostname.endsWith('bing.com') || hostname === 'bing.com') return 'Bing';
-      if (hostname.endsWith('yahoo.com') || hostname === 'yahoo.com') return 'Yahoo';
-      if (hostname.endsWith('baidu.com') || hostname === 'baidu.com') return 'Baidu';
+      // Helper: check if hostname exactly matches or is a subdomain of the given domain
+      const isDomain = (domain: string) =>
+        hostname === domain || hostname === `www.${domain}` || hostname.endsWith(`.${domain}`);
+
+      // Match against known domains using exact domain matching (prevents substring false positives)
+      if (isDomain('google.com') || isDomain('google.co.in') || isDomain('google.co.uk') || isDomain('google.co.jp') || isDomain('google.co.kr') || isDomain('google.de') || isDomain('google.fr') || isDomain('google.com.bd')) return 'Google Search';
+      if (isDomain('facebook.com') || isDomain('fb.com') || isDomain('fb.me') || isDomain('m.facebook.com')) return 'Facebook';
+      if (isDomain('instagram.com')) return 'Instagram';
+      if (isDomain('youtube.com') || isDomain('youtu.be')) return 'YouTube';
+      if (isDomain('twitter.com') || isDomain('x.com') || isDomain('t.co')) return 'Twitter/X';
+      if (isDomain('tiktok.com')) return 'TikTok';
+      if (isDomain('linkedin.com')) return 'LinkedIn';
+      if (isDomain('pinterest.com')) return 'Pinterest';
+      if (isDomain('reddit.com')) return 'Reddit';
+      if (isDomain('whatsapp.com') || isDomain('wa.me')) return 'WhatsApp';
+      if (isDomain('telegram.org') || isDomain('t.me')) return 'Telegram';
+      if (isDomain('bing.com')) return 'Bing';
+      if (isDomain('yahoo.com')) return 'Yahoo';
+      if (isDomain('baidu.com')) return 'Baidu';
 
       return 'Other';
     };
