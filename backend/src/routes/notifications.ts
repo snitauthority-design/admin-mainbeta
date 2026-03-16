@@ -3,6 +3,7 @@ import { z } from "zod";
 import { Notification } from "../models/Notification";
 import { authenticateToken, requireAdmin, requireRole } from '../middleware/auth';
 import { getDatabase } from '../db/mongo';
+import { ObjectId } from 'mongodb';
 
 export const notificationsRouter = Router();
 
@@ -24,7 +25,7 @@ notificationsRouter.get("/dashboard-banners", async (req, res, next) => {
 });
 
 // Get all dashboard notification banners (Super Admin)
-notificationsRouter.get("/dashboard-banners/all", authenticateToken, async (req, res, next) => {
+notificationsRouter.get("/dashboard-banners/all", authenticateToken, requireRole('super_admin'), async (req, res, next) => {
   try {
     const db = await getDatabase();
     const banners = await db.collection("dashboard_banners")
@@ -39,7 +40,7 @@ notificationsRouter.get("/dashboard-banners/all", authenticateToken, async (req,
 });
 
 // Create a dashboard notification banner (Super Admin only)
-notificationsRouter.post("/dashboard-banners", authenticateToken, async (req, res, next) => {
+notificationsRouter.post("/dashboard-banners", authenticateToken, requireRole('super_admin'), async (req, res, next) => {
   try {
     const schema = z.object({
       imageUrl: z.string().url().min(1),
@@ -72,7 +73,7 @@ notificationsRouter.post("/dashboard-banners", authenticateToken, async (req, re
 });
 
 // Update a dashboard notification banner (Super Admin only)
-notificationsRouter.put("/dashboard-banners/:bannerId", authenticateToken, async (req, res, next) => {
+notificationsRouter.put("/dashboard-banners/:bannerId", authenticateToken, requireRole('super_admin'), async (req, res, next) => {
   try {
     const { bannerId } = req.params;
     const schema = z.object({
@@ -85,7 +86,6 @@ notificationsRouter.put("/dashboard-banners/:bannerId", authenticateToken, async
     
     const payload = schema.parse(req.body);
     const db = await getDatabase();
-    const { ObjectId } = await import('mongodb');
     
     const result = await db.collection("dashboard_banners").updateOne(
       { _id: new ObjectId(bannerId) },
@@ -106,11 +106,10 @@ notificationsRouter.put("/dashboard-banners/:bannerId", authenticateToken, async
 });
 
 // Delete a dashboard notification banner (Super Admin only)
-notificationsRouter.delete("/dashboard-banners/:bannerId", authenticateToken, async (req, res, next) => {
+notificationsRouter.delete("/dashboard-banners/:bannerId", authenticateToken, requireRole('super_admin'), async (req, res, next) => {
   try {
     const { bannerId } = req.params;
     const db = await getDatabase();
-    const { ObjectId } = await import('mongodb');
     
     const result = await db.collection("dashboard_banners").deleteOne(
       { _id: new ObjectId(bannerId) }
