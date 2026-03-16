@@ -83,7 +83,7 @@ const SUGGESTED_QUESTIONS = [
   { icon: Package, text: "Show me my inventory report", category: "inventory" },
   { icon: ClipboardList, text: "What are my recent orders?", category: "orders" },
   { icon: TrendingUp, text: "Analyze my store performance for the last 7 days", category: "analytics" },
-  { icon: ShoppingBag, text: "Create a hero section for my landing page", category: "builder" },
+  { icon: Wand2, text: "Create a hero section for my landing page", category: "builder" },
 ];
 
 const SKILLS = [
