@@ -211,7 +211,7 @@ const FigmaDashboardHeader: React.FC<DashboardHeaderProps> = ({
   }, [showProfileDropdown]);
   const searchRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const profileImage = user?.avatar || user?.image;
+  const profileImage = user?.image || user?.avatar;
 
   const handleProfileAction = (action: 'profile' | 'settings' | 'logout') => {
     setShowProfileDropdown(false);
