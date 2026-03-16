@@ -103,7 +103,7 @@ const NotificationsTab: React.FC<NotificationsTabProps> = ({
         toast.error(errorData.error || `Failed to add banner (${response.status})`);
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Network error - failed to add banner');
+      toast.error(error instanceof Error ? error.message : 'Failed to add banner. Please try again.');
     } finally {
       setIsSavingBanner(false);
     }

@@ -1442,8 +1442,8 @@ const SuperAdminDashboard: React.FC = () => {
               const newStatus = statusMap[action] || 'suspended';
               try {
                 await handleUpdateTenantStatus(tenant.id || tenant._id || '', newStatus);
-              } catch {
-                // Error already handled and toasted inside handleUpdateTenantStatus
+              } catch (err) {
+                console.error('[SuperAdmin] Tenant status update failed:', err);
               }
             }}
           />
