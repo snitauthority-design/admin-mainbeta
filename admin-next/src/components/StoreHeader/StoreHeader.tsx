@@ -401,7 +401,7 @@ export const StoreHeader: React.FC<StoreHeaderProps> = (props) => {
 
     const page = window.location.pathname || '/';
     const trackingKey = `${page}:${query.toLowerCase()}`;
-    const timeoutId = window.setTimeout(() => {
+    const timeoutId: ReturnType<typeof window.setTimeout> = window.setTimeout(() => {
       if (lastTrackedSearchKeyRef.current === trackingKey) {
         return;
       }

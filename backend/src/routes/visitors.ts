@@ -1,7 +1,9 @@
 import { Router, Request, Response } from 'express';
+import rateLimit from 'express-rate-limit';
 import { getDatabase } from '../db/mongo';
 
 const router = Router();
+const PRODUCT_PAGE_PATTERN = /^\/(product|product-details|p)\//;
 
 interface VisitorDoc {
   tenantId: string;
@@ -26,6 +28,7 @@ interface PageViewDoc {
   timestamp: Date;
 }
 
+type Period = 'day' | '24h' | '7d' | 'month' | '30d' | 'year' | '365d' | 'all';
 type VisitorEventType = 'search' | 'checkout_start';
 
 interface VisitorEventDoc {
@@ -41,7 +44,7 @@ interface VisitorEventDoc {
   timestamp: Date;
 }
 
-const GOOGLE_DOMAINS = ['google.com', 'google.co.in', 'google.co.uk', 'google.co.jp', 'google.co.kr', 'google.de', 'google.fr', 'google.com.bd'];
+const GOOGLE_DOMAINS = new Set(['google.com', 'google.co.in', 'google.co.uk', 'google.co.jp', 'google.co.kr', 'google.de', 'google.fr', 'google.com.bd']);
 const SUPPORTED_EVENT_TYPES: VisitorEventType[] = ['search', 'checkout_start'];
 const EMPTY_SOURCE_DETAILS = {
   topReferrers: [] as Array<{ referrer: string; count: number }>,
@@ -59,7 +62,24 @@ const EMPTY_SOURCE_DETAILS = {
   }>
 };
 
-const getStartDate = (period: unknown) => {
+const createAnalyticsLimiter = (scope: string, maxRequests: number) =>
+  rateLimit({
+    windowMs: 60_000,
+    limit: maxRequests,
+    standardHeaders: 'draft-7',
+    legacyHeaders: false,
+    keyGenerator: (req) => `${scope}:${req.params.tenantId || 'global'}:${req.ip || 'anonymous'}`,
+    message: { error: 'Too many analytics requests. Please try again shortly.' }
+  });
+
+const visitorEventsLimiter = createAnalyticsLimiter('visitor-events', 90);
+const sourceDetailsLimiter = createAnalyticsLimiter('source-details', 120);
+const sourceSummaryLimiter = createAnalyticsLimiter('source-summary', 120);
+
+const isSupportedEventType = (value: string): value is VisitorEventType =>
+  SUPPORTED_EVENT_TYPES.includes(value as VisitorEventType);
+
+const getStartDate = (period: Period | unknown) => {
   const startDate = new Date();
 
   switch (period) {
@@ -133,7 +153,7 @@ const categorizeReferrer = (referrer: string | null | undefined): string => {
   const isDomain = (domain: string) =>
     hostname === domain || hostname === `www.${domain}` || hostname.endsWith(`.${domain}`);
 
-  if (GOOGLE_DOMAINS.some(isDomain)) return 'Google Search';
+  if ([...GOOGLE_DOMAINS].some(isDomain)) return 'Google Search';
   if (isDomain('facebook.com') || isDomain('fb.com') || isDomain('fb.me') || isDomain('m.facebook.com')) return 'Facebook';
   if (isDomain('instagram.com')) return 'Instagram';
   if (isDomain('youtube.com') || isDomain('youtu.be')) return 'YouTube';
@@ -169,7 +189,7 @@ const normalizeSourceName = (source: string) => {
   return decodedSource;
 };
 
-const isProductPage = (page: string | undefined) => Boolean(page && /^\/(product|product-details|p)\//.test(page));
+const isProductPage = (page: string | undefined) => Boolean(page && PRODUCT_PAGE_PATTERN.test(page));
 
 const getProductLabel = (page: string | undefined, fallbackName?: string) => {
   if (fallbackName) return fallbackName;
@@ -235,19 +255,21 @@ router.post('/:tenantId/track', async (req: Request, res: Response) => {
 });
 
 // Track persistent visitor events such as search queries and checkout journeys
-router.post('/:tenantId/events', async (req: Request, res: Response) => {
+router.post('/:tenantId/events', visitorEventsLimiter, async (req: Request, res: Response) => {
   try {
     const { tenantId } = req.params;
     const visitorId = sanitizeText(req.body?.visitorId, 120);
-    const eventType = sanitizeText(req.body?.eventType, 40) as VisitorEventType | undefined;
+    const rawEventType = sanitizeText(req.body?.eventType, 40);
 
     if (!visitorId) {
       return res.status(400).json({ error: 'visitorId is required' });
     }
 
-    if (!eventType || !SUPPORTED_EVENT_TYPES.includes(eventType)) {
+    if (!rawEventType || !isSupportedEventType(rawEventType)) {
       return res.status(400).json({ error: 'Unsupported eventType' });
     }
+
+    const eventType: VisitorEventType = rawEventType;
 
     const db = await getDatabase();
     const visitorEventsCollection = db.collection<VisitorEventDoc>('visitor_events');
@@ -463,7 +485,7 @@ router.get('/:tenantId/online', async (req: Request, res: Response) => {
 });
 
 // Get persisted details for a traffic source
-router.get('/:tenantId/sources/:sourceName/details', async (req: Request, res: Response) => {
+router.get('/:tenantId/sources/:sourceName/details', sourceDetailsLimiter, async (req: Request, res: Response) => {
   try {
     const { tenantId, sourceName } = req.params;
     const { period = '7d' } = req.query;
@@ -589,7 +611,8 @@ router.get('/:tenantId/sources/:sourceName/details', async (req: Request, res: R
 
     for (const event of visitorEvents) {
       if (event.eventType === 'search') {
-        const query = sanitizeText(event.metadata?.query, 200);
+        const rawQuery = event.metadata?.query;
+        const query = typeof rawQuery === 'string' ? sanitizeText(rawQuery, 200) : undefined;
         if (!query) continue;
 
         const normalizedQuery = query.toLowerCase();
@@ -602,7 +625,7 @@ router.get('/:tenantId/sources/:sourceName/details', async (req: Request, res: R
       }
 
       if (event.eventType === 'checkout_start') {
-        const productPage = sanitizeText(event.metadata?.productPage, 250) || '/checkout';
+        const productPage = sanitizeText(event.metadata?.productPage, 250) || 'unknown';
         const productLabel = getProductLabel(productPage, sanitizeText(event.metadata?.productName, 120));
         const existingJourney = checkoutJourneyMap.get(productPage) || {
           productLabel,
@@ -670,7 +693,7 @@ router.get('/:tenantId/sources/:sourceName/details', async (req: Request, res: R
 });
 
 // Get traffic sources (referrer analysis)
-router.get('/:tenantId/sources', async (req: Request, res: Response) => {
+router.get('/:tenantId/sources', sourceSummaryLimiter, async (req: Request, res: Response) => {
   try {
     const { tenantId } = req.params;
     const { period = '7d' } = req.query;

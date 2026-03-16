@@ -84,11 +84,16 @@ const lastPageViewTrack = new Map<string, number>();
 const PAGE_VIEW_THROTTLE_MS = 5000; // Only track same page once per 5 seconds
 const lastEventTrack = new Map<string, number>();
 const EVENT_THROTTLE_MS = 8000;
+const SUPPORTED_VISITOR_EVENTS = new Set(['search', 'checkout_start']);
 
 const getVisitorId = () => {
   let visitorId = localStorage.getItem('_vid');
   if (!visitorId) {
-    visitorId = `v_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const randomSegment =
+      typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
+        ? crypto.randomUUID().replace(/-/g, '').slice(0, 12)
+        : Math.random().toString(36).slice(2, 14);
+    visitorId = `v_${Date.now()}_${randomSegment}`;
     localStorage.setItem('_vid', visitorId);
   }
   return visitorId;
@@ -126,27 +131,30 @@ const buildVisitorContext = () => {
 };
 
 const sanitizeMetadata = (metadata: Record<string, unknown>) =>
-  Object.fromEntries(
-    Object.entries(metadata).flatMap(([key, value]) => {
+  Object.entries(metadata).reduce<Record<string, string | number | boolean>>((accumulator, [key, value]) => {
       const safeKey = key.replace(/[^\w.-]/g, '').slice(0, 40);
-      if (!safeKey) return [];
+      if (!safeKey) return accumulator;
 
       if (typeof value === 'string') {
         const trimmedValue = value.trim();
-        return trimmedValue ? [[safeKey, trimmedValue.slice(0, 200)]] : [];
+        if (trimmedValue) {
+          accumulator[safeKey] = trimmedValue.slice(0, 200);
+        }
+        return accumulator;
       }
 
       if (typeof value === 'number' && Number.isFinite(value)) {
-        return [[safeKey, value]];
+        accumulator[safeKey] = value;
+        return accumulator;
       }
 
       if (typeof value === 'boolean') {
-        return [[safeKey, value]];
+        accumulator[safeKey] = value;
+        return accumulator;
       }
 
-      return [];
-    })
-  );
+      return accumulator;
+    }, {});
 
 export const trackPageView = async (tenantId: string, page: string) => {
   if (!tenantId) return;
@@ -189,7 +197,7 @@ export const trackVisitorEvent = async (
   metadata: Record<string, unknown> = {},
   throttleKey?: string
 ) => {
-  if (!tenantId || typeof window === 'undefined') return;
+  if (!tenantId || typeof window === 'undefined' || !SUPPORTED_VISITOR_EVENTS.has(eventType)) return;
 
   const now = Date.now();
   const resolvedThrottleKey =
