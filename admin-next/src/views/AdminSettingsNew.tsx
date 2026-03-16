@@ -229,11 +229,11 @@ const createFigmaStyles = (isDark: boolean) => ({
   headerCard: {
     background: isDark ? '#1f2937' : '#ffffff',
     borderRadius: '8px',
-    padding: '20px',
-    marginBottom: '20px',
+    padding: '14px',
+    marginBottom: '12px',
     display: 'flex',
     flexDirection: 'column' as const,
-    gap: '20px',
+    gap: '12px',
   },
   title: {
     fontFamily: "'Lato', sans-serif",
@@ -245,16 +245,17 @@ const createFigmaStyles = (isDark: boolean) => ({
   },
   tabsContainer: {
     display: 'flex',
-    gap: '16px',
+    gap: '8px',
+    flexWrap: 'wrap' as const,
     alignItems: 'flex-start',
   },
   tab: {
     display: 'flex',
     gap: '4px',
-    height: '48px',
+    height: '40px',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: '12px 22px',
+    padding: '8px 14px',
     background: 'white',
     borderTop: 'none',
     borderLeft: 'none',
@@ -262,7 +263,7 @@ const createFigmaStyles = (isDark: boolean) => ({
     borderBottom: 'none',
     cursor: 'pointer',
     fontFamily: "'Poppins', sans-serif",
-    fontSize: '16px',
+    fontSize: '14px',
   },
   tabActive: {
     borderBottom: '2px solid #38bdf8',
@@ -280,14 +281,13 @@ const createFigmaStyles = (isDark: boolean) => ({
   profileCard: {
     background: '#ffffff',
     borderRadius: '8px',
-    padding: '27px 19px',
-    minHeight: '473px',
+    padding: '14px',
   },
   profileHeader: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: '42px',
+    marginBottom: '16px',
   },
   profileTitle: {
     fontFamily: "'Lato', sans-serif",
@@ -299,16 +299,16 @@ const createFigmaStyles = (isDark: boolean) => ({
   },
   buttonGroup: {
     display: 'flex',
-    gap: '16px',
+    gap: '8px',
     alignItems: 'center',
   },
   resetButton: {
     display: 'flex',
     gap: '4px',
-    height: '48px',
+    height: '40px',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: '6px 16px 6px 12px',
+    padding: '6px 12px',
     background: '#f9f9f9',
     borderRadius: '8px',
     border: 'none',
@@ -317,17 +317,17 @@ const createFigmaStyles = (isDark: boolean) => ({
   resetButtonText: {
     fontFamily: "'Poppins', sans-serif",
     fontWeight: 600,
-    fontSize: '16px',
+    fontSize: '14px',
     color: '#020202',
     letterSpacing: '-0.32px',
   },
   saveButton: {
     display: 'flex',
     gap: '4px',
-    height: '48px',
+    height: '40px',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: '6px 16px 6px 12px',
+    padding: '6px 12px',
     background: 'linear-gradient(to right, #38bdf8, #1e90ff)',
     borderRadius: '8px',
     border: 'none',
@@ -336,24 +336,24 @@ const createFigmaStyles = (isDark: boolean) => ({
   saveButtonText: {
     fontFamily: "'Poppins', sans-serif",
     fontWeight: 600,
-    fontSize: '16px',
+    fontSize: '14px',
     color: 'white',
     letterSpacing: '-0.32px',
   },
   avatarSection: {
     display: 'flex',
-    gap: '20px',
+    gap: '12px',
     alignItems: 'center',
-    marginBottom: '30px',
+    marginBottom: '14px',
   },
   avatarContainer: {
     position: 'relative' as const,
-    width: '160px',
-    height: '160px',
+    width: '112px',
+    height: '112px',
   },
   avatar: {
-    width: '160px',
-    height: '160px',
+    width: '112px',
+    height: '112px',
     borderRadius: '482px',
     background: '#f4f4f4',
     objectFit: 'cover' as const,
@@ -375,12 +375,12 @@ const createFigmaStyles = (isDark: boolean) => ({
   userInfo: {
     display: 'flex',
     flexDirection: 'column' as const,
-    gap: '1px',
+    gap: '2px',
   },
   userName: {
     fontFamily: "'Poppins', sans-serif",
     fontWeight: 500,
-    fontSize: '24px',
+    fontSize: '20px',
     color: 'black',
     margin: 0,
   },
@@ -392,7 +392,7 @@ const createFigmaStyles = (isDark: boolean) => ({
   roleText: {
     fontFamily: "'Poppins', sans-serif",
     fontWeight: 400,
-    fontSize: '16px',
+    fontSize: '14px',
     color: 'black',
   },
   sinceBadge: {
@@ -415,13 +415,13 @@ const createFigmaStyles = (isDark: boolean) => ({
   formContainer: {
     display: 'grid',
     gridTemplateColumns: 'repeat(3, 1fr)',
-    gap: '24px',
+    gap: '12px',
   },
   formLeft: {
     gridColumn: 'span 2',
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
-    gap: '20px',
+    gap: '12px',
   },
   formRow: {
     display: 'contents',
@@ -429,24 +429,24 @@ const createFigmaStyles = (isDark: boolean) => ({
   formGroup: {
     display: 'flex',
     flexDirection: 'column' as const,
-    gap: '8px',
+    gap: '6px',
   },
   formLabel: {
     fontFamily: "'Lato', sans-serif",
     fontWeight: 700,
-    fontSize: '15px',
+    fontSize: '14px',
     color: '#023337',
     margin: 0,
   },
   formInput: {
     width: '100%',
-    height: '48px',
-    padding: '12px 16px',
+    height: '42px',
+    padding: '10px 12px',
     background: '#f9fafb',
     borderRadius: '8px',
     border: '1px solid #e5e7eb',
     fontFamily: "'Poppins', sans-serif",
-    fontSize: '15px',
+    fontSize: '14px',
     color: '#111827',
     outline: 'none',
     transition: 'border-color 0.2s, box-shadow 0.2s',
@@ -455,17 +455,17 @@ const createFigmaStyles = (isDark: boolean) => ({
     gridColumn: 'span 1',
     display: 'flex',
     flexDirection: 'column' as const,
-    gap: '20px',
+    gap: '12px',
   },
   addressInput: {
     width: '100%',
-    height: '100px',
-    padding: '12px 16px',
+    height: '90px',
+    padding: '10px 12px',
     background: '#f9fafb',
     borderRadius: '8px',
     border: '1px solid #e5e7eb',
     fontFamily: "'Poppins', sans-serif",
-    fontSize: '15px',
+    fontSize: '14px',
     color: '#111827',
     outline: 'none',
     resize: 'none' as const,
@@ -476,8 +476,8 @@ const createFigmaStyles = (isDark: boolean) => ({
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
-    height: '48px',
-    padding: '10px 16px',
+    height: '42px',
+    padding: '10px 12px',
     background: '#f9fafb',
     borderRadius: '8px',
     border: '1px solid #e5e7eb',
@@ -492,7 +492,7 @@ const createFigmaStyles = (isDark: boolean) => ({
   changePasswordText: {
     fontFamily: "'Poppins', sans-serif",
     fontWeight: 400,
-    fontSize: '16px',
+    fontSize: '14px',
     color: 'black',
   },
 });
@@ -691,7 +691,7 @@ const AdminSettingsNew: React.FC<AdminSettingsNewProps> = ({ onNavigate, current
       email: currentUser?.email || '',
       address: currentUser?.address || '',
     });
-    setAvatarPreview(currentUser?.avatar || null);
+    setAvatarPreview(currentUser?.image || currentUser?.avatar || null);
     toast.success('Form reset to original values');
   };
 
@@ -765,11 +765,45 @@ const AdminSettingsNew: React.FC<AdminSettingsNewProps> = ({ onNavigate, current
           border-color: #0ea5e9 !important;
         }
         @media (max-width: 900px) {
+          .profile-card {
+            padding: 12px !important;
+          }
+          .profile-header {
+            flex-direction: column !important;
+            gap: 10px !important;
+            align-items: stretch !important;
+            margin-bottom: 12px !important;
+          }
+          .profile-button-group {
+            width: 100% !important;
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+          }
+          .profile-avatar-section {
+            align-items: flex-start !important;
+          }
           .profile-form-container {
             grid-template-columns: 1fr !important;
           }
           .profile-form-left {
             grid-column: span 1 !important;
+            grid-template-columns: 1fr !important;
+          }
+        }
+        @media (max-width: 640px) {
+          .profile-tab-wrap {
+            padding: 0 6px !important;
+          }
+          .profile-avatar-section {
+            flex-direction: column !important;
+          }
+          .profile-avatar-meta {
+            width: 100% !important;
+          }
+          .profile-title {
+            font-size: 18px !important;
+          }
+          .profile-button-group {
             grid-template-columns: 1fr !important;
           }
         }
@@ -811,7 +845,7 @@ const AdminSettingsNew: React.FC<AdminSettingsNewProps> = ({ onNavigate, current
 
       {/* Manage Shop Tab Content */}
       {activeTab === 'manage_shop' && (
-        <div style={{ maxWidth: '1150px', margin: '0 auto', padding: '0 20px' }}>
+        <div style={{ maxWidth: '1150px', margin: '0 auto', padding: '0 clamp(6px, 2vw, 20px)' }}>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 dark:bg-gray-800 p-4 rounded-lg dark:text-gray-200">
             {settingsCards.map((card, index) => (
               <SettingsCard
@@ -840,25 +874,25 @@ const AdminSettingsNew: React.FC<AdminSettingsNewProps> = ({ onNavigate, current
 
       {/* Profile Details Tab Content */}
       {activeTab === 'profile_details' && (
-        <div style={{ maxWidth: '1150px', margin: '0 auto', padding: '0 20px' }}>
-          <div style={figmaStyles.profileCard}>
+        <div style={{ maxWidth: '1150px', margin: '0 auto', padding: '0 clamp(6px, 2vw, 20px)' }} className="profile-tab-wrap">
+          <div style={figmaStyles.profileCard} className="profile-card">
             {/* Profile Header */}
-            <div style={figmaStyles.profileHeader}>
-              <h2 style={figmaStyles.profileTitle}>Profile Details</h2>
-              <div style={figmaStyles.buttonGroup}>
+            <div style={figmaStyles.profileHeader} className="profile-header">
+              <h2 style={figmaStyles.profileTitle} className="profile-title">Profile Details</h2>
+              <div style={figmaStyles.buttonGroup} className="profile-button-group">
                 <button onClick={handleResetProfile} style={figmaStyles.resetButton} disabled={isSaving}>
-                  <RefreshCw size={24} color="#020202" />
+                  <RefreshCw size={18} color="#020202" />
                   <span style={figmaStyles.resetButtonText}>Reset</span>
                 </button>
                 <button onClick={handleSaveProfile} style={{...figmaStyles.saveButton, opacity: isSaving ? 0.7 : 1}} disabled={isSaving}>
-                  <Download size={24} color="white" />
+                  <Download size={18} color="white" />
                   <span style={figmaStyles.saveButtonText}>{isSaving ? 'Saving...' : 'Save Changes'}</span>
                 </button>
               </div>
             </div>
 
             {/* Avatar Section */}
-            <div style={figmaStyles.avatarSection}>
+            <div style={figmaStyles.avatarSection} className="profile-avatar-section">
               <div style={{...figmaStyles.avatarContainer, position: 'relative'}}>
                 {avatarPreview ? (
                   <img src={avatarPreview} alt="Avatar" style={figmaStyles.avatar} />
@@ -892,7 +926,7 @@ const AdminSettingsNew: React.FC<AdminSettingsNewProps> = ({ onNavigate, current
                   </button>
                 </div>
               </div>
-              <div style={figmaStyles.userInfo}>
+              <div style={figmaStyles.userInfo} className="profile-avatar-meta">
                 <p style={figmaStyles.userName}>{profileForm.name}</p>
                 <div style={figmaStyles.userRole}>
                   <span style={figmaStyles.roleText}>{currentUser?.role || 'Owner'}</span>
