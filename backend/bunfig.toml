@@ -1,0 +1,8 @@
+[install]
+# Set to true in CI/Docker environments for reproducible installs
+# In local dev, keep false to allow lockfile generation on first run
+frozenLockfile = false
+
+[run]
+# Bun will auto-load .env files
+bun = true
