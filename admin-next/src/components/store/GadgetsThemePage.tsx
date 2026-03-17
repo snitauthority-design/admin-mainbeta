@@ -6,18 +6,29 @@
  * but powered by the shared data engine (products, categories, websiteConfig).
  */
 
-import React, { memo, useMemo, useState, useCallback, useEffect, useRef } from 'react';
+import React, { memo, useMemo, useState, useCallback, useEffect, useRef, lazy, Suspense } from 'react';
 import { ShoppingCart, ChevronLeft, ChevronRight, Package } from 'lucide-react';
 import type { Product, WebsiteConfig } from '../../types';
 import { normalizeImageUrl } from '../../utils/imageUrlHelper';
 
+const TagCountdownTimer = lazy(() => import('./TagCountdownTimer').then(m => ({ default: m.TagCountdownTimer })));
+
 // ─── Interface (same data engine) ────────────────────────────────────────────
+interface GadgetTag {
+  id?: number | string;
+  name: string;
+  status?: string;
+  showCountdown?: boolean;
+  expiresAt?: string;
+}
+
 interface GadgetsThemeProps {
   products: Product[];
   categories: any[];
   brands: any[];
   websiteConfig?: WebsiteConfig;
   logo?: string | null;
+  tags?: GadgetTag[];
   onProductClick: (product: Product) => void;
   onBuyNow?: (product: Product) => void;
   onAddToCart?: (product: Product, quantity: number, variant: any) => void;
@@ -50,34 +61,35 @@ const formatPrice = (p: number) => `৳ ${p.toLocaleString('en-BD')}`;
 const calcDiscount = (price: number, sale: number) =>
   Math.round(((price - sale) / price) * 100);
 
-// ─── Time Counter (matches Figma violet bordered boxes) ──────────────────────
-const GadgetTimeCounter = memo(({ label }: { label: string }) => {
-  const [time, setTime] = useState({ h: 0, m: 0, s: 0 });
+// ─── Time Counter (violet bordered boxes — uses real expiresAt if provided) ──
+const GadgetTimeCounter = memo(({ expiresAt }: { expiresAt?: string }) => {
+  const getSecondsLeft = () => {
+    if (expiresAt) {
+      return Math.max(0, Math.floor((new Date(expiresAt).getTime() - Date.now()) / 1000));
+    }
+    // Fallback: rolling timer to next hour
+    const now = new Date();
+    return (59 - now.getMinutes()) * 60 + (59 - now.getSeconds());
+  };
+
+  const [seconds, setSeconds] = useState(getSecondsLeft);
 
   useEffect(() => {
-    // Initialize with some time
-    setTime({ h: Math.floor(Math.random() * 10), m: Math.floor(Math.random() * 60), s: Math.floor(Math.random() * 60) });
-    const t = setInterval(() => {
-      setTime(prev => {
-        let { h, m, s } = prev;
-        s--;
-        if (s < 0) { s = 59; m--; }
-        if (m < 0) { m = 59; h--; }
-        if (h < 0) return { h: 23, m: 59, s: 59 };
-        return { h, m, s };
-      });
-    }, 1000);
+    const t = setInterval(() => setSeconds(s => Math.max(0, s - 1)), 1000);
     return () => clearInterval(t);
   }, []);
 
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = seconds % 60;
   const pad = (n: number) => String(n).padStart(2, '0');
 
   return (
     <div className="relative items-center bg-transparent flex gap-x-[6px] gap-y-[6px] justify-center max-w-[430px] text-center w-auto z-[2] mx-auto md:bg-white md:w-full">
       {[
-        { v: pad(time.h), l: 'Hours' },
-        { v: pad(time.m), l: 'Mins' },
-        { v: pad(time.s), l: 'Sec' },
+        { v: pad(h), l: 'Hours' },
+        { v: pad(m), l: 'Mins' },
+        { v: pad(s), l: 'Sec' },
       ].map(({ v, l }) => (
         <div key={l} className="items-center flex flex-col h-[34px] justify-center w-10 border-violet-700 rounded-[5px] border-2 border-solid">
           <div className="text-violet-700 text-xs font-bold leading-3">{v}</div>
@@ -565,15 +577,16 @@ const GadgetFooter = memo(({ websiteConfig, logo }: { websiteConfig?: WebsiteCon
 GadgetFooter.displayName = 'GadgetFooter';
 
 // ─── Product Section (section with title + optional timer + 2x5 grid) ────────
-const GadgetProductSection = memo(({ title, products, showTimer, onProductClick, onAddToCart, onBuyNow }: {
+const GadgetProductSection = memo(({ title, products, expiresAt, onProductClick, onAddToCart, onBuyNow }: {
   title: string;
   products: Product[];
-  showTimer?: boolean;
+  expiresAt?: string;
   onProductClick: (p: Product) => void;
   onAddToCart?: (p: Product) => void;
   onBuyNow?: (p: Product) => void;
 }) => {
   if (!products.length) return null;
+  const showTimer = !!expiresAt && new Date(expiresAt).getTime() > Date.now();
 
   return (
     <div>
@@ -583,7 +596,7 @@ const GadgetProductSection = memo(({ title, products, showTimer, onProductClick,
             <h2 className="text-neutral-900 text-base font-bold leading-[18px] md:text-neutral-700 md:text-[22px] md:font-medium md:leading-[normal] whitespace-nowrap">
               {title}
             </h2>
-            {showTimer && <GadgetTimeCounter label={title} />}
+            {showTimer && <GadgetTimeCounter expiresAt={expiresAt} />}
           </div>
           <span className="text-black text-[13px] font-medium items-center flex leading-[15px] md:text-zinc-800 md:text-base cursor-pointer hover:text-lime-500">
             View All
@@ -614,6 +627,7 @@ export const GadgetsThemePage: React.FC<GadgetsThemeProps> = memo(({
   brands,
   websiteConfig,
   logo,
+  tags,
   onProductClick,
   onBuyNow,
   onAddToCart,
@@ -622,8 +636,7 @@ export const GadgetsThemePage: React.FC<GadgetsThemeProps> = memo(({
 }) => {
   const active = useMemo(() => products.filter(p => p.status === 'Active' || !p.status), [products]);
 
-  // Product sections - matching the original theme structure
-  const newArrivals = useMemo(() => active.slice(0, 10), [active]);
+  // Algorithmic sections
   const popularProducts = useMemo(() =>
     [...active].sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 10),
   [active]);
@@ -633,18 +646,11 @@ export const GadgetsThemePage: React.FC<GadgetsThemeProps> = memo(({
   const bestSaleProducts = useMemo(() =>
     [...active].sort((a, b) => (b.totalSold || 0) - (a.totalSold || 0)).slice(0, 10),
   [active]);
-  // If no flash sale products, show discounted items instead
-  const flashOrDiscounted = useMemo(() => {
-    if (flashSaleProducts.length > 0) return flashSaleProducts;
-    return [...active]
-      .filter(p => Number(p.price) && Number(p.salePrice) && Number(p.price) > Number(p.salePrice))
-      .sort((a, b) => {
-        const dA = calcDiscount(Number(a.price), Number(a.salePrice));
-        const dB = calcDiscount(Number(b.price), Number(b.salePrice));
-        return dB - dA;
-      })
-      .slice(0, 10);
-  }, [flashSaleProducts, active]);
+
+  // Active tags from admin — each shows its own product section with optional countdown
+  const activeTags = useMemo(() =>
+    (tags || []).filter(t => !t.status || t.status === 'Active' || t.status?.toLowerCase() === 'active'),
+  [tags]);
 
   const activeCategories = useMemo(() =>
     categories.filter(c => c.status === 'Active' || !c.status).slice(0, 8),
@@ -686,33 +692,46 @@ export const GadgetsThemePage: React.FC<GadgetsThemeProps> = memo(({
             </div>
           )}
 
-          {/* Product Sections */}
-          <GadgetProductSection
-            title="New Arrival"
-            products={newArrivals}
-            onProductClick={onProductClick}
-            onAddToCart={handleAddToCart}
-            onBuyNow={handleBuyNow}
-          />
+          {/* ── Admin-created tag sections (appear first) ── */}
+          {activeTags.map(tag => {
+            const tagProducts = active.filter(p =>
+              Array.isArray(p.tags) && p.tags.some((pt: any) =>
+                (typeof pt === 'string' ? pt : pt?.name)?.toLowerCase() === tag.name?.toLowerCase()
+              )
+            ).slice(0, 10);
+            if (!tagProducts.length) return null;
+            return (
+              <GadgetProductSection
+                key={tag.id || tag.name}
+                title={tag.name}
+                products={tagProducts}
+                expiresAt={tag.showCountdown && tag.expiresAt ? tag.expiresAt : undefined}
+                onProductClick={onProductClick}
+                onAddToCart={handleAddToCart}
+                onBuyNow={handleBuyNow}
+              />
+            );
+          })}
 
-          <GadgetProductSection
-            title="Popular products"
-            products={popularProducts}
-            onProductClick={onProductClick}
-            onAddToCart={handleAddToCart}
-            onBuyNow={handleBuyNow}
-          />
-
-          {flashOrDiscounted.length > 0 && (
+          {/* ── Flash Sale (only when shop owner explicitly marks products) ── */}
+          {flashSaleProducts.length > 0 && (
             <GadgetProductSection
               title="Flash Sale"
-              products={flashOrDiscounted}
-              showTimer
+              products={flashSaleProducts}
               onProductClick={onProductClick}
               onAddToCart={handleAddToCart}
               onBuyNow={handleBuyNow}
             />
           )}
+
+          {/* ── Algorithmic sections ── */}
+          <GadgetProductSection
+            title="Popular Products"
+            products={popularProducts}
+            onProductClick={onProductClick}
+            onAddToCart={handleAddToCart}
+            onBuyNow={handleBuyNow}
+          />
 
           <GadgetProductSection
             title="Best Sale Products"
@@ -721,18 +740,6 @@ export const GadgetsThemePage: React.FC<GadgetsThemeProps> = memo(({
             onAddToCart={handleAddToCart}
             onBuyNow={handleBuyNow}
           />
-
-          {/* If there are more products, show a "Flash Deals" section with timer */}
-          {active.length > 20 && (
-            <GadgetProductSection
-              title="Flash Deals"
-              products={active.slice(20, 30)}
-              showTimer
-              onProductClick={onProductClick}
-              onAddToCart={handleAddToCart}
-              onBuyNow={handleBuyNow}
-            />
-          )}
         </div>
 
         {/* Footer */}

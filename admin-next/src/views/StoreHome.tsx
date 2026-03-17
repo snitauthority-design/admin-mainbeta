@@ -336,6 +336,7 @@ const StoreHome: React.FC<StoreHomeProps> = ({
             brands={brands || []}
             websiteConfig={websiteConfig}
             logo={logo}
+            tags={tags}
             onProductClick={onProductClick}
             onBuyNow={handleBuyNow}
             onAddToCart={handleAddProductToCartFromCard}
