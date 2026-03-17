@@ -13,8 +13,7 @@ export const ProductCard = (props: ProductCardProps) => {
   return (
     <div className="box-border caret-transparent">
       <div className="box-border caret-transparent">
-        <a
-          href={href}
+        <a href={href}
           onClick={(e) => {
             if (onClick) {
               e.preventDefault();
@@ -40,7 +39,7 @@ export const ProductCard = (props: ProductCardProps) => {
                   {price}
                 </div>
               </div>
-              <p className="box-border caret-transparent">
+              <div className="box-border caret-transparent">
                 <div className="box-border caret-transparent">
                   <div className="box-border caret-transparent gap-x-1 flex gap-y-1">
                     {Array.from({ length: rating }).map((_, index) => (
@@ -53,7 +52,7 @@ export const ProductCard = (props: ProductCardProps) => {
                     ))}
                   </div>
                 </div>
-              </p>
+              </div>
             </div>
           </div>
         </a>

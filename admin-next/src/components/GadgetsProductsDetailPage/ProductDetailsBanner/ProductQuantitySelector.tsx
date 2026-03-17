@@ -24,7 +24,7 @@ export const ProductQuantitySelector = ({ quantity, onQuantityChange, onAddToCar
             type="text"
             value={quantity}
             readOnly
-            className="text-[15px] box-border caret-transparent h-[35px] text-center w-[45px] p-0"
+            className="text-[15px] bg-white text-zinc-800 box-border caret-transparent h-[35px] text-center w-[45px] p-0"
           />
         </div>
         <button

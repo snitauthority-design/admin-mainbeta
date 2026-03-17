@@ -20,6 +20,8 @@ export interface GadgetsProductDetailProps {
     tags?: string[];
     sku?: string;
     stock?: number;
+    colors?: string[];
+    sizes?: string[];
     variantGroups?: Array<{
       title: string;
       isMandatory?: boolean;
@@ -39,6 +41,9 @@ export interface GadgetsProductDetailProps {
   }>;
   categories?: Array<{ name: string; slug?: string; image?: string; icon?: string }>;
   currency?: string;
+  tenantId?: string;
+  user?: { name: string; email: string } | null;
+  onLoginClick?: () => void;
   onAddToCart?: () => void;
   onCheckout?: () => void;
   onBack?: () => void;
@@ -51,6 +56,9 @@ export const ProductDetails = ({
   relatedProducts = [],
   categories = [],
   currency = "৳",
+  tenantId,
+  user,
+  onLoginClick,
   onAddToCart,
   onCheckout,
   onBack,
@@ -76,14 +84,31 @@ export const ProductDetails = ({
     ? product.originalPrice - product.price
     : 0;
 
+  // Synthesize variantGroups from old-style colors/sizes if variantGroups is absent
+  const effectiveVariantGroups = product.variantGroups && product.variantGroups.length > 0
+    ? product.variantGroups
+    : [
+        ...(product.colors && product.colors.length > 0 ? [{
+          title: 'Colour',
+          options: product.colors.map((c: string) => ({ attribute: c, extraPrice: 0 })),
+        }] : []),
+        ...(product.sizes && product.sizes.length > 0 ? [{
+          title: 'Size',
+          options: product.sizes.map((s: string) => ({ attribute: s, extraPrice: 0 })),
+        }] : []),
+      ];
+
+  const productWithVariants = { ...product, variantGroups: effectiveVariantGroups };
+
   return (
-    <div className="box-border caret-transparent">
+    
+     <div className="box-border caret-transparent">
       <div className="box-border caret-transparent">
         <div className="box-border caret-transparent max-w-[1340px] w-[95%] mx-auto">
           <div className="box-border caret-transparent gap-x-0 grid grid-cols-[1fr] gap-y-0 pt-[9px] md:gap-x-[15px] md:grid-cols-[3fr_1fr] md:gap-y-[15px] md:pt-[25px]">
             <div className="box-border caret-transparent min-h-[auto] min-w-[auto]">
               <ProductDetailsBanner
-                product={product}
+                product={productWithVariants}
                 currency={currency}
                 quantity={quantity}
                 onQuantityChange={handleQuantityChange}
@@ -99,6 +124,12 @@ export const ProductDetails = ({
                 description={product.description}
                 videoUrl={product.videoUrl}
                 details={product.details}
+                productId={product.id}
+                productName={product.name}
+                tenantId={tenantId}
+                user={user}
+                onLoginClick={onLoginClick}
+                reviewCount={product.reviews}
               />
             </div>
             <RelatedProducts

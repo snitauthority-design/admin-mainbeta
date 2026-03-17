@@ -1,13 +1,21 @@
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { ProductDescription } from "./ProductDescription";
+
+const ProductReviews = lazy(() => import('../../store/ProductReviews').then(m => ({ default: m.ProductReviews })));
 
 interface ProductTabsProps {
   description?: string;
   videoUrl?: string;
   details?: Array<{ type: string; description: string }>;
+  productId?: number;
+  productName?: string;
+  tenantId?: string;
+  user?: { name: string; email: string } | null;
+  onLoginClick?: () => void;
+  reviewCount?: number;
 }
 
-export const ProductTabs = ({ description, videoUrl, details }: ProductTabsProps) => {
+export const ProductTabs = ({ description, videoUrl, details, productId, productName, tenantId, user, onLoginClick, reviewCount }: ProductTabsProps) => {
   const [activeTab, setActiveTab] = useState<'description' | 'additional' | 'reviews'>('description');
 
   return (
@@ -30,6 +38,13 @@ export const ProductTabs = ({ description, videoUrl, details }: ProductTabsProps
               Additional Info{" "}
             </button>
           )}
+          <button
+            onClick={() => setActiveTab('reviews')}
+            className={`${activeTab === 'reviews' ? 'text-lime-500' : 'text-zinc-500'} text-[13px] font-bold bg-white caret-transparent block min-h-[auto] min-w-[auto] text-center border border-stone-300 px-3 py-[11px] rounded-[30px] font-arial md:text-[17px] md:px-6 md:py-[13px]`}
+          >
+            {" "}
+            Reviews({reviewCount ?? 0}){" "}
+          </button>
         </div>
         <div className="box-border caret-transparent my-[15px] md:my-[30px]">
           {activeTab === 'description' && (
@@ -48,6 +63,17 @@ export const ProductTabs = ({ description, videoUrl, details }: ProductTabsProps
                 </tbody>
               </table>
             </div>
+          )}
+          {activeTab === 'reviews' && productId && tenantId && (
+            <Suspense fallback={<div className="flex justify-center py-8"><div className="animate-spin w-6 h-6 border-2 border-lime-500 border-t-transparent rounded-full" /></div>}>
+              <ProductReviews
+                productId={productId}
+                productName={productName || ''}
+                tenantId={tenantId}
+                user={user || null}
+                onLoginClick={onLoginClick || (() => {})}
+              />
+            </Suspense>
           )}
         </div>
       </div>

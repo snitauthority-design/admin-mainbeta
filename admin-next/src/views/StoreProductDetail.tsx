@@ -5,10 +5,10 @@ import { Product, User, WebsiteConfig, Order, ProductVariantSelection, Category,
 import { DynamicLoadingFallback } from '../components/store/skeletons/DynamicLoadingFallback';
 
 // Lazy load heavy layout components and modals from individual files
-const StoreHeader = lazy(() => import('../components/StoreHeader').then(m => ({ default: m.StoreHeader })));
-const StoreFooter = lazy(() => import('../components/store/StoreFooter').then(m => ({ default: m.StoreFooter })));
-const AddToCartSuccessModal = lazy(() => import('../components/store/AddToCartSuccessModal').then(m => ({ default: m.AddToCartSuccessModal })));
-const MobileBottomNav = lazy(() => import('../components/store/MobileBottomNav').then(m => ({ default: m.MobileBottomNav })));
+const StoreHeader = dynamic(() => import('../components/StoreHeader').then(m => ({ default: m.StoreHeader })));
+const StoreFooter = dynamic(() => import('../components/store/StoreFooter').then(m => ({ default: m.StoreFooter })));
+const AddToCartSuccessModal = dynamic(() => import('../components/store/AddToCartSuccessModal').then(m => ({ default: m.AddToCartSuccessModal })));
+const MobileBottomNav = dynamic(() => import('../components/store/MobileBottomNav').then(m => ({ default: m.MobileBottomNav })));
 
 // Dynamic imports with next/dynamic for better code splitting and Core Web Vitals
 const ProductReviews = dynamic(
@@ -37,10 +37,10 @@ const TrackOrderModal = lazy(() => import('../components/store/TrackOrderModal')
 const ProductDetailSkeleton = lazy(() => import('../components/SkeletonLoaders').then(m => ({ default: m.ProductDetailSkeleton })));
 
 // Modern product detail page theme (ready-made theme)
-const ModernProductDetailsPage = lazy(() => import('@/productDetailPage/src/components/ProductDetails'));
+const ModernProductDetailsPage = dynamic(() => import('@/productDetailPage/src/components/ProductDetails'));
 
 // Gadgets product detail page theme
-const GadgetsProductDetailsPage = lazy(() => import('@/components/GadgetsProductsDetailPage').then(m => ({ default: m.ProductDetails })));
+const GadgetsProductDetailsPage = dynamic(() => import('@/components/GadgetsProductsDetailPage').then(m => ({ default: m.ProductDetails })));
 
 // Modal loading fallback
 const ModalLoadingFallback = () => (
@@ -585,7 +585,49 @@ const StoreProductDetail = ({
   if (activeProductDetailTheme === 'gadgets') {
     const currencySymbol = websiteConfig?.shopCurrency === 'USD' ? '$' : '৳';
     return (
-      <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center"><div className="animate-spin w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full" /></div>}>
+      <div className="min-h-screen bg-white font-sans text-slate-900">
+        <Suspense fallback={null}>
+          <StoreHeader
+            onTrackOrder={() => setIsTrackOrderOpen(true)}
+            onHomeClick={onBack}
+            wishlistCount={wishlistCount}
+            cart={cart}
+            onToggleCart={onToggleCart}
+            onCheckoutFromCart={onCheckoutFromCart}
+            productCatalog={catalogProducts}
+            user={user}
+            onLoginClick={onLoginClick}
+            onLogoutClick={onLogoutClick}
+            onProfileClick={onProfileClick}
+            logo={logo}
+            websiteConfig={websiteConfig}
+            searchValue={searchValue}
+            onSearchChange={onSearchChange}
+            onProductClick={onProductClick}
+            tenantId={tenantId}
+            onCategoriesClick={handleCategoriesNav}
+            onProductsClick={handleProductsNav}
+            categoriesList={categoriesList}
+            onCategorySelect={handleCategorySelect}
+            categories={categories}
+          />
+        </Suspense>
+
+        {isTrackOrderOpen && (
+          <Suspense fallback={<ModalLoadingFallback />}>
+            <TrackOrderModal onClose={() => setIsTrackOrderOpen(false)} orders={orders} />
+          </Suspense>
+        )}
+        {showCartSuccess && (
+          <AddToCartSuccessModal
+            product={product}
+            variant={lastAddedVariant || currentVariant}
+            quantity={quantity}
+            onClose={() => setShowCartSuccess(false)}
+            onCheckout={() => onCheckout(product, quantity, lastAddedVariant || currentVariant)}
+          />
+        )}
+
         <GadgetsProductDetailsPage
           product={{
             ...product,
@@ -602,6 +644,9 @@ const StoreProductDetail = ({
           }))}
           categories={categories}
           currency={currencySymbol}
+          tenantId={tenantId}
+          user={user ? { name: user.name || user.email, email: user.email } : null}
+          onLoginClick={onLoginClick}
           onAddToCart={handleAddToCart}
           onCheckout={handleBuyNow}
           onBack={onBack}
@@ -611,7 +656,11 @@ const StoreProductDetail = ({
           }}
           onCategoryClick={handleCategorySelect}
         />
-      </Suspense>
+
+        <Suspense fallback={null}>
+          <StoreFooter websiteConfig={websiteConfig} logo={logo} tenantId={tenantId} onOpenChat={onOpenChat} />
+        </Suspense>
+      </div>
     );
   }
 

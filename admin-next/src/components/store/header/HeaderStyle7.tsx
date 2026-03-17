@@ -64,7 +64,7 @@ const AdminNoticeTicker = memo<{ text: string }>(({ text }) => (
       .header7-marquee-item {
         white-space: nowrap;
         display: inline-block;
-        padding-right: 700px;
+        padding-right: 900px;
       }
       @keyframes header7-marquee {
         0% { transform: translateX(0); }
