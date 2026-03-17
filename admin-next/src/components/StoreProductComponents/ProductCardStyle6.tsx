@@ -16,7 +16,7 @@ const ProductCardStyle6: React.FC<ProductCardProps> = ({ product, onClick, onBuy
   return (
     <div className="group bg-white rounded-xl overflow-hidden flex flex-col relative border border-gray-100 hover:border-theme-primary/40 hover:shadow-xl transition-all duration-300" style={{ contain: 'layout' }}>
       <div className="relative cursor-pointer overflow-hidden" style={{ aspectRatio: '1/1' }} onClick={() => onClick(product)}>
-        <LazyImage src={getImage(product)} alt={product.name} className="w-full h-full object-contain p-3 group-hover:scale-108 transition-transform duration-500" width={300} height={300} />
+        <LazyImage src={getImage(product)} alt={product.name} className="w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-500" width={300} height={300} />
         <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         {(product.discount || discountPercent) && (
           <div className="absolute top-2 left-2 z-10">
