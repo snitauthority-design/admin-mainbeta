@@ -31,7 +31,7 @@ export const THEME_DEMO_IMAGES: Record<string, Record<string, string>> = {
     style3: 'https://hdnfltv.com/image/nitimages/mobile_header_3.webp',
     style4: 'https://hdnfltv.com/image/nitimages/mobile_header_4.webp',
     style5: 'https://hdnfltv.com/image/nitimages/mobile_header_5.webp',
-    style6: 'https://hdnfltv.com/image/nitimages/pasted_1771520591605.webp',
+    style6: 'https://hdnfltv.com/image/nitimages/Mobile_header_6.webp',
   },
   productCardStyle: {
     style1: 'https://hdnfltv.com/image/nitimages/product_card_-_1.webp',
@@ -39,6 +39,7 @@ export const THEME_DEMO_IMAGES: Record<string, Record<string, string>> = {
     style3: 'https://hdnfltv.com/image/nitimages/product_card_-_3.webp',
     style4: 'https://hdnfltv.com/image/nitimages/product_card_-_4.webp',
     style5: 'https://hdnfltv.com/image/nitimages/product_card_-_5.webp',
+    style6: 'https://hdnfltv.com/image/nitimages/Product_card_style6.webp',
   },
   footerStyle: {
     style1: 'https://hdnfltv.com/image/nitimages/pasted_1773259417132.webp',
@@ -83,13 +84,14 @@ const mobileHeaderVariants: SectionVariant[] = [
   { id: 'mobile-header-style6', name: 'Mobile Header 6', description: 'Vibrant orange gradient mobile header', thumbnail: THEME_DEMO_IMAGES.mobileHeaderStyle.style6, settings: { mobileHeaderStyle: 'style6' } },
 ];
 
-// Product Card Style Variants (5 styles)
+// Product Card Style Variants (6 styles)
 const productCardVariants: SectionVariant[] = [
   { id: 'product-card-style1', name: 'Product Card 1', description: 'Classic card with image and price', thumbnail: THEME_DEMO_IMAGES.productCardStyle.style1, settings: { productCardStyle: 'style1' } },
   { id: 'product-card-style2', name: 'Product Card 2', description: 'Card with hover effects', thumbnail: THEME_DEMO_IMAGES.productCardStyle.style2, settings: { productCardStyle: 'style2' } },
   { id: 'product-card-style3', name: 'Product Card 3', description: 'Minimal card with quick add', thumbnail: THEME_DEMO_IMAGES.productCardStyle.style3, settings: { productCardStyle: 'style3' } },
   { id: 'product-card-style4', name: 'Product Card 4', description: 'Card with rating and discount', thumbnail: THEME_DEMO_IMAGES.productCardStyle.style4, settings: { productCardStyle: 'style4' } },
   { id: 'product-card-style5', name: 'Product Card 5', description: 'Modern card with animations', thumbnail: THEME_DEMO_IMAGES.productCardStyle.style5, settings: { productCardStyle: 'style5' } },
+  { id: 'product-card-style6', name: 'Product Card 6', description: 'Overlay card with gradient and badges', thumbnail: THEME_DEMO_IMAGES.productCardStyle.style6, settings: { productCardStyle: 'style6' } },
 ];
 
 // Category Section Style Variants (5 styles)
