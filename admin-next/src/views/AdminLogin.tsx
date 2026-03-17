@@ -218,6 +218,8 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
                     <button
                       type="button"
                       onClick={() => setShowContactOptions(!showContactOptions)}
+                      aria-expanded={showContactOptions}
+                      aria-haspopup="true"
                       className="w-full flex items-center justify-center gap-2 py-2.5 bg-sky-500 hover:bg-sky-600 text-white font-semibold rounded-xl transition-all duration-200 text-sm"
                     >
                       <HeadphonesIcon size={16} />
