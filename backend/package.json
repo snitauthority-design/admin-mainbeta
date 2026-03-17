@@ -3,13 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "bun --watch src/index.ts",
-    "build": "bun build src/index.ts --outdir dist --target bun",
-    "start": "bun run dist/index.js",
-    "seed": "bun run src/scripts/seed.ts",
-    "seed:subscriptions": "bun run src/scripts/seedSubscriptions.ts",
-    "seed:products": "bun run src/scripts/seedProducts.ts",
-    "validate:products": "bun -e \"const s=require('./src/scripts/seedProductsStandalone.js');console.log('✅',s.PRODUCTS.length,'products ready')\""
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "build": "tsc --project tsconfig.json",
+    "start": "node dist/index.js",
+    "seed": "ts-node src/scripts/seed.ts",
+    "seed:subscriptions": "ts-node src/scripts/seedSubscriptions.ts",
+    "seed:products": "ts-node src/scripts/seedProducts.ts",
+    "validate:products": "node -e \"const s=require('./src/scripts/seedProductsStandalone.js');console.log('✅',s.PRODUCTS.length,'products ready')\""
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.965.0",
@@ -43,7 +43,6 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
-    "@types/bun": "latest",
     "@types/compression": "^1.8.1",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
@@ -53,6 +52,7 @@
     "@types/node": "^20.11.30",
     "@types/socket.io": "^3.0.1",
     "@types/uuid": "^9.0.7",
+    "ts-node-dev": "^2.0.0",
     "typescript": "^5.4.5"
   }
 }
