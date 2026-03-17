@@ -403,7 +403,7 @@ export function useAppHandlers(props: UseAppHandlersProps) {
     };
 
     try {
-      const apiBase = import.meta.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5001';
+      const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5001';
       const response = await fetch(`${apiBase}/api/orders/${activeTenantId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -472,7 +472,7 @@ export function useAppHandlers(props: UseAppHandlersProps) {
     };
 
     try {
-      const apiBase = import.meta.env.NEXT_PUBLIC_API_BASE_URL || '';
+      const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || '';
       const response = await fetch(`${apiBase}/api/orders/${activeTenantId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
