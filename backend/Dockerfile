@@ -1,15 +1,20 @@
-# Use Bun runtime
-FROM oven/bun:1 AS base
+# Use Node.js LTS
+FROM node:20-alpine
+
+# Set working directory
 WORKDIR /app
 
 # Copy package files
-COPY package.json bun.lockb* ./
+COPY package*.json ./
 
 # Install dependencies
-RUN bun install
+RUN npm ci --only=production
 
 # Copy source code
 COPY . .
+
+# Build TypeScript
+RUN npm run build
 
 # Expose port
 EXPOSE 5001
@@ -18,5 +23,5 @@ EXPOSE 5001
 ENV NODE_ENV=production
 ENV PORT=5001
 
-# Start the server directly with Bun (no build step needed - Bun runs TS natively)
-CMD ["bun", "run", "src/index.ts"]
+# Start the server
+CMD ["npm", "start"]

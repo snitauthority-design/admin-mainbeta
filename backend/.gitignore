@@ -7,9 +7,6 @@
 !.env.example
 !.env.*.example
 
-# npm lock file (replaced by bun.lockb)
-package-lock.json
-
 # Uploaded files (runtime data, not for version control)
 /uploads/
 
