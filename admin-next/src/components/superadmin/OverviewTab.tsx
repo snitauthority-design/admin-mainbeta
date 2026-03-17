@@ -57,6 +57,8 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
   onEditTenant
 }) => {
   const API_URL = getApiUrl();
+  // Base URL for non-API endpoints (e.g., /health)
+  const BASE_URL = API_URL.replace(/\/api\/?$/, '');
   const [dashboardStats, setDashboardStats] = useState<DashboardStatsData | null>(null);
   const [serverStatus, setServerStatus] = useState<ServerStatus | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -85,9 +87,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
   useEffect(() => {
     const fetchServerStatus = async () => {
       try {
-        // Health endpoint uses base URL without /api prefix
-        const baseUrl = API_URL.replace(/\/api\/?$/, '');
-        const response = await fetch(`${baseUrl}/health`);
+        const response = await fetch(`${BASE_URL}/health`);
         if (response.ok) {
           const result = await response.json();
           if (result.server) {
@@ -205,8 +205,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
   const handleFlushCache = useCallback(async () => {
     setIsFlushing(true);
     try {
-      const baseUrl = API_URL.replace(/\/api\/?$/, '');
-      const response = await fetch(`${baseUrl}/health/cache/flush`, {
+      const response = await fetch(`${BASE_URL}/health/cache/flush`, {
         method: 'POST',
         headers: getAuthHeader()
       });
@@ -618,7 +617,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
           {filteredTenants.length === 0 && searchQuery && (
             <div className="p-8 text-center">
               <Search className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-              <p className="text-sm text-slate-500">No tenants match &quot;{searchQuery}&quot;</p>
+              <p className="text-sm text-slate-500">No tenants match {`"${searchQuery}"`}</p>
             </div>
           )}
         </div>

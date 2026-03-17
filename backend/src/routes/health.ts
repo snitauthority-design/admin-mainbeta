@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import os from 'os';
+import { execSync } from 'child_process';
 import { getDatabase } from '../db/mongo';
 import { getCacheStats, flushAllCache } from '../services/redisCache';
 import { authenticateToken, requireRole } from '../middleware/auth';
@@ -81,7 +82,6 @@ healthRouter.get('/', async (_req, res, next) => {
       // Disk usage: best-effort using /tmp stat (works on Linux)
       let diskUsage = 0;
       try {
-        const { execSync } = require('child_process');
         const dfOutput = execSync("df / --output=pcent 2>/dev/null | tail -1", { encoding: 'utf8', timeout: 3000 });
         diskUsage = parseInt(dfOutput.trim().replace('%', ''), 10) || 0;
       } catch {
