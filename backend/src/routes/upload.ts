@@ -144,10 +144,10 @@ router.post('/api/upload', upload.single('file'), handleMulterError, async (req:
     let fileBuffer = req.file.buffer;
     let fileExtension = path.extname(req.file.originalname) || '.jpg';
     
-    if (!folder || folder !== 'carousel') {
-      // This is a product image - compress it
+    const skipCompression = folder === 'carousel' || folder === 'branding';
+    if (!skipCompression) {
+      // Compress product images only (skip carousel & branding)
       fileBuffer = await compressProductImage(req.file.buffer, req.file.originalname);
-      // Force .webp extension for compressed images
       fileExtension = '.webp';
     }
     

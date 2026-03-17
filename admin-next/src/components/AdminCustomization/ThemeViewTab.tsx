@@ -17,6 +17,7 @@ const THEME_CATEGORIES = [
 const PRODUCT_DETAIL_THEMES = [
   { id: 'default', title: 'Default Theme', description: 'Classic product detail layout' },
   { id: 'modern', title: 'Modern Theme', description: 'Modern product detail page with enhanced UI' },
+  { id: 'gadgets', title: 'Gadgets Theme', description: 'Gadgets-style product detail page' },
 ];
 
 // Ready Colours preset combinations
@@ -532,11 +533,13 @@ export const ThemeViewTab: React.FC<ThemeViewTabProps> = ({
                           height: '100%',
                           background: theme.id === 'modern'
                             ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+                            : theme.id === 'gadgets'
+                            ? 'linear-gradient(135deg, #84cc16 0%, #22c55e 100%)'
                             : 'linear-gradient(135deg, #e0e0e0 0%, #f5f5f5 100%)',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          color: theme.id === 'modern' ? '#fff' : '#999',
+                          color: theme.id === 'default' ? '#999' : '#fff',
                           fontFamily: 'Poppins, sans-serif',
                           fontSize: '14px',
                           fontWeight: 500,

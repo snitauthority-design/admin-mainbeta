@@ -68,7 +68,8 @@ const createAnalyticsLimiter = (scope: string, maxRequests: number) =>
     limit: maxRequests,
     standardHeaders: 'draft-7',
     legacyHeaders: false,
-    keyGenerator: (req) => `${scope}:${req.params.tenantId || 'global'}:${req.ip || 'anonymous'}`,
+    keyGenerator: (req) => `${scope}:${req.params.tenantId || 'global'}`,
+    validate: { xForwardedForHeader: false, ip: false },
     message: { error: 'Too many analytics requests. Please try again shortly.' }
   });
 

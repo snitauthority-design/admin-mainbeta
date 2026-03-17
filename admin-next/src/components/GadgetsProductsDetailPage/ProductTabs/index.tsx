@@ -1,0 +1,56 @@
+import { useState } from "react";
+import { ProductDescription } from "./ProductDescription";
+
+interface ProductTabsProps {
+  description?: string;
+  videoUrl?: string;
+  details?: Array<{ type: string; description: string }>;
+}
+
+export const ProductTabs = ({ description, videoUrl, details }: ProductTabsProps) => {
+  const [activeTab, setActiveTab] = useState<'description' | 'additional' | 'reviews'>('description');
+
+  return (
+    <div className="bg-white box-border caret-transparent border border-neutral-200 my-[15px] px-3.5 py-[11px] rounded-[15px] border-solid md:bg-transparent md:my-[30px] md:p-[18px]">
+      <div className="box-border caret-transparent">
+        <div className="box-border caret-transparent gap-x-2.5 flex flex-wrap gap-y-2.5">
+          <button
+            onClick={() => setActiveTab('description')}
+            className={`${activeTab === 'description' ? 'text-lime-500' : 'text-zinc-500'} text-[13px] font-bold bg-white caret-transparent block min-h-[auto] min-w-[auto] text-center border border-stone-300 px-3 py-[11px] rounded-[30px] font-arial md:text-[17px] md:px-6 md:py-[13px]`}
+          >
+            {" "}
+            Description{" "}
+          </button>
+          {details && details.length > 0 && (
+            <button
+              onClick={() => setActiveTab('additional')}
+              className={`${activeTab === 'additional' ? 'text-lime-500' : 'text-zinc-500'} text-[13px] font-bold bg-white caret-transparent block min-h-[auto] min-w-[auto] text-center border border-stone-300 px-3 py-[11px] rounded-[30px] font-arial md:text-[17px] md:px-6 md:py-[13px]`}
+            >
+              {" "}
+              Additional Info{" "}
+            </button>
+          )}
+        </div>
+        <div className="box-border caret-transparent my-[15px] md:my-[30px]">
+          {activeTab === 'description' && (
+            <ProductDescription description={description} videoUrl={videoUrl} />
+          )}
+          {activeTab === 'additional' && details && (
+            <div className="box-border caret-transparent">
+              <table className="w-full text-sm">
+                <tbody>
+                  {details.map((detail, i) => (
+                    <tr key={i} className={i % 2 === 0 ? 'bg-gray-50' : ''}>
+                      <td className="font-semibold p-2 border border-gray-200">{detail.type}</td>
+                      <td className="p-2 border border-gray-200">{detail.description}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};

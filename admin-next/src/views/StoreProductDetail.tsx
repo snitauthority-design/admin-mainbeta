@@ -39,6 +39,9 @@ const ProductDetailSkeleton = lazy(() => import('../components/SkeletonLoaders')
 // Modern product detail page theme (ready-made theme)
 const ModernProductDetailsPage = lazy(() => import('@/productDetailPage/src/components/ProductDetails'));
 
+// Gadgets product detail page theme
+const GadgetsProductDetailsPage = lazy(() => import('@/components/GadgetsProductsDetailPage').then(m => ({ default: m.ProductDetails })));
+
 // Modal loading fallback
 const ModalLoadingFallback = () => (
   <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
@@ -572,6 +575,40 @@ const StoreProductDetail = ({
           user={user ? { name: user.name || user.email, email: user.email } : null}
           onLoginClick={onLoginClick}
           onChatClick={onOpenChat}
+          onCategoryClick={handleCategorySelect}
+        />
+      </Suspense>
+    );
+  }
+
+  // Render gadgets product detail theme
+  if (activeProductDetailTheme === 'gadgets') {
+    const currencySymbol = websiteConfig?.shopCurrency === 'USD' ? '$' : '৳';
+    return (
+      <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center"><div className="animate-spin w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full" /></div>}>
+        <GadgetsProductDetailsPage
+          product={{
+            ...product,
+            galleryImages: galleryImages,
+          }}
+          relatedProducts={relatedProducts.map(r => ({
+            id: r.product.id,
+            name: r.product.name,
+            price: r.product.price,
+            originalPrice: r.product.originalPrice,
+            image: r.product.image,
+            rating: r.product.rating,
+            slug: r.product.slug,
+          }))}
+          categories={categories}
+          currency={currencySymbol}
+          onAddToCart={handleAddToCart}
+          onCheckout={handleBuyNow}
+          onBack={onBack}
+          onProductClick={(id) => {
+            const p = catalogProducts.find(cp => cp.id === id);
+            if (p) onProductClick(p);
+          }}
           onCategoryClick={handleCategorySelect}
         />
       </Suspense>
