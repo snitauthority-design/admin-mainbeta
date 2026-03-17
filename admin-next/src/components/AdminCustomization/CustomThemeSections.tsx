@@ -10,7 +10,7 @@ const WEB_SECTIONS = [
   { title: 'Showcase Section', key: 'showcaseSectionStyle', label: 'Showcase', count: 5, icon: '\u2728' },
   { title: 'Category Section', key: 'categorySectionStyle', label: 'Category', count: 6, icon: '\u{1F4C2}' },
   { title: 'Product Card V2', key: 'productSectionStyle', label: 'Product', count: 5, icon: '\u{1F6CD}\uFE0F' },
-  { title: 'Product Card', key: 'productCardStyle', label: 'Card', count: 5, icon: '\u{1F0CF}' },
+  { title: 'Product Card', key: 'productCardStyle', label: 'Card', count: 6, icon: '\u{1F0CF}' },
   { title: 'Brand Section', key: 'brandSectionStyle', label: 'Brand', count: 5, icon: '\u{1F3F7}\uFE0F' },
   { title: 'Footer Section', key: 'footerStyle', label: 'Footer', count: 5, icon: '\u{1F4CB}' },
 ];
@@ -18,7 +18,7 @@ const WEB_SECTIONS = [
 // Mobile sections configuration
 const MOBILE_SECTIONS = [
   { title: 'Mobile Header', key: 'mobileHeaderStyle', label: 'Header', count: 6, icon: '\u{1F4F1}' },
-  { title: 'Product Card', key: 'productCardStyle', label: 'Card', count: 5, icon: '\u{1F0CF}' },
+  { title: 'Product Card', key: 'productCardStyle', label: 'Card', count: 6, icon: '\u{1F0CF}' },
   { title: 'Bottom Nav', key: 'bottomNavStyle', label: 'Nav', count: 6, icon: '\u{1F9ED}' },
 ];
 

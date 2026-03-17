@@ -73,7 +73,7 @@ export const THEME_DEMO_IMAGES: Record<string, Record<string, string>> = {
     style3: 'https://hdnfltv.com/image/nitimages/mobile_header_3.webp',
     style4: 'https://hdnfltv.com/image/nitimages/mobile_header_4.webp',
     style5: 'https://hdnfltv.com/image/nitimages/mobile_header_5.webp',
-    style6: 'https://hdnfltv.com/image/nitimages/pasted_1771697764963.webp',
+    style6: 'https://hdnfltv.com/image/nitimages/Mobile_header_6.webp',
   },
   showcaseSectionStyle: {
     style1: 'https://hdnfltv.com/image/nitimages/istockphoto-2177087647-612x612.webp',
@@ -112,6 +112,7 @@ export const THEME_DEMO_IMAGES: Record<string, Record<string, string>> = {
     style3: 'https://hdnfltv.com/image/nitimages/product_card_-_3.webp',
     style4: 'https://hdnfltv.com/image/nitimages/product_card_-_4.webp',
     style5: 'https://hdnfltv.com/image/nitimages/product_card_-_5.webp',
+    style6: 'https://hdnfltv.com/image/nitimages/Product_card_style6.webp',
   },
   footerStyle: {
     style1: 'https://hdnfltv.com/image/nitimages/pasted_1773259417132.webp',
@@ -222,7 +223,7 @@ export const THEME_VIEW_SECTIONS = [
     hasNone: true,
     hasMobile: true
   },
-  { title: 'Product Card', key: 'productCardStyle', count: 5 },
+  { title: 'Product Card', key: 'productCardStyle', count: 6 },
   { title: 'Footer Section', key: 'footerStyle', count: 5 },
   { title: 'Bottom Nav', key: 'bottomNavStyle', count: 6 }
 ];
