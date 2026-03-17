@@ -31,7 +31,7 @@ const FigmaAnalyticsChart: React.FC<FigmaAnalyticsChartProps> = ({ tenantId, onN
       try {
         setLoading(true);
         const hostname = window.location.hostname;
-        const isLocal = hostname.includes('localhost');
+        const isLocal = hostname.includes(':localhost:3000') || hostname.includes('localhost');
         const apiUrl = isLocal ? 'http://localhost:5001' : `${window.location.protocol}//${hostname.split('.').slice(-2).join('.')}`;
 
         const [statsRes, onlineRes] = await Promise.all([

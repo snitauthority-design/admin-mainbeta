@@ -9,9 +9,9 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '';
 
-async function handler(req: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
+async function handler(req: NextRequest, { params }: { params: Promise<{ path?: string[] }> }) {
   const { path } = await params;
-  const apiPath = `/api/${path.join('/')}`;
+  const apiPath = `/api/${(path ?? []).join('/')}`;
   const search = req.nextUrl.search;
 
   if (!BACKEND_URL) {

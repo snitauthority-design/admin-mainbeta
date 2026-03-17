@@ -20,18 +20,12 @@ import { CarouselItem, WebsiteConfig, CarouselFilterStatus, ImageUploadType } fr
 import { STATUS_COLORS } from './constants';
 import { normalizeImageUrl } from '../../utils/imageUrlHelper';
 import {
-  convertCarouselImage,
-  dataUrlToFile,
+  convertFileToWebP,
   CAROUSEL_WIDTH,
   CAROUSEL_HEIGHT,
   CAROUSEL_MOBILE_WIDTH,
-  CAROUSEL_MOBILE_HEIGHT
+  CAROUSEL_MOBILE_HEIGHT,
 } from '../../services/imageUtils';
-import {
-  uploadPreparedImageToServer,
-  isBase64Image,
-  convertBase64ToUploadedUrl
-} from '../../services/imageUploadService';
 import { ActionButton } from './shared/TabButton';
 import { GalleryPicker } from '../GalleryPicker';
 
@@ -122,27 +116,11 @@ export const CarouselTab: React.FC<CarouselTabProps> = ({
     }
 
     try {
-      let convertedImage: string;
-
-      if (imageType === 'carousel') {
-        convertedImage = await convertCarouselImage(file, { quality: 1 });
-      } else {
-        convertedImage = await convertCarouselImage(file, {
-          width: CAROUSEL_MOBILE_WIDTH,
-          height: CAROUSEL_MOBILE_HEIGHT,
-          quality: 1
-        });
-      }
-
-      const webpFile = dataUrlToFile(
-        convertedImage,
-        `${imageType === 'carouselMobile' ? 'carousel-mobile' : 'carousel'}-${Date.now()}.webp`
-      );
-      const uploadedUrl = await uploadPreparedImageToServer(webpFile, tenantId, 'carousel');
+      const converted = await convertFileToWebP(file, { quality: 0.8, maxDimension: 2000 });
       setCarouselFormData((prev) =>
         imageType === 'carousel'
-          ? { ...prev, image: uploadedUrl }
-          : { ...prev, mobileImage: uploadedUrl }
+          ? { ...prev, image: converted }
+          : { ...prev, mobileImage: converted }
       );
     } catch (err) {
       console.error('Failed to upload image:', err);
@@ -186,20 +164,8 @@ export const CarouselTab: React.FC<CarouselTabProps> = ({
     const startTime = Date.now();
 
     try {
-      let desktopImage = carouselFormData.image || '';
-      let mobileImage = carouselFormData.mobileImage || '';
-
-      if (isBase64Image(desktopImage)) {
-        toast.loading('Uploading desktop image...', { id: 'carousel-handleImageUpload' });
-        desktopImage = await convertBase64ToUploadedUrl(desktopImage, tenantId, 'carousel');
-        toast.dismiss('carousel-handleImageUpload');
-      }
-
-      if (mobileImage && isBase64Image(mobileImage)) {
-        toast.loading('Uploading mobile image...', { id: 'carousel-mobile-handleImageUpload' });
-        mobileImage = await convertBase64ToUploadedUrl(mobileImage, tenantId, 'carousel');
-        toast.dismiss('carousel-mobile-handleImageUpload');
-      }
+      const desktopImage = carouselFormData.image || '';
+      const mobileImage = carouselFormData.mobileImage || '';
 
       const carouselItem: CarouselItem = {
         id: editingCarousel?.id || Date.now().toString(),

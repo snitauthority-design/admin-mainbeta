@@ -26,7 +26,7 @@ interface IsActiveTogglebtnProps {
 
 const IsActiveTogglebtn: React.FC<IsActiveTogglebtnProps> = ({ 
   tenants = [], 
-  primaryDomain = getPrimaryDomain() || 'localhost',
+  primaryDomain = getPrimaryDomain() || 'localhost:3000',
   onSelectTenant,
   isProcessing = false 
 }) => {

@@ -9,7 +9,7 @@ import { compressProductImage, convertFileToWebP, dataUrlToFile, convertProductI
 import { getApiUrl } from '../utils/appHelpers';
 
 // Production API URL - get from environment or use default
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || getApiUrl();
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || getApiUrl();
 
 export interface UploadResponse {
   success: boolean;

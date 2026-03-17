@@ -13,11 +13,11 @@ import { auth, provider } from '../config/firebase';
 const DEFAULT_TENANT_ID = '';  // Empty to prevent data leaking to real tenant
 
 // API Base URL - derived from env var or current hostname
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
-  ? String(import.meta.env.VITE_API_BASE_URL)
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
+  ? String(process.env.NEXT_PUBLIC_API_BASE_URL)
   : (() => {
     const domain = getPrimaryDomain();
-    if (domain && domain !== 'localhost') return `https://${domain}`;
+    if (domain && domain !== 'localhost:3000') return `https://${domain}`;
     // In browser, extract from current location; during SSR, return empty
     if (typeof window !== 'undefined') {
       const parts = window.location.hostname.split('.');

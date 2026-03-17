@@ -73,7 +73,7 @@ const GadgetTimeCounter = memo(({ label }: { label: string }) => {
   const pad = (n: number) => String(n).padStart(2, '0');
 
   return (
-    <div className="relative items-center bg-transparent flex gap-x-[7px] gap-y-[7px] justify-center max-w-[430px] text-center w-auto z-[2] mx-auto md:bg-white md:w-full">
+    <div className="relative items-center bg-transparent flex gap-x-[6px] gap-y-[6px] justify-center max-w-[430px] text-center w-auto z-[2] mx-auto md:bg-white md:w-full">
       {[
         { v: pad(time.h), l: 'Hours' },
         { v: pad(time.m), l: 'Mins' },
@@ -94,9 +94,19 @@ const GadgetProductCard = memo(({ product, onClick, onAddToCart, onBuyNow }: {
   product: Product; onClick: () => void; onAddToCart?: () => void; onBuyNow?: () => void;
 }) => {
   const img = product.galleryImages?.[0] || product.image;
-  const price = Number(product.salePrice) || Number(product.price) || 0;
-  const originalPrice = Number(product.price) && Number(product.salePrice) && Number(product.price) > Number(product.salePrice) ? Number(product.price) : null;
-  const discount = originalPrice ? calcDiscount(originalPrice, price) : 0;
+  const basePrice = Number(product.price) || 0;
+  const salePrice = Number(product.salePrice) || 0;
+  const originalFromData = Number(product.originalPrice) || 0;
+
+  const price = salePrice > 0 ? salePrice : basePrice;
+  const displayOriginalPrice = originalFromData > price
+    ? originalFromData
+    : (salePrice > 0 && basePrice > salePrice ? basePrice : null);
+
+  const parsedDiscount = Number(String(product.discount || '').replace(/[^0-9.]/g, '')) || 0;
+  const discount = displayOriginalPrice
+    ? calcDiscount(displayOriginalPrice, price)
+    : parsedDiscount;
   const isStockOut = product.stock != null && product.stock <= 0;
 
   return (
@@ -135,8 +145,8 @@ const GadgetProductCard = memo(({ product, onClick, onAddToCart, onBuyNow }: {
           </div>
 
           {/* Info */}
-          <div className="pb-4 px-2">
-            <div className="items-center gap-x-[3px] flex flex-col gap-y-[3px] my-2">
+          <div className="pb-3 px-2">
+            <div className="items-center gap-x-[3px] flex flex-col gap-y-[3px] my-1.5">
               <div>
                 <p className="text-neutral-900 text-[13px] font-medium flow-root h-[30px] leading-[15px] text-center text-ellipsis break-all overflow-hidden mb-[5px] md:text-black md:text-sm md:h-[39px] md:leading-[normal] md:break-normal">
                  {String(product?.name || 'Unknown Product')}
@@ -147,9 +157,9 @@ const GadgetProductCard = memo(({ product, onClick, onAddToCart, onBuyNow }: {
                   <span className="text-black text-[15px] font-medium flex h-[22px] tracking-[-0.56px] leading-[22px]">
                     {formatPrice(price)}
                   </span>
-                  {originalPrice && (
+                  {displayOriginalPrice && (
                     <span className="text-black text-[13px] font-medium flex h-[22px] tracking-[-0.56px] leading-[22px] line-through ml-[7px]">
-                      {formatPrice(originalPrice)}
+                      {formatPrice(displayOriginalPrice)}
                     </span>
                   )}
                 </div>
@@ -157,7 +167,7 @@ const GadgetProductCard = memo(({ product, onClick, onAddToCart, onBuyNow }: {
             </div>
 
             {/* Buttons */}
-            <div className="items-center gap-x-2.5 flex gap-y-2.5 mt-2.5">
+            <div className="items-center gap-x-2 flex gap-y-2 mt-2">
               {isStockOut ? (
                 <button className="text-black items-center flex justify-center text-center text-sm font-semibold bg-neutral-200 h-[38px] opacity-70 w-full p-0 rounded-[5px] cursor-not-allowed">
                   Stock Out
@@ -250,7 +260,7 @@ const GadgetHero = memo(({ websiteConfig }: { websiteConfig?: WebsiteConfig }) =
   const heroImg = item?.image || item?.imageUrl;
 
   return (
-    <div className="flex-col h-[118px] max-w-[1340px] w-[92%] mt-4 mb-[15px] mx-auto md:flex-row md:h-[345px] md:w-full md:mb-0">
+    <div className="flex-col h-[118px] max-w-[1340px] w-[92%] mt-2 mb-2 mx-auto md:flex-row md:h-[345px] md:w-full md:mb-0">
       <div className="relative bg-neutral-200 h-[118px] w-full overflow-hidden m-auto rounded-lg md:h-[345px] md:rounded-none">
         {/* Slides */}
         <div className="flex h-full transition-transform duration-500 ease-in-out" style={{ transform: `translateX(-${current * 100}%)` }}>
@@ -321,6 +331,28 @@ const defaultUsefulLinks = [
   { id: '4', label: 'Track Order', url: '/track' },
 ];
 
+const GADGET_FOOTER_EMAIL_ICON = 'https://hdnfltv.com/image/nitimages/pasted_1773746473256.webp';
+const GADGET_FOOTER_PHONE_ICON = 'https://hdnfltv.com/image/nitimages/pasted_1773746487757.webp';
+const GADGET_FOOTER_ADDRESS_ICON = 'https://hdnfltv.com/image/nitimages/pasted_1773746503062.webp';
+
+const GADGET_SOCIAL_ICON_URLS: Record<string, string> = {
+  facebook: 'https://upload.wikimedia.org/wikipedia/commons/b/b9/2023_Facebook_icon.svg',
+  fb: 'https://upload.wikimedia.org/wikipedia/commons/b/b9/2023_Facebook_icon.svg',
+  instagram: 'https://upload.wikimedia.org/wikipedia/commons/9/95/Instagram_logo_2022.svg',
+  ig: 'https://upload.wikimedia.org/wikipedia/commons/9/95/Instagram_logo_2022.svg',
+  youtube: 'https://upload.wikimedia.org/wikipedia/commons/a/a0/YouTube_social_red_circle_%282017%29.svg',
+  yt: 'https://upload.wikimedia.org/wikipedia/commons/a/a0/YouTube_social_red_circle_%282017%29.svg',
+  twitter: 'https://upload.wikimedia.org/wikipedia/en/6/60/Twitter_Logo_as_of_2021.svg',
+  x: 'https://upload.wikimedia.org/wikipedia/en/6/60/Twitter_Logo_as_of_2021.svg',
+  linkedin: 'https://hdnfltv.com/image/nitimages/pasted_1773746619238.webp',
+  tiktok: 'https://hdnfltv.com/image/nitimages/pasted_1773746605870.webp',
+  tt: 'https://hdnfltv.com/image/nitimages/pasted_1773746605870.webp',
+  whatsapp: 'https://hdnfltv.com/image/nitimages/2062095_application_chat_communication_logo_whatsapp_icon.webp',
+  wa: 'https://hdnfltv.com/image/nitimages/2062095_application_chat_communication_logo_whatsapp_icon.webp',
+  pinterest: 'https://upload.wikimedia.org/wikipedia/commons/a/a0/YouTube_social_red_circle_%282017%29.svg',
+  daraz: 'https://hdnfltv.com/image/nitimages/pasted_1773759254557.webp',
+};
+
 const GadgetFooter = memo(({ websiteConfig, logo }: { websiteConfig?: WebsiteConfig; logo?: string | null }) => {
   const storeName = websiteConfig?.storeName || 'Store';
   const description = websiteConfig?.shortDescription || '';
@@ -341,9 +373,9 @@ const GadgetFooter = memo(({ websiteConfig, logo }: { websiteConfig?: WebsiteCon
     <div>
       {/* Desktop Footer */}
       <div className="hidden md:block">
-        <div className="bg-white mt-5">
+        <div className="bg-white mt-3">
           <div className="max-w-[1340px] w-[95%] mx-auto">
-            <div className="gap-x-[25px] grid grid-cols-[1fr] gap-y-[25px] p-[15px] md:gap-x-[30px] md:grid-cols-[repeat(4,1fr)] md:gap-y-[30px] md:px-2.5 md:py-5">
+            <div className="gap-x-5 grid grid-cols-[1fr] gap-y-5 p-[12px] md:gap-x-6 md:grid-cols-[repeat(4,1fr)] md:gap-y-6 md:px-2.5 md:py-4">
               {/* Brand */}
               <div className="text-center w-full md:text-start">
                 <div className="flex justify-center text-center mb-[15px] md:block md:justify-normal md:text-start">
@@ -357,12 +389,12 @@ const GadgetFooter = memo(({ websiteConfig, logo }: { websiteConfig?: WebsiteCon
                 {socialLinks.length > 0 && (
                   <div className="items-center gap-x-2.5 flex justify-center gap-y-2.5 text-center mt-[15px] md:justify-normal md:text-start">
                     {socialLinks.map((s, i) => {
-                      const icon: Record<string, string> = { facebook: 'f', instagram: '\uD83D\uDCF7', youtube: '\u25B6', twitter: '𝕏', tiktok: '♪', whatsapp: '\uD83D\uDCAC', linkedin: 'in', pinterest: 'P' };
-                      const label = icon[(s.platform || '').toLowerCase()] || s.platform?.[0]?.toUpperCase() || '?';
+                      const platform = String(s.platform || '').toLowerCase();
+                      const iconSrc = GADGET_SOCIAL_ICON_URLS[platform] || GADGET_SOCIAL_ICON_URLS.facebook;
                       return (
                         <a key={i} href={s.url} target="_blank" rel="noopener noreferrer"
-                          className="bg-gray-400/30 flex items-center justify-center w-8 h-8 rounded-full hover:bg-lime-500 transition-colors">
-                          <span className="text-sm font-bold">{label}</span>
+                          className="bg-gray-400/30 flex items-center justify-center w-9 h-9 rounded-full hover:bg-lime-500 transition-colors overflow-hidden">
+                          <img src={iconSrc} alt={s.platform || 'social'} className="w-5 h-5 object-contain" />
                         </a>
                       );
                     })}
@@ -376,19 +408,19 @@ const GadgetFooter = memo(({ websiteConfig, logo }: { websiteConfig?: WebsiteCon
                 <ul className="list-none pl-0">
                   {emails.map((e, i) => (
                     <li key={`e${i}`} className="items-center gap-x-2.5 flex flex-wrap justify-center gap-y-2.5 text-center w-full mb-2 md:flex-nowrap md:justify-start md:text-start">
-                      <span className="text-lime-500 text-sm">✉</span>
+                      <img src={GADGET_FOOTER_EMAIL_ICON} alt="email" className="w-4 h-4 object-contain" />
                       <span className="text-sm leading-[26px]">{e}</span>
                     </li>
                   ))}
                   {phones.map((p, i) => (
                     <li key={`p${i}`} className="items-center gap-x-2.5 flex flex-wrap justify-center gap-y-2.5 text-center w-full mb-2 md:flex-nowrap md:justify-start md:text-start">
-                      <span className="text-lime-500 text-sm">📞</span>
+                      <img src={GADGET_FOOTER_PHONE_ICON} alt="phone" className="w-4 h-4 object-contain" />
                       <a href={`tel:${p}`} className="text-sm leading-[26px] hover:text-black hover:no-underline">{p}</a>
                     </li>
                   ))}
                   {addresses.map((a, i) => (
                     <li key={`a${i}`} className="items-center gap-x-2.5 flex flex-wrap justify-center gap-y-2.5 text-center w-full mb-2 md:flex-nowrap md:justify-start md:text-start">
-                      <span className="text-lime-500 text-sm">📍</span>
+                      <img src={GADGET_FOOTER_ADDRESS_ICON} alt="address" className="w-4 h-4 object-contain" />
                       <span className="text-sm leading-[26px]">{a}</span>
                     </li>
                   ))}
@@ -441,9 +473,9 @@ const GadgetFooter = memo(({ websiteConfig, logo }: { websiteConfig?: WebsiteCon
 
       {/* Mobile Footer */}
       <div className="block md:hidden">
-        <div className="bg-white mt-5">
+        <div className="bg-white mt-3">
           <div className="max-w-[1340px] w-[95%] mx-auto">
-            <div className="gap-x-[25px] grid grid-cols-[1fr] gap-y-[25px] p-[15px]">
+            <div className="gap-x-4 grid grid-cols-[1fr] gap-y-4 p-[12px]">
               <div className="text-center w-full">
                 <div className="flex justify-center mb-[15px]">
                   {logo ? (
@@ -456,12 +488,12 @@ const GadgetFooter = memo(({ websiteConfig, logo }: { websiteConfig?: WebsiteCon
                 {socialLinks.length > 0 && (
                   <div className="flex justify-center gap-2 mb-3">
                     {socialLinks.map((s, i) => {
-                      const icon: Record<string, string> = { facebook: 'f', instagram: '📷', youtube: '▶', twitter: '𝕏', tiktok: '♪', whatsapp: '💬', linkedin: 'in', pinterest: 'P' };
-                      const label = icon[(s.platform || '').toLowerCase()] || s.platform?.[0]?.toUpperCase() || '?';
+                      const platform = String(s.platform || '').toLowerCase();
+                      const iconSrc = GADGET_SOCIAL_ICON_URLS[platform] || GADGET_SOCIAL_ICON_URLS.facebook;
                       return (
                         <a key={i} href={s.url} target="_blank" rel="noopener noreferrer"
-                          className="bg-gray-400/30 flex items-center justify-center w-8 h-8 rounded-full hover:bg-lime-500 transition-colors">
-                          <span className="text-sm font-bold">{label}</span>
+                          className="bg-gray-400/30 flex items-center justify-center w-auto h-auto rounded-full hover:bg-lime-500 transition-colors overflow-hidden">
+                          <img src={iconSrc} alt={s.platform || 'social'} className="w-5 h-5 object-contain" />
                         </a>
                       );
                     })}
@@ -473,9 +505,24 @@ const GadgetFooter = memo(({ websiteConfig, logo }: { websiteConfig?: WebsiteCon
                 <div className="text-center">
                   <b className="text-base font-semibold block mb-2">Contact Us</b>
                   <ul className="list-none pl-0">
-                    {emails.map((e, i) => <li key={`e${i}`} className="text-sm mb-1"><span className="text-lime-500">✉ </span>{e}</li>)}
-                    {phones.map((p, i) => <li key={`p${i}`} className="text-sm mb-1"><span className="text-lime-500">📞 </span><a href={`tel:${p}`} className="hover:no-underline">{p}</a></li>)}
-                    {addresses.map((a, i) => <li key={`a${i}`} className="text-sm mb-1"><span className="text-lime-500">📍 </span>{a}</li>)}
+                    {emails.map((e, i) => (
+                      <li key={`e${i}`} className="text-sm mb-1 flex items-center justify-center gap-2">
+                        <img src={GADGET_FOOTER_EMAIL_ICON} alt="email" className="w-4 h-4 object-contain" />
+                        <span>{e}</span>
+                      </li>
+                    ))}
+                    {phones.map((p, i) => (
+                      <li key={`p${i}`} className="text-sm mb-1 flex items-center justify-center gap-2">
+                        <img src={GADGET_FOOTER_PHONE_ICON} alt="phone" className="w-4 h-4 object-contain" />
+                        <a href={`tel:${p}`} className="hover:no-underline">{p}</a>
+                      </li>
+                    ))}
+                    {addresses.map((a, i) => (
+                      <li key={`a${i}`} className="text-sm mb-1 flex items-center justify-center gap-2">
+                        <img src={GADGET_FOOTER_ADDRESS_ICON} alt="address" className="w-4 h-4 object-contain" />
+                        <span>{a}</span>
+                      </li>
+                    ))}
                   </ul>
                 </div>
               )}
@@ -503,7 +550,7 @@ const GadgetFooter = memo(({ websiteConfig, logo }: { websiteConfig?: WebsiteCon
               </div>
             </div>
             {!websiteConfig?.hideCopyright && (
-              <div className="border-t-indigo-300 flex justify-center mb-[60px] p-[15px] border-t">
+              <div className="border-t-indigo-300 flex justify-center mb-6 p-[12px] border-t">
                 <b className="text-neutral-600 text-sm block leading-[22px] text-center">
                   Copyright © {new Date().getFullYear()} {storeName}
                 </b>
@@ -530,9 +577,9 @@ const GadgetProductSection = memo(({ title, products, showTimer, onProductClick,
 
   return (
     <div>
-      <div className="items-center flex-col max-w-[1340px] w-full mx-0 px-[15px] md:flex-row md:w-[95%] md:mx-auto md:px-0">
-        <div className="items-center flex justify-between mt-6 mb-3.5">
-          <div className="items-center gap-x-[7px] flex flex-col justify-center gap-y-[7px] md:gap-x-[15px] md:flex-row md:gap-y-[15px]">
+      <div className="items-center flex-col max-w-[1340px] w-full mx-0 px-[12px] md:flex-row md:w-[95%] md:mx-auto md:px-0">
+        <div className="items-center flex justify-between mt-4 mb-2.5">
+          <div className="items-center gap-x-[7px] flex flex-col justify-center gap-y-[7px] md:gap-x-3 md:flex-row md:gap-y-3">
             <h2 className="text-neutral-900 text-base font-bold leading-[18px] md:text-neutral-700 md:text-[22px] md:font-medium md:leading-[normal] whitespace-nowrap">
               {title}
             </h2>
@@ -543,7 +590,7 @@ const GadgetProductSection = memo(({ title, products, showTimer, onProductClick,
             <ChevronRight size={20} className="ml-0 md:ml-2" />
           </span>
         </div>
-        <div className="gap-x-[7px] grid grid-cols-[repeat(2,1fr)] gap-y-[7px] mb-[30px] md:gap-x-[15px] md:grid-cols-[repeat(5,1fr)] md:gap-y-[15px]">
+        <div className="gap-x-[7px] grid grid-cols-[repeat(2,1fr)] gap-y-[7px] mb-5 md:gap-x-3 md:grid-cols-[repeat(5,1fr)] md:gap-y-3 md:mb-6">
           {products.map((product) => (
             <GadgetProductCard
               key={product.id}
@@ -610,13 +657,13 @@ export const GadgetsThemePage: React.FC<GadgetsThemeProps> = memo(({
     <main className="text-black text-base font-normal bg-gray-100 overflow-x-hidden scroll-smooth w-full font-sans md:bg-transparent">
       <div>
         {/* Hero Carousel */}
-        <div className="min-h-[200px] mb-20 md:min-h-0 md:mb-0">
+        <div className="min-h-[150px] mb-8 md:min-h-0 md:mb-0">
           <GadgetHero websiteConfig={websiteConfig} />
 
           {/* Categories */}
           {activeCategories.length > 0 && (
             <div>
-              <div className="bg-white max-w-[1340px] w-[92%] mt-0 mx-auto pt-0 pb-[9.75px] px-[11.25px] rounded-[10px] md:bg-transparent md:w-[95%] md:mt-2.5 md:pt-3.5 md:pb-0 md:px-0 md:rounded-none">
+              <div className="bg-white max-w-[1340px] w-[92%] mt-0 mx-auto pt-0 pb-[8px] px-[10px] rounded-[10px] md:bg-transparent md:w-[95%] md:mt-1.5 md:pt-2 md:pb-0 md:px-0 md:rounded-none">
                 <div className="items-center flex h-[38px] justify-between leading-[38px]">
                   <h2 className="text-neutral-900 text-base font-bold leading-[18px] md:text-neutral-700 md:text-[22px] md:font-medium md:leading-[38px] whitespace-nowrap">
                     Categories
@@ -626,7 +673,7 @@ export const GadgetsThemePage: React.FC<GadgetsThemeProps> = memo(({
                     <ChevronRight size={20} className="ml-0 md:ml-2" />
                   </span>
                 </div>
-                <div className="gap-x-[9px] grid grid-cols-[repeat(2,1fr)] gap-y-[9px] md:gap-x-[15px] md:grid-cols-[repeat(8,1fr)] md:gap-y-[15px]">
+                <div className="gap-x-[7px] grid grid-cols-[repeat(2,1fr)] gap-y-[7px] md:gap-x-3 md:grid-cols-[repeat(8,1fr)] md:gap-y-3">
                   {activeCategories.map((cat: any) => (
                     <GadgetCategoryCard
                       key={cat.id || cat.name}

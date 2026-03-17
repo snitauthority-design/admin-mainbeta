@@ -34,24 +34,43 @@ interface HeaderStyle7Props {
   ImageSearchClick?: () => void;
 }
 
-// ─── Admin Notice Ticker (Figma top bar with scrolling text) ─────────────────
+// ─── Admin Notice Ticker (continuous marquee loop) ───────────────────────────
 const AdminNoticeTicker = memo<{ text: string }>(({ text }) => (
   <div className="border-b border-stone-300 hidden h-[41px] overflow-hidden md:block">
-    <div className="max-w-[1340px] w-[95%] mx-auto">
-      <div className="items-center flex justify-between py-[7px]">
-        <div className="items-center gap-x-5 flex gap-y-5">
+    <div className="max-w-[1340px] w-[95%] mx-auto h-full">
+      <div className="items-center flex h-full py-[7px]">
+        <div className="items-center gap-x-5 flex gap-y-5 shrink-0">
           <span className="text-zinc-900 text-sm font-medium items-center flex">
             <Volume2 size={20} className="mr-[5px] text-zinc-700" />
             <span>Admin Notice:</span>
           </span>
         </div>
-        <div className="basis-[0%] grow ml-2.5">
-          <div className="inline-block text-nowrap w-full overflow-hidden text-sm">
-            {text}
+        <div className="basis-[0%] grow ml-2.5 overflow-hidden">
+          <div className="header7-marquee-track text-sm">
+            <span className="header7-marquee-item">{text}</span>
+            <span className="header7-marquee-item" aria-hidden="true">{text}</span>
           </div>
         </div>
       </div>
     </div>
+    <style>{`
+      .header7-marquee-track {
+        display: flex;
+        align-items: center;
+        width: max-content;
+        min-width: 100%;
+        animation: header7-marquee 20s linear infinite;
+      }
+      .header7-marquee-item {
+        white-space: nowrap;
+        display: inline-block;
+        padding-right: 700px;
+      }
+      @keyframes header7-marquee {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+      }
+    `}</style>
   </div>
 ));
 AdminNoticeTicker.displayName = 'AdminNoticeTicker';
@@ -115,8 +134,8 @@ const HeaderStyle7Desktop = memo<HeaderStyle7Props>(({
                   <DesktopSearchBar {...searchProps} />
                 </div>
                 {/* Image search */}
-                {ImageSearchClick && (
-                  <button type="button" onClick={ImageSearchClick} className="text-center mr-1 pt-1 px-[5px] rounded-[7px] hover:bg-gray-100 transition-colors">
+                {searchProps.onVisualSearch && (
+                  <button type="button" onClick={searchProps.onVisualSearch} className="text-center mr-1 pt-1 px-[5px] rounded-[7px] hover:bg-gray-100 transition-colors">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-500"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                   </button>
                 )}

@@ -10,8 +10,7 @@ import {
 import { WebsiteConfig, SocialLink, FooterLink, FooterLinkField } from './types';
 import { SOCIAL_PLATFORM_OPTIONS, FOOTER_LINK_SECTIONS } from './constants';
 import { normalizeImageUrl } from '../../utils/imageUrlHelper';
-import { convertFileToWebP, dataUrlToFile } from '../../services/imageUtils';
-import { uploadPreparedImageToServer } from '../../services/imageUploadService';
+import { convertFileToWebP } from '../../services/imageUtils';
 import toast from 'react-hot-toast';
 
 interface WebsiteInfoTabProps {
@@ -746,25 +745,20 @@ export const WebsiteInfoTab: React.FC<WebsiteInfoTabProps> = ({
     }
 
     try {
-      const convertedImage = await convertFileToWebP(file, {
+      const converted = await convertFileToWebP(file, {
         quality: imageType === 'favicon' ? 0.9 : 0.82,
         maxDimension: imageType === 'favicon' ? 512 : 2000
       });
 
-      const filename = `${imageType}-${Date.now()}.webp`;
-      const webpFile = dataUrlToFile(convertedImage, filename);
-      const uploadedUrl = await uploadPreparedImageToServer(webpFile, tenantId, 'branding');
-      
       if (imageType === 'logo') {
-        onUpdateLogo(uploadedUrl);
-        // Always update headerLogo so it persists via websiteConfig save
-        setWebsiteConfiguration((prev) => ({ ...prev, headerLogo: uploadedUrl }));
+        onUpdateLogo(converted);
+        setWebsiteConfiguration((prev) => ({ ...prev, headerLogo: converted }));
       } else if (imageType === 'favicon') {
-        setWebsiteConfiguration((prev) => ({ ...prev, favicon: uploadedUrl }));
+        setWebsiteConfiguration((prev) => ({ ...prev, favicon: converted }));
       } else if (imageType === 'headerLogo') {
-        setWebsiteConfiguration((prev) => ({ ...prev, headerLogo: uploadedUrl }));
+        setWebsiteConfiguration((prev) => ({ ...prev, headerLogo: converted }));
       } else if (imageType === 'footerLogo') {
-        setWebsiteConfiguration((prev) => ({ ...prev, footerLogo: uploadedUrl }));
+        setWebsiteConfiguration((prev) => ({ ...prev, footerLogo: converted }));
       }
     } catch (err) {
       console.error('Failed to upload image:', err);

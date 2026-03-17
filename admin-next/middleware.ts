@@ -13,7 +13,7 @@ const additionalDomains = (process.env.NEXT_PUBLIC_ADDITIONAL_DOMAINS || '').spl
 const KNOWN_BASE_DOMAINS = [
   ...(primaryDomain ? [primaryDomain] : []),
   ...additionalDomains,
-  'localhost'
+  'localhost:3000',
 ].filter(Boolean);
 const SYSTEM_SUBDOMAINS = ['admin', 'superadmin', 'www', 'api'];
 
