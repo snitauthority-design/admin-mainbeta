@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Eye, EyeOff, Lock, Mail, Loader2, AlertCircle, LogIn, Shield, Store, LayoutDashboard } from 'lucide-react';
+import { Eye, EyeOff, Lock, Mail, Loader2, AlertCircle, LogIn, Shield, Store, LayoutDashboard, RefreshCw, Phone, MessageCircle, HeadphonesIcon } from 'lucide-react';
 import toast from 'react-hot-toast';
 import * as authService from '../services/authService';
 import { User, ShopStatus } from '../types';
+import RenewSubscription from '../components/dashboard/RenewSubscription';
 
 // Check if we're on the superadmin subdomain
 const isSuperAdminSubdomain = typeof window !== 'undefined' && 
@@ -24,10 +25,18 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [rememberMe, setRememberMe] = useState(true);
+  const [shopStatusType, setShopStatusType] = useState<'expired' | 'suspended' | 'blocked' | null>(null);
+  const [showRenewModal, setShowRenewModal] = useState(false);
+  const [showContactOptions, setShowContactOptions] = useState(false);
+
+  const WHATSAPP_NUMBER = '8801410050031';
+  const PHONE_NUMBER = '+8801410050031';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setShopStatusType(null);
+    setShowContactOptions(false);
     if (!email || !password) {
       setError('Please enter your email and password');
       return;
@@ -65,19 +74,22 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
       const shopStatus: ShopStatus | undefined = user?.tenantDetails?.shopStatus;
       if (shopStatus && user?.role !== 'super_admin') {
         if (shopStatus.isBlocked) {
-          setError('Your shop is blocked. Please contact admin.');
+          setError('Your shop is blocked. Please contact support.');
+          setShopStatusType('blocked');
           authService.logout();
           setIsLoading(false);
           return;
         }
         if (shopStatus.isSuspended) {
-          setError('Your shop is suspended. Please contact admin.');
+          setError('Your shop is suspended. Please contact support.');
+          setShopStatusType('suspended');
           authService.logout();
           setIsLoading(false);
           return;
         }
         if (shopStatus.isExpired) {
           setError('Your subscription is expired. Please renew your subscription to continue.');
+          setShopStatusType('expired');
           authService.logout();
           setIsLoading(false);
           return;
@@ -186,9 +198,55 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
 
           <form onSubmit={handleSubmit} className="p-8 space-y-6">
             {error && (
-              <div className="flex items-center gap-3 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-300 text-sm animate-shake">
-                <AlertCircle size={20} className="flex-shrink-0" />
-                <span>{error}</span>
+              <div className="animate-shake">
+                <div className="flex items-center gap-3 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-300 text-sm">
+                  <AlertCircle size={20} className="flex-shrink-0" />
+                  <span className="flex-1">{error}</span>
+                </div>
+                {shopStatusType === 'expired' && (
+                  <button
+                    type="button"
+                    onClick={() => setShowRenewModal(true)}
+                    className="mt-3 w-full flex items-center justify-center gap-2 py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-xl transition-all duration-200 text-sm"
+                  >
+                    <RefreshCw size={16} />
+                    Renew Subscription
+                  </button>
+                )}
+                {(shopStatusType === 'suspended' || shopStatusType === 'blocked') && (
+                  <div className="relative mt-3">
+                    <button
+                      type="button"
+                      onClick={() => setShowContactOptions(!showContactOptions)}
+                      aria-expanded={showContactOptions}
+                      aria-haspopup="true"
+                      className="w-full flex items-center justify-center gap-2 py-2.5 bg-sky-500 hover:bg-sky-600 text-white font-semibold rounded-xl transition-all duration-200 text-sm"
+                    >
+                      <HeadphonesIcon size={16} />
+                      Contact Us
+                    </button>
+                    {showContactOptions && (
+                      <div className="mt-2 w-full bg-slate-800 border border-white/10 rounded-xl overflow-hidden shadow-xl">
+                        <a
+                          href={`tel:${PHONE_NUMBER}`}
+                          className="flex items-center gap-3 px-4 py-3 text-sm text-gray-200 hover:bg-white/10 transition-colors"
+                        >
+                          <Phone size={16} className="text-green-400" />
+                          <span>Call Us</span>
+                        </a>
+                        <a
+                          href={`https://wa.me/${WHATSAPP_NUMBER}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-3 px-4 py-3 text-sm text-gray-200 hover:bg-white/10 transition-colors border-t border-white/10"
+                        >
+                          <MessageCircle size={16} className="text-green-400" />
+                          <span>WhatsApp</span>
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             )}
 
@@ -246,6 +304,11 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess }) => {
           </div>
         </div>
       </div>
+
+      <RenewSubscription
+        isOpen={showRenewModal}
+        onClose={() => setShowRenewModal(false)}
+      />
 
       <style>{`
         @keyframes fade-in { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
