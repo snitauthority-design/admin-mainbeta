@@ -61,10 +61,10 @@ export const CarouselTab: React.FC<CarouselTabProps> = ({
   const [isCarouselModalOpen, setIsCarouselModalOpen] = useState(false);
   const [editingCarousel, setEditingCarousel] = useState<CarouselItem | null>(null);
   const [carouselFormData, setCarouselFormData] = useState<Partial<CarouselItem>>({
-    name: 'string',
-    image: 'string',
-    mobileImage: 'string',
-    url: 'string',
+    name: '',
+    image: '',
+    mobileImage: '',
+    url: '',
     urlType: 'Internal',
     serial: 1,
     status: 'Publish'
@@ -210,9 +210,9 @@ export const CarouselTab: React.FC<CarouselTabProps> = ({
         urlType: (carouselFormData.urlType as 'Internal' | 'External') || 'Internal',
         serial: Number(carouselFormData.serial),
         status: (carouselFormData.status as 'Publish' | 'Draft') || 'Publish',
-        subtitle: 'string',
-        title: 'string',
-        imageUrl: 'string'
+        subtitle: carouselFormData.subtitle || '',
+        title: carouselFormData.name || '',
+        imageUrl: desktopImage
       };
 
       const updatedItems = editingCarousel

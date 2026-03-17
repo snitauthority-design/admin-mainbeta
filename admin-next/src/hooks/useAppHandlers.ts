@@ -200,30 +200,27 @@ export function useAppHandlers(props: UseAppHandlersProps) {
     });
   }, [setProducts, activeTenantId]);
 
-  const handleBulkDeleteProducts = useCallback((ids: number[]) => {
+  const handleBulkDeleteProducts = useCallback(async (ids: number[]) => {
     setProducts(prev => {
       const updated = prev.filter(p => !ids.includes(p.id));
-      // Save to backend
-      DataService.save('products', updated, activeTenantId);
-      toast.success(`Deleted ${ids.length} products`);
+      DataService.saveImmediate('products', updated, activeTenantId);
       return updated;
     });
   }, [setProducts, activeTenantId]);
 
-  const handleBulkUpdateProducts = useCallback((ids: number[], updates: Partial<Product>) => {
+  const handleBulkUpdateProducts = useCallback(async (ids: number[], updates: Partial<Product>) => {
     const { slug, ...restUpdates } = updates;
     setProducts(prev => {
       const updated = prev.map(p => ids.includes(p.id) ? { ...p, ...restUpdates } : p);
-      // Save to backend
-      DataService.save('products', updated, activeTenantId);
+      DataService.saveImmediate('products', updated, activeTenantId);
       return updated;
     });
   }, [setProducts, activeTenantId]);
 
-  const handleBulkFlashSale = useCallback((ids: number[], action: 'add' | 'remove') => {
+  const handleBulkFlashSale = useCallback(async (ids: number[], action: 'add' | 'remove') => {
     setProducts(prev => {
       const now = new Date();
-      const endDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 days from now
+      const endDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
       const updated = prev.map(p => {
         if (!ids.includes(p.id)) return p;
         if (action === 'add') {
@@ -242,11 +239,7 @@ export function useAppHandlers(props: UseAppHandlersProps) {
           };
         }
       });
-      // Save to backend
-      DataService.save('products', updated, activeTenantId);
-      toast.success(action === 'add' 
-        ? `Added ${ids.length} products to Flash Sale` 
-        : `Removed ${ids.length} products from Flash Sale`);
+      DataService.saveImmediate('products', updated, activeTenantId);
       return updated;
     });
   }, [setProducts, activeTenantId]);
@@ -410,7 +403,7 @@ export function useAppHandlers(props: UseAppHandlersProps) {
     };
 
     try {
-      const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001';
+      const apiBase = import.meta.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5001';
       const response = await fetch(`${apiBase}/api/orders/${activeTenantId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -479,7 +472,7 @@ export function useAppHandlers(props: UseAppHandlersProps) {
     };
 
     try {
-      const apiBase = import.meta.env.VITE_API_BASE_URL || '';
+      const apiBase = import.meta.env.NEXT_PUBLIC_API_BASE_URL || '';
       const response = await fetch(`${apiBase}/api/orders/${activeTenantId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -512,7 +505,12 @@ export function useAppHandlers(props: UseAppHandlersProps) {
   }, [user, setSelectedLandingPage, setCurrentView]);
 
   // === CONFIG HANDLERS ===
-  const handleUpdateLogo = useCallback((newLogo: string | null) => setLogo(newLogo), [setLogo]);
+  const handleUpdateLogo = useCallback((newLogo: string | null) => {
+    setLogo(newLogo);
+    if (activeTenantId) {
+      DataService.saveImmediate('logo', newLogo, activeTenantId);
+    }
+  }, [setLogo, activeTenantId]);
   
   const handleUpdateTheme = useCallback(async (newConfig: ThemeConfig) => {
     console.log('[handleUpdateTheme] Updating theme config:', newConfig);

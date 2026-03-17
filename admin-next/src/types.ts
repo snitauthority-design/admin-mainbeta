@@ -505,10 +505,12 @@ export interface WebsiteConfig {
     depthAccent: string;
     font: string;
   };
+  
+  // Ready Theme Selection types
   readyTheme?: string;
+  readyThemeVariant?: string;
   productDetailTheme?: string;
   //
-
 }
 
 export interface DeliveryConfig {

@@ -66,9 +66,9 @@ const styleSections: Array<{
   hasNone?: boolean;
   description: string;
 }> = [
-  { key: 'headerStyle', title: 'Header Section', count: 6, description: 'Desktop header layout and style' },
-  { key: 'mobileHeaderStyle', title: 'Mobile Header', count: 6, description: 'Mobile header layout and navigation' },
-  { key: 'categorySectionStyle', title: 'Category Section', count: 5, hasNone: true, description: 'Category display style on homepage' },
+  { key: 'headerStyle', title: 'Header Section', count: 7, description: 'Desktop header layout and style' },
+  { key: 'mobileHeaderStyle', title: 'Mobile Header', count: 7, description: 'Mobile header layout and navigation' },
+  { key: 'categorySectionStyle', title: 'Category Section', count: 7, hasNone: true, description: 'Category display style on homepage' },
   { key: 'productCardStyle', title: 'Product Card', count: 6, description: 'Product card design and layout' },
   { key: 'footerStyle', title: 'Footer Section', count: 5, description: 'Footer layout and information display' },
   { key: 'bottomNavStyle', title: 'Bottom Navigation', count: 5, description: 'Mobile bottom navigation bar style' }
@@ -83,6 +83,7 @@ const THEME_DEMO_IMAGES: Record<string, Record<string, string>> = {
     style4: 'https://hdnfltv.com/image/nitimages/header-4.webp',
     style5: 'https://hdnfltv.com/image/nitimages/header_-_5.webp',
     style6: 'https://hdnfltv.com/image/nitimages/pasted_1771520591605.webp',
+    style7: 'https://hdnfltv.com/image/nitimages/Header7.webp',
   },
   mobileHeaderStyle: {
     style1: 'https://hdnfltv.com/image/nitimages/mobile_header_-_1_1768841563.webp',
@@ -91,6 +92,7 @@ const THEME_DEMO_IMAGES: Record<string, Record<string, string>> = {
     style4: 'https://hdnfltv.com/image/nitimages/mobile_header_4.webp',
     style5: 'https://hdnfltv.com/image/nitimages/mobile_header_5.webp',
     style6: 'https://hdnfltv.com/image/nitimages/Mobile_header_6.webp',
+    style7: 'https://hdnfltv.com/image/nitimages/Header7.webp',
   },
   categorySectionStyle: {
     none: '',
@@ -99,6 +101,8 @@ const THEME_DEMO_IMAGES: Record<string, Record<string, string>> = {
     style3: 'https://hdnfltv.com/image/nitimages/category_-_3.webp',
     style4: 'https://hdnfltv.com/image/nitimages/category_-_4.webp',
     style5: 'https://hdnfltv.com/image/nitimages/category-5.webp',
+    style6: 'https://hdnfltv.com/image/nitimages/category-5.webp',
+    style7: 'https://hdnfltv.com/image/nitimages/category-5.webp',
   },
   productCardStyle: {
     style1: 'https://hdnfltv.com/image/nitimages/product_card_-_1.webp',

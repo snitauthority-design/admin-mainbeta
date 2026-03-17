@@ -24,6 +24,7 @@ export const THEME_DEMO_IMAGES: Record<string, Record<string, string>> = {
     style4: 'https://hdnfltv.com/image/nitimages/header-4.webp',
     style5: 'https://hdnfltv.com/image/nitimages/header_-_5.webp',
     style6: 'https://hdnfltv.com/image/nitimages/pasted_1771520591605.webp',
+    style7: 'https://hdnfltv.com/image/nitimages/Header7.webp',
   },
   mobileHeaderStyle: {
     style1: 'https://hdnfltv.com/image/nitimages/mobile_header_-_1_1768841563.webp',
@@ -61,17 +62,20 @@ export const THEME_DEMO_IMAGES: Record<string, Record<string, string>> = {
     style3: 'https://hdnfltv.com/image/nitimages/category_-_3.webp',
     style4: 'https://hdnfltv.com/image/nitimages/category_-_4.webp',
     style5: 'https://hdnfltv.com/image/nitimages/category-5.webp',
+    style6: 'https://hdnfltv.com/image/nitimages/category-5.webp',
+    style7: 'https://hdnfltv.com/image/nitimages/category-5.webp',
   },
 };
 
 // Header Style Variants (5 styles)
 const headerVariants: SectionVariant[] = [
-  { id: 'header-style1', name: 'Header Style 1', description: 'Classic centered logo with horizontal menu', thumbnail: THEME_DEMO_IMAGES.headerStyle.style1, settings: { headerStyle: 'style1' } },
+  { id: 'header-style1', name: '1', description: 'Classic centered logo with horizontal menu', thumbnail: THEME_DEMO_IMAGES.headerStyle.style1, settings: { headerStyle: 'style1' } },
   { id: 'header-style2', name: 'Header Style 2', description: 'Left logo with search bar and cart', thumbnail: THEME_DEMO_IMAGES.headerStyle.style2, settings: { headerStyle: 'style2' } },
   { id: 'header-style3', name: 'Header Style 3', description: 'Minimal header with hamburger menu', thumbnail: THEME_DEMO_IMAGES.headerStyle.style3, settings: { headerStyle: 'style3' } },
   { id: 'header-style4', name: 'Header Style 4', description: 'Full-width with category dropdown', thumbnail: THEME_DEMO_IMAGES.headerStyle.style4, settings: { headerStyle: 'style4' } },
   { id: 'header-style5', name: 'Header Style 5', description: 'Modern header with mega menu', thumbnail: THEME_DEMO_IMAGES.headerStyle.style5, settings: { headerStyle: 'style5' } },
   { id: 'header-style6', name: 'Header Style 6', description: 'Vibrant orange gradient with pill search', thumbnail: THEME_DEMO_IMAGES.headerStyle.style6, settings: { headerStyle: 'style6' } },
+  { id: 'header-style7', name: 'Header Style 7', description: 'Gadgets theme with admin notice bar, lime accent search & cart', thumbnail: THEME_DEMO_IMAGES.headerStyle.style7, settings: { headerStyle: 'style7' } },
 ];
 
 // Mobile Header Style Variants (5 styles)
@@ -101,6 +105,8 @@ const categorySectionVariants: SectionVariant[] = [
   { id: 'category-style3', name: 'Category Style 3', description: 'Card-based categories', thumbnail: THEME_DEMO_IMAGES.categorySectionStyle.style3, settings: { categorySectionStyle: 'style3' } },
   { id: 'category-style4', name: 'Category Style 4', description: 'Banner style categories', thumbnail: THEME_DEMO_IMAGES.categorySectionStyle.style4, settings: { categorySectionStyle: 'style4' } },
   { id: 'category-style5', name: 'Category Style 5', description: 'Modern slider categories', thumbnail: THEME_DEMO_IMAGES.categorySectionStyle.style5, settings: { categorySectionStyle: 'style5' } },
+  { id: 'category-style6', name: 'Category Style 6', description: 'Colorful large cards', thumbnail: THEME_DEMO_IMAGES.categorySectionStyle.style6, settings: { categorySectionStyle: 'style6' } },
+  { id: 'category-style7', name: 'Category Style 7', description: 'Gadgets theme with rounded cards, 2-col mobile / 8-col desktop', thumbnail: THEME_DEMO_IMAGES.categorySectionStyle.style7, settings: { categorySectionStyle: 'style7' } },
 ];
 
 // Product Section Style Variants (5 styles)
@@ -236,12 +242,12 @@ export const sectionCategories: SectionCategory[] = [
 // Map variant IDs to section types
 export const variantToSectionType: Record<string, string> = {
   'announcement-1': 'announcement-bar', 'announcement-2': 'announcement-bar', 'announcement-3': 'announcement-bar',
-  'header-style1': 'header', 'header-style2': 'header', 'header-style3': 'header', 'header-style4': 'header', 'header-style5': 'header', 'header-style6': 'header',
-  'mobile-header-style1': 'header', 'mobile-header-style2': 'header', 'mobile-header-style3': 'header', 'mobile-header-style4': 'header', 'mobile-header-style5': 'header', 'mobile-header-style6': 'header',
+  'header-style1': 'header', 'header-style2': 'header', 'header-style3': 'header', 'header-style4': 'header', 'header-style5': 'header', 'header-style6': 'header', 'header-style7': 'header',
+  'mobile-header-style1': 'header', 'mobile-header-style2': 'header', 'mobile-header-style3': 'header', 'mobile-header-style4': 'header', 'mobile-header-style5': 'header', 'mobile-header-style6': 'header', 'mobile-header-style7': 'header',
   'hero-1': 'hero', 'hero-2': 'hero', 'hero-3': 'hero', 'hero-4': 'hero',
   'heading-1': 'rich-text',
   'static-1': 'image-banner', 'static-2': 'image-banner', 'static-3': 'image-banner', 'static-4': 'image-banner',
-  'category-style1': 'categories', 'category-style2': 'categories', 'category-style3': 'categories', 'category-style4': 'categories', 'category-style5': 'categories',
+  'category-style1': 'categories', 'category-style2': 'categories', 'category-style3': 'categories', 'category-style4': 'categories', 'category-style5': 'categories', 'category-style6': 'categories', 'category-style7': 'categories',
   'special-1': 'flash-sale', 'special-2': 'flash-sale', 'special-3': 'flash-sale', 'special-4': 'flash-sale', 'special-5': 'flash-sale',
   'product-card-style1': 'product-grid', 'product-card-style2': 'product-grid', 'product-card-style3': 'product-grid', 'product-card-style4': 'product-grid', 'product-card-style5': 'product-grid',
   'product-section-style1': 'product-grid', 'product-section-style2': 'product-grid', 'product-section-style3': 'product-grid', 'product-section-style4': 'product-grid', 'product-section-style5': 'product-grid',
@@ -257,11 +263,11 @@ export const variantToSectionType: Record<string, string> = {
 
 // Map variant IDs to theme config keys (for styles that affect global theme)
 export const variantToThemeConfigKey: Record<string, string> = {
-  'header-style1': 'headerStyle', 'header-style2': 'headerStyle', 'header-style3': 'headerStyle', 'header-style4': 'headerStyle', 'header-style5': 'headerStyle', 'header-style6': 'headerStyle',
-  'mobile-header-style1': 'mobileHeaderStyle', 'mobile-header-style2': 'mobileHeaderStyle', 'mobile-header-style3': 'mobileHeaderStyle', 'mobile-header-style4': 'mobileHeaderStyle', 'mobile-header-style5': 'mobileHeaderStyle', 'mobile-header-style6': 'mobileHeaderStyle',
+  'header-style1': 'headerStyle', 'header-style2': 'headerStyle', 'header-style3': 'headerStyle', 'header-style4': 'headerStyle', 'header-style5': 'headerStyle', 'header-style6': 'headerStyle', 'header-style7': 'headerStyle',
+  'mobile-header-style1': 'mobileHeaderStyle', 'mobile-header-style2': 'mobileHeaderStyle', 'mobile-header-style3': 'mobileHeaderStyle', 'mobile-header-style4': 'mobileHeaderStyle', 'mobile-header-style5': 'mobileHeaderStyle', 'mobile-header-style6': 'mobileHeaderStyle', 'mobile-header-style7': 'mobileHeaderStyle',
   'product-card-style1': 'productCardStyle', 'product-card-style2': 'productCardStyle', 'product-card-style3': 'productCardStyle', 'product-card-style4': 'productCardStyle', 'product-card-style5': 'productCardStyle',
   'product-section-style1': 'productSectionStyle', 'product-section-style2': 'productSectionStyle', 'product-section-style3': 'productSectionStyle', 'product-section-style4': 'productSectionStyle', 'product-section-style5': 'productSectionStyle',
-  'category-style1': 'categorySectionStyle', 'category-style2': 'categorySectionStyle', 'category-style3': 'categorySectionStyle', 'category-style4': 'categorySectionStyle', 'category-style5': 'categorySectionStyle',
+  'category-style1': 'categorySectionStyle', 'category-style2': 'categorySectionStyle', 'category-style3': 'categorySectionStyle', 'category-style4': 'categorySectionStyle', 'category-style5': 'categorySectionStyle', 'category-style6': 'categorySectionStyle', 'category-style7': 'categorySectionStyle',
   'brand-section-style1': 'brandSectionStyle', 'brand-section-style2': 'brandSectionStyle', 'brand-section-style3': 'brandSectionStyle', 'brand-section-style4': 'brandSectionStyle', 'brand-section-style5': 'brandSectionStyle',
   'footer-style1': 'footerStyle', 'footer-style2': 'footerStyle', 'footer-style3': 'footerStyle', 'footer-style4': 'footerStyle', 'footer-style5': 'footerStyle',
   'bottom-nav-style1': 'bottomNavStyle', 'bottom-nav-style2': 'bottomNavStyle', 'bottom-nav-style3': 'bottomNavStyle', 'bottom-nav-style4': 'bottomNavStyle', 'bottom-nav-style5': 'bottomNavStyle',

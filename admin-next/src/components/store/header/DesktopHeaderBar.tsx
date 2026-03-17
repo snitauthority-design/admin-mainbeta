@@ -6,6 +6,7 @@ import { DesktopSearchBar } from './HeaderSearchBar';
 import { SearchSuggestions } from './SearchBar';
 import type { User as UserType, WebsiteConfig } from '../../../types';
 import HeaderStyle6Desktop from './HeaderStyle6';
+import HeaderStyle7Desktop from './HeaderStyle7';
 import MenuHome from './MenuHome';
 import { useLanguage } from '../../../context/LanguageContext';
 
@@ -699,6 +700,8 @@ export const DesktopHeaderBar = memo<DesktopHeaderBarProps>((props) => {
       return <HeaderStyle5 {...props} />;
     case 'style6':
       return <HeaderStyle6Desktop {...props} />;
+    case 'style7':
+      return <HeaderStyle7Desktop {...props} />;
     case 'style1':
     default:
       return <HeaderStyle1 {...props} />;

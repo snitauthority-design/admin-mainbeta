@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Helmet } from 'react-helmet-async';
+import Head from 'next/head';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { CarouselItem, WebsiteConfig, Campaign } from '../../../types';
 import { getOptimizedImageUrl, normalizeImageUrl } from '../../../utils/imageUrlHelper';
@@ -150,7 +150,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ carouselItems, website
 
     return (
         <>
-            <Helmet>
+            <Head>
                 {lcpImageOrigin && <link rel="preconnect" href={lcpImageOrigin} />}
                 {lcpImageUrl && (
                     <link
@@ -162,7 +162,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ carouselItems, website
                         fetchPriority="high"
                     />
                 )}
-            </Helmet>
+            </Head>
             <section className="hero-section w-full">
                 <div className="flex gap-4 max-w-[1720px] mx-auto pb-1 px-2 md:px-4 lg:px-0" onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)}>
                     <div className="flex-1 min-w-0 h-fit">

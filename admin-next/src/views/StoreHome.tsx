@@ -16,14 +16,29 @@ import { ScrollToTopButton } from '../components/store/ScrollToTopButton';
 
 // Skeletons
 import { SectionSkeleton, StoreHomeSkeleton } from '../components/store/skeletons';
+import dynamic from 'next/dynamic';
 
 // Lazy loaded components — deferred until needed
-const StoreHomeModals = lazy(() => import('../components/store/StoreHomeModals').then(m => ({ default: m.StoreHomeModals })));
-const StoreHomeDefaultLayout = lazy(() => import('../components/store/StoreHomeDefaultLayout').then(m => ({ default: m.StoreHomeDefaultLayout })));
-const StoreCategoryProducts = lazy(() => import('../components/StoreCategoryProducts'));
-const StorePopup = lazy(() => import('../components/StorePopup').then(m => ({ default: m.StorePopup })));
-const StoreFrontRenderer = lazy(() => import('../components/store/StoreFrontRenderer').then(m => ({ default: m.StoreFrontRenderer })));
-const StoreFrontThemePage = lazy(() => import('../components/store/StoreFrontThemePage').then(m => ({ default: m.StoreFrontThemePage })));
+const StoreHomeModals = dynamic(() => import('../components/store/StoreHomeModals').then(m => ({ default: m.StoreHomeModals })));
+const StoreHomeDefaultLayout = dynamic(() => import('../components/store/StoreHomeDefaultLayout').then(m => ({ default: m.StoreHomeDefaultLayout })));
+const StoreCategoryProducts = dynamic(() => import('../components/StoreCategoryProducts'));
+const StorePopup = dynamic(() => import('../components/StorePopup').then(m => ({ default: m.StorePopup })));
+const StoreFrontRenderer = dynamic(() => import('../components/store/StoreFrontRenderer').then(m => ({ default: m.StoreFrontRenderer })));
+const StoreFrontThemePage = dynamic(() => import('../components/store/StoreFrontThemePage').then(m => ({ default: m.StoreFrontThemePage })));
+const StoreFront2Page = dynamic(() => import('../components/store/StoreFront2Page').then(m => ({ default: m.StoreFront2Page })));
+
+// StoreFront1 Visual Variants
+const StoreFront1Elegant = dynamic(() => import('../components/store/StoreFront1Variants').then(m => ({ default: m.StoreFront1Elegant })));
+const StoreFront1Bold = dynamic(() => import('../components/store/StoreFront1Variants').then(m => ({ default: m.StoreFront1Bold })));
+const StoreFront1Minimal = dynamic(() => import('../components/store/StoreFront1Variants').then(m => ({ default: m.StoreFront1Minimal })));
+
+// Gadgets Theme
+const GadgetsThemePage = dynamic(() => import('../components/store/GadgetsThemePage').then(m => ({ default: m.GadgetsThemePage })));
+
+// StoreFront2 Visual Variants
+const StoreFront2Neon = dynamic(() => import('../components/store/StoreFront2Variants').then(m => ({ default: m.StoreFront2Neon })));
+const StoreFront2Earth = dynamic(() => import('../components/store/StoreFront2Variants').then(m => ({ default: m.StoreFront2Earth })));
+const StoreFront2Pastel = dynamic(() => import('../components/store/StoreFront2Variants').then(m => ({ default: m.StoreFront2Pastel })));
 
 interface StoreHomeProps {
   products?: Product[];
@@ -311,10 +326,11 @@ const StoreHome: React.FC<StoreHomeProps> = ({
             storeStudioEnabled={storeStudioEnabled}
             productDisplayOrder={productDisplayOrder}
           />
+          
         </Suspense>
-      ) : websiteConfig?.readyTheme?.startsWith('storefront') ? (
+      ) : websiteConfig?.readyTheme?.startsWith('gadgets') ? (
         <Suspense fallback={<StoreHomeSkeleton />}>
-          <StoreFrontThemePage
+          <GadgetsThemePage
             products={products}
             categories={categories}
             brands={brands || []}
@@ -326,6 +342,120 @@ const StoreHome: React.FC<StoreHomeProps> = ({
             onCategoryClick={handleCategoryClick}
             onOpenChat={onOpenChat}
           />
+        </Suspense>
+      ) : websiteConfig?.readyTheme === 'storefront2' ? (
+        <Suspense fallback={<StoreHomeSkeleton />}>
+          {/* StoreFront2 variant routing */}
+          {websiteConfig?.readyThemeVariant === 'neon' ? (
+            <StoreFront2Neon
+              products={products}
+              categories={categories}
+              brands={brands || []}
+              websiteConfig={websiteConfig}
+              logo={logo}
+              onProductClick={onProductClick}
+              onBuyNow={handleBuyNow}
+              onAddToCart={handleAddProductToCartFromCard}
+              onCategoryClick={handleCategoryClick}
+              onOpenChat={onOpenChat}
+            />
+          ) : websiteConfig?.readyThemeVariant === 'earth' ? (
+            <StoreFront2Earth
+              products={products}
+              categories={categories}
+              brands={brands || []}
+              websiteConfig={websiteConfig}
+              logo={logo}
+              onProductClick={onProductClick}
+              onBuyNow={handleBuyNow}
+              onAddToCart={handleAddProductToCartFromCard}
+              onCategoryClick={handleCategoryClick}
+              onOpenChat={onOpenChat}
+            />
+          ) : websiteConfig?.readyThemeVariant === 'pastel' ? (
+            <StoreFront2Pastel
+              products={products}
+              categories={categories}
+              brands={brands || []}
+              websiteConfig={websiteConfig}
+              logo={logo}
+              onProductClick={onProductClick}
+              onBuyNow={handleBuyNow}
+              onAddToCart={handleAddProductToCartFromCard}
+              onCategoryClick={handleCategoryClick}
+              onOpenChat={onOpenChat}
+            />
+          ) : (
+            <StoreFront2Page
+              products={products}
+              categories={categories}
+              brands={brands || []}
+              websiteConfig={websiteConfig}
+              logo={logo}
+              onProductClick={onProductClick}
+              onBuyNow={handleBuyNow}
+              onAddToCart={handleAddProductToCartFromCard}
+              onCategoryClick={handleCategoryClick}
+              onOpenChat={onOpenChat}
+            />
+          )}
+        </Suspense>
+      ) : websiteConfig?.readyTheme === 'storefront1' || websiteConfig?.readyTheme?.startsWith('storefront') ? (
+        <Suspense fallback={<StoreHomeSkeleton />}>
+          {/* StoreFront1 variant routing */}
+          {websiteConfig?.readyThemeVariant === 'elegant' ? (
+            <StoreFront1Elegant
+              products={products}
+              categories={categories}
+              brands={brands || []}
+              websiteConfig={websiteConfig}
+              logo={logo}
+              onProductClick={onProductClick}
+              onBuyNow={handleBuyNow}
+              onAddToCart={handleAddProductToCartFromCard}
+              onCategoryClick={handleCategoryClick}
+              onOpenChat={onOpenChat}
+            />
+          ) : websiteConfig?.readyThemeVariant === 'bold' ? (
+            <StoreFront1Bold
+              products={products}
+              categories={categories}
+              brands={brands || []}
+              websiteConfig={websiteConfig}
+              logo={logo}
+              onProductClick={onProductClick}
+              onBuyNow={handleBuyNow}
+              onAddToCart={handleAddProductToCartFromCard}
+              onCategoryClick={handleCategoryClick}
+              onOpenChat={onOpenChat}
+            />
+          ) : websiteConfig?.readyThemeVariant === 'minimal' ? (
+            <StoreFront1Minimal
+              products={products}
+              categories={categories}
+              brands={brands || []}
+              websiteConfig={websiteConfig}
+              logo={logo}
+              onProductClick={onProductClick}
+              onBuyNow={handleBuyNow}
+              onAddToCart={handleAddProductToCartFromCard}
+              onCategoryClick={handleCategoryClick}
+              onOpenChat={onOpenChat}
+            />
+          ) : (
+            <StoreFrontThemePage
+              products={products}
+              categories={categories}
+              brands={brands || []}
+              websiteConfig={websiteConfig}
+              logo={logo}
+              onProductClick={onProductClick}
+              onBuyNow={handleBuyNow}
+              onAddToCart={handleAddProductToCartFromCard}
+              onCategoryClick={handleCategoryClick}
+              onOpenChat={onOpenChat}
+            />
+          )}
         </Suspense>
       ) : (
         <Suspense fallback={<StoreHomeSkeleton />}>
@@ -380,6 +510,7 @@ const StoreHome: React.FC<StoreHomeProps> = ({
       {/* Scroll to Top Button */}
       <ScrollToTopButton visible={showScrollToTop} onClick={scrollToTop} />
     </div>
+    
   );
 };
 

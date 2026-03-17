@@ -506,6 +506,74 @@ const CategoryStyle6 = memo(({ categories, onCategoryClick, sectionRef }: Omit<P
 CategoryStyle6.displayName = 'CategoryStyle6';
 
 // ============================================================================
+// Style 7: Gadgets Theme - Figma design with rounded cards, 2-col mobile / 8-col desktop
+// ============================================================================
+const CategoryStyle7 = memo(({ categories, onCategoryClick, sectionRef }: Omit<Props, 'style'>) => {
+  const processed = useMemo(() =>
+    categories?.filter(c => !c.status || c.status === 'Active' || c.status?.toLowerCase() === 'active')
+      .sort((a: any, b: any) => (a.serial ?? Infinity) - (b.serial ?? Infinity))
+      .slice(0, 8)
+      .map(c => ({ name: c.name, icon: c.icon || 'grid', image: c.image, slug: c.slug })) || []
+  , [categories]);
+
+  if (!processed.length) return null;
+
+  return (
+    <div ref={sectionRef}>
+      <div className="bg-white max-w-[1340px] w-[92%] mt-0 mx-auto pt-0 pb-[9.75px] px-[11.25px] rounded-[10px] md:bg-transparent md:w-[95%] md:mt-2.5 md:pt-3.5 md:pb-0 md:px-0 md:rounded-none">
+        <div className="items-center flex h-[38px] justify-between leading-[38px]">
+          <h2 className="text-neutral-900 text-base font-bold leading-[18px] whitespace-nowrap md:text-neutral-700 md:text-[22px] md:font-medium md:leading-[38px]">
+            Categories
+          </h2>
+          <button
+            onClick={() => onCategoryClick('__all__')}
+            className="text-black text-[13px] font-medium items-center flex leading-[15px] md:text-zinc-800 md:text-base md:leading-[38px] hover:text-lime-500 transition-colors"
+          >
+            View All
+            <ChevronRight size={20} className="ml-0 md:ml-2" />
+          </button>
+        </div>
+        <div className="gap-x-[9px] grid grid-cols-[repeat(2,1fr)] gap-y-[9px] md:gap-x-[15px] md:grid-cols-[repeat(8,1fr)] md:gap-y-[15px]">
+          {processed.map((cat, idx) => {
+            const iconSrc = cat.image || cat.icon;
+            const hasImage = iconSrc && isImageUrl(iconSrc);
+            return (
+              <div key={`${cat.name}-${idx}`} className="block">
+                <button
+                  onClick={() => onCategoryClick(cat.slug || cat.name)}
+                  className="w-full items-center flex flex-col h-[96.25px] justify-center border border-neutral-200 pt-1.5 rounded-[10px] border-solid cursor-pointer md:h-full md:pt-4 hover:shadow-[rgba(0,0,0,0.1)_1px_5px_10px_0px] hover:border-zinc-500/60 transition-shadow"
+                >
+                  <div className="bg-white h-[45px] w-[45px] overflow-hidden mx-auto rounded-md md:h-20 md:w-20 md:rounded-[5px]">
+                    {hasImage ? (
+                      <img
+                        alt={cat.name}
+                        src={normalizeImageUrl(iconSrc)}
+                        className="inline-block h-full object-contain w-full"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-300 bg-gray-50">
+                        <Grid size={24} />
+                      </div>
+                    )}
+                  </div>
+                  <div className="text-center">
+                    <div className="text-neutral-900 text-[13px] font-medium flow-root h-auto leading-[15px] overflow-hidden mx-0 my-1.5 px-[9px] md:text-black md:text-sm md:block md:h-[37px] md:leading-[18px] md:mt-2 md:mb-0 md:mx-3 md:px-0">
+                      {cat.name}
+                    </div>
+                  </div>
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+});
+CategoryStyle7.displayName = 'CategoryStyle7';
+
+// ============================================================================
 // Main Component with Style Switch
 // ============================================================================
 export const CategoriesSection = memo(({ categories, onCategoryClick, sectionRef, categoryScrollRef, style }: Props) => {
@@ -523,6 +591,8 @@ export const CategoriesSection = memo(({ categories, onCategoryClick, sectionRef
       return <CategoryStyle5 categories={categories} onCategoryClick={onCategoryClick} sectionRef={ref} />;
     case 'style6':
       return <CategoryStyle6 categories={categories} onCategoryClick={onCategoryClick} sectionRef={ref} />;
+    case 'style7':
+      return <CategoryStyle7 categories={categories} onCategoryClick={onCategoryClick} sectionRef={ref} />;
     case 'none':
       return null;
     case 'style1':

@@ -8,10 +8,26 @@ import {
 } from 'lucide-react';
 import { StatCardProps, User, Tenant } from '../types';
 import { useNotifications } from '../hooks/useNotifications';
-import type { Notification as AppNotification } from '../backend/src/services/NotificationService';
-import { normalizeImageUrl } from '../utils/imageUrlHelper';
+// import { normalizeImageUrl } from '../utils/imageUrlHelper';
 import { getTenantSafeImageUrl } from '../utils/tenantBrandingHelper';
 import { useLanguage } from '../context/LanguageContext';
+
+// Notification type definition
+interface Notification {
+	_id?: string;
+	type: string;
+	title: string;
+	message: string;
+	isRead: boolean;
+	createdAt: string;
+	data?: {
+		orderId?: string;
+		tenantId?: string;
+		[key: string]: any;
+	};
+}
+
+type AppNotification = Notification;
 
 
 // Check if we're on tenant subdomain with /admin path (not admin.* or superadmin.* subdomain)
@@ -146,7 +162,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = memo(({ activePage, onN
 	};
 
 
-	const SidebarContent = ({ scrollRef }: { scrollRef: React.RefObject<HTMLDivElement | null> }) => (
+	const SidebarContent = ({ scrollRef }: { scrollRef: React.RefObject<HTMLDivElement> }) => (
 		<>
 
 			{/* Sidebar Menu */}
@@ -499,7 +515,7 @@ export const AdminHeader: React.FC<{
 
 	// Handle notification click
 	const handleNotificationClick = async (notification: AppNotification) => {
-		if (!notification.isRead) {
+		if (!notification.isRead && notification._id) {
 			await markAsRead([notification._id]);
 		}
 
@@ -767,54 +783,54 @@ export const AdminHeader: React.FC<{
 									)}
 								</div>
 
-								{/* Notification List */}
-								<div className="max-h-[400px] overflow-y-auto">
-									{notificationsLoading ? (
-										<div className="flex items-center justify-center py-8">
-											<Loader2 size={24} className="animate-spin text-green-600" />
+							{/* Notification List */}
+							<div className="max-h-[400px] overflow-y-auto">
+								{notificationsLoading ? (
+									<div className="flex items-center justify-center py-8">
+										<Loader2 size={24} className="animate-spin text-green-600" />
+									</div>
+								) : notifications.length === 0 ? (
+									<div className="flex flex-col items-center justify-center py-10 px-4 text-center">
+										<div className="w-16 h-16 rounded-full flex items-center justify-center mb-3 bg-gray-100">
+											<Bell size={28} className="text-gray-400" />
 										</div>
-									) : notifications.length === 0 ? (
-										<div className="flex flex-col items-center justify-center py-10 px-4 text-center">
-											<div className="w-16 h-16 rounded-full flex items-center justify-center mb-3 bg-gray-100">
-												<Bell size={28} className="text-gray-400" />
-											</div>
-											<p className="text-sm text-gray-600">No notifications yet</p>
-											<p className="text-xs mt-1 text-gray-400">We'll notify you when something arrives</p>
-										</div>
-									) : (
-										<div>
-											{notifications.map((notification) => (
-												<div
-													key={notification._id}
-													onClick={() => handleNotificationClick(notification)}
-													className={`flex items-start gap-3 px-4 py-3 cursor-pointer transition-[background-color] duration-150 hover:bg-gray-50 ${!notification.isRead ? 'bg-green-50 border-l-2 border-green-500' : ''}`}
-												>
-													<div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center mt-0.5 bg-gray-100">
-														{getNotificationIcon(notification.type)}
-													</div>
-													<div className="flex-1 min-w-0">
-														<div className="flex items-start justify-between gap-2">
-															<p className={`text-sm font-medium truncate ${!notification.isRead ? 'text-gray-900' : 'text-gray-500'}`}>
-																{notification.title}
-															</p>
-															{!notification.isRead && (
-																<span className="flex-shrink-0 w-2 h-2 rounded-full mt-1.5 bg-green-500"></span>
-															)}
-														</div>
-														<p className="text-xs mt-0.5 line-clamp-2 text-gray-500">
-															{notification.message}
+										<p className="text-sm text-gray-600">No notifications yet</p>
+										<p className="text-xs mt-1 text-gray-400">We'll notify you when something arrives</p>
+									</div>
+								) : (
+									<div>
+										{/* Added 'as any' or explicit type cast here to resolve the broad 'Notification' vs local 'Notification' conflict */}
+										{notifications.map((notification: any) => (
+											<div
+												key={notification._id ?? `${notification.createdAt}-${notification.title}`}
+												onClick={() => handleNotificationClick(notification)}
+												className={`flex items-start gap-3 px-4 py-3 cursor-pointer transition-[background-color] duration-150 hover:bg-gray-100 ${!notification.isRead ? 'bg-green-50 border-l-2 border-green-500' : ''}`}
+											>
+												<div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center mt-0.5 bg-gray-100">
+													{getNotificationIcon(notification.type ?? 'default')}
+												</div>
+												<div className="flex-1 min-w-0">
+													<div className="flex items-start justify-between gap-2">
+														<p className={`text-sm font-medium truncate ${!notification.isRead ? 'text-gray-900' : 'text-gray-500'}`}>
+															{notification.title}
 														</p>
-														<div className="flex items-center gap-1 mt-1.5 text-[10px] text-gray-400">
-															<Clock size={10} />
-															{formatTimeAgo(notification.createdAt)}
-														</div>
+														{!notification.isRead && (
+															<span className="flex-shrink-0 w-2 h-2 rounded-full mt-1.5 bg-green-500"></span>
+														)}
+													</div>
+													<p className="text-xs mt-0.5 line-clamp-2 text-gray-500">
+														{notification.message}
+													</p>
+													<div className="flex items-center gap-1 mt-1.5 text-[10px] text-gray-400">
+														<Clock size={10} />
+														{formatTimeAgo(notification.createdAt)}
 													</div>
 												</div>
-											))}
-										</div>
-									)}
-								</div>
-
+											</div>
+										))}
+									</div>
+								)}
+							</div>
 								{/* Footer */}
 								{notifications.length > 0 && (
 									<div className="px-4 py-3 border-t border-gray-100 bg-gray-50">
@@ -853,7 +869,7 @@ export const AdminHeader: React.FC<{
 								<div className="p-4 border-b border-gray-100">
 									{selectedTenant?.subdomain && (
 										<a
-											href={`${window.location.protocol}//${selectedTenant.subdomain}.${import.meta.env.VITE_PRIMARY_DOMAIN || window.location.hostname.split('.').slice(-2).join('.')}`}
+											href={`${window.location.protocol}//${selectedTenant.subdomain}.${process.env.NEXT_PUBLIC_PRIMARY_DOMAIN || window.location.hostname.split('.').slice(-2).join('.')}`}
 											target="_blank"
 											rel="noopener noreferrer"
 											className="flex items-center gap-3 text-sm text-gray-700 hover:text-green-600 w-full p-2 rounded-lg hover:bg-gray-50 transition mb-1"

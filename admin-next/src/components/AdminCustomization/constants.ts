@@ -66,6 +66,7 @@ export const THEME_DEMO_IMAGES: Record<string, Record<string, string>> = {
     style4: 'https://hdnfltv.com/image/nitimages/header-4.webp',
     style5: 'https://hdnfltv.com/image/nitimages/header_-_5.webp',
     style6: 'https://hdnfltv.com/image/nitimages/pasted_1771697764963.webp',
+    style7: 'https://hdnfltv.com/image/nitimages/Header7.webp',
   },
   mobileHeaderStyle: {
     style1: 'https://hdnfltv.com/image/nitimages/mobile_header_-_1_1768841563.webp',
@@ -74,6 +75,7 @@ export const THEME_DEMO_IMAGES: Record<string, Record<string, string>> = {
     style4: 'https://hdnfltv.com/image/nitimages/mobile_header_4.webp',
     style5: 'https://hdnfltv.com/image/nitimages/mobile_header_5.webp',
     style6: 'https://hdnfltv.com/image/nitimages/Mobile_header_6.webp',
+    style7: 'https://hdnfltv.com/image/nitimages/Header7.webp',
   },
   showcaseSectionStyle: {
     style1: 'https://hdnfltv.com/image/nitimages/istockphoto-2177087647-612x612.webp',
@@ -98,6 +100,7 @@ export const THEME_DEMO_IMAGES: Record<string, Record<string, string>> = {
     style4: 'https://hdnfltv.com/image/nitimages/category_-_4.webp',
     style5: 'https://hdnfltv.com/image/nitimages/category-5.webp',
     style6: 'https://hdnfltv.com/image/nitimages/category-5.webp',
+    style7: 'https://hdnfltv.com/image/nitimages/category-5.webp',
   },
   productSectionStyle: {
     style1: 'https://hdnfltv.com/image/nitimages/product_card_-_1.webp',
@@ -151,7 +154,10 @@ export const THEME_DEMO_IMAGES: Record<string, Record<string, string>> = {
     pharmacy2: 'https://hdnfltv.com/image/nitimages/istockphoto-2177087647-612x612.webp',
     pharmacy3: 'https://hdnfltv.com/image/nitimages/istockphoto-2177087647-612x612.webp',
     pharmacy4: 'https://hdnfltv.com/image/nitimages/istockphoto-2177087647-612x612.webp',
-    storefront1: 'https://hdnfltv.com/image/nitimages/istockphoto-2177087647-612x612.webp',
+    // store front theme number 1 preview image. 
+    storefront1: 'https://hdnfltv.com/image/nitimages/pasted_1773730043062.webp',
+    // store front theme number 2 preview image.
+    storefront2: 'https://hdnfltv.com/image/nitimages/store_front_theme_2.webp',
   },
   // Product Detail Page Theme preview images
   productDetailThemes: {

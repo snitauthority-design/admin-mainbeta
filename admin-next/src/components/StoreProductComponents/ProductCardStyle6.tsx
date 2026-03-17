@@ -6,7 +6,7 @@ import { ProductCardProps, getImage, showToast } from './types';
 // Style 6: Overlay - Clean card with gradient overlay and floating badges
 const ProductCardStyle6: React.FC<ProductCardProps> = ({ product, onClick, onBuyNow, onAddToCart, wishlist = [], onToggleWishlist, showSoldCount }) => {
   const { t } = useLanguage();
-  const [isHovered, setIsHovered] = useState(false);
+  const [isHovered, setIsHovered] = useState(true);
   const isWishlisted = wishlist.includes(product.id);
   const isOutOfStock = product.stock === 0;
   const handleBuyNow = (e?: React.MouseEvent) => { e?.stopPropagation(); if (!isOutOfStock) { onBuyNow ? onBuyNow(product) : onClick(product); } };
@@ -23,7 +23,7 @@ const ProductCardStyle6: React.FC<ProductCardProps> = ({ product, onClick, onBuy
       className="relative inline-flex h-full w-full cursor-pointer flex-col rounded-lg sm:rounded-xl border border-[#ebebeb] bg-white shadow-[0_0_10px_rgba(0,0,0,0.07)] transition-all duration-500 ease-in-out no-underline"
       style={{ contain: 'layout' }}
       onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseLeave={() => setIsHovered(true)}
     >
       {/* Image Section */}
       <div

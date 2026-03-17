@@ -207,6 +207,77 @@ const MobileHeaderStyle6: React.FC<MobileHeaderBarProps> = ({
   </header>
 );
 
+// Style 7: Gadgets Theme - Lime accent, admin notice, centered logo, search bar
+const MobileHeaderStyle7: React.FC<MobileHeaderBarProps> = ({
+  resolvedHeaderLogo, logoKey, onHomeClick, cartBadgeCount,
+  onCartOpen, onMenuOpen, onSearchOpen, websiteConfig
+}) => {
+  const noticeText = websiteConfig?.adminNoticeText || 'Easy return policy and complete cash on delivery, ease of shopping!';
+
+  return (
+    <>
+      <header className="md:hidden bg-white sticky top-0 w-full z-[999] overflow-hidden border-b border-stone-300">
+        <div className="max-w-[1340px] w-[93%] mx-auto">
+          {/* Admin Notice */}
+          <div className="flex items-center leading-[18px] pt-2 pb-[5px]">
+            <div>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-zinc-700"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+            </div>
+            <div className="basis-[0%] grow ml-[5px]">
+              <div className="inline-block text-nowrap w-full overflow-hidden text-sm">
+                {noticeText}
+              </div>
+            </div>
+          </div>
+
+          {/* Logo */}
+          <button type="button" onClick={onHomeClick} className="items-center flex h-[52px] justify-center text-center w-full overflow-hidden mt-2.5 mx-auto">
+            {resolvedHeaderLogo ? (
+              <img
+                key={logoKey}
+                src={normalizeImageUrl(resolvedHeaderLogo)}
+                alt={websiteConfig?.websiteName || 'Store'}
+                className="block max-h-[50px] max-w-[140px] object-contain w-full"
+              />
+            ) : (
+              <span className="text-xl font-bold text-gray-800">{websiteConfig?.websiteName || 'Store'}</span>
+            )}
+          </button>
+
+          {/* Search + Cart */}
+          <div className="items-center flex w-full py-2.5">
+            {/* Hamburger */}
+            <button type="button" onClick={onMenuOpen} className="flex-col pr-[5px]" aria-label="Menu">
+              <span className="bg-lime-500 block h-0.5 w-[22px] mx-auto my-[5px]" />
+              <span className="bg-lime-500 block h-0.5 w-[22px] mx-auto my-[5px]" />
+              <span className="bg-lime-500 block h-0.5 w-[22px] mx-auto my-[5px]" />
+            </button>
+
+            {/* Search Bar */}
+            <button type="button" onClick={onSearchOpen} className="items-center flex h-10 justify-between w-[95%] border border-lime-500 rounded-[5px] border-solid">
+              <div className="flex justify-center">
+                <div className="text-lime-500 ml-1 pt-[3px] px-[5px]">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                </div>
+                <span className="text-neutral-400 text-[15px] font-medium flex items-center pl-2.5">Search products...</span>
+              </div>
+              <span className="text-white text-sm font-medium bg-lime-500 mr-1 px-2.5 py-1.5 rounded-[5px]">Search</span>
+            </button>
+
+            {/* Cart */}
+            <button type="button" onClick={onCartOpen} className="relative block text-center pt-[5px] pb-px px-2.5 rounded-[10px]">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-700"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+              <span className="absolute text-white text-xs font-medium bg-lime-500 block h-5 leading-5 top-[-3px] w-5 rounded-full -right-px">
+                {cartBadgeCount}
+              </span>
+            </button>
+          </div>
+        </div>
+      </header>
+    </>
+  );
+};
+
 export const MobileHeaderBar: React.FC<MobileHeaderBarProps> = (props) => {
   const style = props.websiteConfig?.mobileHeaderStyle || 'style1';
   
@@ -221,6 +292,8 @@ export const MobileHeaderBar: React.FC<MobileHeaderBarProps> = (props) => {
       return <MobileHeaderStyle5 {...props} />;
     case 'style6':
       return <MobileHeaderStyle6 {...props} />;
+    case 'style7':
+      return <MobileHeaderStyle7 {...props} />;
     case 'style1':
     default:
       return <MobileHeaderStyle1 {...props} />;

@@ -1,0 +1,697 @@
+/**
+ * GadgetsThemePage – Dynamic version of StoreFrontTheme2 (Gadgets Theme)
+ * 
+ * Exact same Figma design (lime-green accent, orange buy-now, rounded cards,
+ * category grid, time counter, View All links, desktop/mobile responsive),
+ * but powered by the shared data engine (products, categories, websiteConfig).
+ */
+
+import React, { memo, useMemo, useState, useCallback, useEffect, useRef } from 'react';
+import { ShoppingCart, ChevronLeft, ChevronRight, Package } from 'lucide-react';
+import type { Product, WebsiteConfig } from '../../types';
+import { normalizeImageUrl } from '../../utils/imageUrlHelper';
+
+// ─── Interface (same data engine) ────────────────────────────────────────────
+interface GadgetsThemeProps {
+  products: Product[];
+  categories: any[];
+  brands: any[];
+  websiteConfig?: WebsiteConfig;
+  logo?: string | null;
+  onProductClick: (product: Product) => void;
+  onBuyNow?: (product: Product) => void;
+  onAddToCart?: (product: Product, quantity: number, variant: any) => void;
+  onCategoryClick?: (categorySlug: string) => void;
+  onOpenChat?: () => void;
+}
+
+// ─── Palette (matches Figma: lime-500 accent, orange CTA) ────────────────────
+const G = {
+  accent: '#84cc16',       // lime-500
+  accentDark: '#65a30d',   // lime-600
+  buyNow: '#fb923c',       // orange-400
+  buyNowHover: '#f97316',  // orange-500
+  bg: '#f3f4f6',           // gray-100
+  cardBg: '#ffffff',
+  text: '#171717',         // neutral-900
+  textMuted: '#525252',    // neutral-600
+  border: '#e5e7eb',       // gray-200
+  discountBg: '#fb923c',   // orange-400
+  counterBorder: '#6d28d9', // violet-700
+  counterText: '#6d28d9',
+} as const;
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+const slugify = (s: string) =>
+  s?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || '';
+
+const formatPrice = (p: number) => `৳ ${p.toLocaleString('en-BD')}`;
+
+const calcDiscount = (price: number, sale: number) =>
+  Math.round(((price - sale) / price) * 100);
+
+// ─── Time Counter (matches Figma violet bordered boxes) ──────────────────────
+const GadgetTimeCounter = memo(({ label }: { label: string }) => {
+  const [time, setTime] = useState({ h: 0, m: 0, s: 0 });
+
+  useEffect(() => {
+    // Initialize with some time
+    setTime({ h: Math.floor(Math.random() * 10), m: Math.floor(Math.random() * 60), s: Math.floor(Math.random() * 60) });
+    const t = setInterval(() => {
+      setTime(prev => {
+        let { h, m, s } = prev;
+        s--;
+        if (s < 0) { s = 59; m--; }
+        if (m < 0) { m = 59; h--; }
+        if (h < 0) return { h: 23, m: 59, s: 59 };
+        return { h, m, s };
+      });
+    }, 1000);
+    return () => clearInterval(t);
+  }, []);
+
+  const pad = (n: number) => String(n).padStart(2, '0');
+
+  return (
+    <div className="relative items-center bg-transparent flex gap-x-[7px] gap-y-[7px] justify-center max-w-[430px] text-center w-auto z-[2] mx-auto md:bg-white md:w-full">
+      {[
+        { v: pad(time.h), l: 'Hours' },
+        { v: pad(time.m), l: 'Mins' },
+        { v: pad(time.s), l: 'Sec' },
+      ].map(({ v, l }) => (
+        <div key={l} className="items-center flex flex-col h-[34px] justify-center w-10 border-violet-700 rounded-[5px] border-2 border-solid">
+          <div className="text-violet-700 text-xs font-bold leading-3">{v}</div>
+          <div className="text-violet-700 text-[11px] font-medium brightness-[1.2] leading-3">{l}</div>
+        </div>
+      ))}
+    </div>
+  );
+});
+GadgetTimeCounter.displayName = 'GadgetTimeCounter';
+
+// ─── Product Card (exact Figma design) ───────────────────────────────────────
+const GadgetProductCard = memo(({ product, onClick, onAddToCart, onBuyNow }: {
+  product: Product; onClick: () => void; onAddToCart?: () => void; onBuyNow?: () => void;
+}) => {
+  const img = product.galleryImages?.[0] || product.image;
+  const price = Number(product.salePrice) || Number(product.price) || 0;
+  const originalPrice = Number(product.price) && Number(product.salePrice) && Number(product.price) > Number(product.salePrice) ? Number(product.price) : null;
+  const discount = originalPrice ? calcDiscount(originalPrice, price) : 0;
+  const isStockOut = product.stock != null && product.stock <= 0;
+
+  return (
+    <div className="block">
+      <div
+        onClick={onClick}
+        className="relative shadow-[rgba(0,0,0,0.07)_0px_0px_10px_0px] inline-block w-full border border-gray-200 rounded-2xl border-solid cursor-pointer hover:shadow-[rgba(0,0,0,0.07)_0px_0px_10px_0px] hover:border hover:border-lime-500 hover:rounded-2xl hover:border-solid transition-all"
+      >
+        <div className="bg-white max-w-xs w-full overflow-hidden rounded-2xl">
+          {/* Image */}
+          <div className="relative max-h-[50%]">
+            <div className="items-center flex justify-center">
+              <div className="items-center flex h-[149.25px] justify-center w-full overflow-hidden md:h-[220px]">
+                {img ? (
+                  <img
+                    alt={product.title}
+                    src={normalizeImageUrl(img)}
+                    className="block h-full max-h-full max-w-full object-cover w-full md:object-contain"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-gray-300 bg-gray-50">
+                    <Package size={40} />
+                  </div>
+                )}
+              </div>
+            </div>
+            {/* Discount Badge */}
+            {discount > 0 && (
+              <div className="absolute z-[9] left-0 top-0">
+                <span className="text-white text-xs bg-orange-400 inline-block leading-3 px-2.5 py-[7px] rounded-[5px]">
+                  -{discount}% OFF
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* Info */}
+          <div className="pb-4 px-2">
+            <div className="items-center gap-x-[3px] flex flex-col gap-y-[3px] my-2">
+              <div>
+                <p className="text-neutral-900 text-[13px] font-medium flow-root h-[30px] leading-[15px] text-center text-ellipsis break-all overflow-hidden mb-[5px] md:text-black md:text-sm md:h-[39px] md:leading-[normal] md:break-normal">
+                 {String(product?.name || 'Unknown Product')}
+                </p>
+              </div>
+              <div className="mb-[3px]">
+                <div className="flex pt-[5px]">
+                  <span className="text-black text-[15px] font-medium flex h-[22px] tracking-[-0.56px] leading-[22px]">
+                    {formatPrice(price)}
+                  </span>
+                  {originalPrice && (
+                    <span className="text-black text-[13px] font-medium flex h-[22px] tracking-[-0.56px] leading-[22px] line-through ml-[7px]">
+                      {formatPrice(originalPrice)}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Buttons */}
+            <div className="items-center gap-x-2.5 flex gap-y-2.5 mt-2.5">
+              {isStockOut ? (
+                <button className="text-black items-center flex justify-center text-center text-sm font-semibold bg-neutral-200 h-[38px] opacity-70 w-full p-0 rounded-[5px] cursor-not-allowed">
+                  Stock Out
+                </button>
+              ) : (
+                <>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onAddToCart?.(); }}
+                    className="text-black items-center flex justify-center text-center text-xs bg-neutral-400/40 shadow-[rgba(0,0,0,0.07)_0px_2px_8px_0px] gap-x-[5px] basis-[0%] grow h-8 gap-y-[5px] w-[38px] px-px py-0 rounded md:text-[13px] md:h-[38px] md:px-0 hover:text-white hover:bg-lime-500 hover:shadow-[rgba(0,0,0,0.07)_0px_2px_8px_0px] hover:rounded transition-colors"
+                  >
+                    <ShoppingCart size={16} />
+                    <span className="text-xs font-medium block px-px md:text-sm md:px-0">
+                      Cart
+                    </span>
+                  </button>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onBuyNow?.(); }}
+                    className="text-white text-xs font-semibold items-center bg-orange-400 shadow-[rgba(0,0,0,0.07)_0px_2px_8px_0px] flex basis-[0%] grow h-8 justify-center text-center px-px py-0 rounded-[5px] md:text-sm md:h-[38px] md:px-[18px] hover:bg-orange-500 hover:shadow-[rgba(0,0,0,0.07)_0px_2px_8px_0px] hover:rounded-[5px] transition-colors"
+                  >
+                    Buy Now
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+});
+GadgetProductCard.displayName = 'GadgetProductCard';
+
+// ─── Category Card (exact Figma design) ──────────────────────────────────────
+const GadgetCategoryCard = memo(({ category, onClick }: {
+  category: any; onClick: () => void;
+}) => {
+  const img = category.image || category.icon;
+
+  return (
+    <div className="block">
+      <div
+        onClick={onClick}
+        className="items-center flex flex-col h-[96.25px] justify-center w-full border border-neutral-200 pt-1.5 rounded-[10px] border-solid cursor-pointer md:inline-block md:h-full md:pt-4 hover:shadow-[rgba(0,0,0,0.1)_1px_5px_10px_0px] hover:border-zinc-500/60 transition-shadow"
+      >
+        <div className="bg-white h-[45px] w-[45px] overflow-hidden mx-auto rounded-md md:h-20 md:w-20 md:rounded-[5px]">
+          {img ? (
+            <img
+              alt={category.name}
+              src={normalizeImageUrl(img)}
+              className="inline-block h-full object-contain w-full"
+              loading="lazy"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-gray-300 bg-gray-50 text-xs">
+              {category.name?.[0] || '?'}
+            </div>
+          )}
+        </div>
+        <div className="text-center">
+          <div className="text-neutral-900 text-[13px] font-medium flow-root h-auto leading-[15px] overflow-hidden mx-0 my-1.5 px-[9px] md:text-black md:text-sm md:block md:h-[37px] md:leading-[18px] md:mt-2 md:mb-0 md:mx-3 md:px-0">
+            {category.name}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+});
+GadgetCategoryCard.displayName = 'GadgetCategoryCard';
+
+// ─── Hero Carousel (exact Figma design) ──────────────────────────────────────
+const GadgetHero = memo(({ websiteConfig }: { websiteConfig?: WebsiteConfig }) => {
+  const items = (websiteConfig?.carouselItems || [])
+    .filter(i => String(i.status ?? '').trim().toLowerCase() === 'publish')
+    .sort((a, b) => Number(a.serial ?? 0) - Number(b.serial ?? 0));
+  const [current, setCurrent] = useState(0);
+  const total = items.length;
+
+  useEffect(() => {
+    if (total <= 1) return;
+    const t = setInterval(() => setCurrent(p => (p + 1) % total), 4000);
+    return () => clearInterval(t);
+  }, [total]);
+
+  const goPrev = useCallback(() => setCurrent(p => (p - 1 + total) % total), [total]);
+  const goNext = useCallback(() => setCurrent(p => (p + 1) % total), [total]);
+
+  if (!total) return null;
+
+  const item = items[current];
+  const heroImg = item?.image || item?.imageUrl;
+
+  return (
+    <div className="flex-col h-[118px] max-w-[1340px] w-[92%] mt-4 mb-[15px] mx-auto md:flex-row md:h-[345px] md:w-full md:mb-0">
+      <div className="relative bg-neutral-200 h-[118px] w-full overflow-hidden m-auto rounded-lg md:h-[345px] md:rounded-none">
+        {/* Slides */}
+        <div className="flex h-full transition-transform duration-500 ease-in-out" style={{ transform: `translateX(-${current * 100}%)` }}>
+          {items.map((itm: any, i: number) => {
+            const imgSrc = itm?.image || itm?.imageUrl;
+            return (
+              <div key={i} className="h-full min-w-full w-full rounded-lg md:rounded-none flex-shrink-0">
+                {imgSrc ? (
+                  <img alt={itm?.title || `Slide ${i + 1}`} src={normalizeImageUrl(imgSrc)} className="block h-full object-cover w-full rounded-lg md:rounded-none" />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-r from-lime-100 to-lime-200 flex items-center justify-center">
+                    <span className="text-lime-700 text-xl font-bold">{itm?.title || 'Sale'}</span>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Nav Arrows (desktop only) */}
+        {total > 1 && (
+          <>
+            <button
+              onClick={goPrev}
+              className="absolute text-white bg-gray-100 block h-[35px] opacity-0 invisible text-center w-[35px] z-[100] rounded-[50%] left-5 top-1/2 -translate-y-1/2 md:opacity-100 md:visible hover:bg-lime-500 transition-colors"
+            >
+              <ChevronLeft size={20} />
+            </button>
+            <button
+              onClick={goNext}
+              className="absolute text-white bg-gray-100 block h-[35px] opacity-0 invisible text-center w-[35px] z-[100] rounded-[50%] right-5 top-1/2 -translate-y-1/2 md:opacity-100 md:visible hover:bg-lime-500 transition-colors"
+            >
+              <ChevronRight size={20} />
+            </button>
+          </>
+        )}
+
+        {/* Dots */}
+        {total > 1 && (
+          <div className="absolute flex gap-x-2.5 gap-y-2.5 -translate-x-1/2 left-1/2 bottom-[15px]">
+            {items.map((_: any, i: number) => (
+              <button
+                key={i}
+                onClick={() => setCurrent(i)}
+                className="block h-2 w-2 rounded-[50%] md:h-2.5 md:w-2.5 transition-colors"
+                style={{ backgroundColor: i === current ? G.accent : 'rgba(255,255,255,0.4)' }}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+});
+GadgetHero.displayName = 'GadgetHero';
+
+// ─── Footer (dynamic version of Figma Footer) ───────────────────────────────
+// Default footer link fallbacks (same as StoreFooter)
+const defaultQuickLinks = [
+  { id: '1', label: 'Home', url: '/' },
+  { id: '2', label: 'Terms and Conditions', url: '/termsnconditions' },
+  { id: '3', label: 'Return Policy', url: '/returnpolicy' },
+];
+const defaultUsefulLinks = [
+  { id: '1', label: 'About Us', url: '/about' },
+  { id: '2', label: 'Privacy Policy', url: '/privacy' },
+  { id: '3', label: 'FAQ', url: '/faq' },
+  { id: '4', label: 'Track Order', url: '/track' },
+];
+
+const GadgetFooter = memo(({ websiteConfig, logo }: { websiteConfig?: WebsiteConfig; logo?: string | null }) => {
+  const storeName = websiteConfig?.storeName || 'Store';
+  const description = websiteConfig?.shortDescription || '';
+  const emails = websiteConfig?.emails || [];
+  const phones = websiteConfig?.phones || [];
+  const addresses = websiteConfig?.addresses || [];
+  const socialLinks = websiteConfig?.socialLinks || [];
+  const rawQuickLinks = websiteConfig?.footerQuickLinks || [];
+  const rawUsefulLinks = websiteConfig?.footerUsefulLinks || [];
+  const quickLinks = rawQuickLinks.filter(l => l.label && l.url).length > 0
+    ? rawQuickLinks.filter(l => l.label && l.url)
+    : defaultQuickLinks;
+  const usefulLinks = rawUsefulLinks.filter(l => l.label && l.url).length > 0
+    ? rawUsefulLinks.filter(l => l.label && l.url)
+    : defaultUsefulLinks;
+
+  return (
+    <div>
+      {/* Desktop Footer */}
+      <div className="hidden md:block">
+        <div className="bg-white mt-5">
+          <div className="max-w-[1340px] w-[95%] mx-auto">
+            <div className="gap-x-[25px] grid grid-cols-[1fr] gap-y-[25px] p-[15px] md:gap-x-[30px] md:grid-cols-[repeat(4,1fr)] md:gap-y-[30px] md:px-2.5 md:py-5">
+              {/* Brand */}
+              <div className="text-center w-full md:text-start">
+                <div className="flex justify-center text-center mb-[15px] md:block md:justify-normal md:text-start">
+                  {logo ? (
+                    <img alt={storeName} src={normalizeImageUrl(logo)} className="block h-10 max-w-[180px] object-contain w-full" />
+                  ) : (
+                    <span className="text-xl font-bold text-neutral-900">{storeName}</span>
+                  )}
+                </div>
+                {description && <p className="text-sm text-center md:text-start">{description}</p>}
+                {socialLinks.length > 0 && (
+                  <div className="items-center gap-x-2.5 flex justify-center gap-y-2.5 text-center mt-[15px] md:justify-normal md:text-start">
+                    {socialLinks.map((s, i) => {
+                      const icon: Record<string, string> = { facebook: 'f', instagram: '\uD83D\uDCF7', youtube: '\u25B6', twitter: '𝕏', tiktok: '♪', whatsapp: '\uD83D\uDCAC', linkedin: 'in', pinterest: 'P' };
+                      const label = icon[(s.platform || '').toLowerCase()] || s.platform?.[0]?.toUpperCase() || '?';
+                      return (
+                        <a key={i} href={s.url} target="_blank" rel="noopener noreferrer"
+                          className="bg-gray-400/30 flex items-center justify-center w-8 h-8 rounded-full hover:bg-lime-500 transition-colors">
+                          <span className="text-sm font-bold">{label}</span>
+                        </a>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
+              {/* Contact */}
+              <div className="text-center md:text-start">
+                <b className="text-xl font-semibold block tracking-[-0.3px] leading-[30px] mb-[15px]">Contact Us</b>
+                <ul className="list-none pl-0">
+                  {emails.map((e, i) => (
+                    <li key={`e${i}`} className="items-center gap-x-2.5 flex flex-wrap justify-center gap-y-2.5 text-center w-full mb-2 md:flex-nowrap md:justify-start md:text-start">
+                      <span className="text-lime-500 text-sm">✉</span>
+                      <span className="text-sm leading-[26px]">{e}</span>
+                    </li>
+                  ))}
+                  {phones.map((p, i) => (
+                    <li key={`p${i}`} className="items-center gap-x-2.5 flex flex-wrap justify-center gap-y-2.5 text-center w-full mb-2 md:flex-nowrap md:justify-start md:text-start">
+                      <span className="text-lime-500 text-sm">📞</span>
+                      <a href={`tel:${p}`} className="text-sm leading-[26px] hover:text-black hover:no-underline">{p}</a>
+                    </li>
+                  ))}
+                  {addresses.map((a, i) => (
+                    <li key={`a${i}`} className="items-center gap-x-2.5 flex flex-wrap justify-center gap-y-2.5 text-center w-full mb-2 md:flex-nowrap md:justify-start md:text-start">
+                      <span className="text-lime-500 text-sm">📍</span>
+                      <span className="text-sm leading-[26px]">{a}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Quick Links */}
+              {quickLinks.length > 0 && (
+                <div className="text-center md:text-start">
+                  <b className="text-xl font-semibold block tracking-[-0.3px] leading-[30px] mb-[15px]">Quick Links</b>
+                  <ul className="list-none pl-0">
+                    {quickLinks.map((link, i) => (
+                      <li key={i} className="text-center py-[5px] md:text-start">
+                        <a href={link.url} className="text-zinc-800 inline-block hover:text-blue-600 hover:no-underline">{link.label}</a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Useful Links */}
+              {usefulLinks.length > 0 && (
+                <div className="text-center md:text-start">
+                  <b className="text-xl font-semibold block tracking-[-0.3px] leading-[30px] mb-[15px]">Useful Links</b>
+                  <ul className="list-none pl-0">
+                    {usefulLinks.map((link, i) => (
+                      <li key={i} className="text-center py-[5px] md:text-start">
+                        <a href={link.url} className="text-zinc-800 inline-block hover:text-blue-600 hover:no-underline">{link.label}</a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+
+            {/* Copyright */}
+            {!websiteConfig?.hideCopyright && (
+              <div className="border-t-indigo-300 flex justify-center mb-0 p-[15px] border-t md:px-[30px] md:py-[25px]">
+                <b className="text-neutral-600 text-sm block leading-[22px] text-center">
+                  Copyright © {new Date().getFullYear()} {storeName}
+                  {websiteConfig?.showPoweredBy && (
+                    <><br /><span className="font-normal text-xs text-gray-400">Powered by Paatalika</span></>
+                  )}
+                </b>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Footer */}
+      <div className="block md:hidden">
+        <div className="bg-white mt-5">
+          <div className="max-w-[1340px] w-[95%] mx-auto">
+            <div className="gap-x-[25px] grid grid-cols-[1fr] gap-y-[25px] p-[15px]">
+              <div className="text-center w-full">
+                <div className="flex justify-center mb-[15px]">
+                  {logo ? (
+                    <img alt={storeName} src={normalizeImageUrl(logo)} className="block h-10 max-w-[180px] object-contain w-full" />
+                  ) : (
+                    <span className="text-xl font-bold">{storeName}</span>
+                  )}
+                </div>
+                {description && <p className="text-sm text-center mb-3">{description}</p>}
+                {socialLinks.length > 0 && (
+                  <div className="flex justify-center gap-2 mb-3">
+                    {socialLinks.map((s, i) => {
+                      const icon: Record<string, string> = { facebook: 'f', instagram: '📷', youtube: '▶', twitter: '𝕏', tiktok: '♪', whatsapp: '💬', linkedin: 'in', pinterest: 'P' };
+                      const label = icon[(s.platform || '').toLowerCase()] || s.platform?.[0]?.toUpperCase() || '?';
+                      return (
+                        <a key={i} href={s.url} target="_blank" rel="noopener noreferrer"
+                          className="bg-gray-400/30 flex items-center justify-center w-8 h-8 rounded-full hover:bg-lime-500 transition-colors">
+                          <span className="text-sm font-bold">{label}</span>
+                        </a>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+              {/* Contact */}
+              {(emails.length > 0 || phones.length > 0 || addresses.length > 0) && (
+                <div className="text-center">
+                  <b className="text-base font-semibold block mb-2">Contact Us</b>
+                  <ul className="list-none pl-0">
+                    {emails.map((e, i) => <li key={`e${i}`} className="text-sm mb-1"><span className="text-lime-500">✉ </span>{e}</li>)}
+                    {phones.map((p, i) => <li key={`p${i}`} className="text-sm mb-1"><span className="text-lime-500">📞 </span><a href={`tel:${p}`} className="hover:no-underline">{p}</a></li>)}
+                    {addresses.map((a, i) => <li key={`a${i}`} className="text-sm mb-1"><span className="text-lime-500">📍 </span>{a}</li>)}
+                  </ul>
+                </div>
+              )}
+              {/* Quick Links */}
+              <div className="text-center">
+                <b className="text-base font-semibold block mb-2">Quick Links</b>
+                <ul className="list-none pl-0">
+                  {quickLinks.map((link, i) => (
+                    <li key={i} className="py-1">
+                      <a href={link.url} className="text-sm text-zinc-800 hover:text-lime-600 hover:no-underline">{link.label}</a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              {/* Useful Links */}
+              <div className="text-center">
+                <b className="text-base font-semibold block mb-2">Useful Links</b>
+                <ul className="list-none pl-0">
+                  {usefulLinks.map((link, i) => (
+                    <li key={i} className="py-1">
+                      <a href={link.url} className="text-sm text-zinc-800 hover:text-lime-600 hover:no-underline">{link.label}</a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+            {!websiteConfig?.hideCopyright && (
+              <div className="border-t-indigo-300 flex justify-center mb-[60px] p-[15px] border-t">
+                <b className="text-neutral-600 text-sm block leading-[22px] text-center">
+                  Copyright © {new Date().getFullYear()} {storeName}
+                </b>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+});
+GadgetFooter.displayName = 'GadgetFooter';
+
+// ─── Product Section (section with title + optional timer + 2x5 grid) ────────
+const GadgetProductSection = memo(({ title, products, showTimer, onProductClick, onAddToCart, onBuyNow }: {
+  title: string;
+  products: Product[];
+  showTimer?: boolean;
+  onProductClick: (p: Product) => void;
+  onAddToCart?: (p: Product) => void;
+  onBuyNow?: (p: Product) => void;
+}) => {
+  if (!products.length) return null;
+
+  return (
+    <div>
+      <div className="items-center flex-col max-w-[1340px] w-full mx-0 px-[15px] md:flex-row md:w-[95%] md:mx-auto md:px-0">
+        <div className="items-center flex justify-between mt-6 mb-3.5">
+          <div className="items-center gap-x-[7px] flex flex-col justify-center gap-y-[7px] md:gap-x-[15px] md:flex-row md:gap-y-[15px]">
+            <h2 className="text-neutral-900 text-base font-bold leading-[18px] md:text-neutral-700 md:text-[22px] md:font-medium md:leading-[normal] whitespace-nowrap">
+              {title}
+            </h2>
+            {showTimer && <GadgetTimeCounter label={title} />}
+          </div>
+          <span className="text-black text-[13px] font-medium items-center flex leading-[15px] md:text-zinc-800 md:text-base cursor-pointer hover:text-lime-500">
+            View All
+            <ChevronRight size={20} className="ml-0 md:ml-2" />
+          </span>
+        </div>
+        <div className="gap-x-[7px] grid grid-cols-[repeat(2,1fr)] gap-y-[7px] mb-[30px] md:gap-x-[15px] md:grid-cols-[repeat(5,1fr)] md:gap-y-[15px]">
+          {products.map((product) => (
+            <GadgetProductCard
+              key={product.id}
+              product={product}
+              onClick={() => onProductClick(product)}
+              onAddToCart={() => onAddToCart?.(product)}
+              onBuyNow={() => onBuyNow?.(product)}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+});
+GadgetProductSection.displayName = 'GadgetProductSection';
+
+// ─── Main Component ──────────────────────────────────────────────────────────
+export const GadgetsThemePage: React.FC<GadgetsThemeProps> = memo(({
+  products,
+  categories,
+  brands,
+  websiteConfig,
+  logo,
+  onProductClick,
+  onBuyNow,
+  onAddToCart,
+  onCategoryClick,
+  onOpenChat,
+}) => {
+  const active = useMemo(() => products.filter(p => p.status === 'Active' || !p.status), [products]);
+
+  // Product sections - matching the original theme structure
+  const newArrivals = useMemo(() => active.slice(0, 10), [active]);
+  const popularProducts = useMemo(() =>
+    [...active].sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 10),
+  [active]);
+  const flashSaleProducts = useMemo(() =>
+    active.filter(p => p.flashSale).slice(0, 10),
+  [active]);
+  const bestSaleProducts = useMemo(() =>
+    [...active].sort((a, b) => (b.totalSold || 0) - (a.totalSold || 0)).slice(0, 10),
+  [active]);
+  // If no flash sale products, show discounted items instead
+  const flashOrDiscounted = useMemo(() => {
+    if (flashSaleProducts.length > 0) return flashSaleProducts;
+    return [...active]
+      .filter(p => Number(p.price) && Number(p.salePrice) && Number(p.price) > Number(p.salePrice))
+      .sort((a, b) => {
+        const dA = calcDiscount(Number(a.price), Number(a.salePrice));
+        const dB = calcDiscount(Number(b.price), Number(b.salePrice));
+        return dB - dA;
+      })
+      .slice(0, 10);
+  }, [flashSaleProducts, active]);
+
+  const activeCategories = useMemo(() =>
+    categories.filter(c => c.status === 'Active' || !c.status).slice(0, 8),
+  [categories]);
+
+  const handleAddToCart = useCallback((p: Product) => onAddToCart?.(p, 1, {}), [onAddToCart]);
+  const handleBuyNow = useCallback((p: Product) => onBuyNow?.(p), [onBuyNow]);
+
+  return (
+    <main className="text-black text-base font-normal bg-gray-100 overflow-x-hidden scroll-smooth w-full font-sans md:bg-transparent">
+      <div>
+        {/* Hero Carousel */}
+        <div className="min-h-[200px] mb-20 md:min-h-0 md:mb-0">
+          <GadgetHero websiteConfig={websiteConfig} />
+
+          {/* Categories */}
+          {activeCategories.length > 0 && (
+            <div>
+              <div className="bg-white max-w-[1340px] w-[92%] mt-0 mx-auto pt-0 pb-[9.75px] px-[11.25px] rounded-[10px] md:bg-transparent md:w-[95%] md:mt-2.5 md:pt-3.5 md:pb-0 md:px-0 md:rounded-none">
+                <div className="items-center flex h-[38px] justify-between leading-[38px]">
+                  <h2 className="text-neutral-900 text-base font-bold leading-[18px] md:text-neutral-700 md:text-[22px] md:font-medium md:leading-[38px] whitespace-nowrap">
+                    Categories
+                  </h2>
+                  <span className="text-black text-[13px] font-medium items-center flex leading-[15px] md:text-zinc-800 md:text-base md:leading-[38px] cursor-pointer hover:text-lime-500">
+                    View All
+                    <ChevronRight size={20} className="ml-0 md:ml-2" />
+                  </span>
+                </div>
+                <div className="gap-x-[9px] grid grid-cols-[repeat(2,1fr)] gap-y-[9px] md:gap-x-[15px] md:grid-cols-[repeat(8,1fr)] md:gap-y-[15px]">
+                  {activeCategories.map((cat: any) => (
+                    <GadgetCategoryCard
+                      key={cat.id || cat.name}
+                      category={cat}
+                      onClick={() => onCategoryClick?.(cat.slug || slugify(cat.name))}
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Product Sections */}
+          <GadgetProductSection
+            title="New Arrival"
+            products={newArrivals}
+            onProductClick={onProductClick}
+            onAddToCart={handleAddToCart}
+            onBuyNow={handleBuyNow}
+          />
+
+          <GadgetProductSection
+            title="Popular products"
+            products={popularProducts}
+            onProductClick={onProductClick}
+            onAddToCart={handleAddToCart}
+            onBuyNow={handleBuyNow}
+          />
+
+          {flashOrDiscounted.length > 0 && (
+            <GadgetProductSection
+              title="Flash Sale"
+              products={flashOrDiscounted}
+              showTimer
+              onProductClick={onProductClick}
+              onAddToCart={handleAddToCart}
+              onBuyNow={handleBuyNow}
+            />
+          )}
+
+          <GadgetProductSection
+            title="Best Sale Products"
+            products={bestSaleProducts}
+            onProductClick={onProductClick}
+            onAddToCart={handleAddToCart}
+            onBuyNow={handleBuyNow}
+          />
+
+          {/* If there are more products, show a "Flash Deals" section with timer */}
+          {active.length > 20 && (
+            <GadgetProductSection
+              title="Flash Deals"
+              products={active.slice(20, 30)}
+              showTimer
+              onProductClick={onProductClick}
+              onAddToCart={handleAddToCart}
+              onBuyNow={handleBuyNow}
+            />
+          )}
+        </div>
+
+        {/* Footer */}
+        <GadgetFooter websiteConfig={websiteConfig} logo={logo} />
+      </div>
+    </main>
+  );
+});
+GadgetsThemePage.displayName = 'GadgetsThemePage';

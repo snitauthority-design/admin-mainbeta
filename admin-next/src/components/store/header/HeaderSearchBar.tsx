@@ -53,18 +53,18 @@ export const DesktopSearchBar: React.FC<HeaderSearchProps> = ({
       placeholder={activeHint ? '' : 'Search products...'}
       value={activeSearchValue}
       onChange={(event) => onInputChange(event.target.value)}
-      className="w-full h-11 rounded-xl border border-slate-200 bg-white pl-5 pr-44 text-[15px] text-slate-800 placeholder:text-slate-400 shadow-sm transition-all focus:border-theme-primary focus:outline-none focus:ring-2 focus:ring-theme-primary/15"
+      className="relative flex items-center bg-gray-100 rounded-lg transition-all duration-200 focus-within:bg-white focus-within:ring-2 focus-within:ring-orange-500/20 focus-within:border-orange- 500 w-full py-2 pl-4 pr-12 text-sm focus:outline-none"
     />
     <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
-      <CameraButton onClick={onVisualSearch} />
-      <VoiceButton
+      {/* <CameraButton onClick={onVisualSearch} /> */}
+      {/* <VoiceButton
         isListening={isListening}
         supportsVoiceSearch={supportsVoiceSearch}
         onVoiceSearch={onVoiceSearch}
-      />
-      <button className="btn-order px-5 py-2 rounded-full font-semibold hover:shadow-lg active:scale-95">
+      /> */}
+      {/* <button className="btn-order px-5 py-2 rounded-full font-semibold hover:shadow-lg active:scale-95">
         <Search size={18} />
-      </button>
+      </button> */}
     </div>
     {isSuggestionsOpen && suggestions.length > 0 && (
       <SearchSuggestions suggestions={suggestions} onSuggestionClick={onSuggestionClick} />

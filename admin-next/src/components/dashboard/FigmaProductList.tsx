@@ -888,9 +888,17 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
     });
   }, []);
 
-const getSelectedProductIds = () => {
-  return Array.from(selectedIds);
-};
+const getSelectedProductIds = useCallback((): number[] => {
+  const selectedKeysArray = Array.from(selectedIds);
+  const numericIds: number[] = [];
+  orderedProducts.forEach((product, idx) => {
+    const key = getProductKey(product, idx);
+    if (selectedKeysArray.includes(key)) {
+      numericIds.push(product.id);
+    }
+  });
+  return numericIds;
+}, [selectedIds, orderedProducts, getProductKey]);
 
   const handlePrintMultiple = useCallback(() => {
     if (selectedIds.size === 0) {
@@ -908,8 +916,7 @@ const getSelectedProductIds = () => {
       return;
     }
     if (onBulkDelete) {
-    const ids = Array.from(selectedIds);
-    } else {
+      onBulkDelete(ids);
       toast.success(`Deleted ${ids.length} products`);
     }
     setSelectedIds(new Set());
@@ -922,8 +929,7 @@ const getSelectedProductIds = () => {
       return;
     }
     if (onBulkStatusUpdate) {
-    const ids = Array.from(selectedIds);
-    } else {
+      onBulkStatusUpdate(ids, 'Active');
       toast.success(`Published ${ids.length} products`);
     }
     setSelectedIds(new Set());
@@ -936,8 +942,7 @@ const getSelectedProductIds = () => {
       return;
     }
     if (onBulkStatusUpdate) {
-    const ids = Array.from(selectedIds);
-    } else {
+      onBulkStatusUpdate(ids, 'Draft');
       toast.success(`Moved ${ids.length} products to draft`);
     }
     setSelectedIds(new Set());
@@ -950,8 +955,7 @@ const getSelectedProductIds = () => {
       return;
     }
     if (onBulkFlashSale) {
-    const ids = Array.from(selectedIds);
-    } else {
+      onBulkFlashSale(ids, action);
       toast.success(action === 'add' ? `Added ${ids.length} products to Flash Sale` : `Removed ${ids.length} products from Flash Sale`);
     }
     setSelectedIds(new Set());
@@ -968,8 +972,7 @@ const getSelectedProductIds = () => {
       return;
     }
     if (onBulkDiscount) {
-    const ids = Array.from(selectedIds);
-    } else {
+      onBulkDiscount(ids, discountValue);
       toast.success(`Applied ${discountValue}% discount to ${ids.length} products`);
     }
     setShowDiscountModal(false);

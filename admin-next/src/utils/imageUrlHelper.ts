@@ -6,7 +6,7 @@
 import { getCDNImageUrl, isCDNEnabled } from '../config/cdnConfig';
 
 // Resolve production URL from env var
-const PRIMARY_DOMAIN = (import.meta.env.VITE_PRIMARY_DOMAIN || '').replace(/^https?:\/\//, '').replace(/\/$/, '');
+const PRIMARY_DOMAIN = (process.env.NEXT_PUBLIC_PRIMARY_DOMAIN || '').replace(/^https?:\/\//, '');
 
 const getProductionUrl = (): string => {
   if (PRIMARY_DOMAIN) return `https://${PRIMARY_DOMAIN}`;
@@ -25,8 +25,7 @@ const getBaseUrl = (): string => {
   // In browser, use current origin for uploads to avoid CORS issues
   if (typeof window !== 'undefined') {
     // Get the backend API URL from environment or use current origin
-    const apiUrl = import.meta.env.VITE_API_BASE_URL;
-    // Validate URL format before using
+    const apiUrl = process.env.NEXT_PUBLIC_API_BASE_URL;    // Validate URL format before using
     if (apiUrl && /^https?:\/\/.+/.test(apiUrl)) {
       return apiUrl;
     }
@@ -65,7 +64,7 @@ const normalizeDataUrl = (value: string): string => {
   const v = stripWrappingQuotes(value);
   if (!v.toLowerCase().startsWith('data:')) return v;
   
-  const match = v.match(/^data:([^,]*),(.*)$/s);
+  const match = v.match(/^data:([^,]*),(.*)$/);
   if (!match) return v;
 
   const meta = match[1];
