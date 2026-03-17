@@ -27,7 +27,7 @@ const ProductCardStyle6: React.FC<ProductCardProps> = ({ product, onClick, onBuy
     >
       {/* Image Section */}
       <div
-        className={`relative overflow-hidden rounded-t-lg sm:rounded-t-xl bg-[#f8f8f8] group-hover:opacity-95 transition-opacity ${isOutOfStock ? 'opacity-40 grayscale-[30%]' : ''}`}
+        className={`relative overflow-hidden rounded-t-lg sm:rounded-t-xl bg-[#f8f8f8] transition-opacity ${isOutOfStock ? 'opacity-40 grayscale-[30%]' : ''}`}
         style={{ aspectRatio: '1.2/1' }}
         onClick={() => onClick(product)}
       >
