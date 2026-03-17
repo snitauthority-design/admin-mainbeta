@@ -1492,6 +1492,18 @@ const SuperAdminDashboard: React.FC = () => {
               topTenants={topTenants}
               recentActivities={recentActivities}
               onViewAllTenants={() => setActiveTab('tenants')}
+              onAddTenant={() => setActiveTab('tenants')}
+              onAddUser={() => setActiveTab('tenants')}
+              onBroadcast={() => setActiveTab('announcements')}
+              onSecurity={() => setActiveTab('system-health')}
+              onViewTenant={(tenantId) => {
+                // Navigate to tenant detail (tenants tab)
+                setActiveTab('tenants');
+              }}
+              onEditTenant={(tenantId) => {
+                // Navigate to tenant edit (tenants tab)
+                setActiveTab('tenants');
+              }}
             />
           </React.Suspense>
         );

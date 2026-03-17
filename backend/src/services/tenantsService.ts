@@ -315,6 +315,82 @@ export const getTenantStats = async (tenantId: string) => {
   };
 };
 
+// Get aggregated dashboard stats for super admin
+export const getDashboardStats = async () => {
+  const db = await getDatabase();
+  const now = new Date();
+  const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  const fourteenDaysAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
+
+  // Get all tenants
+  const allTenants = await db.collection<Tenant>(collectionName).find({}).toArray();
+  const totalTenants = allTenants.length;
+  const activeTenants = allTenants.filter(t => t.status === 'active').length;
+
+  // Tenant count comparison (7-day periods)
+  const tenantsLastWeek = allTenants.filter(t => {
+    const created = new Date(t.createdAt || 0);
+    return created >= sevenDaysAgo && created <= now;
+  }).length;
+  const tenantsPrevWeek = allTenants.filter(t => {
+    const created = new Date(t.createdAt || 0);
+    return created >= fourteenDaysAgo && created < sevenDaysAgo;
+  }).length;
+  const tenantsChange = tenantsPrevWeek > 0
+    ? Math.round(((tenantsLastWeek - tenantsPrevWeek) / tenantsPrevWeek) * 100 * 10) / 10
+    : tenantsLastWeek > 0 ? 100 : 0;
+
+  // Subscription distribution by plan
+  const planCounts: Record<string, number> = { starter: 0, growth: 0, enterprise: 0 };
+  allTenants.forEach(t => {
+    const plan = (t.plan || 'starter') as string;
+    if (plan in planCounts) {
+      planCounts[plan]++;
+    } else {
+      planCounts.starter++;
+    }
+  });
+
+  // Aggregate orders across all tenants
+  const allOrderDocs = await db.collection('tenant_data').find({ key: 'orders' }).toArray();
+  let totalOrders = 0;
+  let ordersLastWeek = 0;
+  let ordersPrevWeek = 0;
+  for (const doc of allOrderDocs) {
+    if (Array.isArray(doc.data)) {
+      totalOrders += doc.data.length;
+      for (const order of doc.data) {
+        const orderDate = new Date(order.createdAt || order.date || 0);
+        if (orderDate >= sevenDaysAgo && orderDate <= now) ordersLastWeek++;
+        else if (orderDate >= fourteenDaysAgo && orderDate < sevenDaysAgo) ordersPrevWeek++;
+      }
+    }
+  }
+  const ordersChange = ordersPrevWeek > 0
+    ? Math.round(((ordersLastWeek - ordersPrevWeek) / ordersPrevWeek) * 100 * 10) / 10
+    : ordersLastWeek > 0 ? 100 : 0;
+
+  // Total active users
+  const totalUsers = await User.countDocuments({});
+  // Users created in last 7 days vs previous 7 days
+  const usersLastWeek = await User.countDocuments({ createdAt: { $gte: sevenDaysAgo, $lte: now } });
+  const usersPrevWeek = await User.countDocuments({ createdAt: { $gte: fourteenDaysAgo, $lt: sevenDaysAgo } });
+  const usersChange = usersPrevWeek > 0
+    ? Math.round(((usersLastWeek - usersPrevWeek) / usersPrevWeek) * 100 * 10) / 10
+    : usersLastWeek > 0 ? 100 : 0;
+
+  return {
+    totalTenants,
+    activeTenants,
+    tenantsChange,
+    totalOrders,
+    ordersChange,
+    totalUsers,
+    usersChange,
+    subscriptionDistribution: planCounts
+  };
+};
+
 export const ensureTenantIndexes = async () => {
   const db = await getDatabase();
   await db.collection<Tenant>(collectionName).createIndex({ subdomain: 1 }, { unique: true });

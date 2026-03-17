@@ -423,6 +423,28 @@ export function getCacheStats(): {
   };
 }
 
+/**
+ * Flush all caches (L1 memory + Redis)
+ */
+export async function flushAllCache(): Promise<{ l1Cleared: number; redisCleared: boolean }> {
+  const l1Count = L1.size;
+  L1.clear();
+
+  let redisCleared = false;
+  const client = getRedis();
+  if (client) {
+    try {
+      await client.flushdb();
+      redisCleared = true;
+      console.log('[Redis] All cache flushed');
+    } catch (e) {
+      console.error('[Redis] Flush error:', e);
+    }
+  }
+
+  return { l1Cleared: l1Count, redisCleared };
+}
+
 // Legacy export for compatibility
 export const invalidateCache = invalidateTenantCache;
 
