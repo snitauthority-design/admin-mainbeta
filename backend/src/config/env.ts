@@ -11,7 +11,15 @@ const envSchema = z.object({
   JWT_SECRET: z.string().optional().default('your-super-secret-jwt-key-change-in-production'),
   JWT_EXPIRES_IN: z.string().optional().default('7d'),
   UPLOAD_DIR: z.string().optional().default(''),
-  PRIMARY_DOMAIN: z.string().optional().default('')
+  PRIMARY_DOMAIN: z.string().optional().default(''),
+  /** URL of the Admin Dashboard (e.g. https://admin.myapp.com) */
+  ADMIN_URL: z.string().optional().default(''),
+  /** URL of the Storefront app (e.g. https://store.myapp.com) */
+  STOREFRONT_URL: z.string().optional().default(''),
+  /** Shared cookie domain for cross-app auth (e.g. .myapp.com) */
+  COOKIE_DOMAIN: z.string().optional().default(''),
+  /** Shared uploads directory used by both apps (Docker shared volume) */
+  SHARED_UPLOADS_DIR: z.string().optional().default(''),
 });
 
 const parsed = envSchema.safeParse(process.env);
@@ -31,5 +39,9 @@ export const env = {
   jwtSecret: parsed.data.JWT_SECRET,
   jwtExpiresIn: parsed.data.JWT_EXPIRES_IN,
   uploadDir: parsed.data.UPLOAD_DIR || '',
-  primaryDomain: parsed.data.PRIMARY_DOMAIN || ''
+  primaryDomain: parsed.data.PRIMARY_DOMAIN || '',
+  adminUrl: parsed.data.ADMIN_URL || '',
+  storefrontUrl: parsed.data.STOREFRONT_URL || '',
+  cookieDomain: parsed.data.COOKIE_DOMAIN || '',
+  sharedUploadsDir: parsed.data.SHARED_UPLOADS_DIR || '',
 };

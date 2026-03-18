@@ -161,6 +161,17 @@ const corsOptions: cors.CorsOptions = {
     if (systemnextPattern.test(origin) || systemnextWebsitePattern.test(origin) || cartngetPattern.test(origin) || shopbdPattern.test(origin) || allinbanglaPattern.test(origin) || localhostPattern.test(origin)) {
       return callback(null, true);
     }
+
+    // Allow explicitly configured Admin and Storefront app URLs
+    const appUrls = [env.adminUrl, env.storefrontUrl].filter(Boolean);
+    if (appUrls.includes(origin)) {
+      return callback(null, true);
+    }
+
+    // Allow any extra origins from ALLOWED_ORIGINS env
+    if (env.allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
     
     // Allow any origin for now (can be restricted later)
     return callback(null, true);
@@ -218,7 +229,8 @@ app.use(addSubscriptionHeaders);
 // Serve static files for uploaded images
 // Use image optimization route first (handles ?w=&q= params)
 // Apply cache headers to uploads
-const uploadsDir = env.uploadDir || path.join(process.cwd(), 'uploads');
+// Support shared uploads directory for multi-app Docker deployments
+const uploadsDir = env.sharedUploadsDir || env.uploadDir || path.join(process.cwd(), 'uploads');
 app.use('/uploads', imageCacheHeaders, imageOptimizeRouter);
 // Fallback to static files for non-optimized requests
 app.use('/uploads', express.static(uploadsDir));
