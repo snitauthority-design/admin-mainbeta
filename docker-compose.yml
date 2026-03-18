@@ -93,6 +93,8 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - uploads:/var/www/uploads:ro
       # SSL certificates (from host Certbot)
+      # NOTE: Mounts the full letsencrypt dir so cert renewal works.
+      # For stricter isolation, mount only your domain's cert directory.
       - /etc/letsencrypt:/etc/letsencrypt:ro
       # ACME challenge directory for Certbot renewal
       - ./certbot/www:/var/www/certbot:ro

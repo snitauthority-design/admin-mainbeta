@@ -126,6 +126,14 @@ do_pull() {
     log "Pulling latest code from origin/${BRANCH}..."
     cd "$APP_DIR"
     git fetch origin
+
+    # Warn if there are local changes
+    if ! git diff --quiet HEAD 2>/dev/null; then
+        warn "Local changes detected – they will be overwritten!"
+        warn "Press Ctrl+C within 5 seconds to abort..."
+        sleep 5
+    fi
+
     git reset --hard "origin/${BRANCH}"
     ok "Code updated to $(git log --oneline -1)"
 }
