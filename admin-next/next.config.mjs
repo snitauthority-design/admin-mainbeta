@@ -11,7 +11,6 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   experimental: {
-    missingSuspenseWithCSRBailout: false,
     optimizePackageImports: [
       'lucide-react',
       'recharts',

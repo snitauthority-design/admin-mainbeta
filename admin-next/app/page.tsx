@@ -44,7 +44,7 @@ function StorePageSkeleton() {
   );
 }
 
-export default function HomePage() {
+function HomePageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const app = useApp();
@@ -161,5 +161,13 @@ export default function HomePage() {
         />
       </Suspense>
     </>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <Suspense fallback={<StorePageSkeleton />}>
+      <HomePageInner />
+    </Suspense>
   );
 }
