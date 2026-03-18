@@ -29,7 +29,7 @@ const nextConfig = {
       '@google/generative-ai',
     ],
   },
-  transpilePackages: ['swiper'],
+  transpilePackages: ['swiper', '@repo/shared-types', '@repo/config'],
 
   webpack: (config, { webpack }) => {
     const srcPath = path.resolve(__dirname, 'src');

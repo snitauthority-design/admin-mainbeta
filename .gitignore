@@ -1,4 +1,31 @@
+# Dependencies
+node_modules/
 backend/node_modules/
-backend/dist/
 admin-next/node_modules/
+
+# Build outputs
+backend/dist/
 admin-next/.next/
+admin-next/.next-dev/
+apps/storefront/.next/
+apps/storefront/.next-dev/
+packages/*/dist/
+
+# Turborepo
+.turbo
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/*
+!.vscode/settings.json
+
+# Uploads (shared volume)
+uploads/
