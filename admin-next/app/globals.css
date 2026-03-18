@@ -2,8 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Fonts are loaded via next/font in layout.tsx for optimal performance.
-   CSS variables --font-inter, --font-lato, --font-poppins are set on <html>. */
+/* Core fonts loaded via <link> tags in layout.tsx <head> instead of
+   render-blocking @import. This eliminates a CSS waterfall and enables
+   parallel font discovery. */
 
 /* CSS variables for dynamic tenant theming */
 :root {

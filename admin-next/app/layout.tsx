@@ -33,7 +33,7 @@ export default function RootLayout({
         */}
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lato:wght@400;700;900&family=Poppins:wght@400;500;600;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lato:wght@400;700;900&family=Montserrat:wght@500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap"
         />
       </head>
       <body className="min-h-screen bg-gray-50" suppressHydrationWarning>
