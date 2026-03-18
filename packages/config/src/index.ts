@@ -92,11 +92,12 @@ export function isOriginAllowed(
   if (KNOWN_ORIGIN_PATTERNS.some((p) => p.test(origin))) return true;
   if (extraOrigins.includes(origin)) return true;
   // Support wildcard entries like https://*.myapp.com
-  return extraOrigins.some(
-    (allowed) =>
-      allowed.includes('*') &&
-      new RegExp('^' + allowed.replace(/\*/g, '.*') + '$').test(origin),
-  );
+  // Escape regex metacharacters before converting wildcard * to .*
+  return extraOrigins.some((allowed) => {
+    if (!allowed.includes('*')) return false;
+    const escaped = allowed.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\\\*/g, '.*');
+    return new RegExp('^' + escaped + '$').test(origin);
+  });
 }
 
 // ─── API URL Resolver ────────────────────────────────────────────────

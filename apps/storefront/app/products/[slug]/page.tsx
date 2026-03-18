@@ -32,6 +32,9 @@ async function getProduct(slug: string): Promise<Product | null> {
   }
 }
 
+/** Maximum number of product pages to pre-render at build time via SSG. */
+const MAX_PRERENDERED_PRODUCTS = 50;
+
 export async function generateStaticParams(): Promise<Params[]> {
   try {
     const apiUrl = getApiBaseUrl();
@@ -42,7 +45,7 @@ export async function generateStaticParams(): Promise<Params[]> {
     if (!res.ok) return [];
     const json = await res.json();
     const products: Product[] = json?.products ?? [];
-    return products.slice(0, 50).map((p) => ({ slug: p.slug }));
+    return products.slice(0, MAX_PRERENDERED_PRODUCTS).map((p) => ({ slug: p.slug }));
   } catch {
     return [];
   }

@@ -16,11 +16,16 @@ export function middleware(request: NextRequest) {
   const cookieDomain = getSharedCookieDomain(hostname);
 
   // Resolve tenant from subdomain
-  const parts = hostname.split('.');
+  const host = hostname.split(':')[0]; // Strip port
+  const parts = host.split('.');
   let tenantSlug = process.env.NEXT_PUBLIC_DEFAULT_TENANT_SLUG || 'demo';
 
-  // If hostname has subdomain (e.g. store1.myapp.com), use it as tenant
+  // Extract tenant from subdomain:
+  //   store1.myapp.com → store1 (parts.length > 2)
+  //   store1.localhost  → store1 (parts.length === 2, last part is localhost)
   if (parts.length > 2) {
+    tenantSlug = parts[0];
+  } else if (parts.length === 2 && parts[1] === 'localhost') {
     tenantSlug = parts[0];
   }
 

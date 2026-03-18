@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   typescript: {
+    // Matches admin-next config; strict checking done via tsc in CI
     ignoreBuildErrors: true,
   },
   transpilePackages: ['@repo/shared-types', '@repo/config'],
