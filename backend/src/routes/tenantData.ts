@@ -196,8 +196,9 @@ tenantDataRouter.get('/:tenantId/secondary', async (req, res, next) => {
       'categories', 'subcategories', 'childcategories', 'brands', 'tags'
     ]);
     
+    // Short cache for secondary data (categories, brands, tags change infrequently)
     res.set({
-      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Cache-Control': 'public, max-age=30, stale-while-revalidate=60',
     });
     
     res.json({

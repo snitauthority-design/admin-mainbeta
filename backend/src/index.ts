@@ -201,11 +201,13 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ limit: '10mb', extended: true }));
 app.use(morgan('dev'));
 
-// Debugging middleware to log request path and host
-app.use((req, res, next) => {
-  console.log(`[DEBUG] Path: ${req.path} | Host: ${req.headers.host}`);
-  next();
-});
+// Debug logging - only in development
+if (process.env.NODE_ENV !== 'production') {
+  app.use((req, res, next) => {
+    console.log(`[DEBUG] Path: ${req.path} | Host: ${req.headers.host}`);
+    next();
+  });
+}
 
 // Subscription check middleware - blocks API calls for expired tenants
 app.use(checkTenantSubscription);

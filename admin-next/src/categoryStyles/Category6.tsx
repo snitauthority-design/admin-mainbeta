@@ -174,15 +174,10 @@ const CategoryCard = ({ card }: { card: CategoryCardData }) => {
 export const Category6 = () => {
   return (
     <div className="min-h-screen bg-white py-16 px-4 md:px-8 flex flex-col items-center">
-      {/* Font Import */}
-      <link 
-        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" 
-        rel="stylesheet" 
-      />
 
       {/* Header */}
       <header className="mb-14 text-center">
-        <h1 className="text-5xl md:text-[64px] font-bold text-[#4B4B4B] font-[Montserrat] tracking-tight">
+        <h1 className="text-5xl md:text-[64px] font-bold text-[#4B4B4B] tracking-tight" style={{ fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" }}>
           Product Categories
         </h1>
       </header>
