@@ -13,8 +13,8 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@google/generative-ai": "^0.24.1",
-    "@repo/shared-types": "*",
     "@repo/config": "*",
+    "@repo/shared-types": "*",
     "clsx": "^2.1.1",
     "firebase": "^12.9.0",
     "lucide-react": "^0.263.1",
@@ -30,7 +30,7 @@
     "swiper": "^12.1.2",
     "tailwind-merge": "^3.5.0",
     "uuid": "^13.0.0",
-    "xlsx": "^0.18.5",
+    "xlsx": "npm:@e965/xlsx@^0.20.3",
     "zod": "^3.24.0"
   },
   "devDependencies": {
