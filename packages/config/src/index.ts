@@ -95,7 +95,7 @@ export function isOriginAllowed(
   // Escape regex metacharacters before converting wildcard * to .*
   return extraOrigins.some((allowed) => {
     if (!allowed.includes('*')) return false;
-    const escaped = allowed.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\\\*/g, '.*');
+    const escaped = allowed.replace(/[.+?^${}()|\\[\]]/g, '\\$&').replace(/\\\*/g, '.*');
     return new RegExp('^' + escaped + '$').test(origin);
   });
 }

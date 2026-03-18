@@ -25,8 +25,9 @@ FROM base AS builder
 WORKDIR /app
 
 COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/packages/shared-types/node_modules ./packages/shared-types/node_modules 2>/dev/null || true
-COPY --from=deps /app/packages/config/node_modules ./packages/config/node_modules 2>/dev/null || true
+# Workspace packages may not have their own node_modules (deps are hoisted)
+# Create empty dirs to ensure COPY does not fail, then overlay if they exist
+RUN mkdir -p packages/shared-types/node_modules packages/config/node_modules apps/storefront/node_modules
 COPY --from=deps /app/apps/storefront/node_modules ./apps/storefront/node_modules
 
 # Copy source
