@@ -57,8 +57,8 @@ const E = {
   bg: '#faf8f5',            // off-white
   text: '#2d2420',
   textMuted: '#8c7e75',
-  font: "'Playfair Display', 'Georgia', serif",
-  fontBody: "'Lato', sans-serif",
+  font: "'Georgia', 'Times New Roman', serif",
+  fontBody: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
 } as const;
 
 const ElegantProductCard = memo(({ product, onClick, onAddToCart }: {
@@ -153,7 +153,6 @@ export const StoreFront1Elegant: React.FC<StoreFrontThemeProps> = memo(({
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: E.bg, fontFamily: E.fontBody }}>
-      <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
 
       <ElegantHero websiteConfig={websiteConfig} />
 
@@ -257,7 +256,7 @@ const B = {
   bg: '#f8fafc',
   text: '#0f172a',
   textLight: '#94a3b8',
-  font: "'Space Grotesk', sans-serif",
+  font: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
 } as const;
 
 const BoldProductCard = memo(({ product, onClick, onAddToCart }: {
@@ -366,7 +365,6 @@ export const StoreFront1Bold: React.FC<StoreFrontThemeProps> = memo(({
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: B.bg, fontFamily: B.font }}>
-      <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
       <BoldHero websiteConfig={websiteConfig} />
 
@@ -474,7 +472,7 @@ const M = {
   border: '#eeeeee',
   bg: '#ffffff',
   accent: '#111111',
-  font: "'Inter', sans-serif",
+  font: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
 } as const;
 
 const MinimalProductCard = memo(({ product, onClick, onAddToCart }: {
@@ -562,7 +560,6 @@ export const StoreFront1Minimal: React.FC<StoreFrontThemeProps> = memo(({
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: M.bg, fontFamily: M.font }}>
-      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
 
       <MinimalHero websiteConfig={websiteConfig} />
 

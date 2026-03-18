@@ -56,13 +56,13 @@ const SFProductCard = memo(({ product, onClick, onAddToCart }: {
         )}
       </div>
       <div className="p-4 flex flex-col flex-1 gap-2">
-        <h3 className="font-bold text-gray-900 text-base line-clamp-1" style={{ fontFamily: "'Lato', sans-serif" }}>{product.title}</h3>
-        <p className="text-gray-500 text-sm line-clamp-2" style={{ fontFamily: "'Lato', sans-serif" }}>
+        <h3 className="font-bold text-gray-900 text-base line-clamp-1" style={{ fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" }}>{product.title}</h3>
+        <p className="text-gray-500 text-sm line-clamp-2" style={{ fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" }}>
           {product.description || product.description?.replace(/<[^>]*>/g, '').slice(0, 80) || ''}
         </p>
         <StarRating rating={product.rating || 4} />
         <div className="flex items-end gap-2 mt-auto">
-          <span className="font-bold text-lg" style={{ color: ACCENT, fontFamily: "'Lato', sans-serif" }}>
+          <span className="font-bold text-lg" style={{ color: ACCENT, fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" }}>
             ৳{price}
           </span>
           {originalPrice && (
@@ -70,7 +70,7 @@ const SFProductCard = memo(({ product, onClick, onAddToCart }: {
           )}
         </div>
         <div className="flex items-center gap-3 mt-1">
-          <span className="text-sm" style={{ color: ACCENT, fontFamily: "'Lato', sans-serif" }}>View Details</span>
+          <span className="text-sm" style={{ color: ACCENT, fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" }}>View Details</span>
           <button
             onClick={(e) => { e.stopPropagation(); onAddToCart?.(); }}
             className="ml-auto px-4 py-2 rounded-full text-white text-sm font-bold transition-colors hover:opacity-90"
@@ -88,9 +88,9 @@ SFProductCard.displayName = 'SFProductCard';
 // Section Header
 const SectionHeader = memo(({ title, onViewAll }: { title: string; onViewAll?: () => void }) => (
   <div className="flex items-center justify-between mb-6">
-    <h2 className="text-2xl md:text-3xl font-bold text-gray-900" style={{ fontFamily: "'Lato', sans-serif" }}>{title}</h2>
+    <h2 className="text-2xl md:text-3xl font-bold text-gray-900" style={{ fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" }}>{title}</h2>
     {onViewAll && (
-      <button onClick={onViewAll} className="px-5 py-2 rounded-full border border-gray-900 text-gray-900 text-sm font-medium hover:bg-gray-900 hover:text-white transition-colors" style={{ fontFamily: "'Lato', sans-serif" }}>
+      <button onClick={onViewAll} className="px-5 py-2 rounded-full border border-gray-900 text-gray-900 text-sm font-medium hover:bg-gray-900 hover:text-white transition-colors" style={{ fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" }}>
         View All
       </button>
     )}
@@ -124,7 +124,7 @@ const HeroBanner = memo(({ websiteConfig, categories, onCategoryClick }: {
       <div className="relative overflow-hidden" style={{ backgroundColor: DARK }}>
         <div className="max-w-[1400px] mx-auto flex flex-col md:flex-row items-center min-h-[300px] md:min-h-[420px]">
           <div className="relative z-10 px-6 md:px-12 py-10 md:py-0 flex-1 max-w-xl">
-            <h1 className="text-white text-3xl md:text-4xl lg:text-5xl leading-tight mb-6" style={{ fontFamily: "'Lato', sans-serif", textShadow: '2px 2px 4px rgba(0,0,0,0.3)' }}>
+            <h1 className="text-white text-3xl md:text-4xl lg:text-5xl leading-tight mb-6" style={{ fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif", textShadow: '2px 2px 4px rgba(0,0,0,0.3)' }}>
               {currentItem?.title || 'Discover the Latest Deals –'}{' '}
               <span className="font-bold italic">{currentItem?.subtitle || 'Up to 50% Off!'}</span>
             </h1>
@@ -179,7 +179,7 @@ const PromoGrid = memo(({ products, onProductClick }: { products: Product[]; onP
               onClick={() => onProductClick(p)}>
               {img && <img src={normalizeImageUrl(img)} alt={p.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />}
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3">
-                <p className="text-white text-sm font-bold truncate" style={{ fontFamily: "'Lato', sans-serif" }}>{p.title}</p>
+                <p className="text-white text-sm font-bold truncate" style={{ fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" }}>{p.title}</p>
                 {p.salePrice && <span className="text-white/90 text-xs font-bold">৳{p.salePrice}</span>}
               </div>
               <button className="absolute bottom-3 right-3 px-3 py-1.5 rounded-full text-white text-xs font-bold shadow-md transition-colors" style={{ backgroundColor: ACCENT }}>
@@ -219,7 +219,7 @@ const FeaturedCategories = memo(({ categories, onCategoryClick }: { categories: 
                     </div>
                   )}
                 </div>
-                <span className="text-sm font-medium text-gray-900 text-center line-clamp-1" style={{ fontFamily: "'Lato', sans-serif" }}>{cat.name}</span>
+                <span className="text-sm font-medium text-gray-900 text-center line-clamp-1" style={{ fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" }}>{cat.name}</span>
               </button>
             );
           })}
@@ -257,7 +257,7 @@ const BestSellingSection = memo(({ products, onProductClick }: { products: Produ
                 <div className="w-full h-full bg-gray-100 flex items-center justify-center"><ShoppingCart size={36} className="text-gray-300" /></div>
               )}
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3 flex items-end justify-between">
-                <span className="text-white font-bold text-sm" style={{ fontFamily: "'Lato', sans-serif" }}>৳{p.salePrice || p.price || 0}</span>
+                <span className="text-white font-bold text-sm" style={{ fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" }}>৳{p.salePrice || p.price || 0}</span>
                 <button className="px-3 py-1.5 bg-white rounded-full text-xs font-medium text-gray-900 hover:bg-gray-100 transition-colors shadow-sm">
                   Visit store
                 </button>
@@ -283,8 +283,8 @@ const CustomerReviews = memo(() => {
   return (
     <section className="max-w-[1400px] mx-auto px-4 md:px-8 py-12">
       <div className="text-center mb-8">
-        <h2 className="text-2xl md:text-3xl font-bold mb-3" style={{ color: ACCENT, fontFamily: "'Lato', sans-serif" }}>Our Happy Customers</h2>
-        <p className="text-gray-600 max-w-xl mx-auto text-sm" style={{ fontFamily: "'Lato', sans-serif" }}>
+        <h2 className="text-2xl md:text-3xl font-bold mb-3" style={{ color: ACCENT, fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" }}>Our Happy Customers</h2>
+        <p className="text-gray-600 max-w-xl mx-auto text-sm" style={{ fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" }}>
           Don't just take our word for it – see how our products and services have delighted customers across the globe.
         </p>
       </div>
@@ -295,14 +295,14 @@ const CustomerReviews = memo(() => {
               <div className="w-11 h-11 rounded-xl flex items-center justify-center text-white font-bold text-lg" style={{ backgroundColor: ACCENT }}>
                 {r.name[0]}
               </div>
-              <span className="font-bold text-lg" style={{ color: DARK, fontFamily: "'Lato', sans-serif" }}>{r.name}</span>
+              <span className="font-bold text-lg" style={{ color: DARK, fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" }}>{r.name}</span>
               <div className="ml-auto flex gap-0.5">
                 {Array.from({ length: 5 }).map((_, j) => (
                   <Star key={j} size={14} className="text-yellow-400 fill-yellow-400" />
                 ))}
               </div>
             </div>
-            <p className="text-gray-700 text-sm leading-relaxed" style={{ fontFamily: "'Lato', sans-serif" }}>{r.text}</p>
+            <p className="text-gray-700 text-sm leading-relaxed" style={{ fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" }}>{r.text}</p>
           </div>
         ))}
       </div>
@@ -320,10 +320,10 @@ CustomerReviews.displayName = 'CustomerReviews';
 const CTASection = memo(() => (
   <section className="py-16 text-center" style={{ backgroundColor: LIGHT_GREEN }}>
     <div className="max-w-[1400px] mx-auto px-4 md:px-8">
-      <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ color: DARK, fontFamily: "'Lato', sans-serif" }}>
+      <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ color: DARK, fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" }}>
         Join the Shopping Revolution
       </h2>
-      <p className="text-gray-600 max-w-2xl mx-auto mb-8 text-base" style={{ fontFamily: "'Lato', sans-serif" }}>
+      <p className="text-gray-600 max-w-2xl mx-auto mb-8 text-base" style={{ fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" }}>
         Explore a vast marketplace of incredible deals from trusted sellers worldwide. Shop top brands, enjoy fast delivery, and discover exclusive offers.
       </p>
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -350,16 +350,16 @@ const SFFooter = memo(({ logo, websiteConfig }: { logo?: string | null; websiteC
             {logo ? (
               <img src={normalizeImageUrl(logo)} alt={storeName} className="h-8 mb-4 object-contain brightness-0 invert" />
             ) : (
-              <h3 className="text-xl font-bold mb-4" style={{ fontFamily: "'Lato', sans-serif" }}>{storeName}</h3>
+              <h3 className="text-xl font-bold mb-4" style={{ fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" }}>{storeName}</h3>
             )}
-            <p className="text-white/70 text-sm leading-relaxed" style={{ fontFamily: "'Lato', sans-serif" }}>
+            <p className="text-white/70 text-sm leading-relaxed" style={{ fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" }}>
               Your one-stop destination for quality products at great prices.
             </p>
           </div>
           {['Shop', 'Help', 'Company'].map((section) => (
             <div key={section}>
-              <h4 className="font-bold text-base mb-4" style={{ fontFamily: "'Lato', sans-serif" }}>{section}</h4>
-              <ul className="space-y-2 text-white/70 text-sm" style={{ fontFamily: "'Lato', sans-serif" }}>
+              <h4 className="font-bold text-base mb-4" style={{ fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" }}>{section}</h4>
+              <ul className="space-y-2 text-white/70 text-sm" style={{ fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" }}>
                 {section === 'Shop' && ['All Products', 'Categories', 'Brands', 'Deals'].map(l => <li key={l}><a href="#" className="hover:text-white transition-colors">{l}</a></li>)}
                 {section === 'Help' && ['FAQ', 'Shipping', 'Returns', 'Contact Us'].map(l => <li key={l}><a href="#" className="hover:text-white transition-colors">{l}</a></li>)}
                 {section === 'Company' && ['About Us', 'Privacy Policy', 'Terms of Service'].map(l => <li key={l}><a href="#" className="hover:text-white transition-colors">{l}</a></li>)}
@@ -367,7 +367,7 @@ const SFFooter = memo(({ logo, websiteConfig }: { logo?: string | null; websiteC
             </div>
           ))}
         </div>
-        <div className="border-t border-white/20 pt-6 text-center text-white/50 text-sm" style={{ fontFamily: "'Lato', sans-serif" }}>
+        <div className="border-t border-white/20 pt-6 text-center text-white/50 text-sm" style={{ fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" }}>
           © {new Date().getFullYear()} {storeName}. All rights reserved.
         </div>
       </div>

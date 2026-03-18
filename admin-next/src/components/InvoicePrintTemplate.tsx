@@ -102,7 +102,6 @@ export const generateInvoiceHTML = (data: InvoicePrintData): string => {
   <meta charset="UTF-8">
   <title>Invoice ${invoiceNumber}</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
     
     * {
       margin: 0;
@@ -111,7 +110,7 @@ export const generateInvoiceHTML = (data: InvoicePrintData): string => {
     }
     
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
       background: #f9fafc;
       padding: 20px;
       color: #1a1c21;

@@ -410,7 +410,7 @@ const CategoryStyle6 = memo(({ categories, onCategoryClick, sectionRef }: Omit<P
         ${isLarge ? 'w-full lg:flex-[2]' : 'w-full lg:flex-1'}`}
       style={{ 
         backgroundColor: scheme.bgColor, 
-        fontFamily: "'Montserrat', sans-serif" 
+        fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" 
       }}
     >
       {/* Background Subtle Gradient Overlay */}
@@ -483,7 +483,7 @@ const CategoryStyle6 = memo(({ categories, onCategoryClick, sectionRef }: Omit<P
   return (
     <div ref={sectionRef} className="py-1 sm:py-2 px-1 md:px-2 flex flex-col items-center">
       <header className="mb-1 sm:mb-2 text-center">
-        <h2 className="text-3xl sm:text-5xl md:text-[64px] font-bold text-[#4B4B4B] tracking-tight" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+        <h2 className="text-3xl sm:text-5xl md:text-[64px] font-bold text-[#4B4B4B] tracking-tight" style={{ fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" }}>
           Product Categories
         </h2>
       </header>

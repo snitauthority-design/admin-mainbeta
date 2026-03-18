@@ -2,14 +2,6 @@
 @tailwind utilities;
 
 @font-face {
-  /* @FONTWARNING[{"type":"restricted","family":"Material Icons","weight":"400","style":"normal","allowsCrossOrigin":true}] */
-  font-family: 'Material Icons';
-  src: url('https://fonts.gstatic.com/s/materialicons/v145/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2') format("woff2");
-  font-weight: 400;
-  font-style: normal;
-}
-
-@font-face {
   /* @FONTWARNING[{"type":"restricted","family":"Satoshi","weight":"400","style":"normal","allowsCrossOrigin":false}] */
   font-family: 'Satoshi';
   src: url('https://www.paatalika.com/media/Satoshi-Regular-UEXLJ65B.ttf') format("truetype");

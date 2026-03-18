@@ -36,8 +36,7 @@ const ProfitLossTab: React.FC<ProfitLossTabProps> = ({
         <head>
           <title>Business Report - ${tenantId}</title>
           <style>
-            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-            body { font-family: 'Inter', -apple-system, sans-serif; padding: 40px; color: #1a1a1a; line-height: 1.5; background: #fff; }
+            body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; padding: 40px; color: #1a1a1a; line-height: 1.5; background: #fff; }
             .header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 2px solid #f1f5f9; padding-bottom: 20px; margin-bottom: 30px; }
             .header h1 { margin: 0; color: #023337; font-size: 28px; font-weight: 700; }
             .header p { margin: 4px 0 0 0; color: #64748b; font-size: 14px; }

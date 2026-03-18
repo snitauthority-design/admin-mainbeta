@@ -2,9 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Core fonts loaded via <link> tags in layout.tsx <head> instead of
-   render-blocking @import. This eliminates a CSS waterfall and enables
-   parallel font discovery. */
+/* System font stack — no external Google Fonts for fastest possible load */
 
 /* CSS variables for dynamic tenant theming */
 :root {
@@ -12,7 +10,7 @@
   --color-primary-dark: #4338CA;
   --color-secondary: #7C3AED;
   --color-accent: #F59E0B;
-  --font-family: 'Inter', system-ui, sans-serif;
+  --font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
 /* Swiper overrides for product detail page */

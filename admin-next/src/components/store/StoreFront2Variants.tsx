@@ -104,7 +104,7 @@ const N = {
   textMain: '#e8e8f0',
   textMuted: '#6b6b7a',
   border: '#2a2a3a',
-  font: "'Space Grotesk', sans-serif",
+  font: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
 } as const;
 
 const NeonProductCard = memo(({ product, onClick, onAddToCart, onBuyNow }: {
@@ -335,7 +335,6 @@ export const StoreFront2Neon: React.FC<StoreFront2Props> = memo(({
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: N.bg, fontFamily: N.font, color: N.textMain }}>
-      <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
       <NeonHero websiteConfig={websiteConfig} products={active} onProductClick={onProductClick} />
 
@@ -378,8 +377,8 @@ const EE = {
   border: '#e5ddd0',
   text: '#2d3124',
   textMuted: '#8a8274',
-  font: "'DM Serif Display', serif",
-  fontBody: "'Nunito', sans-serif",
+  font: "'Georgia', 'Times New Roman', serif",
+  fontBody: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
 } as const;
 
 const EarthProductCard = memo(({ product, onClick, onAddToCart, onBuyNow }: {
@@ -486,7 +485,6 @@ export const StoreFront2Earth: React.FC<StoreFront2Props> = memo(({
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: EE.bg, fontFamily: EE.fontBody }}>
-      <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
 
       <EarthHero websiteConfig={websiteConfig} products={active} onProductClick={onProductClick} />
 
@@ -581,7 +579,7 @@ const P = {
   text: '#2d3436',
   textMuted: '#a29baf',
   border: '#ede8f5',
-  font: "'Nunito', sans-serif",
+  font: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
 } as const;
 
 const PastelProductCard = memo(({ product, onClick, onAddToCart, onBuyNow }: {
@@ -702,7 +700,6 @@ export const StoreFront2Pastel: React.FC<StoreFront2Props> = memo(({
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: P.bg, fontFamily: P.font }}>
-      <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
 
       <PastelHero websiteConfig={websiteConfig} />
 
