@@ -7,6 +7,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const nextConfig = {
   // Separate build output dirs for dev and production to prevent conflicts
   distDir: process.env.NODE_ENV === 'development' ? '.next-dev' : '.next',
+  // Enable standalone output for Docker deployments
+  output: process.env.NODE_ENV === 'production' ? 'standalone' : undefined,
   typescript: {
     ignoreBuildErrors: true,
   },

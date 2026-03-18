@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Enable standalone output for Docker deployments
+  output: process.env.NODE_ENV === 'production' ? 'standalone' : undefined,
   typescript: {
     // Matches admin-next config; strict checking done via tsc in CI
     ignoreBuildErrors: true,
