@@ -410,9 +410,7 @@ export const StoreFrontThemePage: React.FC<StoreFrontThemeProps> = memo(({
   }, [onAddToCart]);
 
   return (
-    <div className="bg-white min-h-screen" style={{ fontFamily: "'Lato', sans-serif", zoom: 1 }}>
-      {/* Google Font */}
-      <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap" rel="stylesheet" />
+    <div className="bg-white min-h-screen font-lato" style={{ zoom: 1 }}>
 
       {/* Hero Banner */}
       <HeroBanner websiteConfig={websiteConfig} categories={categories} onCategoryClick={onCategoryClick} />

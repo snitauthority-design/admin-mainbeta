@@ -19,7 +19,7 @@ const config: Config = {
         accent: 'var(--color-accent, #F59E0B)',
       },
       fontFamily: {
-        sans: ['var(--font-family, "Inter")', 'system-ui', 'sans-serif'],
+        sans: ['Inter', 'system-ui', 'sans-serif'],
         inter: ['Inter', 'system-ui', 'sans-serif'],
         lato: ['Lato', 'sans-serif'],
         poppins: ['Poppins', 'sans-serif'],

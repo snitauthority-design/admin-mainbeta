@@ -482,9 +482,8 @@ const CategoryStyle6 = memo(({ categories, onCategoryClick, sectionRef }: Omit<P
 
   return (
     <div ref={sectionRef} className="py-1 sm:py-2 px-1 md:px-2 flex flex-col items-center">
-      <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
       <header className="mb-1 sm:mb-2 text-center">
-        <h2 className="text-3xl sm:text-5xl md:text-[64px] font-bold text-[#4B4B4B] tracking-tight" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+        <h2 className="text-3xl sm:text-5xl md:text-[64px] font-bold text-[#4B4B4B] tracking-tight font-inter">
           Product Categories
         </h2>
       </header>

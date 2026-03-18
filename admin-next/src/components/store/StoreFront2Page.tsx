@@ -1037,14 +1037,8 @@ export const StoreFront2Page: React.FC<StoreFront2Props> = memo(({
 
   return (
     <div
-      className="bg-white min-h-screen"
-      style={{ fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif" }}
+      className="bg-white min-h-screen font-inter"
     >
-      {/* Inter font */}
-      <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
-        rel="stylesheet"
-      />
 
       {/* Hero */}
       <SF2Hero
