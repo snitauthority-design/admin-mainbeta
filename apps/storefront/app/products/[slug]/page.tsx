@@ -1,6 +1,7 @@
 import { getApiBaseUrl } from '@repo/config';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
+import ProductActions from '@/components/ProductActions';
 
 /**
  * Dynamic product detail page using ISR.
@@ -145,39 +146,13 @@ export default async function ProductPage({
               </span>
             </div>
 
-            {/* Variants */}
-            {product.variants && product.variants.length > 0 && (
-              <div className="mb-6">
-                <h3 className="text-sm font-medium text-gray-700 mb-2">
-                  Available Variants
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {product.variants.map((v: any) => (
-                    <button
-                      key={v.id || v._id || v.name}
-                      className="px-4 py-2 border border-gray-300 rounded-md text-sm hover:border-primary transition-colors"
-                    >
-                      {v.name} – ৳{(v.salePrice || v.price || 0).toLocaleString()}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div className="flex gap-4">
-              <button
-                className="flex-1 px-8 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50"
-                disabled={productStock <= 0}
-              >
-                Add to Cart
-              </button>
-              <button
-                className="px-8 py-3 bg-gray-900 text-white font-medium rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50"
-                disabled={productStock <= 0}
-              >
-                Buy Now
-              </button>
-            </div>
+            <ProductActions
+              product={product}
+              productName={productName}
+              productPrice={productPrice}
+              productStock={productStock}
+              imageUrl={imageUrl}
+            />
 
             {/* Product Details */}
             <div className="mt-8 border-t border-gray-200 pt-8">

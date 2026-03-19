@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import './globals.css';
+import { Providers } from '@/contexts/Providers';
 import StorefrontHeader from '@/components/StorefrontHeader';
 import StorefrontFooter from '@/components/StorefrontFooter';
 import {
@@ -40,18 +41,20 @@ export default async function RootLayout({
         />
       </head>
       <body className="antialiased font-sans flex flex-col min-h-screen">
-        <StorefrontHeader
-          logo={logo}
-          websiteConfig={bootstrap.website_config}
-          categories={secondary.categories}
-          tenantId={tenantId}
-        />
-        <main className="flex-1">{children}</main>
-        <StorefrontFooter
-          logo={logo}
-          websiteConfig={bootstrap.website_config}
-          tenantId={tenantId}
-        />
+        <Providers>
+          <StorefrontHeader
+            logo={logo}
+            websiteConfig={bootstrap.website_config}
+            categories={secondary.categories}
+            tenantId={tenantId}
+          />
+          <main className="flex-1">{children}</main>
+          <StorefrontFooter
+            logo={logo}
+            websiteConfig={bootstrap.website_config}
+            tenantId={tenantId}
+          />
+        </Providers>
       </body>
     </html>
   );
