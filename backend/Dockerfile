@@ -7,17 +7,14 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install all dependencies (including dev for build)
-RUN npm ci
+# Install dependencies
+RUN npm ci --only=production
 
 # Copy source code
 COPY . .
 
 # Build TypeScript
 RUN npm run build
-
-# Remove dev dependencies
-RUN npm prune --omit=dev
 
 # Expose port
 EXPOSE 5001

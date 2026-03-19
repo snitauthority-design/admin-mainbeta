@@ -7,14 +7,11 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const nextConfig = {
   // Separate build output dirs for dev and production to prevent conflicts
   distDir: process.env.NODE_ENV === 'development' ? '.next-dev' : '.next',
-  // Enable standalone output for Docker deployments
-  output: process.env.NODE_ENV === 'production' ? 'standalone' : undefined,
-  // Trace from monorepo root so hoisted node_modules are included in standalone
-  outputFileTracingRoot: path.join(__dirname, '../'),
   typescript: {
     ignoreBuildErrors: true,
   },
   experimental: {
+    missingSuspenseWithCSRBailout: false,
     optimizePackageImports: [
       'lucide-react',
       'recharts',
@@ -32,7 +29,7 @@ const nextConfig = {
       '@google/generative-ai',
     ],
   },
-  transpilePackages: ['swiper', '@repo/shared-types', '@repo/config'],
+  transpilePackages: ['swiper'],
 
   webpack: (config, { webpack }) => {
     const srcPath = path.resolve(__dirname, 'src');

@@ -12,7 +12,7 @@ import dynamic from 'next/dynamic';
 const StoreOrderSuccess = dynamic(() => import('@/views/StoreOrderSuccess'), { ssr: false });
 const MobileBottomNav = dynamic(() => import('@/components/store/MobileBottomNav').then(m => ({ default: m.MobileBottomNav })), { ssr: false });
 
-function SuccessOrderPageInner() {
+export default function SuccessOrderPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const orderId = searchParams.get('orderId');
@@ -61,13 +61,5 @@ function SuccessOrderPageInner() {
         />
       </Suspense>
     </>
-  );
-}
-
-export default function SuccessOrderPage() {
-  return (
-    <Suspense fallback={null}>
-      <SuccessOrderPageInner />
-    </Suspense>
   );
 }

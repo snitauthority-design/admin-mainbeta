@@ -1,6 +1,6 @@
 {
   "framework": "nextjs",
-  "buildCommand": "npm run build:admin",
+  "buildCommand": "npm run build",
   "outputDirectory": "admin-next/.next",
-  "installCommand": "npm install --legacy-peer-deps"
+  "installCommand": "npm install && cd admin-next && npm install"
 }

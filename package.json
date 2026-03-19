@@ -2,29 +2,13 @@
   "name": "admin-mainbeta",
   "version": "1.0.0",
   "private": true,
-  "workspaces": [
-    "admin-next",
-    "backend",
-    "apps/*",
-    "packages/*"
-  ],
   "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev",
-    "dev:admin": "turbo run dev --filter=admin-next",
-    "dev:storefront": "turbo run dev --filter=storefront",
-    "dev:backend": "turbo run dev --filter=admin-backend",
-    "lint": "turbo run lint",
-    "build:admin": "turbo run build --filter=admin-next",
-    "build:storefront": "turbo run build --filter=storefront",
-    "build:backend": "turbo run build --filter=admin-backend",
-    "build:packages": "turbo run build --filter='./packages/*'"
-  },
-  "devDependencies": {
-    "turbo": "^2.5.0"
+    "build": "cd admin-next && npm run build",
+    "dev": "cd admin-next && npm run dev",
+    "start": "cd admin-next && npm start",
+    "lint": "cd admin-next && npm run lint"
   },
   "dependencies": {
     "tailwind-merge": "^3.5.0"
-  },
-  "packageManager": "npm@10.0.0"
+  }
 }
