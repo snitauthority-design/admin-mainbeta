@@ -81,8 +81,11 @@ services:
     restart: unless-stopped
 
   # ── Nginx – Reverse proxy & media server ──────────────────
+  # NOTE: Using host nginx instead. Docker nginx is disabled.
+  # To re-enable, uncomment the ports and remove host nginx config.
   nginx:
     image: nginx:1.27-alpine
+    profiles: ["docker-proxy"]  # not started by default
     ports:
       - "80:80"
       - "443:443"
