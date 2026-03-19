@@ -1,6 +1,7 @@
 import { getApiBaseUrl } from '@repo/config';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
+import ProductActions from '@/components/ProductActions';
 
 /**
  * Dynamic product detail page using ISR.
@@ -76,8 +77,21 @@ export default async function ProductPage({
   const imageAlt = typeof primaryImage === 'string' ? productName : (primaryImage?.alt || productName);
 
   return (
-    <main className="min-h-screen bg-white">
+    <div className="bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Breadcrumb */}
+        <nav className="flex items-center gap-2 text-sm text-gray-500 mb-8">
+          <a href="/" className="hover:text-primary transition-colors">
+            Home
+          </a>
+          <span>/</span>
+          <a href="/all-products" className="hover:text-primary transition-colors">
+            Products
+          </a>
+          <span>/</span>
+          <span className="text-gray-900 font-medium">{productName}</span>
+        </nav>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           {/* Product Image */}
           <div className="aspect-square relative bg-gray-100 rounded-lg overflow-hidden">
@@ -132,34 +146,45 @@ export default async function ProductPage({
               </span>
             </div>
 
-            {/* Variants */}
-            {product.variants && product.variants.length > 0 && (
-              <div className="mb-6">
-                <h3 className="text-sm font-medium text-gray-700 mb-2">
-                  Available Variants
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {product.variants.map((v: any) => (
-                    <button
-                      key={v.id || v._id || v.name}
-                      className="px-4 py-2 border border-gray-300 rounded-md text-sm hover:border-primary transition-colors"
-                    >
-                      {v.name} – ৳{(v.salePrice || v.price || 0).toLocaleString()}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
+            <ProductActions
+              product={product}
+              productName={productName}
+              productPrice={productPrice}
+              productStock={productStock}
+              imageUrl={imageUrl}
+            />
 
-            <button
-              className="w-full sm:w-auto px-8 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50"
-              disabled={productStock <= 0}
-            >
-              Add to Cart
-            </button>
+            {/* Product Details */}
+            <div className="mt-8 border-t border-gray-200 pt-8">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Product Details</h3>
+              <dl className="space-y-3">
+                {product.category && (
+                  <div className="flex">
+                    <dt className="text-sm font-medium text-gray-500 w-32">Category:</dt>
+                    <dd className="text-sm text-gray-900">{product.category}</dd>
+                  </div>
+                )}
+                {product.brand && (
+                  <div className="flex">
+                    <dt className="text-sm font-medium text-gray-500 w-32">Brand:</dt>
+                    <dd className="text-sm text-gray-900">{product.brand}</dd>
+                  </div>
+                )}
+                {product.sku && (
+                  <div className="flex">
+                    <dt className="text-sm font-medium text-gray-500 w-32">SKU:</dt>
+                    <dd className="text-sm text-gray-900">{product.sku}</dd>
+                  </div>
+                )}
+                <div className="flex">
+                  <dt className="text-sm font-medium text-gray-500 w-32">Stock:</dt>
+                  <dd className="text-sm text-gray-900">{productStock} units</dd>
+                </div>
+              </dl>
+            </div>
           </div>
         </div>
       </div>
-    </main>
+    </div>
   );
 }
