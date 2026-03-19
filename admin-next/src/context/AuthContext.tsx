@@ -103,12 +103,12 @@ const API_BASE_URL = typeof window !== 'undefined' && (window as any).__ENV__?.N
   ? String((import.meta as any).env.NEXT_PUBLIC_API_BASE_URL)
   : (() => {
     const domain = getPrimaryDomain();
-    if (domain && domain !== 'localhost') return `https://${domain}`;
+    if (domain && domain !== 'localhost') return `https://api.${domain}`;
     // In browser, extract from current location; during SSR, return empty
     if (typeof window !== 'undefined') {
       const parts = window.location.hostname.split('.');
       const root = parts.length > 2 ? parts.slice(-2).join('.') : window.location.hostname;
-      return `${window.location.protocol}//${root}`;
+      return `${window.location.protocol}//api.${root}`;
     }
     return '';
   })();

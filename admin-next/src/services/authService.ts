@@ -27,12 +27,11 @@ const getApiUrl = (): string => {
     return 'http://localhost:5001/api';
   }
   
-  // For production - all requests go to main domain API
-  // The API handles tenant context via subdomain header
+  // For production - API lives on api.* subdomain
   const parts = hostname.split('.');
   const mainDomain = parts.length > 2 ? parts.slice(-2).join('.') : hostname;
   
-  return `${protocol}//${mainDomain}/api`;
+  return `${protocol}//api.${mainDomain}/api`;
 };
 
 // Get current subdomain (if any)
