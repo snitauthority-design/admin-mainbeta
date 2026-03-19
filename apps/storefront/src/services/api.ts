@@ -1,10 +1,4 @@
 import { getApiBaseUrl } from '@repo/config';
-import type {
-  Product,
-  Order,
-  ApiResponse,
-  PaginatedResponse,
-} from '@repo/shared-types';
 
 /**
  * Storefront API client.
@@ -33,17 +27,17 @@ async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
 
 export async function getProducts(
   tenantId: string,
-): Promise<Product[]> {
-  const data = await fetchJson<{ products?: Product[] }>(
-    `${apiBase}/api/tenant-data/${tenantId}/secondary`,
+): Promise<any[]> {
+  const data = await fetchJson<{ data?: { products?: any[] } }>(
+    `${apiBase}/api/tenant-data/${tenantId}/bootstrap`,
   );
-  return data.products ?? [];
+  return data.data?.products ?? [];
 }
 
 export async function getProductBySlug(
   tenantId: string,
   slug: string,
-): Promise<Product | null> {
+): Promise<any | null> {
   const products = await getProducts(tenantId);
   return products.find((p) => p.slug === slug) ?? null;
 }
@@ -52,10 +46,10 @@ export async function getProductBySlug(
 
 export async function createOrder(
   tenantId: string,
-  order: Omit<Order, 'id' | '_id' | 'tenantId' | 'createdAt' | 'updatedAt'>,
+  order: Record<string, unknown>,
   token?: string,
-): Promise<ApiResponse<Order>> {
-  return fetchJson<ApiResponse<Order>>(`${apiBase}/api/orders`, {
+): Promise<any> {
+  return fetchJson(`${apiBase}/api/orders`, {
     method: 'POST',
     headers: {
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -68,8 +62,8 @@ export async function createOrder(
 export async function getOrderStatus(
   tenantId: string,
   orderNumber: string,
-): Promise<ApiResponse<Order>> {
-  return fetchJson<ApiResponse<Order>>(
+): Promise<any> {
+  return fetchJson(
     `${apiBase}/api/orders/track/${orderNumber}?tenantId=${tenantId}`,
   );
 }
