@@ -6,6 +6,10 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   distDir: process.env.NODE_ENV === 'development' ? '.next-dev' : '.next',
+  outputFileTracingRoot: path.resolve(__dirname, '..'),
+  turbopack: {
+    root: path.resolve(__dirname, '..'),
+  },
   typescript: {
     ignoreBuildErrors: true,
   },
