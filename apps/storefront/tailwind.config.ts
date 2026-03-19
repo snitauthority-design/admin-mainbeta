@@ -1,10 +1,12 @@
-/** @type {import('tailwindcss').Config} */
-module.exports = {
+import type { Config } from 'tailwindcss';
+
+const config: Config = {
   content: [
     './app/**/*.{js,ts,jsx,tsx,mdx}',
     './src/**/*.{js,ts,jsx,tsx,mdx}',
-    // Include admin-next store theme components so their Tailwind classes are generated
+    // Include admin-next store theme components so their classes are detected
     '../../admin-next/src/components/store/**/*.{js,ts,jsx,tsx}',
+    '../../admin-next/src/views/StoreHome.tsx',
   ],
   theme: {
     extend: {
@@ -18,3 +20,5 @@ module.exports = {
   },
   plugins: [],
 };
+
+export default config;

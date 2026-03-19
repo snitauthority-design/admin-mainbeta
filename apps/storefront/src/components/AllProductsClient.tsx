@@ -1,77 +1,81 @@
 'use client';
 
 import React, { useCallback } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 
 const StoreCategoryProducts = dynamic(
-  () =>
-    import('admin-next/src/components/store/StoreCategoryProducts/StoreCategoryProducts').then(
-      (m) => ({ default: m.StoreCategoryProducts })
-    ),
+  () => import('admin-next/src/components/store/StoreCategoryProducts').then(m => ({ default: m.StoreCategoryProducts })),
   { ssr: false }
 );
 
 interface AllProductsClientProps {
   products: any[];
   categories: any[];
-  subcategories: any[];
-  childcategories: any[];
+  subCategories: any[];
+  childCategories: any[];
   brands: any[];
   tags: any[];
   websiteConfig: any;
   logo: string | null;
-  initialCategory: string;
+  tenantId: string;
 }
 
 export default function AllProductsClient({
   products,
   categories,
-  subcategories,
-  childcategories,
+  subCategories,
+  childCategories,
   brands,
   tags,
   websiteConfig,
   logo,
-  initialCategory,
+  tenantId,
 }: AllProductsClientProps) {
-  const handleProductClick = useCallback((product: any) => {
-    const slug = product.slug || product._id || product.id;
-    if (slug) window.location.href = `/products/${slug}`;
-  }, []);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const selectedCategory = searchParams.get('category') || '';
 
-  const handleCategoryChange = useCallback((cat: string | null) => {
-    const params = new URLSearchParams(window.location.search);
-    if (cat) {
-      params.set('category', cat);
+  const handleProductClick = useCallback((product: any) => {
+    router.push(`/products/${product.slug || product._id}`);
+  }, [router]);
+
+  const handleCategoryChange = useCallback((categorySlug: string) => {
+    if (categorySlug) {
+      router.push(`/all-products?category=${categorySlug}`);
     } else {
-      params.delete('category');
+      router.push('/all-products');
     }
-    const qs = params.toString();
-    window.history.replaceState(null, '', qs ? `/all-products?${qs}` : '/all-products');
-  }, []);
+  }, [router]);
 
   const handleBack = useCallback(() => {
-    window.location.href = '/';
-  }, []);
+    router.back();
+  }, [router]);
+
+  const handleHome = useCallback(() => {
+    router.push('/');
+  }, [router]);
+
+  const handleBuyNow = useCallback((product: any) => {
+    router.push(`/products/${product.slug || product._id}`);
+  }, [router]);
 
   return (
     <StoreCategoryProducts
       products={products}
       categories={categories}
-      subCategories={subcategories}
-      childCategories={childcategories}
+      subCategories={subCategories}
+      childCategories={childCategories}
       brands={brands}
       tags={tags}
-      selectedCategory={initialCategory}
-      websiteConfig={websiteConfig}
-      logo={logo}
+      selectedCategory={selectedCategory}
       onCategoryChange={handleCategoryChange}
       onBack={handleBack}
-      onHome={handleBack}
+      onHome={handleHome}
       onProductClick={handleProductClick}
-      onBuyNow={handleProductClick}
-      onAddToCart={() => {}}
-      onOpenChat={() => {}}
+      onBuyNow={handleBuyNow}
+      websiteConfig={websiteConfig}
+      logo={logo}
     />
   );
 }
