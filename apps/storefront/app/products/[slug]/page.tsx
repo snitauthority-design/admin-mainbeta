@@ -76,8 +76,21 @@ export default async function ProductPage({
   const imageAlt = typeof primaryImage === 'string' ? productName : (primaryImage?.alt || productName);
 
   return (
-    <main className="min-h-screen bg-white">
+    <div className="bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Breadcrumb */}
+        <nav className="flex items-center gap-2 text-sm text-gray-500 mb-8">
+          <a href="/" className="hover:text-primary transition-colors">
+            Home
+          </a>
+          <span>/</span>
+          <a href="/all-products" className="hover:text-primary transition-colors">
+            Products
+          </a>
+          <span>/</span>
+          <span className="text-gray-900 font-medium">{productName}</span>
+        </nav>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           {/* Product Image */}
           <div className="aspect-square relative bg-gray-100 rounded-lg overflow-hidden">
@@ -151,15 +164,52 @@ export default async function ProductPage({
               </div>
             )}
 
-            <button
-              className="w-full sm:w-auto px-8 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50"
-              disabled={productStock <= 0}
-            >
-              Add to Cart
-            </button>
+            <div className="flex gap-4">
+              <button
+                className="flex-1 px-8 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50"
+                disabled={productStock <= 0}
+              >
+                Add to Cart
+              </button>
+              <button
+                className="px-8 py-3 bg-gray-900 text-white font-medium rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50"
+                disabled={productStock <= 0}
+              >
+                Buy Now
+              </button>
+            </div>
+
+            {/* Product Details */}
+            <div className="mt-8 border-t border-gray-200 pt-8">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Product Details</h3>
+              <dl className="space-y-3">
+                {product.category && (
+                  <div className="flex">
+                    <dt className="text-sm font-medium text-gray-500 w-32">Category:</dt>
+                    <dd className="text-sm text-gray-900">{product.category}</dd>
+                  </div>
+                )}
+                {product.brand && (
+                  <div className="flex">
+                    <dt className="text-sm font-medium text-gray-500 w-32">Brand:</dt>
+                    <dd className="text-sm text-gray-900">{product.brand}</dd>
+                  </div>
+                )}
+                {product.sku && (
+                  <div className="flex">
+                    <dt className="text-sm font-medium text-gray-500 w-32">SKU:</dt>
+                    <dd className="text-sm text-gray-900">{product.sku}</dd>
+                  </div>
+                )}
+                <div className="flex">
+                  <dt className="text-sm font-medium text-gray-500 w-32">Stock:</dt>
+                  <dd className="text-sm text-gray-900">{productStock} units</dd>
+                </div>
+              </dl>
+            </div>
           </div>
         </div>
       </div>
-    </main>
+    </div>
   );
 }
