@@ -29,7 +29,7 @@ export async function getProducts(
   tenantId: string,
 ): Promise<any[]> {
   const data = await fetchJson<{ data?: { products?: any[] } }>(
-    `${apiBase}/api/tenant-data/${tenantId}/bootstrap`,
+    `${apiBase}/tenant-data/${tenantId}/bootstrap`,
   );
   return data.data?.products ?? [];
 }
@@ -49,7 +49,7 @@ export async function createOrder(
   order: Record<string, unknown>,
   token?: string,
 ): Promise<any> {
-  return fetchJson(`${apiBase}/api/orders`, {
+  return fetchJson(`${apiBase}/orders`, {
     method: 'POST',
     headers: {
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -64,6 +64,6 @@ export async function getOrderStatus(
   orderNumber: string,
 ): Promise<any> {
   return fetchJson(
-    `${apiBase}/api/orders/track/${orderNumber}?tenantId=${tenantId}`,
+    `${apiBase}/orders/track/${orderNumber}?tenantId=${tenantId}`,
   );
 }
