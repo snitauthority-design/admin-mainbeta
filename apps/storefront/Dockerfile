@@ -15,6 +15,9 @@ COPY package.json package-lock.json* ./
 COPY packages/shared-types/package.json ./packages/shared-types/
 COPY packages/config/package.json ./packages/config/
 
+# Copy admin-next package (storefront imports store theme components from it)
+COPY admin-next/package.json ./admin-next/
+
 # Copy storefront package
 COPY apps/storefront/package.json ./apps/storefront/
 
@@ -33,6 +36,9 @@ COPY --from=deps /app/apps/storefront/node_modules ./apps/storefront/node_module
 # Copy source
 COPY packages/shared-types ./packages/shared-types
 COPY packages/config ./packages/config
+COPY admin-next/src ./admin-next/src
+COPY admin-next/next.config.mjs ./admin-next/
+COPY admin-next/tsconfig.json ./admin-next/
 COPY apps/storefront ./apps/storefront
 
 WORKDIR /app/apps/storefront
