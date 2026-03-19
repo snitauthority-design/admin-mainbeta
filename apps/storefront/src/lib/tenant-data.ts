@@ -33,7 +33,7 @@ const EMPTY_SECONDARY: TenantSecondary = {
 export async function getBootstrapData(tenantId: string): Promise<TenantBootstrap> {
   try {
     const apiUrl = getApiBaseUrl();
-    const res = await fetch(`${apiUrl}/api/tenant-data/${tenantId}/bootstrap`, {
+    const res = await fetch(`${apiUrl}/tenant-data/${tenantId}/bootstrap`, {
       next: { revalidate: 60 },
     });
     if (!res.ok) return EMPTY_BOOTSTRAP;
@@ -51,7 +51,7 @@ export async function getBootstrapData(tenantId: string): Promise<TenantBootstra
 export async function getSecondaryData(tenantId: string): Promise<TenantSecondary> {
   try {
     const apiUrl = getApiBaseUrl();
-    const res = await fetch(`${apiUrl}/api/tenant-data/${tenantId}/secondary`, {
+    const res = await fetch(`${apiUrl}/tenant-data/${tenantId}/secondary`, {
       next: { revalidate: 60 },
     });
     if (!res.ok) return EMPTY_SECONDARY;
@@ -71,7 +71,7 @@ export async function getSecondaryData(tenantId: string): Promise<TenantSecondar
 }
 
 export function resolveTenantId(headerTenantId: string | null): string {
-  return headerTenantId || process.env.NEXT_PUBLIC_DEFAULT_TENANT_SLUG || 'demo';
+  return headerTenantId || process.env.NEXT_PUBLIC_API_BASE || 'demo';
 }
 
 export function resolveLogoUrl(logo: any): string | null {
