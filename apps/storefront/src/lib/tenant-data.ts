@@ -71,7 +71,7 @@ export async function getSecondaryData(tenantId: string): Promise<TenantSecondar
 }
 
 export function resolveTenantId(headerTenantId: string | null): string {
-  return headerTenantId || process.env.NEXT_PUBLIC_API_BASE || 'demo';
+  return headerTenantId || process.env.NEXT_PUBLIC_DEFAULT_TENANT_SLUG || 'demo';
 }
 
 export function resolveLogoUrl(logo: any): string | null {
