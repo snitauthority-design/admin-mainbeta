@@ -1,5 +1,5 @@
 import { headers } from 'next/headers';
-import StoreFrontClient from '@/components/StoreFrontClient';
+import AllProductsClient from '@/components/AllProductsClient';
 import {
   getBootstrapData,
   getSecondaryData,
@@ -7,9 +7,15 @@ import {
   resolveLogoUrl,
 } from '@/lib/tenant-data';
 
-export default async function HomePage() {
+interface Props {
+  searchParams: Promise<{ category?: string }>;
+}
+
+export default async function AllProductsPage({ searchParams }: Props) {
   const headerList = await headers();
   const tenantId = resolveTenantId(headerList.get('x-tenant-id'));
+  const params = await searchParams;
+  const initialCategory = params.category || '';
 
   const [bootstrap, secondary] = await Promise.all([
     getBootstrapData(tenantId),
@@ -17,13 +23,16 @@ export default async function HomePage() {
   ]);
 
   return (
-    <StoreFrontClient
+    <AllProductsClient
       products={bootstrap.products}
-      websiteConfig={bootstrap.website_config}
       categories={secondary.categories}
+      subcategories={secondary.subcategories}
+      childcategories={secondary.childcategories}
       brands={secondary.brands}
       tags={secondary.tags}
+      websiteConfig={bootstrap.website_config}
       logo={resolveLogoUrl(secondary.logo)}
+      initialCategory={initialCategory}
     />
   );
 }
