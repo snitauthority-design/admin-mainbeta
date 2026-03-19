@@ -1,4 +1,3 @@
-import type { Product } from '@repo/shared-types';
 import { getApiBaseUrl } from '@repo/config';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
@@ -6,8 +5,8 @@ import Image from 'next/image';
 /**
  * Dynamic product detail page using ISR.
  *
- * `generateStaticParams` pre-renders known products at build time.
- * Unknown slugs are rendered on-demand and cached (fallback: 'blocking').
+ * Fetches products from the bootstrap endpoint (which actually contains products).
+ * Unknown slugs are rendered on-demand and cached.
  * Pages revalidate every 60 seconds for fresh data.
  */
 
@@ -15,21 +14,25 @@ interface Params {
   slug: string;
 }
 
-async function getProduct(slug: string): Promise<Product | null> {
+async function getProducts(tenantId: string): Promise<any[]> {
   try {
     const apiUrl = getApiBaseUrl();
-    const tenantId = process.env.NEXT_PUBLIC_DEFAULT_TENANT_SLUG || 'demo';
     const res = await fetch(
-      `${apiUrl}/api/tenant-data/${tenantId}/secondary`,
+      `${apiUrl}/api/tenant-data/${tenantId}/bootstrap`,
       { next: { revalidate: 60 } },
     );
-    if (!res.ok) return null;
+    if (!res.ok) return [];
     const json = await res.json();
-    const products: Product[] = json?.products ?? [];
-    return products.find((p) => p.slug === slug) ?? null;
+    return json?.data?.products ?? [];
   } catch {
-    return null;
+    return [];
   }
+}
+
+async function getProduct(slug: string): Promise<any | null> {
+  const tenantId = process.env.NEXT_PUBLIC_DEFAULT_TENANT_SLUG || 'demo';
+  const products = await getProducts(tenantId);
+  return products.find((p: any) => p.slug === slug) ?? null;
 }
 
 /** Maximum number of product pages to pre-render at build time via SSG. */
@@ -37,15 +40,9 @@ const MAX_PRERENDERED_PRODUCTS = 50;
 
 export async function generateStaticParams(): Promise<Params[]> {
   try {
-    const apiUrl = getApiBaseUrl();
     const tenantId = process.env.NEXT_PUBLIC_DEFAULT_TENANT_SLUG || 'demo';
-    const res = await fetch(
-      `${apiUrl}/api/tenant-data/${tenantId}/secondary`,
-    );
-    if (!res.ok) return [];
-    const json = await res.json();
-    const products: Product[] = json?.products ?? [];
-    return products.slice(0, MAX_PRERENDERED_PRODUCTS).map((p) => ({ slug: p.slug }));
+    const products = await getProducts(tenantId);
+    return products.slice(0, MAX_PRERENDERED_PRODUCTS).map((p: any) => ({ slug: p.slug }));
   } catch {
     return [];
   }
@@ -63,7 +60,20 @@ export default async function ProductPage({
     notFound();
   }
 
-  const primaryImage = product.images?.find((img) => img.isPrimary) ?? product.images?.[0];
+  // Support both admin-next field names (title, image, galleryImages, salePrice)
+  // and shared-types field names (name, images, price)
+  const productName = product.title || product.name || 'Product';
+  const productPrice = product.salePrice || product.price || 0;
+  const originalPrice = product.price && product.salePrice && product.price > product.salePrice ? product.price : product.compareAtPrice;
+  const productDescription = product.description?.replace?.(/<[^>]*>/g, '') || '';
+  const productStock = product.stock ?? product.quantity ?? 0;
+
+  // Image handling: support both schemas
+  const primaryImage = product.galleryImages?.[0]
+    || product.images?.find((img: any) => img.isPrimary)
+    || product.images?.[0];
+  const imageUrl = typeof primaryImage === 'string' ? primaryImage : primaryImage?.url;
+  const imageAlt = typeof primaryImage === 'string' ? productName : (primaryImage?.alt || productName);
 
   return (
     <main className="min-h-screen bg-white">
@@ -71,10 +81,10 @@ export default async function ProductPage({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           {/* Product Image */}
           <div className="aspect-square relative bg-gray-100 rounded-lg overflow-hidden">
-            {primaryImage?.url ? (
+            {imageUrl ? (
               <Image
-                src={primaryImage.url}
-                alt={primaryImage.alt || product.name}
+                src={imageUrl}
+                alt={imageAlt}
                 fill
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, 50vw"
@@ -90,35 +100,35 @@ export default async function ProductPage({
           {/* Product Info */}
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-4">
-              {product.name}
+              {productName}
             </h1>
 
             <div className="flex items-center gap-4 mb-6">
               <span className="text-2xl font-bold text-primary">
-                ৳{product.price.toLocaleString()}
+                ৳{productPrice.toLocaleString()}
               </span>
-              {product.compareAtPrice && product.compareAtPrice > product.price && (
+              {originalPrice && originalPrice > productPrice && (
                 <span className="text-lg text-gray-400 line-through">
-                  ৳{product.compareAtPrice.toLocaleString()}
+                  ৳{originalPrice.toLocaleString()}
                 </span>
               )}
             </div>
 
-            {product.description && (
+            {productDescription && (
               <p className="text-gray-600 leading-relaxed mb-6">
-                {product.description}
+                {productDescription}
               </p>
             )}
 
             <div className="flex items-center gap-2 mb-6">
               <span
                 className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                  product.stock > 0
+                  productStock > 0
                     ? 'bg-green-100 text-green-800'
                     : 'bg-red-100 text-red-800'
                 }`}
               >
-                {product.stock > 0 ? `In Stock (${product.stock})` : 'Out of Stock'}
+                {productStock > 0 ? `In Stock (${productStock})` : 'Out of Stock'}
               </span>
             </div>
 
@@ -129,12 +139,12 @@ export default async function ProductPage({
                   Available Variants
                 </h3>
                 <div className="flex flex-wrap gap-2">
-                  {product.variants.map((v) => (
+                  {product.variants.map((v: any) => (
                     <button
-                      key={v.id}
+                      key={v.id || v._id || v.name}
                       className="px-4 py-2 border border-gray-300 rounded-md text-sm hover:border-primary transition-colors"
                     >
-                      {v.name} – ৳{v.price.toLocaleString()}
+                      {v.name} – ৳{(v.salePrice || v.price || 0).toLocaleString()}
                     </button>
                   ))}
                 </div>
@@ -143,7 +153,7 @@ export default async function ProductPage({
 
             <button
               className="w-full sm:w-auto px-8 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50"
-              disabled={product.stock <= 0}
+              disabled={productStock <= 0}
             >
               Add to Cart
             </button>
