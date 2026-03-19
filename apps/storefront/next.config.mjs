@@ -1,7 +1,14 @@
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Enable standalone output for Docker deployments
   output: process.env.NODE_ENV === 'production' ? 'standalone' : undefined,
+  // Trace from monorepo root so hoisted node_modules are included in standalone
+  outputFileTracingRoot: path.join(__dirname, '../../'),
   typescript: {
     // Matches admin-next config; strict checking done via tsc in CI
     ignoreBuildErrors: true,

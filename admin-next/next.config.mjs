@@ -9,6 +9,8 @@ const nextConfig = {
   distDir: process.env.NODE_ENV === 'development' ? '.next-dev' : '.next',
   // Enable standalone output for Docker deployments
   output: process.env.NODE_ENV === 'production' ? 'standalone' : undefined,
+  // Trace from monorepo root so hoisted node_modules are included in standalone
+  outputFileTracingRoot: path.join(__dirname, '../'),
   typescript: {
     ignoreBuildErrors: true,
   },

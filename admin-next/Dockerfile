@@ -40,7 +40,7 @@ RUN npm run build
 
 # ── Runner ───────────────────────────────────────────────
 FROM base AS runner
-WORKDIR /app/admin-next
+WORKDIR /app
 
 ENV NODE_ENV=production
 ENV PORT=3000
@@ -48,12 +48,12 @@ ENV PORT=3000
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
-COPY --from=builder /app/admin-next/public ./public
+COPY --from=builder /app/admin-next/public ./admin-next/public
 COPY --from=builder --chown=nextjs:nodejs /app/admin-next/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/admin-next/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/admin-next/.next/static ./admin-next/.next/static
 
 USER nextjs
 
 EXPOSE 3000
 
-CMD ["node", "server.js"]
+CMD ["node", "admin-next/server.js"]

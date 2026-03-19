@@ -12,8 +12,6 @@
 # server without any cloud storage dependency.
 # ─────────────────────────────────────────────────────────────
 
-version: "3.9"
-
 volumes:
   uploads:
     driver: local
@@ -38,10 +36,11 @@ services:
       - uploads:/var/www/uploads
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:5001/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      test: ["CMD-SHELL", "node -e \"fetch('http://localhost:5001/health').then(()=>process.exit(0)).catch(()=>process.exit(1))\""]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
 
   # ── Admin Dashboard ───────────────────────────────────────
   admin:
