@@ -1,0 +1,36 @@
+/*!**********************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/next/dist/build/webpack/loaders/css-loader/src/index.js??ruleSet[1].rules[14].oneOf[12].use[2]!./node_modules/next/dist/build/webpack/loaders/postcss-loader/src/index.js??ruleSet[1].rules[14].oneOf[12].use[3]!../admin-next/src/components/store/StoreFooter/StoreFooter.css ***!
+  \**********************************************************************************************************************************************************************************************************************************************************************************************************/
+.store-footer-minheight {
+  /* Fixed height prevents CLS - footer content is static */
+  min-height: 320px;
+  contain: layout style;
+}
+
+/* Mobile footer height */
+@media (max-width: 767px) {
+  .store-footer-minheight {
+    min-height: 480px;
+  }
+}
+
+.store-footer-chat-gradient {
+  background: linear-gradient(135deg, #4F8EF7 0%, #8B5CF6 50%, #EC4899 100%);
+  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+}
+
+.store-footer-chat-gradient-whatsapp {
+  background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+  box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+}
+
+/* Mobile footer scroll hide scrollbar elegantly */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+

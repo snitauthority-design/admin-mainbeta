@@ -40,7 +40,7 @@ interface UseAppEffectsProps {
   setAdminSection: (section: string) => void;
   setActiveTenantId: (id: string) => void;
   setHostTenantId: (id: string) => void;
-  setProducts: (products: Product[]) => void;
+  setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
   setOrders: (orders: Order[]) => void;
   setLogo: (logo: string | null) => void;
   setThemeConfig: (config: any) => void;
@@ -68,11 +68,11 @@ interface UseAppEffectsProps {
 
   // Refs
   refs: any;
-  currentViewRef: React.RefObject<string>;
-  activeTenantIdRef: React.RefObject<string>;
-  skipNextChatSaveRef: React.RefObject<boolean>;
-  chatMessagesRef: React.RefObject<any[]>;
-  isAdminChatOpenRef: React.RefObject<boolean>;
+  currentViewRef: React.MutableRefObject<string | null>;
+  activeTenantIdRef: React.MutableRefObject<string | null>;
+  skipNextChatSaveRef: React.MutableRefObject<boolean>;
+  chatMessagesRef: React.MutableRefObject<any[]>;
+  isAdminChatOpenRef: React.MutableRefObject<boolean>;
 }
 
 // Helper to hide preload skeleton
@@ -197,6 +197,7 @@ export const useUserRoleEffect = ({
   useEffect(() => { activeTenantIdRef.current = activeTenantId; }, [activeTenantId]);
 
   useEffect(() => {
+    const currentView = currentViewRef.current ?? '';
     if (!user) {
       const isOnAdminPath = typeof window !== 'undefined' &&
         (window.location.pathname === '/admin' || window.location.pathname.startsWith('/admin/'));
@@ -205,7 +206,7 @@ export const useUserRoleEffect = ({
       // 2. User was previously set (actual logout) OR no user was stored
       // This prevents redirecting during initial load race condition
       const storedUser = typeof window !== 'undefined' ? window.localStorage.getItem('admin_auth_user') : null;
-      if (refs.sessionRestoredRef.current && currentViewRef.current.startsWith('admin') && (isAdminSubdomain || isOnAdminPath)) {
+      if (refs.sessionRestoredRef.current && currentView.startsWith('admin') && (isAdminSubdomain || isOnAdminPath)) {
         // If there's a stored user but state is null, wait for state to propagate
         if (storedUser && !hadUserRef.current) {
           return; // Wait for user state to be restored
@@ -225,7 +226,7 @@ export const useUserRoleEffect = ({
     }
     const isOnAdminPath = typeof window !== 'undefined' &&
       (window.location.pathname === '/admin' || window.location.pathname.startsWith('/admin/'));
-    if (isAdminRole(user.role) && !currentViewRef.current.startsWith('admin') && !currentViewRef.current.startsWith('super') && (isAdminSubdomain || isOnAdminPath)) {
+    if (isAdminRole(user.role) && !currentView.startsWith('admin') && !currentView.startsWith('super') && (isAdminSubdomain || isOnAdminPath)) {
       if (user.role === 'super_admin') {
         setCurrentView('super-admin');
       } else {
@@ -562,10 +563,12 @@ export const useDataRefresh = ({
   useEffect(() => { categoriesLengthRef.current = categories.length; }, [categories.length]);
 
   const handleDataRefresh = useCallback(async (key: string, eventTenantId?: string, fromSocket = false) => {
-    if (currentViewRef.current.startsWith('admin')) return;
+    const currentView = currentViewRef.current ?? '';
+    if (currentView.startsWith('admin')) return;
     if (eventTenantId && eventTenantId !== activeTenantIdRef.current) return;
 
-    const tenantId = eventTenantId || activeTenantIdRef.current;
+    const tenantId = eventTenantId || activeTenantIdRef.current || undefined;
+    if (!tenantId) return;
     try {
       switch (key) {
         case 'products':

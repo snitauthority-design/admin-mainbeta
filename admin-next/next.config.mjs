@@ -7,6 +7,31 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const nextConfig = {
   // Separate build output dirs for dev and production to prevent conflicts
   distDir: process.env.NODE_ENV === 'development' ? '.next-dev' : '.next',
+  async redirects() {
+    return [
+      { source: '/login', destination: '/admin/login', permanent: false },
+      { source: '/dashboard', destination: '/admin/dashboard', permanent: false },
+      { source: '/orders', destination: '/admin/orders', permanent: false },
+      { source: '/products', destination: '/admin/products', permanent: false },
+      { source: '/customers', destination: '/admin/customers', permanent: false },
+      { source: '/settings', destination: '/admin/settings', permanent: false },
+      { source: '/catalog', destination: '/admin/catalog', permanent: false },
+      { source: '/gallery', destination: '/admin/gallery', permanent: false },
+      { source: '/landing-pages', destination: '/admin/landing-pages', permanent: false },
+      { source: '/billing', destination: '/admin/billing', permanent: false },
+      { source: '/analytics', destination: '/admin/analytics', permanent: false },
+      { source: '/support', destination: '/admin/support', permanent: false },
+      { source: '/superadmin', destination: '/admin/superadmin', permanent: false },
+      { source: '/purchase', destination: '/admin/purchase', permanent: false },
+      { source: '/expenses', destination: '/admin/expenses', permanent: false },
+      { source: '/income', destination: '/admin/income', permanent: false },
+      { source: '/notes', destination: '/admin/notes', permanent: false },
+      { source: '/inventory', destination: '/admin/inventory', permanent: false },
+      { source: '/groups', destination: '/admin/groups', permanent: false },
+      { source: '/control', destination: '/admin/control', permanent: false },
+      { source: '/activity', destination: '/admin/activity', permanent: false },
+    ];
+  },
   typescript: {
     ignoreBuildErrors: true,
   },

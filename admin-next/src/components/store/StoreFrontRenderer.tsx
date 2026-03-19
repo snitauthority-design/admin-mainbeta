@@ -806,9 +806,9 @@ export const StoreFrontRenderer: React.FC<StoreFrontRendererProps> = ({
               <ShowcaseSection
                 products={activeProducts.slice(0, settings?.productsToShow || 8)}
                 onProductClick={onProductClick}
-                onBuyNow={onBuyNow}
-                onQuickView={onQuickView}
-                onAddToCart={(product: Product) => onAddToCart?.({ product, quantity: 1, variant: {} })}
+                onBuyNow={onBuyNow ?? ((product: Product) => {})}
+                onQuickView={onQuickView ?? ((product: Product) => {})}
+                onAddToCart={(product: Product) => onAddToCart?.(product, 1, {})}
               />
             </Suspense>
           </section>

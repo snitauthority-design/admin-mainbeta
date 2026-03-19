@@ -11,26 +11,18 @@ const firebaseConfig = {
 };
   
 // Initialize Firebase - singleton pattern
-let app: FirebaseApp;
-let auth: Auth;
-let provider: GoogleAuthProvider;
+const app: FirebaseApp = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+const auth: Auth = getAuth(app);
+const provider = new GoogleAuthProvider();
 
-try {
-  app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-  auth = getAuth(app);
-  provider = new GoogleAuthProvider();
-  
-  // Configure provider settings
-  provider.addScope('profile');
-  provider.addScope('email');
-  
-  // Set custom parameters to avoid continue URL issues
-  provider.setCustomParameters({
-    prompt: 'select_account'
-  });
-} catch (error) {
-  console.error('Firebase initialization error:', error);
-}
+// Configure provider settings
+provider.addScope('profile');
+provider.addScope('email');
+
+// Set custom parameters to avoid continue URL issues
+provider.setCustomParameters({
+  prompt: 'select_account'
+});
 
 export { auth, provider };
 export default app;

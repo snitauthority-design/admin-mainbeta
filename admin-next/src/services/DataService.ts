@@ -35,7 +35,7 @@ const RESERVED_TENANT_SLUGS = [
 ];
 
 // API base URL from environment variable
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+const API_BASE_URL = process.env.VITE_API_BASE_URL || '';
 
 /**
  * Cache-aware API fetch function
@@ -325,9 +325,9 @@ const notifyDataRefresh = (key: string, tenantId?: string, fromSocket = false) =
   });
 };
 
-const SAVE_DEBOUNCE_MS = Math.max(0, Number(import.meta.env.VITE_REMOTE_SAVE_DEBOUNCE_MS ?? 1200));
-const DISABLE_REMOTE_SAVE = String(import.meta.env.VITE_DISABLE_REMOTE_SAVE ?? '').toLowerCase() === 'true';
-const SHOULD_LOG_SAVE_SKIP = Boolean(import.meta.env.DEV);
+const SAVE_DEBOUNCE_MS = Math.max(0, Number(process.env.VITE_REMOTE_SAVE_DEBOUNCE_MS ?? 1200));
+const DISABLE_REMOTE_SAVE = String(process.env.VITE_DISABLE_REMOTE_SAVE ?? '').toLowerCase() === 'true';
+const SHOULD_LOG_SAVE_SKIP = Boolean(process.env.DEV);
 
 // Simple memory cache for frequently accessed data
 type CacheEntry<T> = { data: T; timestamp: number; tenantId?: string };
@@ -1311,7 +1311,7 @@ async getPaymentMethods(tenantId?: string): Promise<PaymentMethod[]> {
     }
   }
 
-  async saveCourierConfig(tenantId: string, config: { apiKey: string; secretKey: string; instruction: string }): Promise<void> {
+  async saveCourierConfig(tenantId: string, config: { apiKey: string; secretKey: string; instruction?: string }): Promise<void> {
     if (!tenantId) return;
     
     try {

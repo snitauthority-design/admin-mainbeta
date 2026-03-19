@@ -17,9 +17,11 @@ export const SearchResultsSection = ({ searchTerm, products, sortOption, onSortC
         <p className="text-xs sm:text-sm text-gray-500">Matching product titles, categories, brands, and tags.</p>
       </div>
       <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-        <ProductFilter products={[]} onSortChange={function (s: SortOption, p: Product[]): void {
-          throw new Error('Function not implemented.');
-        } } sortBy={'relevance'} />
+        <ProductFilter
+          products={products}
+          onSortChange={(nextSort) => onSortChange(nextSort)}
+          sortBy={sortOption}
+        />
         <button onClick={onClearSearch} className="rounded-full border border-gray-200 px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-gray-600 transition hover:border-rose-400 hover:text-rose-500 h-10 min-w-[80px] sm:min-w-[100px]" aria-label="Clear search filters">Clear</button>
       </div>
     </div>

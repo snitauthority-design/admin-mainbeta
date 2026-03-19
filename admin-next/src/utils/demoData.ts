@@ -6,6 +6,14 @@
 
 import type { Product, WebsiteConfig, CarouselItem, Category, Brand } from '../types';
 
+const DEMO_PRODUCT_BASE: Pick<Product, 'condition' | 'coins' | 'sold' | 'title' | 'salePrice'> = {
+  condition: 'new',
+  coins: null,
+  sold: 0,
+  title: '',
+  salePrice: undefined,
+};
+
 // Demo Carousel Items - using placeholder images
 export const DEMO_CAROUSEL_ITEMS: CarouselItem[] = [
   {
@@ -69,6 +77,7 @@ export const DEMO_BRANDS: Brand[] = [
 // Demo Products - using placeholder images
 export const DEMO_PRODUCTS: Product[] = [
   {
+    ...DEMO_PRODUCT_BASE,
     id: 1,
     name: 'Premium Wireless Headphones',
     slug: 'premium-wireless-headphones',
@@ -83,10 +92,9 @@ export const DEMO_PRODUCTS: Product[] = [
     status: 'Active',
     rating: 4.5,
     reviews: 128,
-    title: '',
-    salePrice: undefined
   },
   {
+    ...DEMO_PRODUCT_BASE,
     id: 2,
     name: 'Smart Watch Pro',
     slug: 'smart-watch-pro',
@@ -101,10 +109,9 @@ export const DEMO_PRODUCTS: Product[] = [
     status: 'Active',
     rating: 4.8,
     reviews: 256,
-    title: '',
-    salePrice: undefined
   },
   {
+    ...DEMO_PRODUCT_BASE,
     id: 3,
     name: 'Designer Backpack',
     slug: 'designer-backpack',
@@ -119,10 +126,9 @@ export const DEMO_PRODUCTS: Product[] = [
     status: 'Active',
     rating: 4.3,
     reviews: 89,
-    title: '',
-    salePrice: undefined
   },
   {
+    ...DEMO_PRODUCT_BASE,
     id: 4,
     name: 'Bluetooth Speaker',
     slug: 'bluetooth-speaker',
@@ -137,10 +143,9 @@ export const DEMO_PRODUCTS: Product[] = [
     status: 'Active',
     rating: 4.6,
     reviews: 167,
-    title: '',
-    salePrice: undefined
   },
   {
+    ...DEMO_PRODUCT_BASE,
     id: 5,
     name: 'Fitness Tracker Band',
     slug: 'fitness-tracker-band',
@@ -155,10 +160,9 @@ export const DEMO_PRODUCTS: Product[] = [
     status: 'Active',
     rating: 4.4,
     reviews: 312,
-    title: '',
-    salePrice: undefined
   },
   {
+    ...DEMO_PRODUCT_BASE,
     id: 6,
     name: 'Organic Face Cream',
     slug: 'organic-face-cream',
@@ -173,10 +177,9 @@ export const DEMO_PRODUCTS: Product[] = [
     status: 'Active',
     rating: 4.7,
     reviews: 445,
-    title: '',
-    salePrice: undefined
   },
   {
+    ...DEMO_PRODUCT_BASE,
     id: 7,
     name: 'Laptop Stand',
     slug: 'laptop-stand',
@@ -191,10 +194,9 @@ export const DEMO_PRODUCTS: Product[] = [
     status: 'Active',
     rating: 4.5,
     reviews: 98,
-    title: '',
-    salePrice: undefined
   },
   {
+    ...DEMO_PRODUCT_BASE,
     id: 8,
     name: 'Yoga Mat Premium',
     slug: 'yoga-mat-premium',
@@ -209,8 +211,6 @@ export const DEMO_PRODUCTS: Product[] = [
     status: 'Active',
     rating: 4.6,
     reviews: 234,
-    title: '',
-    salePrice: undefined
   },
 ];
 

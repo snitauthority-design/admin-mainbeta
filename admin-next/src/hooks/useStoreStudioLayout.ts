@@ -18,6 +18,10 @@ interface BatchResult {
   };
 }
 
+type CustomLayoutData = {
+  sections: any[];
+};
+
 const getCachedBatch = (tenantId: string): CachedBatchData | null => {
   try {
     const raw = sessionStorage.getItem(CACHE_KEY_PREFIX + tenantId);
@@ -47,7 +51,7 @@ interface UseStoreStudioLayoutProps {
 interface UseStoreStudioLayoutReturn {
   useCustomLayout: boolean;
   customLayoutLoading: boolean;
-  customLayoutData: any;
+  customLayoutData: CustomLayoutData | null;
   storeStudioEnabled: boolean;
   productDisplayOrder: number[];
   effectiveWebsiteConfig: WebsiteConfig | undefined;
@@ -59,7 +63,7 @@ export const useStoreStudioLayout = ({
 }: UseStoreStudioLayoutProps): UseStoreStudioLayoutReturn => {
   const [useCustomLayout, setUseCustomLayout] = useState(false);
   const [customLayoutLoading, setCustomLayoutLoading] = useState(true);
-  const [customLayoutData, setCustomLayoutData] = useState(null);
+  const [customLayoutData, setCustomLayoutData] = useState<CustomLayoutData | null>(null);
   const [storeStudioEnabled, setStoreStudioEnabled] = useState(false);
   const [productDisplayOrder, setProductDisplayOrder] = useState<number[]>([]);
   const [storeStudioStyles, setStoreStudioStyles] = useState<Record<string, string> | null>(null);
@@ -69,7 +73,9 @@ export const useStoreStudioLayout = ({
     const { config: configData, layout: layoutData, styles: stylesData } = batchResult.data || {};
 
     const isStoreStudioEnabled = configData?.enabled || false;
-    const hasCustomLayout = layoutData?.sections?.length > 0;
+    const normalizedLayoutData: CustomLayoutData = {
+      sections: Array.isArray(layoutData?.sections) ? layoutData.sections : [],
+    };
     const displayOrder = configData?.productDisplayOrder || [];
 
     setStoreStudioEnabled(isStoreStudioEnabled);
@@ -82,7 +88,7 @@ export const useStoreStudioLayout = ({
     }
 
     if (isStoreStudioEnabled) {
-      setCustomLayoutData(hasCustomLayout ? layoutData : { sections: [] });
+      setCustomLayoutData(normalizedLayoutData);
       setUseCustomLayout(true);
     } else {
       setCustomLayoutData(null);

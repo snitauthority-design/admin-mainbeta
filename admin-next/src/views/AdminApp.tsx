@@ -307,18 +307,18 @@ const adminUrlMap: Record<string, string> = {
   'landing_pages': '/landing-pages',
   'store_studio': '/store-studio',
   'gallery': '/gallery',
-  'admin_control': '/admin-control',
-  'business_report': '/reports',
-  'business_report_purchase': '/reports',
-  'business_report_expense': '/reports',
-  'business_report_income': '/reports',
-  'business_report_due_book': '/reports',
-  'business_report_profit_loss': '/reports',
-  'business_report_contact_list': '/reports',
-  'business_report_note': '/reports',
+  'admin_control': '/control',
+  'business_report': '/analytics',
+  'business_report_purchase': '/analytics',
+  'business_report_expense': '/analytics',
+  'business_report_income': '/analytics',
+  'business_report_due_book': '/analytics',
+  'business_report_profit_loss': '/analytics',
+  'business_report_contact_list': '/analytics',
+  'business_report_note': '/notes',
   'expenses': '/expenses',
   'income': '/income',
-  'purchases': '/purchases',
+  'purchases': '/purchase',
   'due_book': '/due-book',
   'activity_log': '/activity',
   'support': '/support',
@@ -334,13 +334,32 @@ const adminUrlMap: Record<string, string> = {
   'online_now': '/online-now',
 };
 
+const legacyAdminSectionAliases: Record<string, string> = {
+  'customers': 'customers_reviews',
+  'analytics': 'business_report',
+  'reports': 'business_report',
+  'purchase': 'purchases',
+  'purchases': 'purchases',
+  'notes': 'business_report_note',
+  'note': 'business_report_note',
+  'control': 'admin_control',
+  'admin-control': 'admin_control',
+  'catalog': 'catalog_categories',
+  'groups': 'admin_control',
+  'superadmin': 'dashboard',
+};
+
+const normalizeAdminSection = (section: string): string => {
+  return legacyAdminSectionAliases[section] || section;
+};
+
 // Reverse map URL to page name
 const getPageFromUrl = (): string => {
   const path = window.location.pathname.replace(/^\/admin/, '').replace(/^\//, '') || 'dashboard';
   for (const [page, url] of Object.entries(adminUrlMap)) {
     if (url.replace(/^\//, '') === path) return page;
   }
-  return path || 'dashboard';
+  return normalizeAdminSection(path || 'dashboard');
 };
 
 // Helper to check if user can access a page
@@ -841,7 +860,7 @@ const AdminApp: React.FC<AdminAppProps> = ({
             adminSection === 'incomplete_orders' ? <IncompleteOrder tenantId={activeTenantId} /> :
             adminSection === 'online_now' ? <OnlineNowPage tenantId={activeTenantId} onBack={() => setAdminSection('dashboard')} /> :
             adminSection === 'orders' || adminSection === 'all_orders' ? <FigmaOrderList orders={orders} courierConfig={courierConfig} onUpdateOrder={onUpdateOrder} products={products} tenantId={activeTenantId} onNewOrder={onAddOrder} initialSelectedOrderId={selectedOrderIdFromNotification} onClearSelectedOrderId={() => setSelectedOrderIdFromNotification(null)} incomplete={function (): void {
-                    throw new Error('Function not implemented.');
+                    setAdminSection('incomplete_orders');
                   } } /> :
               adminSection === 'products' ? <FigmaProductList products={products} categories={categories} brands={brands} onAddProduct={() => { setEditingProduct(null); setAdminSection('product-upload'); }} onEditProduct={(p) => { setEditingProduct(p); setAdminSection('product-upload'); }} onDeleteProduct={onDeleteProduct} onCloneProduct={(p) => onAddProduct({ ...p, id: Date.now(), name: p.name + ' (Copy)' })} onBulkDelete={onBulkDeleteProducts} onBulkStatusUpdate={(ids, status) => onBulkUpdateProducts(ids, { status })} onBulkFlashSale={onBulkFlashSale} onBulkImport={onBulkAddProducts} tenantId={activeTenantId} tenantSubdomain={selectedTenantRecord?.subdomain || ""} onProductOrderChange={onProductOrderChange} onQuickUpdate={(id, updates) => onBulkUpdateProducts([id], updates)} tags={tags} /> :
                 adminSection === 'product-upload' ? <FigmaProductUpload categories={categories} subCategories={subCategories} childCategories={childCategories} brands={brands} tags={tags} onAddProduct={editingProduct ? onUpdateProduct : onAddProduct} onBack={() => { setEditingProduct(null); setAdminSection('products'); }} onNavigate={setAdminSection} editProduct={editingProduct} /> :

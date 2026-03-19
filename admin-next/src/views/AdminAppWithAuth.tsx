@@ -189,9 +189,7 @@ const AdminAppWithAuth: React.FC<AdminAppWithAuthProps> = (props) => {
       }
     >
       <AdminApp
-      onRefreshTenants={function (): Promise<Tenant[]> {
-        throw new Error('Function not implemented.');
-      } } isTenantCreating={false} deletingTenantId={null} {...props}
+      onRefreshTenants={props.onRefreshTenants} isTenantCreating={false} deletingTenantId={null} {...props}
       user={user}
       userPermissions={userPermissions}
       onLogout={handleLogout}      />

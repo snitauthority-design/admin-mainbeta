@@ -1,0 +1,8 @@
+{
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/[[...path]]/route": "app/api/[[...path]]/route.js",
+  "/page": "app/page.js",
+  "/checkout/page": "app/checkout/page.js",
+  "/all-products/page": "app/all-products/page.js",
+  "/success-order/page": "app/success-order/page.js"
+}

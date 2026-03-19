@@ -1,6 +1,7 @@
 import React, { Suspense, lazy } from 'react';
 import type { Product, WebsiteConfig } from '../../types';
 import { useLanguage } from '../../context/LanguageContext';
+import type { SortOption } from '../ProductFilter';
 import { HeroSection } from './HeroSection';
 import { CategoriesSection } from './CategoriesSection';
 import {
@@ -39,8 +40,8 @@ interface StoreHomeDefaultLayoutProps {
   // Search
   hasSearchQuery: boolean;
   searchTerm: string;
-  sortOption: string;
-  onSortChange: (option: any) => void;
+  sortOption: SortOption;
+  onSortChange: (option: SortOption) => void;
   onClearSearch: () => void;
 
   // Flash sale
