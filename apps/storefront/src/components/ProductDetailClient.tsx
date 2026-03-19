@@ -67,7 +67,7 @@ export default function ProductDetailClient({
     router.push('/cart');
   }, [handleAddToCart, router]);
 
-  const currency = websiteConfig?.shopCurrency === 'BDT' ? '৳' : '৳';
+  const currency = websiteConfig?.shopCurrency === 'USD' ? '$' : '৳';
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6">

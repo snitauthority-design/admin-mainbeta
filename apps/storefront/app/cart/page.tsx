@@ -3,6 +3,7 @@
 import React, { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Trash2, Minus, Plus, ShoppingBag, ArrowLeft } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { useCart } from '@/contexts/CartContext';
 import { normalizeImageUrl } from 'admin-next/src/utils/imageUrlHelper';
 
@@ -12,7 +13,7 @@ export default function CartPage() {
 
   const handleCheckout = useCallback(() => {
     // TODO: implement checkout flow
-    alert('Checkout coming soon!');
+    toast('Checkout coming soon!', { icon: '🛒' });
   }, []);
 
   if (items.length === 0) {

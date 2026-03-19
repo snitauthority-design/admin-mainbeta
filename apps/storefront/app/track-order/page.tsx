@@ -11,17 +11,20 @@ export default function TrackOrderPage() {
   const [orderStatus, setOrderStatus] = useState<any>(null);
   const [error, setError] = useState('');
 
+  const [info, setInfo] = useState('');
+
   const handleTrack = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     if (!orderNumber.trim()) return;
 
     setLoading(true);
     setError('');
+    setInfo('');
     setOrderStatus(null);
 
     try {
       // TODO: implement actual order tracking API call
-      setError('Order tracking will be available soon.');
+      setInfo('Order tracking will be available soon.');
     } catch {
       setError('Unable to find order. Please check the order number.');
     } finally {
@@ -65,8 +68,14 @@ export default function TrackOrderPage() {
       </form>
 
       {error && (
-        <div className="mt-4 bg-yellow-50 text-yellow-700 text-sm p-3 rounded-lg">
+        <div className="mt-4 bg-red-50 text-red-700 text-sm p-3 rounded-lg">
           {error}
+        </div>
+      )}
+
+      {info && (
+        <div className="mt-4 bg-blue-50 text-blue-700 text-sm p-3 rounded-lg">
+          {info}
         </div>
       )}
 
