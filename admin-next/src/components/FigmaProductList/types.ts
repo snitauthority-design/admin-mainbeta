@@ -1,54 +1,23 @@
 // Type definitions for FigmaProductList and related components
 
-export interface Product {
-  id: number;
-  name: string;
-  price: number;
-  originalPrice?: number;
-  costPrice?: number;
-  image?: string;
-  galleryImages?: string[];
-  description?: string;
-  category?: string;
-  subCategory?: string;
-  childCategory?: string;
-  brand?: string;
-  sku?: string;
-  stock?: number;
-  status?: 'Active' | 'Draft';
-  tags?: string[];
-  slug?: string;
-  title?: string;
-  salePrice?: number;
-  tag?: string;
-  rating?: number;
-  /** MongoDB / Firestore document ID (string form) */
-  _id?: string;
-  [key: string]: any;
-}
+import { Product, Category, Brand, CourierConfig, Order, PathaoConfig, Tag as TagType } from '../../types';
 
-export interface Category {
-  id: number;
-  name: string;
-  [key: string]: any;
-}
+export type { Product, Category, Brand, CourierConfig, Order, PathaoConfig, TagType };
 
-export interface Brand {
-  id: number;
-  name: string;
-  [key: string]: any;
+export interface ProductCourierStatus {
+  label: string;
+  provider: 'Steadfast' | 'Pathao';
+  trackingId: string;
+  orderId: string;
 }
-
-export type TagType = {
-  id: number;
-  name: string;
-  [key: string]: any;
-};
 
 export interface FigmaProductListProps {
   products?: Product[];
+  orders?: Order[];
+  courierConfig?: CourierConfig;
   categories?: Category[];
   brands?: Brand[];
+  title?: string;
   onAddProduct?: () => void;
   onEditProduct?: (product: Product) => void;
   onDeleteProduct?: (id: number) => void;

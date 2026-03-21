@@ -76,10 +76,31 @@ const canAccess = (resource: string, userRole?: User['role'], permissions?: Perm
 
 export const AdminSidebar: React.FC<AdminSidebarProps> = memo(({ activePage, onNavigate, logo, isOpen, onClose, userRole, permissions, isCollapsed }) => {
 	const [isCatalogOpen, setIsCatalogOpen] = useState(false);
-	const [isProductsOpen, setIsProductsOpen] = useState(activePage === 'products' || activePage === 'product-upload');
+	const productSections = ['products', 'product-upload', 'product-media'];
+	const [isProductsOpen, setIsProductsOpen] = useState(productSections.includes(activePage || ''));
 	const desktopScrollRef = useRef<HTMLDivElement>(null);
 	const mobileScrollRef = useRef<HTMLDivElement>(null);
+	const productsMenuRef = useRef<HTMLDivElement>(null);
 	const { t } = useLanguage();
+
+	useEffect(() => {
+		if (productSections.includes(activePage || '')) {
+			setIsProductsOpen(true);
+		}
+	}, [activePage]);
+
+	useEffect(() => {
+		if (!isProductsOpen) return;
+
+		const handleOutsideClick = (event: MouseEvent) => {
+			if (productsMenuRef.current && !productsMenuRef.current.contains(event.target as Node)) {
+				setIsProductsOpen(false);
+			}
+		};
+
+		document.addEventListener('mousedown', handleOutsideClick);
+		return () => document.removeEventListener('mousedown', handleOutsideClick);
+	}, [isProductsOpen]);
 
 	// Simple navigation handler
 	const handleNavigate = (page: string) => {
@@ -128,8 +149,9 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = memo(({ activePage, onN
 	];
 
 	const productsMenuItems = [
-		{ id: 'products', label: t('all_products') },
+		{ id: 'products', label: t('manage_products') },
 		{ id: 'product-upload', label: t('add_new_product') },
+		{ id: 'product-media', label: t('media_center') },
 	];
 
 	// Filter menu items based on permissions
@@ -158,6 +180,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = memo(({ activePage, onN
 	const isItemActive = (itemId: string) => {
 		if (itemId === 'business_report_expense' && activePage?.startsWith('business_report_')) return true;
 		if (itemId === 'customization' && ['carousel', 'banner', 'popup', 'website_info', 'chat_settings', 'theme_view', 'theme_colors'].includes(activePage || '')) return true;
+		if (itemId === 'products' && productSections.includes(activePage || '')) return true;
 		return activePage === itemId;
 	};
 
@@ -196,12 +219,12 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = memo(({ activePage, onN
 
 				{/* Products with Dropdown */}
 				{canSeeProducts && (
-					<div title={isCollapsed ? t('products') : undefined}>
+					<div title={isCollapsed ? t('products') : undefined} className="relative" ref={productsMenuRef}>
 						<div
 							onClick={() => setIsProductsOpen(!isProductsOpen)}
 							onKeyDown={(e) => e.key === 'Enter' && setIsProductsOpen(!isProductsOpen)}
 							className={`flex items-center justify-between px-3 py-2 cursor-pointer rounded-xl transition-all duration-200 text-sm font-medium hover:bg-white/5 outline-none focus-visible:ring-2 focus-visible:ring-blue-500`}
-							style={getMenuItemStyle('products', isProductsOpen || activePage === 'products' || activePage === 'product-upload')}
+							style={getMenuItemStyle('products', isProductsOpen || productSections.includes(activePage || ''))}
 							aria-label={t('products')}
 							role="button"
 							tabIndex={0}
@@ -214,16 +237,19 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = memo(({ activePage, onN
 						</div>
 
 						{isProductsOpen && !isCollapsed && (
-							<div className="ml-9 mt-0.5 space-y-0.5">
+							<div className="absolute left-0 top-full mt-2 w-full min-w-[230px] overflow-hidden rounded-2xl border border-slate-200/90 bg-white py-2 shadow-[0_16px_42px_rgba(15,23,42,0.16)] z-[80] lg:left-full lg:top-0 lg:mt-0 lg:ml-3 lg:w-auto">
 								{productsMenuItems.map(item => (
 									<div
 										key={item.id}
-										onClick={() => handleNavigate(item.id)}
-										className={`py-2 px-3 rounded-lg text-sm cursor-pointer transition-all duration-200 hover:text-white`}
+										onClick={() => {
+											handleNavigate(item.id);
+											setIsProductsOpen(false);
+										}}
+										className="mx-2 rounded-xl px-4 py-3 text-sm cursor-pointer transition-all duration-150 hover:bg-slate-50"
 										style={{
-											color: activePage === item.id ? '#ffffff' : '#94a3b8',
-											fontWeight: activePage === item.id ? 600 : 400,
-											backgroundColor: activePage === item.id ? 'rgba(255,255,255,0.05)' : 'transparent'
+											color: activePage === item.id ? '#ea580c' : '#64748b',
+											fontWeight: activePage === item.id ? 700 : 500,
+											backgroundColor: activePage === item.id ? '#fff7ed' : 'transparent'
 										}}
 									>
 										{item.label}

@@ -5,6 +5,7 @@ import { SearchIcon, SortIcon, ExpandIcon, AddSquareIcon } from './icons';
 type ViewMode = 'large' | 'small' | 'list';
 
 interface ProductHeaderProps {
+  title?: string;
   searchQuery: string;
   viewMode: ViewMode;
   showViewDropdown: boolean;
@@ -21,6 +22,7 @@ interface ProductHeaderProps {
 }
 
 const ProductHeader: React.FC<ProductHeaderProps> = ({
+  title = 'Products',
   searchQuery,
   viewMode,
   showViewDropdown,
@@ -37,7 +39,7 @@ const ProductHeader: React.FC<ProductHeaderProps> = ({
 }) => (
   <div className="flex flex-col gap-3 xxs:gap-4 mb-4 xxs:mb-5">
     <h1 className="text-base xxs:text-lg sm:text-xl lg:text-[22px] font-bold text-[#023337] dark:text-white tracking-[0.11px] font-['Lato']">
-      Products
+      {title}
     </h1>
 
     <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 w-full">

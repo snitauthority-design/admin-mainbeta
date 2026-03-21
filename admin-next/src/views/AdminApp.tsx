@@ -44,6 +44,7 @@ const AdminCourierSettings = lazy(() => import(/* webpackChunkName: "admin-couri
 const AdminCustomers = lazy(() => import(/* webpackChunkName: "admin-customers" */ '../components/dashboard/customers/AdminCustomersReview'));
 const AdminDailyTarget = lazy(() => import(/* webpackChunkName: "admin-target" */ './AdminDailyTarget'));
 const AdminGallery = lazy(() => import(/* webpackChunkName: "admin-gallery" */ './AdminGallery'));
+const AdminProductMediaCenter = lazy(() => import(/* webpackChunkName: "admin-product-media-center" */ './AdminProductMediaCenter'));
 const AdminPopups = lazy(() => import(/* webpackChunkName: "admin-popups" */ './AdminPopups'));
 const IncompleteOrder = lazy(() => import(/* webpackChunkName: "incomplete-orders" */ '../components/NewComponentMentItem'));
 const AdminFacebookPixel = lazy(() => import(/* webpackChunkName: "admin-pixel" */ './AdminFacebookPixel'));
@@ -69,7 +70,7 @@ import AIChatAssistant from '../components/AIChatAssistant';
 // Admin Components - directly imported for instant layout render
 
 import AdminDueList from './AdminDueList';
-import { FigmaDashboardPage as AdminDashboard, DashboardLayout } from '../components/dashboard';
+import { FigmaDashboardPage as AdminDashboard, DashboardHeaderProps, DashboardLayout } from '../components/dashboard';
 
 // Lazy load SuperAdminDashboard - only needed for super_admin users
 const SuperAdminDashboard = lazy(() => import(/* webpackChunkName: "super-admin-dashboard" */ './SuperAdminDashboard'));
@@ -93,6 +94,7 @@ const PageLoadingFallback = ({ section }: { section?: string }) => {
     case 'orders':
       return <OrdersSkeleton />;
     case 'products':
+    case 'product-media':
       return <ProductsSkeleton />;
     case 'inventory':
       return <InventorySkeleton />;
@@ -270,8 +272,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({
         onLogout,
         // Notification props
         notificationCount: unreadCount,
-        notifications: notifications,
-        onMarkNotificationRead: markAsRead,
+        notifications: notifications as DashboardHeaderProps['notifications'],        onMarkNotificationRead: markAsRead,
         onOrderNotificationClick: onOrderNotificationClick,
         // Chat props
         unreadChatCount: hasUnreadChat ? 1 : 0,
@@ -301,6 +302,8 @@ const adminUrlMap: Record<string, string> = {
   'orders': '/orders',
   'all_orders': '/orders',
   'products': '/products',
+  'product-upload': '/products/add',
+  'product-media': '/products/media-center',
   'inventory': '/inventory',
   'customers_reviews': '/customers',
   'customization': '/customization',
@@ -339,6 +342,8 @@ const legacyAdminSectionAliases: Record<string, string> = {
   'analytics': 'business_report',
   'reports': 'business_report',
   'purchase': 'purchases',
+  'products/add': 'product-upload',
+  'products/media-center': 'product-media',
   'purchases': 'purchases',
   'notes': 'business_report_note',
   'note': 'business_report_note',
@@ -391,6 +396,7 @@ const canAccessPage = (page: string, user?: User | null, permissions?: Permissio
         'incomplete_orders': 'orders',
         'products': 'products',
         'product-upload': 'products',
+        'product-media': 'products',
         'landing_pages': 'landing_pages',
         'popups': 'landing_pages',
         'inventory': 'inventory',
@@ -862,8 +868,9 @@ const AdminApp: React.FC<AdminAppProps> = ({
             adminSection === 'orders' || adminSection === 'all_orders' ? <FigmaOrderList orders={orders} courierConfig={courierConfig} onUpdateOrder={onUpdateOrder} products={products} tenantId={activeTenantId} onNewOrder={onAddOrder} initialSelectedOrderId={selectedOrderIdFromNotification} onClearSelectedOrderId={() => setSelectedOrderIdFromNotification(null)} incomplete={function (): void {
                     setAdminSection('incomplete_orders');
                   } } /> :
-              adminSection === 'products' ? <FigmaProductList products={products} categories={categories} brands={brands} onAddProduct={() => { setEditingProduct(null); setAdminSection('product-upload'); }} onEditProduct={(p) => { setEditingProduct(p); setAdminSection('product-upload'); }} onDeleteProduct={onDeleteProduct} onCloneProduct={(p) => onAddProduct({ ...p, id: Date.now(), name: p.name + ' (Copy)' })} onBulkDelete={onBulkDeleteProducts} onBulkStatusUpdate={(ids, status) => onBulkUpdateProducts(ids, { status })} onBulkFlashSale={onBulkFlashSale} onBulkImport={onBulkAddProducts} tenantId={activeTenantId} tenantSubdomain={selectedTenantRecord?.subdomain || ""} onProductOrderChange={onProductOrderChange} onQuickUpdate={(id, updates) => onBulkUpdateProducts([id], updates)} tags={tags} /> :
+              adminSection === 'products' ? <FigmaProductList title="Manage Products" products={products} orders={orders} courierConfig={courierConfig} categories={categories} brands={brands} onAddProduct={() => { setEditingProduct(null); setAdminSection('product-upload'); }} onEditProduct={(p) => { setEditingProduct(p); setAdminSection('product-upload'); }} onDeleteProduct={onDeleteProduct} onCloneProduct={(p) => onAddProduct({ ...p, id: Date.now(), name: p.name + ' (Copy)' })} onBulkDelete={onBulkDeleteProducts} onBulkStatusUpdate={(ids, status) => onBulkUpdateProducts(ids, { status })} onBulkFlashSale={onBulkFlashSale} onBulkImport={onBulkAddProducts} tenantId={activeTenantId} tenantSubdomain={selectedTenantRecord?.subdomain || ""} onProductOrderChange={onProductOrderChange} onQuickUpdate={(id, updates) => onBulkUpdateProducts([id], updates)} tags={tags} /> :
                 adminSection === 'product-upload' ? <FigmaProductUpload categories={categories} subCategories={subCategories} childCategories={childCategories} brands={brands} tags={tags} onAddProduct={editingProduct ? onUpdateProduct : onAddProduct} onBack={() => { setEditingProduct(null); setAdminSection('products'); }} onNavigate={setAdminSection} editProduct={editingProduct} /> :
+                  adminSection === 'product-media' ? <AdminProductMediaCenter products={products} onEditProduct={(product) => { setEditingProduct(product); setAdminSection('product-upload'); }} onAddProduct={() => { setEditingProduct(null); setAdminSection('product-upload'); }} /> :
                   adminSection === 'store_studio' ? <StoreStudioManager tenantId={activeTenantId} onBack={() => setAdminSection('manage_shop')} products={products} /> :
                   adminSection === 'landing_pages' ? <AdminLandingPage tenantSubdomain={selectedTenantRecord?.subdomain || ''} products={products} landingPages={landingPages} onCreateLandingPage={onCreateLandingPage} onUpdateLandingPage={onUpsertLandingPage} onTogglePublish={onToggleLandingPublish} onPreviewLandingPage={handlePreviewLandingPage} /> :
                     adminSection === 'due_list' ? <AdminDueList user={user} onLogout={onLogout} /> :

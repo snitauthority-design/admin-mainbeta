@@ -1,11 +1,12 @@
 import React from 'react';
 import { Search } from 'lucide-react';
-import { Product } from './types';
-import { normalizeImageUrl } from './utils';
+import { Product, ProductCourierStatus } from './types';
+import { normalizeImageUrl, getCourierBadgeClassName } from './utils';
 
 interface ProductGridSmallProps {
   products: Product[];
   selectedIds: Set<string>;
+  courierStatuses?: Record<number, ProductCourierStatus>;
   getProductKey: (product: Product, idx: number) => string;
   onSelectProduct: (key: string) => void;
   onEditProduct?: (product: Product) => void;
@@ -14,6 +15,7 @@ interface ProductGridSmallProps {
 const ProductGridSmall: React.FC<ProductGridSmallProps> = ({
   products,
   selectedIds,
+  courierStatuses = {},
   getProductKey,
   onSelectProduct,
   onEditProduct,
@@ -60,6 +62,11 @@ const ProductGridSmall: React.FC<ProductGridSmallProps> = ({
               title={product.status === 'Active' ? 'Published' : 'Draft'}
             />
           </div>
+          {courierStatuses[product.id] && (
+            <p className={`mt-1 text-[9px] xxs:text-[10px] font-medium truncate ${getCourierBadgeClassName(courierStatuses[product.id].label).split(' border ')[0]}`}>
+              {courierStatuses[product.id].provider}: {courierStatuses[product.id].label}
+            </p>
+          )}
         </div>
       );
     }) : (

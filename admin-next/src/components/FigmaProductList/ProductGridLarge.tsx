@@ -1,7 +1,7 @@
 import React from 'react';
 import { Search, Edit, Copy, Eye, Trash2 } from 'lucide-react';
-import { Product } from './types';
-import { normalizeImageUrl } from './utils';
+import { Product, ProductCourierStatus } from './types';
+import { normalizeImageUrl, getCourierBadgeClassName } from './utils';
 import { DotsIcon } from './icons';
 
 interface ProductGridLargeProps {
@@ -9,6 +9,7 @@ interface ProductGridLargeProps {
   selectedIds: Set<string>;
   openDropdownId: string | null;
   storeBaseUrl: string;
+  courierStatuses?: Record<number, ProductCourierStatus>;
   getProductKey: (product: Product, idx: number) => string;
   onSelectProduct: (key: string) => void;
   onSetDropdownId: (id: string | null) => void;
@@ -22,6 +23,7 @@ const ProductGridLarge: React.FC<ProductGridLargeProps> = ({
   selectedIds,
   openDropdownId,
   storeBaseUrl,
+  courierStatuses = {},
   getProductKey,
   onSelectProduct,
   onSetDropdownId,
@@ -99,15 +101,25 @@ const ProductGridLarge: React.FC<ProductGridLargeProps> = ({
           {/* Info */}
           <h3 className="text-[11px] xxs:text-xs sm:text-[14px] font-medium text-gray-900 dark:text-white line-clamp-2 mb-1 sm:mb-2">{product.name}</h3>
           <p className="text-[11px] xxs:text-[13px] text-gray-500 dark:text-gray-400 mb-1 xxs:mb-2">{product.category || 'Uncategorized'}</p>
-          <div className="flex items-center justify-between">
+          <div className="flex items-end justify-between gap-2">
             <span className="text-[13px] xxs:text-[15px] font-bold text-[#1e90ff]">৳{product.price}</span>
-            <span className={`px-1.5 xxs:px-2 py-0.5 rounded-full text-[9px] xxs:text-[11px] font-medium ${
-              product.status === 'Active'
-                ? 'bg-[#c1ffbc] text-[#085e00]'
-                : 'bg-orange-100 text-orange-700'
-            }`}>
-              {product.status === 'Active' ? 'Publish' : 'Draft'}
-            </span>
+            <div className="flex flex-col items-end gap-1">
+              <span className={`px-1.5 xxs:px-2 py-0.5 rounded-full text-[9px] xxs:text-[11px] font-medium ${
+                product.status === 'Active'
+                  ? 'bg-[#c1ffbc] text-[#085e00]'
+                  : 'bg-orange-100 text-orange-700'
+              }`}>
+                {product.status === 'Active' ? 'Publish' : 'Draft'}
+              </span>
+              {courierStatuses[product.id] && (
+                <span
+                  title={`${courierStatuses[product.id].provider} | ${courierStatuses[product.id].trackingId}`}
+                  className={`max-w-[120px] text-right px-2 py-0.5 rounded-full text-[10px] font-medium truncate ${getCourierBadgeClassName(courierStatuses[product.id].label)}`}
+                >
+                  {courierStatuses[product.id].provider}: {courierStatuses[product.id].label}
+                </span>
+              )}
+            </div>
           </div>
           {product.sku && <p className="text-[10px] xxs:text-[11px] text-gray-400 dark:text-gray-500 mt-1 xxs:mt-2">SKU: {product.sku}</p>}
         </div>

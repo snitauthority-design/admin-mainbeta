@@ -149,7 +149,7 @@ const GadgetProductCard = memo(({ product, onClick, onAddToCart, onBuyNow }: {
             {/* Discount Badge */}
             {discount > 0 && (
               <div className="absolute z-[9] left-0 top-0">
-                <span className="text-white text-xs bg-orange-400 inline-block leading-3 px-2.5 py-[7px] rounded-[5px]">
+                <span className="text-white text-[11px] bg-orange-400 inline-block leading-3 px-2 py-[5px] rounded-[5px]">
                   -{discount}% OFF
                 </span>
               </div>
@@ -157,15 +157,15 @@ const GadgetProductCard = memo(({ product, onClick, onAddToCart, onBuyNow }: {
           </div>
 
           {/* Info */}
-          <div className="pb-3 px-2">
-            <div className="items-center gap-x-[3px] flex flex-col gap-y-[3px] my-1.5">
+          <div className="px-1.5 pb-2 md:px-2 md:pb-2.5">
+            <div className="items-center gap-x-[3px] flex flex-col gap-y-0.5 my-1">
               <div>
-                <p className="text-neutral-900 text-[13px] font-medium flow-root h-[30px] leading-[15px] text-center text-ellipsis break-all overflow-hidden mb-[5px] md:text-black md:text-sm md:h-[39px] md:leading-[normal] md:break-normal">
+                <p className="text-neutral-900 text-[13px] font-medium flow-root h-7 leading-[15px] text-center text-ellipsis break-all overflow-hidden mb-0.5 md:text-black md:text-sm md:h-[34px] md:leading-[17px] md:break-normal">
                  {String(product?.name || 'Unknown Product')}
                 </p>
               </div>
-              <div className="mb-[3px]">
-                <div className="flex pt-[5px]">
+              <div className="mb-0.5">
+                <div className="flex items-center pt-0.5">
                   <span className="text-black text-[15px] font-medium flex h-[22px] tracking-[-0.56px] leading-[22px]">
                     {formatPrice(price)}
                   </span>
@@ -179,16 +179,16 @@ const GadgetProductCard = memo(({ product, onClick, onAddToCart, onBuyNow }: {
             </div>
 
             {/* Buttons */}
-            <div className="items-center gap-x-2 flex gap-y-2 mt-2">
+            <div className="items-center gap-x-1.5 flex gap-y-1.5 mt-1.5">
               {isStockOut ? (
-                <button className="text-black items-center flex justify-center text-center text-sm font-semibold bg-neutral-200 h-[38px] opacity-70 w-full p-0 rounded-[5px] cursor-not-allowed">
+                <button className="text-black items-center flex justify-center text-center text-sm font-semibold bg-neutral-200 h-9 opacity-70 w-full p-0 rounded-[5px] cursor-not-allowed md:h-[38px]">
                   Stock Out
                 </button>
               ) : (
                 <>
                   <button
                     onClick={(e) => { e.stopPropagation(); onAddToCart?.(); }}
-                    className="text-black items-center flex justify-center text-center text-xs bg-neutral-400/40 shadow-[rgba(0,0,0,0.07)_0px_2px_8px_0px] gap-x-[5px] basis-[0%] grow h-8 gap-y-[5px] w-[38px] px-px py-0 rounded md:text-[13px] md:h-[38px] md:px-0 hover:text-white hover:bg-lime-500 hover:shadow-[rgba(0,0,0,0.07)_0px_2px_8px_0px] hover:rounded transition-colors"
+                    className="text-black items-center flex justify-center text-center text-xs bg-neutral-400/40 shadow-[rgba(0,0,0,0.07)_0px_2px_8px_0px] gap-x-1 basis-[0%] grow h-9 gap-y-1 w-[38px] px-1 py-0 rounded md:text-[13px] md:h-[38px] md:px-0 hover:text-white hover:bg-lime-500 hover:shadow-[rgba(0,0,0,0.07)_0px_2px_8px_0px] hover:rounded transition-colors"
                   >
                     <ShoppingCart size={16} />
                     <span className="text-xs font-medium block px-px md:text-sm md:px-0">
@@ -197,7 +197,7 @@ const GadgetProductCard = memo(({ product, onClick, onAddToCart, onBuyNow }: {
                   </button>
                   <button
                     onClick={(e) => { e.stopPropagation(); onBuyNow?.(); }}
-                    className="text-white text-xs font-semibold items-center bg-orange-400 shadow-[rgba(0,0,0,0.07)_0px_2px_8px_0px] flex basis-[0%] grow h-8 justify-center text-center px-px py-0 rounded-[5px] md:text-sm md:h-[38px] md:px-[18px] hover:bg-orange-500 hover:shadow-[rgba(0,0,0,0.07)_0px_2px_8px_0px] hover:rounded-[5px] transition-colors"
+                    className="text-white text-xs font-semibold items-center bg-orange-400 shadow-[rgba(0,0,0,0.07)_0px_2px_8px_0px] flex basis-[0%] grow h-9 justify-center text-center px-2 py-0 rounded-[5px] md:text-sm md:h-[38px] md:px-4 hover:bg-orange-500 hover:shadow-[rgba(0,0,0,0.07)_0px_2px_8px_0px] hover:rounded-[5px] transition-colors"
                   >
                     Buy Now
                   </button>
@@ -222,9 +222,9 @@ const GadgetCategoryCard = memo(({ category, onClick }: {
     <div className="block">
       <div
         onClick={onClick}
-        className="items-center flex flex-col h-[96.25px] justify-center w-full border border-neutral-200 pt-1.5 rounded-[10px] border-solid cursor-pointer md:inline-block md:h-full md:pt-4 hover:shadow-[rgba(0,0,0,0.1)_1px_5px_10px_0px] hover:border-zinc-500/60 transition-shadow"
+        className="items-center flex flex-col h-[86px] justify-center w-full border border-neutral-200 pt-1 rounded-[10px] border-solid cursor-pointer md:inline-block md:h-full md:pt-3 hover:shadow-[rgba(0,0,0,0.1)_1px_5px_10px_0px] hover:border-zinc-500/60 transition-shadow"
       >
-        <div className="bg-white h-[45px] w-[45px] overflow-hidden mx-auto rounded-md md:h-20 md:w-20 md:rounded-[5px]">
+        <div className="bg-white h-10 w-10 overflow-hidden mx-auto rounded-md md:h-[68px] md:w-[68px] md:rounded-[5px]">
           {img ? (
             <img
               alt={category.name}
@@ -239,7 +239,7 @@ const GadgetCategoryCard = memo(({ category, onClick }: {
           )}
         </div>
         <div className="text-center">
-          <div className="text-neutral-900 text-[13px] font-medium flow-root h-auto leading-[15px] overflow-hidden mx-0 my-1.5 px-[9px] md:text-black md:text-sm md:block md:h-[37px] md:leading-[18px] md:mt-2 md:mb-0 md:mx-3 md:px-0">
+          <div className="text-neutral-900 text-[12px] font-medium flow-root h-auto leading-[14px] overflow-hidden mx-0 my-1 px-2 md:text-black md:text-sm md:block md:h-[34px] md:leading-[17px] md:mt-1.5 md:mb-0 md:mx-2 md:px-0">
             {category.name}
           </div>
         </div>
@@ -272,7 +272,7 @@ const GadgetHero = memo(({ websiteConfig }: { websiteConfig?: WebsiteConfig }) =
   const heroImg = item?.image || item?.imageUrl;
 
   return (
-    <div className="flex-col h-[118px] max-w-[1340px] w-[92%] mt-2 mb-2 mx-auto md:flex-row md:h-[345px] md:w-full md:mb-0">
+    <div className="flex-col h-[118px] max-w-[1340px] w-[92%] mt-1 mb-1 mx-auto md:flex-row md:h-[345px] md:w-full md:mb-0">
       <div className="relative bg-neutral-200 h-[118px] w-full overflow-hidden m-auto rounded-lg md:h-[345px] md:rounded-none">
         {/* Slides */}
         <div className="flex h-full transition-transform duration-500 ease-in-out" style={{ transform: `translateX(-${current * 100}%)` }}>
@@ -385,12 +385,12 @@ const GadgetFooter = memo(({ websiteConfig, logo }: { websiteConfig?: WebsiteCon
     <div>
       {/* Desktop Footer */}
       <div className="hidden md:block">
-        <div className="bg-white mt-3">
+        <div className="bg-white mt-2">
           <div className="max-w-[1340px] w-[95%] mx-auto">
-            <div className="gap-x-5 grid grid-cols-[1fr] gap-y-5 p-[12px] md:gap-x-6 md:grid-cols-[repeat(4,1fr)] md:gap-y-6 md:px-2.5 md:py-4">
+            <div className="gap-x-4 grid grid-cols-[1fr] gap-y-4 p-[10px] md:gap-x-5 md:grid-cols-[repeat(4,1fr)] md:gap-y-4 md:px-2 md:py-3">
               {/* Brand */}
               <div className="text-center w-full md:text-start">
-                <div className="flex justify-center text-center mb-[15px] md:block md:justify-normal md:text-start">
+                <div className="flex justify-center text-center mb-3 md:block md:justify-normal md:text-start">
                   {logo ? (
                     <img alt={storeName} src={normalizeImageUrl(logo)} className="block h-10 max-w-[180px] object-contain w-full" />
                   ) : (
@@ -399,7 +399,7 @@ const GadgetFooter = memo(({ websiteConfig, logo }: { websiteConfig?: WebsiteCon
                 </div>
                 {description && <p className="text-sm text-center md:text-start">{description}</p>}
                 {socialLinks.length > 0 && (
-                  <div className="items-center gap-x-2.5 flex justify-center gap-y-2.5 text-center mt-[15px] md:justify-normal md:text-start">
+                  <div className="items-center gap-x-2 flex justify-center gap-y-2 text-center mt-3 md:justify-normal md:text-start">
                     {socialLinks.map((s, i) => {
                       const platform = String(s.platform || '').toLowerCase();
                       const iconSrc = GADGET_SOCIAL_ICON_URLS[platform] || GADGET_SOCIAL_ICON_URLS.facebook;
@@ -416,22 +416,22 @@ const GadgetFooter = memo(({ websiteConfig, logo }: { websiteConfig?: WebsiteCon
 
               {/* Contact */}
               <div className="text-center md:text-start">
-                <b className="text-xl font-semibold block tracking-[-0.3px] leading-[30px] mb-[15px]">Contact Us</b>
+                <b className="text-xl font-semibold block tracking-[-0.3px] leading-[30px] mb-3">Contact Us</b>
                 <ul className="list-none pl-0">
                   {emails.map((e, i) => (
-                    <li key={`e${i}`} className="items-center gap-x-2.5 flex flex-wrap justify-center gap-y-2.5 text-center w-full mb-2 md:flex-nowrap md:justify-start md:text-start">
+                    <li key={`e${i}`} className="items-center gap-x-2 flex flex-wrap justify-center gap-y-1.5 text-center w-full mb-1.5 md:flex-nowrap md:justify-start md:text-start">
                       <img src={GADGET_FOOTER_EMAIL_ICON} alt="email" className="w-4 h-4 object-contain" />
                       <span className="text-sm leading-[26px]">{e}</span>
                     </li>
                   ))}
                   {phones.map((p, i) => (
-                    <li key={`p${i}`} className="items-center gap-x-2.5 flex flex-wrap justify-center gap-y-2.5 text-center w-full mb-2 md:flex-nowrap md:justify-start md:text-start">
+                    <li key={`p${i}`} className="items-center gap-x-2 flex flex-wrap justify-center gap-y-1.5 text-center w-full mb-1.5 md:flex-nowrap md:justify-start md:text-start">
                       <img src={GADGET_FOOTER_PHONE_ICON} alt="phone" className="w-4 h-4 object-contain" />
                       <a href={`tel:${p}`} className="text-sm leading-[26px] hover:text-black hover:no-underline">{p}</a>
                     </li>
                   ))}
                   {addresses.map((a, i) => (
-                    <li key={`a${i}`} className="items-center gap-x-2.5 flex flex-wrap justify-center gap-y-2.5 text-center w-full mb-2 md:flex-nowrap md:justify-start md:text-start">
+                    <li key={`a${i}`} className="items-center gap-x-2 flex flex-wrap justify-center gap-y-1.5 text-center w-full mb-1.5 md:flex-nowrap md:justify-start md:text-start">
                       <img src={GADGET_FOOTER_ADDRESS_ICON} alt="address" className="w-4 h-4 object-contain" />
                       <span className="text-sm leading-[26px]">{a}</span>
                     </li>
@@ -442,10 +442,10 @@ const GadgetFooter = memo(({ websiteConfig, logo }: { websiteConfig?: WebsiteCon
               {/* Quick Links */}
               {quickLinks.length > 0 && (
                 <div className="text-center md:text-start">
-                  <b className="text-xl font-semibold block tracking-[-0.3px] leading-[30px] mb-[15px]">Quick Links</b>
+                  <b className="text-xl font-semibold block tracking-[-0.3px] leading-[30px] mb-3">Quick Links</b>
                   <ul className="list-none pl-0">
                     {quickLinks.map((link, i) => (
-                      <li key={i} className="text-center py-[5px] md:text-start">
+                      <li key={i} className="text-center py-1 md:text-start">
                         <a href={link.url} className="text-zinc-800 inline-block hover:text-blue-600 hover:no-underline">{link.label}</a>
                       </li>
                     ))}
@@ -456,10 +456,10 @@ const GadgetFooter = memo(({ websiteConfig, logo }: { websiteConfig?: WebsiteCon
               {/* Useful Links */}
               {usefulLinks.length > 0 && (
                 <div className="text-center md:text-start">
-                  <b className="text-xl font-semibold block tracking-[-0.3px] leading-[30px] mb-[15px]">Useful Links</b>
+                  <b className="text-xl font-semibold block tracking-[-0.3px] leading-[30px] mb-3">Useful Links</b>
                   <ul className="list-none pl-0">
                     {usefulLinks.map((link, i) => (
-                      <li key={i} className="text-center py-[5px] md:text-start">
+                      <li key={i} className="text-center py-1 md:text-start">
                         <a href={link.url} className="text-zinc-800 inline-block hover:text-blue-600 hover:no-underline">{link.label}</a>
                       </li>
                     ))}
@@ -470,7 +470,7 @@ const GadgetFooter = memo(({ websiteConfig, logo }: { websiteConfig?: WebsiteCon
 
             {/* Copyright */}
             {!websiteConfig?.hideCopyright && (
-              <div className="border-t-indigo-300 flex justify-center mb-0 p-[15px] border-t md:px-[30px] md:py-[25px]">
+              <div className="border-t-indigo-300 flex justify-center mb-0 border-t px-3 py-3 md:px-6 md:py-4">
                 <b className="text-neutral-600 text-sm block leading-[22px] text-center">
                   Copyright © {new Date().getFullYear()} {storeName}
                   {websiteConfig?.showPoweredBy && (
@@ -485,20 +485,20 @@ const GadgetFooter = memo(({ websiteConfig, logo }: { websiteConfig?: WebsiteCon
 
       {/* Mobile Footer */}
       <div className="block md:hidden">
-        <div className="bg-white mt-3">
+        <div className="bg-white mt-2">
           <div className="max-w-[1340px] w-[95%] mx-auto">
-            <div className="gap-x-4 grid grid-cols-[1fr] gap-y-4 p-[12px]">
+            <div className="gap-x-3 grid grid-cols-[1fr] gap-y-3 p-[10px]">
               <div className="text-center w-full">
-                <div className="flex justify-center mb-[15px]">
+                <div className="flex justify-center mb-3">
                   {logo ? (
                     <img alt={storeName} src={normalizeImageUrl(logo)} className="block h-10 max-w-[180px] object-contain w-full" />
                   ) : (
                     <span className="text-xl font-bold">{storeName}</span>
                   )}
                 </div>
-                {description && <p className="text-sm text-center mb-3">{description}</p>}
+                {description && <p className="text-sm text-center mb-2">{description}</p>}
                 {socialLinks.length > 0 && (
-                  <div className="flex justify-center gap-2 mb-3">
+                  <div className="flex justify-center gap-2 mb-2">
                     {socialLinks.map((s, i) => {
                       const platform = String(s.platform || '').toLowerCase();
                       const iconSrc = GADGET_SOCIAL_ICON_URLS[platform] || GADGET_SOCIAL_ICON_URLS.facebook;
@@ -515,22 +515,22 @@ const GadgetFooter = memo(({ websiteConfig, logo }: { websiteConfig?: WebsiteCon
               {/* Contact */}
               {(emails.length > 0 || phones.length > 0 || addresses.length > 0) && (
                 <div className="text-center">
-                  <b className="text-base font-semibold block mb-2">Contact Us</b>
+                  <b className="text-base font-semibold block mb-1.5">Contact Us</b>
                   <ul className="list-none pl-0">
                     {emails.map((e, i) => (
-                      <li key={`e${i}`} className="text-sm mb-1 flex items-center justify-center gap-2">
+                      <li key={`e${i}`} className="text-sm mb-0.5 flex items-center justify-center gap-1.5">
                         <img src={GADGET_FOOTER_EMAIL_ICON} alt="email" className="w-4 h-4 object-contain" />
                         <span>{e}</span>
                       </li>
                     ))}
                     {phones.map((p, i) => (
-                      <li key={`p${i}`} className="text-sm mb-1 flex items-center justify-center gap-2">
+                      <li key={`p${i}`} className="text-sm mb-0.5 flex items-center justify-center gap-1.5">
                         <img src={GADGET_FOOTER_PHONE_ICON} alt="phone" className="w-4 h-4 object-contain" />
                         <a href={`tel:${p}`} className="hover:no-underline">{p}</a>
                       </li>
                     ))}
                     {addresses.map((a, i) => (
-                      <li key={`a${i}`} className="text-sm mb-1 flex items-center justify-center gap-2">
+                      <li key={`a${i}`} className="text-sm mb-0.5 flex items-center justify-center gap-1.5">
                         <img src={GADGET_FOOTER_ADDRESS_ICON} alt="address" className="w-4 h-4 object-contain" />
                         <span>{a}</span>
                       </li>
@@ -540,10 +540,10 @@ const GadgetFooter = memo(({ websiteConfig, logo }: { websiteConfig?: WebsiteCon
               )}
               {/* Quick Links */}
               <div className="text-center">
-                <b className="text-base font-semibold block mb-2">Quick Links</b>
+                <b className="text-base font-semibold block mb-1.5">Quick Links</b>
                 <ul className="list-none pl-0">
                   {quickLinks.map((link, i) => (
-                    <li key={i} className="py-1">
+                    <li key={i} className="py-0.5">
                       <a href={link.url} className="text-sm text-zinc-800 hover:text-lime-600 hover:no-underline">{link.label}</a>
                     </li>
                   ))}
@@ -551,10 +551,10 @@ const GadgetFooter = memo(({ websiteConfig, logo }: { websiteConfig?: WebsiteCon
               </div>
               {/* Useful Links */}
               <div className="text-center">
-                <b className="text-base font-semibold block mb-2">Useful Links</b>
+                <b className="text-base font-semibold block mb-1.5">Useful Links</b>
                 <ul className="list-none pl-0">
                   {usefulLinks.map((link, i) => (
-                    <li key={i} className="py-1">
+                    <li key={i} className="py-0.5">
                       <a href={link.url} className="text-sm text-zinc-800 hover:text-lime-600 hover:no-underline">{link.label}</a>
                     </li>
                   ))}
@@ -562,7 +562,7 @@ const GadgetFooter = memo(({ websiteConfig, logo }: { websiteConfig?: WebsiteCon
               </div>
             </div>
             {!websiteConfig?.hideCopyright && (
-              <div className="border-t-indigo-300 flex justify-center mb-6 p-[12px] border-t">
+              <div className="border-t-indigo-300 flex justify-center mb-2 border-t px-3 py-2.5">
                 <b className="text-neutral-600 text-sm block leading-[22px] text-center">
                   Copyright © {new Date().getFullYear()} {storeName}
                 </b>
@@ -590,9 +590,9 @@ const GadgetProductSection = memo(({ title, products, expiresAt, onProductClick,
 
   return (
     <div>
-      <div className="items-center flex-col max-w-[1340px] w-full mx-0 px-[12px] md:flex-row md:w-[95%] md:mx-auto md:px-0">
-        <div className="items-center flex justify-between mt-4 mb-2.5">
-          <div className="items-center gap-x-[7px] flex flex-col justify-center gap-y-[7px] md:gap-x-3 md:flex-row md:gap-y-3">
+      <div className="items-center flex-col max-w-[1340px] w-full mx-0 px-[10px] md:flex-row md:w-[95%] md:mx-auto md:px-0">
+        <div className="items-center flex justify-between mt-2.5 mb-2">
+          <div className="items-center gap-x-[5px] flex flex-col justify-center gap-y-[5px] md:gap-x-2 md:flex-row md:gap-y-2">
             <h2 className="text-neutral-900 text-base font-bold leading-[18px] md:text-neutral-700 md:text-[22px] md:font-medium md:leading-[normal] whitespace-nowrap">
               {title}
             </h2>
@@ -603,7 +603,7 @@ const GadgetProductSection = memo(({ title, products, expiresAt, onProductClick,
             <ChevronRight size={20} className="ml-0 md:ml-2" />
           </span>
         </div>
-        <div className="gap-x-[7px] grid grid-cols-[repeat(2,1fr)] gap-y-[7px] mb-5 md:gap-x-3 md:grid-cols-[repeat(5,1fr)] md:gap-y-3 md:mb-6">
+        <div className="gap-x-[6px] grid grid-cols-[repeat(2,1fr)] gap-y-[6px] mb-3 md:gap-x-[10px] md:grid-cols-[repeat(5,1fr)] md:gap-y-[10px] md:mb-4">
           {products.map((product) => (
             <GadgetProductCard
               key={product.id}
@@ -663,13 +663,13 @@ export const GadgetsThemePage: React.FC<GadgetsThemeProps> = memo(({
     <main className="text-black text-base font-normal bg-gray-100 overflow-x-hidden scroll-smooth w-full font-sans md:bg-transparent">
       <div>
         {/* Hero Carousel */}
-        <div className="min-h-[150px] mb-8 md:min-h-0 md:mb-0">
+        <div className="min-h-[118px] mb-3 md:min-h-0 md:mb-0">
           <GadgetHero websiteConfig={websiteConfig} />
 
           {/* Categories */}
           {activeCategories.length > 0 && (
             <div>
-              <div className="bg-white max-w-[1340px] w-[92%] mt-0 mx-auto pt-0 pb-[8px] px-[10px] rounded-[10px] md:bg-transparent md:w-[95%] md:mt-1.5 md:pt-2 md:pb-0 md:px-0 md:rounded-none">
+              <div className="bg-white max-w-[1340px] w-[92%] mt-0 mx-auto pt-0 pb-[6px] px-[8px] rounded-[10px] md:bg-transparent md:w-[95%] md:mt-1 md:pt-1 md:pb-0 md:px-0 md:rounded-none">
                 <div className="items-center flex h-[38px] justify-between leading-[38px]">
                   <h2 className="text-neutral-900 text-base font-bold leading-[18px] md:text-neutral-700 md:text-[22px] md:font-medium md:leading-[38px] whitespace-nowrap">
                     Categories
@@ -679,7 +679,7 @@ export const GadgetsThemePage: React.FC<GadgetsThemeProps> = memo(({
                     <ChevronRight size={20} className="ml-0 md:ml-2" />
                   </span>
                 </div>
-                <div className="gap-x-[7px] grid grid-cols-[repeat(2,1fr)] gap-y-[7px] md:gap-x-3 md:grid-cols-[repeat(8,1fr)] md:gap-y-3">
+                <div className="gap-x-[6px] grid grid-cols-[repeat(2,1fr)] gap-y-[6px] md:gap-x-[10px] md:grid-cols-[repeat(8,1fr)] md:gap-y-[10px]">
                   {activeCategories.map((cat: any) => (
                     <GadgetCategoryCard
                       key={cat.id || cat.name}

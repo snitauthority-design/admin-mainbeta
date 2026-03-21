@@ -605,6 +605,49 @@ router.post('/pathao/create-order', async (req: Request, res: Response) => {
   }
 });
 
+router.post('/pathao/status', async (req: Request, res: Response) => {
+  try {
+    const tenantId = req.headers['x-tenant-id'] as string || 'temp';
+    const { apiKey, secretKey, username, password, consignmentId } = req.body;
+
+    if (!apiKey || !secretKey || !username || !password) {
+      return res.status(400).json({ error: 'Credentials are required' });
+    }
+    if (!consignmentId) {
+      return res.status(400).json({ error: 'Consignment ID is required' });
+    }
+
+    const token = await getPathaoToken(apiKey, secretKey, username, password, tenantId);
+
+    const response = await fetch(`${PATHAO_BASE_URL}/aladdin/api/v1/orders/${encodeURIComponent(String(consignmentId))}/info`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
+    });
+
+    const responseText = await response.text();
+
+    let data;
+    try {
+      data = JSON.parse(responseText);
+    } catch {
+      return res.status(502).json({ error: 'Pathao API returned an invalid response' });
+    }
+
+    if (!response.ok) {
+      return res.status(response.status).json({ error: data?.message || data?.error || 'Failed to fetch Pathao order status', details: data });
+    }
+
+    res.json(data);
+  } catch (error: any) {
+    console.error('[Pathao] Status check error:', error);
+    res.status(500).json({ error: error.message || 'Failed to fetch Pathao order status' });
+  }
+});
+
 router.post('/pathao/price-calculation', async (req: Request, res: Response) => {
   try {
     const tenantId = req.headers['x-tenant-id'] as string || 'temp';

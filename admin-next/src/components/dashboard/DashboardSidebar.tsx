@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   LayoutDashboard,
   ShoppingCart,
@@ -58,6 +58,8 @@ const itemResourceMap: Record<string, string> = {
   'dashboard': 'dashboard',
   'orders': 'orders',
   'products': 'products',
+  'product-upload': 'products',
+  'product-media': 'products',
   'catalog': 'catalog',
   'catalog_categories': 'catalog',
   'catalog_subcategories': 'catalog',
@@ -98,7 +100,17 @@ const menuItems: SidebarItem[] = [
       { id: 'incomplete_orders', label: 'Incomplete Orders', icon: <ChevronRight className="w-4 h-4" /> },
     ]
   },
-  { id: 'products', label: 'Products', icon: <img src="https://hdnfltv.com/image/nitimages/icon-park_ad-product.webp" alt="Products" className="w-5 h-5 object-contain" /> },
+  {
+    id: 'products',
+    label: 'Products',
+    icon: <img src="https://hdnfltv.com/image/nitimages/icon-park_ad-product.webp" alt="Products" className="w-5 h-5 object-contain" />,
+    hasDropdown: true,
+    children: [
+      { id: 'products', label: 'Manage Products', icon: <ChevronRight className="w-4 h-4" /> },
+      { id: 'product-upload', label: 'Add New Product', icon: <ChevronRight className="w-4 h-4" /> },
+      { id: 'product-media', label: 'Media Center', icon: <ChevronRight className="w-4 h-4" /> },
+    ]
+  },
   { 
     id: 'catalog', 
     label: 'Catalog', 
@@ -201,7 +213,17 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
         { id: 'incomplete_orders', label: 'Incomplete Orders', icon: <ChevronRight className="w-4 h-4" /> },
       ]
     },
-    { id: 'products', label: t('products'), icon: <img src="https://hdnfltv.com/image/nitimages/icon-park_ad-product.webp" alt="Products" className="w-5 h-5 object-contain" /> },
+    {
+      id: 'products',
+      label: t('products'),
+      icon: <img src="https://hdnfltv.com/image/nitimages/icon-park_ad-product.webp" alt="Products" className="w-5 h-5 object-contain" />,
+      hasDropdown: true,
+      children: [
+        { id: 'products', label: t('manage_products'), icon: <ChevronRight className="w-4 h-4" /> },
+        { id: 'product-upload', label: t('add_new_product'), icon: <ChevronRight className="w-4 h-4" /> },
+        { id: 'product-media', label: t('media_center'), icon: <ChevronRight className="w-4 h-4" /> },
+      ]
+    },
     { 
       id: 'catalog', 
       label: t('catalog'), 
@@ -243,6 +265,34 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
     { id: 'tutorial', label: t('tutorial'), icon: <img src="https://hdnfltv.com/image/nitimages/pasted_1770763376612.webp" alt="Tutorial" className="w-5 h-5 object-contain" /> },
   // eslint-disable-next-line react-hooks/exhaustive-deps
   ], [t]);
+
+  useEffect(() => {
+    const parentByChild: Record<string, string> = {
+      products: 'products',
+      all_orders: 'orders',
+      incomplete_orders: 'orders',
+      'product-upload': 'products',
+      'product-media': 'products',
+      catalog_categories: 'catalog',
+      catalog_subcategories: 'catalog',
+      catalog_childcategories: 'catalog',
+      catalog_brands: 'catalog',
+      catalog_tags: 'catalog',
+      website_info: 'website_content',
+      website_content_carousel: 'website_content',
+      website_content_banners: 'website_content',
+      website_content_popups: 'website_content',
+      chat_settings: 'website_content',
+      website_content_landing_page: 'website_content',
+    };
+
+    const parentId = parentByChild[activeItem];
+    if (!parentId) {
+      return;
+    }
+
+    setExpandedItems((prev) => (prev.includes(parentId) ? prev : [...prev, parentId]));
+  }, [activeItem]);
 
   // Filter menu items based on permissions
   const filteredMenuItems = useMemo(() => {
@@ -303,12 +353,15 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
     // For catalog, check if activeItem starts with 'catalog_'
     // For website_content, check if activeItem starts with 'website_content_'
     // For orders, check if activeItem is 'orders', 'all_orders', or 'incomplete_orders'
+    // For products, check if activeItem is 'products', 'product-upload', or 'product-media'
     const isActive = item.id === 'catalog' 
       ? activeItem.startsWith('catalog_') 
       : item.id === 'website_content'
         ? activeItem.startsWith('website_content_')
         : item.id === 'orders'
           ? activeItem === 'orders' || activeItem === 'all_orders' || activeItem === 'incomplete_orders'
+          : item.id === 'products'
+            ? activeItem === 'products' || activeItem === 'product-upload' || activeItem === 'product-media'
           : activeItem === item.id;
     
     const isExpanded = expandedItems.includes(item.id);

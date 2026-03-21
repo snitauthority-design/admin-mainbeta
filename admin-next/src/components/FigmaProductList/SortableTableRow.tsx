@@ -2,11 +2,12 @@ import React from 'react';
 import { MoreVertical, Edit, Copy, Eye, Trash2, GripVertical } from 'lucide-react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Product } from './types';
-import { normalizeImageUrl } from './utils';
+import { Product, ProductCourierStatus } from './types';
+import { normalizeImageUrl, getCourierBadgeClassName } from './utils';
 
 export interface SortableTableRowProps {
   product: Product;
+  courierStatus?: ProductCourierStatus;
   productKey: string;
   index: number;
   currentPage: number;
@@ -24,6 +25,7 @@ export interface SortableTableRowProps {
 
 const SortableTableRow: React.FC<SortableTableRowProps> = ({
   product,
+  courierStatus,
   productKey,
   index,
   currentPage,
@@ -125,13 +127,23 @@ const SortableTableRow: React.FC<SortableTableRowProps> = ({
         {product.tag || (Array.isArray(product.tags) ? product.tags.join(', ') : '') || '-'}
       </td>
       <td className="px-4 py-3">
-        <span className={`px-[9px] py-0.5 rounded-[30px] text-[12px] font-medium ${
-          product.status === 'Active'
-            ? 'bg-[#c1ffbc] text-[#085e00]'
-            : 'bg-orange-100 text-orange-700'
-        }`}>
-          {product.status === 'Active' ? 'Publish' : 'Draft'}
-        </span>
+        <div className="flex flex-col items-start gap-1">
+          <span className={`px-[9px] py-0.5 rounded-[30px] text-[12px] font-medium ${
+            product.status === 'Active'
+              ? 'bg-[#c1ffbc] text-[#085e00]'
+              : 'bg-orange-100 text-orange-700'
+          }`}>
+            {product.status === 'Active' ? 'Publish' : 'Draft'}
+          </span>
+          {courierStatus && (
+            <span
+              title={`${courierStatus.provider} | ${courierStatus.trackingId}`}
+              className={`max-w-[180px] px-2 py-0.5 rounded-full text-[10px] font-medium truncate ${getCourierBadgeClassName(courierStatus.label)}`}
+            >
+              {courierStatus.provider}: {courierStatus.label}
+            </span>
+          )}
+        </div>
       </td>
       <td className="px-4 py-3 text-center">
         <div className="relative" data-dropdown>

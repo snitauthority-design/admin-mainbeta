@@ -8,7 +8,7 @@ const getApiBaseUrl = () => {
       return window.location.origin;
     }
   }
-  return import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001';
+  return  process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5001';
 };
 
 const sanitizePhone = (value?: string) => {
@@ -54,6 +54,65 @@ export interface FraudCheckResult {
   remarks?: string;
   raw: any;
 }
+
+export interface CourierStatusResult {
+  provider: 'Steadfast' | 'Pathao';
+  trackingId: string;
+  status: string;
+  raw: any;
+}
+
+const titleCaseStatus = (value: string) => value
+  .replace(/[_-]+/g, ' ')
+  .replace(/\s+/g, ' ')
+  .trim()
+  .replace(/\b\w/g, (char) => char.toUpperCase());
+
+const pickCourierStatus = (payload: any): string => {
+  const candidates = [
+    payload?.delivery_status,
+    payload?.deliveryStatus,
+    payload?.order_status,
+    payload?.orderStatus,
+    payload?.status,
+    payload?.current_status,
+    payload?.currentStatus,
+    payload?.state,
+    payload?.consignment?.delivery_status,
+    payload?.consignment?.status,
+    payload?.data?.delivery_status,
+    payload?.data?.order_status,
+    payload?.data?.status,
+    Array.isArray(payload?.data) ? payload.data[0]?.delivery_status : undefined,
+    Array.isArray(payload?.data) ? payload.data[0]?.status : undefined,
+  ];
+
+  const status = candidates.find((value) => typeof value === 'string' && value.trim());
+  return status ? titleCaseStatus(status) : 'Status Unavailable';
+};
+
+const resolveTrackingId = (order: Order): string => {
+  if (order.trackingId) {
+    return order.trackingId;
+  }
+
+  if (!order.courierMeta) {
+    return '';
+  }
+
+  const candidates = [
+    order.courierMeta.tracking_id,
+    order.courierMeta.trackingCode,
+    order.courierMeta.consignment_id,
+    order.courierMeta.invoice,
+    order.courierMeta.data?.consignment_id,
+    order.courierMeta.data?.tracking_code,
+    order.courierMeta.consignment?.tracking_code,
+  ];
+
+  const match = candidates.find((value) => typeof value === 'string' || typeof value === 'number');
+  return match ? String(match) : '';
+};
 
 export class CourierService {
   // ========== STEADFAST ==========
@@ -145,6 +204,43 @@ export class CourierService {
     } catch (error) {
       throw error instanceof Error ? error : new Error('Unexpected error during Steadfast fraud check.');
     }
+  }
+
+  static async getSteadfastStatus(order: Order, config: CourierConfig): Promise<CourierStatusResult> {
+    if (!config.apiKey || !config.secretKey) {
+      throw new Error('Steadfast credentials are missing.');
+    }
+
+    const trackingId = resolveTrackingId(order);
+    if (!trackingId) {
+      throw new Error('Steadfast tracking ID is missing.');
+    }
+
+    const response = await fetch(`${getApiBaseUrl()}/api/courier/steadfast/status`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({
+        apiKey: config.apiKey.trim(),
+        secretKey: config.secretKey.trim(),
+        consignmentId: trackingId,
+        trackingCode: trackingId,
+        invoice: trackingId,
+      })
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(data?.error || data?.message || 'Failed to fetch Steadfast status.');
+    }
+
+    return {
+      provider: 'Steadfast',
+      trackingId,
+      status: pickCourierStatus(data),
+      raw: data,
+    };
   }
 
   // ========== PATHAO ==========
@@ -265,5 +361,45 @@ export class CourierService {
     } catch {
       return null;
     }
+  }
+
+  static async getPathaoStatus(order: Order, config: PathaoConfig, tenantId: string): Promise<CourierStatusResult> {
+    if (!config.apiKey || !config.secretKey || !config.username || !config.password) {
+      throw new Error('Pathao credentials are missing.');
+    }
+
+    const trackingId = resolveTrackingId(order);
+    if (!trackingId) {
+      throw new Error('Pathao consignment ID is missing.');
+    }
+
+    const response = await fetch(`${getApiBaseUrl()}/api/courier/pathao/status`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Tenant-Id': tenantId,
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        apiKey: config.apiKey.trim(),
+        secretKey: config.secretKey.trim(),
+        username: config.username.trim(),
+        password: config.password.trim(),
+        consignmentId: trackingId,
+      })
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(data?.error || data?.message || 'Failed to fetch Pathao status.');
+    }
+
+    return {
+      provider: 'Pathao',
+      trackingId,
+      status: pickCourierStatus(data),
+      raw: data,
+    };
   }
 }

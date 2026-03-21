@@ -33,3 +33,12 @@ export const stripHtmlTags = (html: string): string => {
 
 /** Get the store front URL for a given subdomain (SSR-safe) */
 export { getStoreUrl } from '../../utils/appHelpers';
+
+/** Get Tailwind className for a courier status badge based on status label */
+export const getCourierBadgeClassName = (label: string): string => {
+  const normalized = label.toLowerCase();
+  if (normalized.includes('deliver')) return 'bg-emerald-50 text-emerald-700 border border-emerald-200';
+  if (normalized.includes('cancel') || normalized.includes('return') || normalized.includes('fail')) return 'bg-rose-50 text-rose-700 border border-rose-200';
+  if (normalized.includes('transit') || normalized.includes('pickup') || normalized.includes('process')) return 'bg-sky-50 text-sky-700 border border-sky-200';
+  return 'bg-violet-50 text-violet-700 border border-violet-200';
+};

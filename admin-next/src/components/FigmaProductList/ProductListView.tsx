@@ -2,8 +2,8 @@ import React from 'react';
 import { Search, GripVertical, Eye, Edit, MoreVertical } from 'lucide-react';
 import { DndContext, closestCenter, DragEndEvent, useSensors, useSensor, PointerSensor } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { Product } from './types';
-import { normalizeImageUrl } from './utils';
+import { Product, ProductCourierStatus } from './types';
+import { normalizeImageUrl, getCourierBadgeClassName } from './utils';
 import SortableTableRow from './SortableTableRow';
 
 interface ProductListViewProps {
@@ -13,6 +13,7 @@ interface ProductListViewProps {
   currentPage: number;
   productsPerPage: number;
   storeBaseUrl: string;
+  courierStatuses?: Record<number, ProductCourierStatus>;
   getProductKey: (product: Product, idx: number) => string;
   onSelectAll: () => void;
   onSelectProduct: (key: string) => void;
@@ -31,6 +32,7 @@ const ProductListView: React.FC<ProductListViewProps> = ({
   currentPage,
   productsPerPage,
   storeBaseUrl,
+  courierStatuses = {},
   getProductKey,
   onSelectAll,
   onSelectProduct,
@@ -73,7 +75,7 @@ const ProductListView: React.FC<ProductListViewProps> = ({
                   <th className="hidden lg:table-cell px-4 py-3 text-left font-medium text-black dark:text-white text-[16px]">Priority</th>
                   <th className="hidden md:table-cell px-4 py-3 text-left font-medium text-black dark:text-white text-[16px]">SKU</th>
                   <th className="hidden lg:table-cell px-4 py-3 text-left font-medium text-black dark:text-white text-[16px]">Tags</th>
-                  <th className="px-4 py-3 text-left font-medium text-black dark:text-white text-[16px]">Status</th>
+                  <th className="px-4 py-3 text-left font-medium text-black dark:text-white text-[16px]">Status / Courier</th>
                   <th className="px-4 py-3 text-center font-medium text-black dark:text-white text-[16px]">Action</th>
                 </tr>
               </thead>
@@ -84,6 +86,7 @@ const ProductListView: React.FC<ProductListViewProps> = ({
                     <SortableTableRow
                       key={productKey}
                       product={product}
+                      courierStatus={courierStatuses[product.id]}
                       productKey={productKey}
                       index={index}
                       currentPage={currentPage}
@@ -138,6 +141,11 @@ const ProductListView: React.FC<ProductListViewProps> = ({
                       <span className={`inline-block mt-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${product.status === 'Active' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'}`}>
                         {product.status === 'Active' ? 'Active' : 'Inactive'}
                       </span>
+                      {courierStatuses[product.id] && (
+                        <p className={`mt-1 text-[10px] font-medium truncate ${getCourierBadgeClassName(courierStatuses[product.id].label).split(' border ')[0]}`}>
+                          {courierStatuses[product.id].provider}: {courierStatuses[product.id].label}
+                        </p>
+                      )}
                     </div>
                   </div>
                   <div className="relative" data-dropdown>

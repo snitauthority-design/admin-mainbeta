@@ -129,6 +129,7 @@ interface Variant {
 }
 
 export interface Product {
+  _id: string;
   condition: string;
   coins: ReactNode;
   sold: ReactNode;

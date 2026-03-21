@@ -4,6 +4,7 @@ import { FigmaProductListProps, Product } from './types';
 import { getStoreUrl } from './utils';
 import { useProductOrder } from './hooks/useProductOrder';
 import { useProductImport } from './hooks/useProductImport';
+import { useCourierStatus } from './hooks/useCourierStatus';
 import ProductHeader from './ProductHeader';
 import ProductFilters from './ProductFilters';
 import BulkActionBar from './BulkActionBar';
@@ -16,8 +17,11 @@ import ProductContextMenu from './ProductContextMenu';
 
 const FigmaProductList: React.FC<FigmaProductListProps> = ({
   products: propProducts = [],
+  orders = [],
+  courierConfig,
   categories = [],
   brands = [],
+  title,
   onAddProduct,
   onEditProduct,
   onDeleteProduct,
@@ -30,6 +34,7 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
   onBulkImport,
   onQuickUpdate,
   tags: availableTags = [],
+  tenantId,
   tenantSubdomain,
   productDisplayOrder = [],
   onProductOrderChange,
@@ -80,6 +85,8 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
     onBulkImport,
     importInputRef,
   });
+
+  const courierStatuses = useCourierStatus({ orders, tenantId, courierConfig });
 
   // ── Derived data ──────────────────────────────────────────────────────────
   const storeBaseUrl = getStoreUrl(tenantSubdomain);
@@ -246,6 +253,7 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
 
       {/* Header */}
       <ProductHeader
+        title={title}
         searchQuery={searchQuery}
         viewMode={viewMode}
         showViewDropdown={showViewDropdown}
@@ -311,6 +319,7 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
           selectedIds={selectedIds}
           openDropdownId={openDropdownId}
           storeBaseUrl={storeBaseUrl}
+          courierStatuses={courierStatuses}
           getProductKey={getProductKey}
           onSelectProduct={handleSelectProduct}
           onSetDropdownId={setOpenDropdownId}
@@ -324,6 +333,7 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
         <ProductGridSmall
           products={paginatedProducts}
           selectedIds={selectedIds}
+          courierStatuses={courierStatuses}
           getProductKey={getProductKey}
           onSelectProduct={handleSelectProduct}
           onEditProduct={onEditProduct}
@@ -338,6 +348,7 @@ const FigmaProductList: React.FC<FigmaProductListProps> = ({
           currentPage={currentPage}
           productsPerPage={productsPerPage}
           storeBaseUrl={storeBaseUrl}
+          courierStatuses={courierStatuses}
           getProductKey={getProductKey}
           onSelectAll={handleSelectAll}
           onSelectProduct={handleSelectProduct}
