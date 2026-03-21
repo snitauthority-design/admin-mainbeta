@@ -228,9 +228,9 @@ const AdminPurchase: React.FC<AdminPurchaseProps> = ({ products = [], tenantId, 
 
   const filteredProducts = useMemo(() => {
     if (!searchQuery.trim()) return productsList;
-    const q = searchQuery.toLowerCase();
+    const lowerQuery = searchQuery.toLowerCase();
     return productsList.filter(p =>
-      p.name.toLowerCase().includes(q) || p.sku?.toLowerCase().includes(q) || p.category?.toLowerCase().includes(q)
+      p.name.toLowerCase().includes(lowerQuery) || p.sku?.toLowerCase().includes(lowerQuery) || p.category?.toLowerCase().includes(lowerQuery)
     );
   }, [productsList, searchQuery]);
 
@@ -277,7 +277,7 @@ const AdminPurchase: React.FC<AdminPurchaseProps> = ({ products = [], tenantId, 
   const removeFromCart = (productId: number) => setCart(prev => prev.filter(i => i.productId !== productId));
   const clearCart = () => { setCart([]); setDiscount(0); setDeliveryCharge(0); };
 
-  const cartTotal = useMemo(() => cart.reduce((s, i) => s + i.total, 0), [cart]);
+  const cartTotal = useMemo(() => cart.reduce((sum, item) => sum + item.total, 0), [cart]);
   const grandTotal = useMemo(() => cartTotal - (Number(discount) || 0) + (Number(deliveryCharge) || 0), [cartTotal, discount, deliveryCharge]);
   const getCartCount = (productId: number) => cart.find(i => i.productId === productId)?.quantity || 0;
 
@@ -440,14 +440,14 @@ const AdminPurchase: React.FC<AdminPurchaseProps> = ({ products = [], tenantId, 
 
   // ─── Computed ───────────────────────────────────────────────────────────
 
-  const totalPurchaseAmount = useMemo(() => purchaseRecords.reduce((s, r) => s + (r.totalAmount || 0), 0), [purchaseRecords]);
+  const totalPurchaseAmount = useMemo(() => purchaseRecords.reduce((sum, record) => sum + (record.totalAmount || 0), 0), [purchaseRecords]);
 
   const groupedPurchases = useMemo(() => {
     const groups: { [key: string]: PurchaseRecord[] } = {};
-    purchaseRecords.forEach(r => {
-      const d = new Date(r.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-      if (!groups[d]) groups[d] = [];
-      groups[d].push(r);
+    purchaseRecords.forEach(record => {
+      const dateKey = new Date(record.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      if (!groups[dateKey]) groups[dateKey] = [];
+      groups[dateKey].push(record);
     });
     return groups;
   }, [purchaseRecords]);
@@ -478,7 +478,7 @@ const AdminPurchase: React.FC<AdminPurchaseProps> = ({ products = [], tenantId, 
           className={`p-2 border rounded-lg ${showBarcodeInput ? 'border-[#1E90FF] bg-blue-50 text-[#1E90FF]' : 'hover:bg-gray-50'}`}>
           <ScanLine className="w-4 h-4" />
         </button>
-        <button onClick={() => { const refreshData = async () => { if (tenantId) setProductsList((await DataService.getProducts(tenantId)) || []); }; refreshData(); }}
+        <button onClick={() => { if (tenantId) DataService.getProducts(tenantId).then(data => setProductsList(data || [])); }}
           className="p-2 border rounded-lg hover:bg-gray-50">
           <RefreshCw className="w-4 h-4" />
         </button>
@@ -664,7 +664,7 @@ const AdminPurchase: React.FC<AdminPurchaseProps> = ({ products = [], tenantId, 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Date of Purchase</label>
               <input type="date" value={paymentForm.dateOfPurchase}
-                onChange={e => setPaymentForm(p => ({ ...p, dateOfPurchase: e.target.value }))}
+                onChange={e => setPaymentForm(prev => ({ ...prev, dateOfPurchase: e.target.value }))}
                 className="w-full px-3 py-2.5 border rounded-lg text-sm" />
             </div>
 
@@ -677,20 +677,20 @@ const AdminPurchase: React.FC<AdminPurchaseProps> = ({ products = [], tenantId, 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Cash Paid <span className="text-red-500">*</span></label>
                 <input type="number" value={paymentForm.cashPaid}
-                  onChange={e => setPaymentForm(p => ({ ...p, cashPaid: Number(e.target.value) || 0 }))}
+                  onChange={e => setPaymentForm(prev => ({ ...prev, cashPaid: Number(e.target.value) || 0 }))}
                   className="w-full px-3 py-2.5 border rounded-lg text-sm" placeholder="0" />
               </div>
             )}
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Note</label>
-              <input type="text" value={paymentForm.note} onChange={e => setPaymentForm(p => ({ ...p, note: e.target.value }))}
+              <input type="text" value={paymentForm.note} onChange={e => setPaymentForm(prev => ({ ...prev, note: e.target.value }))}
                 placeholder="Note" className="w-full px-3 py-2.5 border rounded-lg text-sm" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Supplier Name <span className="text-red-500">*</span></label>
               <div className="relative">
-                <input type="text" value={paymentForm.supplierName} onChange={e => setPaymentForm(p => ({ ...p, supplierName: e.target.value }))}
+                <input type="text" value={paymentForm.supplierName} onChange={e => setPaymentForm(prev => ({ ...prev, supplierName: e.target.value }))}
                   placeholder="Supplier Name" className="w-full px-3 py-2.5 border rounded-lg pr-9 text-sm" />
                 <User className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               </div>
@@ -698,44 +698,44 @@ const AdminPurchase: React.FC<AdminPurchaseProps> = ({ products = [], tenantId, 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Mobile Number <span className="text-red-500">*</span></label>
               <div className="flex gap-2">
-                <select value={paymentForm.countryCode} onChange={e => setPaymentForm(p => ({ ...p, countryCode: e.target.value }))}
+                <select value={paymentForm.countryCode} onChange={e => setPaymentForm(prev => ({ ...prev, countryCode: e.target.value }))}
                   className="px-2 py-2.5 border rounded-lg bg-white text-sm">
                   <option value="+88">🇧🇩 +88</option>
                   <option value="+91">🇮🇳 +91</option>
                   <option value="+1">🇺🇸 +1</option>
                 </select>
                 <input type="text" value={paymentForm.mobileNumber}
-                  onChange={e => setPaymentForm(p => ({ ...p, mobileNumber: e.target.value }))}
+                  onChange={e => setPaymentForm(prev => ({ ...prev, mobileNumber: e.target.value }))}
                   placeholder="XXXXXXXXXXX" className="flex-1 px-3 py-2.5 border rounded-lg text-sm" />
               </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
-              <input type="text" value={paymentForm.address} onChange={e => setPaymentForm(p => ({ ...p, address: e.target.value }))}
+              <input type="text" value={paymentForm.address} onChange={e => setPaymentForm(prev => ({ ...prev, address: e.target.value }))}
                 placeholder="Address" className="w-full px-3 py-2.5 border rounded-lg text-sm" />
             </div>
 
             {/* Toggles */}
             <div className="flex items-center justify-between py-2">
               <span className="text-sm">Custom Invoice Number</span>
-              <Toggle on={paymentForm.customInvoiceNumber} onToggle={() => setPaymentForm(p => ({ ...p, customInvoiceNumber: !p.customInvoiceNumber }))} />
+              <Toggle on={paymentForm.customInvoiceNumber} onToggle={() => setPaymentForm(prev => ({ ...prev, customInvoiceNumber: !p.customInvoiceNumber }))} />
             </div>
             {paymentForm.customInvoiceNumber && (
-              <input type="text" value={paymentForm.invoiceNumber} onChange={e => setPaymentForm(p => ({ ...p, invoiceNumber: e.target.value }))}
+              <input type="text" value={paymentForm.invoiceNumber} onChange={e => setPaymentForm(prev => ({ ...prev, invoiceNumber: e.target.value }))}
                 placeholder="Invoice Number" className="w-full px-3 py-2.5 border rounded-lg text-sm" />
             )}
             <div className="flex items-center justify-between py-2">
               <span className="text-sm">Employee Information</span>
-              <Toggle on={paymentForm.employeeInfo} onToggle={() => setPaymentForm(p => ({ ...p, employeeInfo: !p.employeeInfo }))} />
+              <Toggle on={paymentForm.employeeInfo} onToggle={() => setPaymentForm(prev => ({ ...prev, employeeInfo: !p.employeeInfo }))} />
             </div>
             {paymentForm.employeeInfo && (
               <>
                 <div className="relative">
-                  <input type="text" value={paymentForm.employeeName} onChange={e => setPaymentForm(p => ({ ...p, employeeName: e.target.value }))}
+                  <input type="text" value={paymentForm.employeeName} onChange={e => setPaymentForm(prev => ({ ...prev, employeeName: e.target.value }))}
                     placeholder="Employee Name" className="w-full px-3 py-2.5 border rounded-lg pr-9 text-sm" />
                   <User className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 </div>
-                <input type="text" value={paymentForm.employeeNumber} onChange={e => setPaymentForm(p => ({ ...p, employeeNumber: e.target.value }))}
+                <input type="text" value={paymentForm.employeeNumber} onChange={e => setPaymentForm(prev => ({ ...prev, employeeNumber: e.target.value }))}
                   placeholder="Employee Number" className="w-full px-3 py-2.5 border rounded-lg text-sm" />
               </>
             )}
@@ -769,10 +769,10 @@ const AdminPurchase: React.FC<AdminPurchaseProps> = ({ products = [], tenantId, 
 
       <div className="flex items-center gap-2 px-3 py-2 border-b">
         <input type="date" className="flex-1 px-2 py-1.5 border rounded-lg text-xs" value={dateRange.start}
-          onChange={e => setDateRange(p => ({ ...p, start: e.target.value }))} />
+          onChange={e => setDateRange(prev => ({ ...prev, start: e.target.value }))} />
         <span className="text-xs text-gray-400">to</span>
         <input type="date" className="flex-1 px-2 py-1.5 border rounded-lg text-xs" value={dateRange.end}
-          onChange={e => setDateRange(p => ({ ...p, end: e.target.value }))} />
+          onChange={e => setDateRange(prev => ({ ...prev, end: e.target.value }))} />
       </div>
 
       <div className="flex-1 overflow-y-auto p-3">
@@ -944,34 +944,34 @@ const AdminPurchase: React.FC<AdminPurchaseProps> = ({ products = [], tenantId, 
           </div>
           <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
 
-          <input type="text" value={newProduct.name} onChange={e => setNewProduct(p => ({ ...p, name: e.target.value }))}
+          <input type="text" value={newProduct.name} onChange={e => setNewProduct(prev => ({ ...prev, name: e.target.value }))}
             placeholder="Product Name *" className="w-full px-3 py-2.5 border rounded-lg text-sm" />
-          <input type="number" value={newProduct.currentStock} onChange={e => setNewProduct(p => ({ ...p, currentStock: Number(e.target.value) || 0 }))}
+          <input type="number" value={newProduct.currentStock} onChange={e => setNewProduct(prev => ({ ...prev, currentStock: Number(e.target.value) || 0 }))}
             placeholder="Stock" className="w-full px-3 py-2.5 border rounded-lg text-sm" />
           <div className="grid grid-cols-2 gap-3">
-            <input type="number" value={newProduct.purchasePrice} onChange={e => setNewProduct(p => ({ ...p, purchasePrice: Number(e.target.value) || 0 }))}
+            <input type="number" value={newProduct.purchasePrice} onChange={e => setNewProduct(prev => ({ ...prev, purchasePrice: Number(e.target.value) || 0 }))}
               placeholder="Purchase Price" className="px-3 py-2.5 border rounded-lg text-sm" />
-            <input type="number" value={newProduct.sellPrice} onChange={e => setNewProduct(p => ({ ...p, sellPrice: Number(e.target.value) || 0 }))}
+            <input type="number" value={newProduct.sellPrice} onChange={e => setNewProduct(prev => ({ ...prev, sellPrice: Number(e.target.value) || 0 }))}
               placeholder="Sell Price *" className="px-3 py-2.5 border rounded-lg text-sm" />
           </div>
-          <select value={newProduct.unit} onChange={e => setNewProduct(p => ({ ...p, unit: e.target.value }))}
+          <select value={newProduct.unit} onChange={e => setNewProduct(prev => ({ ...prev, unit: e.target.value }))}
             className="w-full px-3 py-2.5 border rounded-lg text-sm">
             <option value="">Select Unit</option>
             {units.map(u => <option key={u} value={u}>{u}</option>)}
           </select>
           <div className="grid grid-cols-2 gap-3">
-            <select value={newProduct.category} onChange={e => setNewProduct(p => ({ ...p, category: e.target.value, subCategory: '' }))}
+            <select value={newProduct.category} onChange={e => setNewProduct(prev => ({ ...prev, category: e.target.value, subCategory: '' }))}
               className="px-3 py-2.5 border rounded-lg text-sm">
               <option value="">Category</option>
               {categoriesList.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
             </select>
-            <select value={newProduct.subCategory} onChange={e => setNewProduct(p => ({ ...p, subCategory: e.target.value }))}
+            <select value={newProduct.subCategory} onChange={e => setNewProduct(prev => ({ ...prev, subCategory: e.target.value }))}
               className="px-3 py-2.5 border rounded-lg text-sm" disabled={!newProduct.category}>
               <option value="">Sub-Category</option>
               {subCategories.map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
             </select>
           </div>
-          <textarea value={newProduct.description} onChange={e => setNewProduct(p => ({ ...p, description: e.target.value }))}
+          <textarea value={newProduct.description} onChange={e => setNewProduct(prev => ({ ...prev, description: e.target.value }))}
             placeholder="Description" rows={2} className="w-full px-3 py-2.5 border rounded-lg text-sm" />
         </div>
         <div className="p-3 border-t flex gap-3">
