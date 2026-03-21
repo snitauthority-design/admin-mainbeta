@@ -718,7 +718,7 @@ const AdminPurchase: React.FC<AdminPurchaseProps> = ({ products = [], tenantId, 
             {/* Toggles */}
             <div className="flex items-center justify-between py-2">
               <span className="text-sm">Custom Invoice Number</span>
-              <Toggle on={paymentForm.customInvoiceNumber} onToggle={() => setPaymentForm(prev => ({ ...prev, customInvoiceNumber: !p.customInvoiceNumber }))} />
+              <Toggle on={paymentForm.customInvoiceNumber} onToggle={() => setPaymentForm(prev => ({ ...prev, customInvoiceNumber: !prev.customInvoiceNumber }))} />
             </div>
             {paymentForm.customInvoiceNumber && (
               <input type="text" value={paymentForm.invoiceNumber} onChange={e => setPaymentForm(prev => ({ ...prev, invoiceNumber: e.target.value }))}
@@ -726,7 +726,7 @@ const AdminPurchase: React.FC<AdminPurchaseProps> = ({ products = [], tenantId, 
             )}
             <div className="flex items-center justify-between py-2">
               <span className="text-sm">Employee Information</span>
-              <Toggle on={paymentForm.employeeInfo} onToggle={() => setPaymentForm(prev => ({ ...prev, employeeInfo: !p.employeeInfo }))} />
+              <Toggle on={paymentForm.employeeInfo} onToggle={() => setPaymentForm(prev => ({ ...prev, employeeInfo: !prev.employeeInfo }))} />
             </div>
             {paymentForm.employeeInfo && (
               <>
