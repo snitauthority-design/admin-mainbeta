@@ -1,4 +1,10 @@
-'use client';
-// All Products page — reuses the store home with category/brand filters
-import HomePage from '../page';
-export default HomePage;
+import { Suspense } from 'react';
+import StoreHomeClient, { StorePageSkeleton } from '../store-home-client';
+
+export default function AllProductsPage() {
+	return (
+		<Suspense fallback={<StorePageSkeleton />}>
+			<StoreHomeClient />
+		</Suspense>
+	);
+}
