@@ -113,7 +113,7 @@ type ViewMode = 'select' | 'review' | 'cash' | 'due' | 'book' | 'invoice';
 const Header: React.FC<{ title: string; onBack?: () => void; right?: React.ReactNode }> = ({ title, onBack, right }) => (
   <div className="flex items-center justify-between px-4 py-3 text-white" style={{ background: ORANGE }}>
     <div className="flex items-center gap-3">
-      {onBack && <button onClick={onBack}><ArrowLeft className="w-5 h-5" /></button>}
+      {onBack && <button onClick={onBack} aria-label="Go back"><ArrowLeft className="w-5 h-5" /></button>}
       <h1 className="text-lg font-semibold">{title}</h1>
     </div>
     {right}
@@ -458,7 +458,7 @@ const AdminPurchase: React.FC<AdminPurchaseProps> = ({ products = [], tenantId, 
     <div className="flex flex-col h-full min-h-screen">
       <Header
         title="Purchase"
-        right={<button onClick={() => setView('book')} className="p-1"><BookOpen className="w-5 h-5" /></button>}
+        right={<button onClick={() => setView('book')} className="p-1" aria-label="View purchase book"><BookOpen className="w-5 h-5" /></button>}
       />
       <div className="px-4 py-2 bg-orange-50 text-sm font-medium text-gray-700">Select Products to Purchase</div>
 
@@ -474,12 +474,12 @@ const AdminPurchase: React.FC<AdminPurchaseProps> = ({ products = [], tenantId, 
             onKeyPress={e => e.key === 'Enter' && handleBarcodeScan()} autoFocus
             className="flex-1 px-3 py-2 border rounded-lg text-sm focus:ring-1 focus:ring-[#1E90FF]" />
         )}
-        <button onClick={() => setShowBarcodeInput(!showBarcodeInput)}
+        <button onClick={() => setShowBarcodeInput(!showBarcodeInput)} aria-label="Toggle barcode input"
           className={`p-2 border rounded-lg ${showBarcodeInput ? 'border-[#1E90FF] bg-blue-50 text-[#1E90FF]' : 'hover:bg-gray-50'}`}>
           <ScanLine className="w-4 h-4" />
         </button>
         <button onClick={() => { if (tenantId) DataService.getProducts(tenantId).then(data => setProductsList(data || [])); }}
-          className="p-2 border rounded-lg hover:bg-gray-50">
+          className="p-2 border rounded-lg hover:bg-gray-50" aria-label="Refresh products list">
           <RefreshCw className="w-4 h-4" />
         </button>
       </div>
@@ -558,7 +558,7 @@ const AdminPurchase: React.FC<AdminPurchaseProps> = ({ products = [], tenantId, 
                         <input type="text" value={item.sku} onChange={e => updateCartItem(item.productId, 'sku', e.target.value)}
                           className="mt-1 w-full px-2 py-1 border rounded text-xs text-gray-500" placeholder="SKU" />
                       </div>
-                      <button onClick={() => removeFromCart(item.productId)} className="ml-2 p-1 text-red-400 hover:text-red-600">
+                      <button onClick={() => removeFromCart(item.productId)} className="ml-2 p-1 text-red-400 hover:text-red-600" aria-label={`Remove ${item.productName}`}>
                         <X className="w-4 h-4" />
                       </button>
                     </div>
@@ -567,11 +567,11 @@ const AdminPurchase: React.FC<AdminPurchaseProps> = ({ products = [], tenantId, 
                         <label className="text-[10px] text-gray-500 font-medium">QTY</label>
                         <div className="flex items-center mt-0.5">
                           <button onClick={() => updateCartItem(item.productId, 'quantity', Math.max(1, item.quantity - 1))}
-                            className="p-1 border rounded-l-md hover:bg-gray-50"><Minus className="w-3 h-3" /></button>
+                            className="p-1 border rounded-l-md hover:bg-gray-50" aria-label="Decrease quantity"><Minus className="w-3 h-3" /></button>
                           <input type="number" min="1" value={item.quantity} onChange={e => updateCartItem(item.productId, 'quantity', Number(e.target.value) || 1)}
                             className="w-full px-1 py-1 border-y text-center text-xs" />
                           <button onClick={() => updateCartItem(item.productId, 'quantity', item.quantity + 1)}
-                            className="p-1 border rounded-r-md hover:bg-gray-50"><Plus className="w-3 h-3" /></button>
+                            className="p-1 border rounded-r-md hover:bg-gray-50" aria-label="Increase quantity"><Plus className="w-3 h-3" /></button>
                         </div>
                       </div>
                       <div>
@@ -764,7 +764,7 @@ const AdminPurchase: React.FC<AdminPurchaseProps> = ({ products = [], tenantId, 
 
       <div className="px-4 py-2 bg-orange-50 flex items-center justify-between">
         <span className="text-sm font-medium">Total: <span style={{ color: BLUE }}>৳{totalPurchaseAmount.toLocaleString()}</span></span>
-        <button onClick={loadPurchaseRecords} className="p-1.5 hover:bg-white/60 rounded-lg"><RefreshCw className="w-4 h-4 text-gray-600" /></button>
+        <button onClick={loadPurchaseRecords} className="p-1.5 hover:bg-white/60 rounded-lg" aria-label="Refresh purchase records"><RefreshCw className="w-4 h-4 text-gray-600" /></button>
       </div>
 
       <div className="flex items-center gap-2 px-3 py-2 border-b">
@@ -800,7 +800,7 @@ const AdminPurchase: React.FC<AdminPurchaseProps> = ({ products = [], tenantId, 
                       </span>
                       <div className="relative">
                         <button onClick={() => setMobileMenuOpen(mobileMenuOpen === record._id ? null : record._id)}
-                          className="p-1 hover:bg-gray-100 rounded">
+                          className="p-1 hover:bg-gray-100 rounded" aria-label="Show options">
                           <MoreVertical className="w-4 h-4 text-gray-400" />
                         </button>
                         {mobileMenuOpen === record._id && (
@@ -932,7 +932,7 @@ const AdminPurchase: React.FC<AdminPurchaseProps> = ({ products = [], tenantId, 
       <div className="fixed inset-y-0 right-0 w-full max-w-md bg-white shadow-2xl z-50 flex flex-col">
         <div className="px-4 py-3 flex items-center justify-between text-white" style={{ background: ORANGE }}>
           <h2 className="font-semibold">Add Product</h2>
-          <button onClick={() => { setShowAddProductPanel(false); resetNewProductForm(); }}><X className="w-5 h-5" /></button>
+          <button onClick={() => { setShowAddProductPanel(false); resetNewProductForm(); }} aria-label="Close panel"><X className="w-5 h-5" /></button>
         </div>
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
           <div onClick={() => fileInputRef.current?.click()}
