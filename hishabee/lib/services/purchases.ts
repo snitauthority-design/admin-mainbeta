@@ -13,9 +13,10 @@ export interface Purchase {
 
 export async function fetchPurchases(tenantId: string, params?: Record<string, string>): Promise<{ purchases: Purchase[]; total: number }> {
   const res = await api.get('/purchases', { params, headers: { 'X-Tenant-Id': tenantId } });
+  // Backend returns { items: [...], total }
   const data = res.data;
   return {
-    purchases: data?.purchases || data || [],
+    purchases: data?.items || [],
     total: data?.total || 0,
   };
 }

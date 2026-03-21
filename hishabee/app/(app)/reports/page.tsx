@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import api from '@/lib/api';
+import { formatCurrency } from '@/lib/tenant-config';
 import { BarChart3, TrendingUp, TrendingDown, DollarSign } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -15,7 +16,8 @@ interface ProfitLossData {
 }
 
 export default function ReportsPage() {
-  const { tenantId } = useAuth();
+  const { tenantId, tenantConfig } = useAuth();
+  const fc = (n: number) => formatCurrency(n, tenantConfig.currency);
   const [data, setData] = useState<ProfitLossData | null>(null);
   const [loading, setLoading] = useState(true);
   const [period, setPeriod] = useState('monthly');
@@ -84,7 +86,7 @@ export default function ReportsPage() {
                 <span className="text-sm font-medium text-gray-600">{card.title}</span>
                 {card.icon}
               </div>
-              <p className={`text-2xl font-bold ${card.color}`}>৳{card.value.toLocaleString()}</p>
+              <p className={`text-2xl font-bold ${card.color}`}>{fc(card.value)}</p>
             </div>
           ))}
         </div>
@@ -95,9 +97,9 @@ export default function ReportsPage() {
         <div className="mt-6 bg-white border rounded-xl p-6">
           <h3 className="font-semibold text-gray-900 mb-4">Profit Breakdown</h3>
           <div className="space-y-3">
-            <BarRow label="Revenue" value={data.totalRevenue} max={Math.max(data.totalRevenue, data.totalExpenses + data.totalPurchases)} color="bg-green-500" />
-            <BarRow label="Expenses" value={data.totalExpenses} max={Math.max(data.totalRevenue, data.totalExpenses + data.totalPurchases)} color="bg-red-400" />
-            <BarRow label="Purchases" value={data.totalPurchases} max={Math.max(data.totalRevenue, data.totalExpenses + data.totalPurchases)} color="bg-orange-400" />
+            <BarRow label="Revenue" value={data.totalRevenue} max={Math.max(data.totalRevenue, data.totalExpenses + data.totalPurchases)} color="bg-green-500" currencyFn={fc} />
+            <BarRow label="Expenses" value={data.totalExpenses} max={Math.max(data.totalRevenue, data.totalExpenses + data.totalPurchases)} color="bg-red-400" currencyFn={fc} />
+            <BarRow label="Purchases" value={data.totalPurchases} max={Math.max(data.totalRevenue, data.totalExpenses + data.totalPurchases)} color="bg-orange-400" currencyFn={fc} />
           </div>
         </div>
       )}
@@ -105,13 +107,13 @@ export default function ReportsPage() {
   );
 }
 
-function BarRow({ label, value, max, color }: { label: string; value: number; max: number; color: string }) {
+function BarRow({ label, value, max, color, currencyFn }: { label: string; value: number; max: number; color: string; currencyFn: (n: number) => string }) {
   const pct = max > 0 ? (value / max) * 100 : 0;
   return (
     <div>
       <div className="flex justify-between text-sm mb-1">
         <span className="text-gray-600">{label}</span>
-        <span className="font-medium">৳{value.toLocaleString()}</span>
+        <span className="font-medium">{currencyFn(value)}</span>
       </div>
       <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
         <div className={`h-full ${color} rounded-full transition-all duration-500`} style={{ width: `${pct}%` }} />

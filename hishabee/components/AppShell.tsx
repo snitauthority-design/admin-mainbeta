@@ -30,7 +30,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
-  const { user, logout } = useAuth();
+  const { user, logout, tenantConfig } = useAuth();
 
   const handleLogout = () => {
     logout();
@@ -58,9 +58,9 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           <div className="flex items-center justify-between h-14 px-4 border-b">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-sm font-bold text-white">হি</span>
+                <span className="text-sm font-bold text-white">{tenantConfig.logoChar}</span>
               </div>
-              <span className="font-bold text-gray-900">Hishabee</span>
+              <span className="font-bold text-gray-900">{tenantConfig.appName}</span>
             </div>
             <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-gray-500">
               <X size={20} />
@@ -121,7 +121,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           <button onClick={() => setSidebarOpen(true)} className="text-gray-600">
             <Menu size={24} />
           </button>
-          <span className="font-bold text-gray-900">Hishabee</span>
+          <span className="font-bold text-gray-900">{tenantConfig.appName}</span>
           <div className="flex items-center gap-2">
             <Wallet size={16} className="text-green-600" />
           </div>

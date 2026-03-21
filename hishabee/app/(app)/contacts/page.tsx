@@ -3,11 +3,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { fetchEntities, createEntity, updateEntity, deleteEntity, type Entity } from '@/lib/services/entities';
+import { formatCurrency } from '@/lib/tenant-config';
 import { Users, Plus, Phone, Mail, Edit2, Trash2, Save, X, Search } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function ContactsPage() {
-  const { tenantId } = useAuth();
+  const { tenantId, tenantConfig } = useAuth();
+  const fc = (n: number) => formatCurrency(n, tenantConfig.currency);
   const [entities, setEntities] = useState<Entity[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -36,10 +38,10 @@ export default function ContactsPage() {
     return matchSearch && matchType;
   });
 
-  const handleAdd = async (name: string, phone: string, email: string, type: 'customer' | 'supplier' | 'both', address: string) => {
+  const handleAdd = async (name: string, phone: string, email: string, type: 'Customer' | 'Supplier' | 'Employee', address: string) => {
     if (!tenantId) return;
     try {
-      await createEntity(tenantId, { name, phone, email, type, address, balance: 0 });
+      await createEntity(tenantId, { name, phone, email, type, address, totalOwedToMe: 0, totalIOweThemNumber: 0 });
       toast.success('Contact added');
       setShowForm(false);
       loadEntities();
@@ -99,7 +101,7 @@ export default function ContactsPage() {
         </select>
       </div>
 
-      {showForm && <ContactForm onSave={handleAdd} onCancel={() => setShowForm(false)} />}
+      {showForm && <ContactForm entityTypes={tenantConfig.entityTypes} onSave={handleAdd} onCancel={() => setShowForm(false)} />}
 
       {editingEntity && (
         <div className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4" onClick={() => setEditingEntity(null)}>
@@ -134,7 +136,7 @@ export default function ContactsPage() {
               <div className="flex justify-between items-start mb-2">
                 <div>
                   <p className="font-medium text-gray-900">{entity.name}</p>
-                  <span className={`text-xs px-2 py-0.5 rounded-full ${entity.type === 'customer' ? 'bg-blue-100 text-blue-600' : 'bg-orange-100 text-orange-600'}`}>{entity.type}</span>
+                  <span className={`text-xs px-2 py-0.5 rounded-full ${entity.type === 'Customer' ? 'bg-blue-100 text-blue-600' : 'bg-orange-100 text-orange-600'}`}>{entity.type}</span>
                 </div>
                 <div className="flex gap-1">
                   <button onClick={() => setEditingEntity({ ...entity })} className="p-1 text-blue-600 hover:bg-blue-50 rounded"><Edit2 size={14} /></button>
@@ -146,9 +148,8 @@ export default function ContactsPage() {
                 {entity.email && <p className="flex items-center gap-1"><Mail size={12} /> {entity.email}</p>}
               </div>
               <div className="mt-2 pt-2 border-t">
-                <span className={`text-sm font-bold ${entity.balance > 0 ? 'text-red-600' : entity.balance < 0 ? 'text-green-600' : 'text-gray-400'}`}>
-                  Balance: ৳{Math.abs(entity.balance).toLocaleString()}
-                  {entity.balance > 0 ? ' (receivable)' : entity.balance < 0 ? ' (payable)' : ''}
+                <span className={`text-sm font-bold ${(entity.totalOwedToMe || 0) > 0 ? 'text-red-600' : (entity.totalIOweThemNumber || 0) > 0 ? 'text-green-600' : 'text-gray-400'}`}>
+                  Receivable: {fc(entity.totalOwedToMe || 0)} | Payable: {fc(entity.totalIOweThemNumber || 0)}
                 </span>
               </div>
             </div>
@@ -159,11 +160,11 @@ export default function ContactsPage() {
   );
 }
 
-function ContactForm({ onSave, onCancel }: { onSave: (name: string, phone: string, email: string, type: 'customer' | 'supplier' | 'both', address: string) => void; onCancel: () => void }) {
+function ContactForm({ entityTypes, onSave, onCancel }: { entityTypes: string[]; onSave: (name: string, phone: string, email: string, type: 'Customer' | 'Supplier' | 'Employee', address: string) => void; onCancel: () => void }) {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
-  const [type, setType] = useState<'customer' | 'supplier' | 'both'>('customer');
+  const [type, setType] = useState<string>(entityTypes[0] || 'Customer');
   const [address, setAddress] = useState('');
 
   return (
@@ -173,15 +174,13 @@ function ContactForm({ onSave, onCancel }: { onSave: (name: string, phone: strin
         <input value={name} onChange={e => setName(e.target.value)} placeholder="Name *" className="border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500" />
         <input value={phone} onChange={e => setPhone(e.target.value)} placeholder="Phone" className="border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500" />
         <input value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" type="email" className="border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500" />
-        <select value={type} onChange={e => setType(e.target.value as 'customer' | 'supplier' | 'both')} className="border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
-          <option value="customer">Customer</option>
-          <option value="supplier">Supplier</option>
-          <option value="both">Both</option>
+        <select value={type} onChange={e => setType(e.target.value)} className="border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+          {entityTypes.map(t => <option key={t} value={t}>{t}</option>)}
         </select>
         <input value={address} onChange={e => setAddress(e.target.value)} placeholder="Address" className="border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 sm:col-span-2" />
       </div>
       <div className="flex gap-2 mt-3">
-        <button onClick={() => { if (!name) { toast.error('Name required'); return; } onSave(name, phone, email, type, address); }} className="flex items-center gap-1 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700"><Save size={14} /> Save</button>
+        <button onClick={() => { if (!name) { toast.error('Name required'); return; } onSave(name, phone, email, type as 'Customer' | 'Supplier' | 'Employee', address); }} className="flex items-center gap-1 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700"><Save size={14} /> Save</button>
         <button onClick={onCancel} className="flex items-center gap-1 border px-4 py-2 rounded-lg text-sm hover:bg-gray-50"><X size={14} /> Cancel</button>
       </div>
     </div>

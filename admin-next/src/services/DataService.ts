@@ -1092,12 +1092,19 @@ class DataServiceImpl {
 
   async getOrders(tenantId?: string): Promise<Order[]> {
     const cacheKey = CacheKeys.tenantOrders(tenantId || 'default');
+    const authHeaders = getAuthHeader();
+    const hasAuthToken = Object.entries(authHeaders).some(([key, value]) => key.toLowerCase() === 'authorization' && Boolean(value));
     
     // Check Redis cache first
     const cachedOrders = await getCached<Order[]>(cacheKey);
     if (cachedOrders) {
       console.log(`[Redis] Orders cache hit for tenant: ${tenantId}`);
       return cachedOrders;
+    }
+
+    // Storefront guests do not have an access token, so avoid calling the protected tenant-data orders endpoint.
+    if (!hasAuthToken) {
+      return getCachedData<Order[]>('orders', tenantId) || [];
     }
     
     // Fetch from API and cache

@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { fetchOrders, updateOrder, type Order } from '@/lib/services/orders';
+import { formatCurrency } from '@/lib/tenant-config';
 import { ShoppingCart, Search, Eye, ChevronDown } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -16,10 +17,26 @@ const STATUS_COLORS: Record<string, string> = {
   Return: 'bg-orange-100 text-orange-700',
 };
 
-const STATUSES = ['Pending', 'Confirmed', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Return'];
+function getOrderDisplayId(order: Order) {
+  if (order.orderId) {
+    return order.orderId;
+  }
+
+  if (order._id) {
+    return order._id.slice(-6);
+  }
+
+  return 'N/A';
+}
+
+function getOrderRowKey(order: Order, index: number) {
+  return order._id || order.orderId || `${order.createdAt}-${order.customerPhone || order.customerName || 'guest'}-${index}`;
+}
 
 export default function SalesPage() {
-  const { tenantId } = useAuth();
+  const { tenantId, tenantConfig } = useAuth();
+  const STATUSES_LIST = tenantConfig.orderStatuses;
+  const fc = (n: number) => formatCurrency(n, tenantConfig.currency);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -52,6 +69,12 @@ export default function SalesPage() {
 
   const handleStatusChange = async (order: Order, newStatus: string) => {
     if (!tenantId) return;
+
+    if (!order._id) {
+      toast.error('This order cannot be updated because it is missing an ID');
+      return;
+    }
+
     try {
       await updateOrder(tenantId, order._id, { status: newStatus });
       setOrders(prev => prev.map(o => o._id === order._id ? { ...o, status: newStatus } : o));
@@ -91,7 +114,7 @@ export default function SalesPage() {
           className="border rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
         >
           <option value="">All Status</option>
-          {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
+          {STATUSES_LIST.map(s => <option key={s} value={s}>{s}</option>)}
         </select>
       </div>
 
@@ -99,12 +122,12 @@ export default function SalesPage() {
       {selectedOrder && (
         <div className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4" onClick={() => setSelectedOrder(null)}>
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 max-h-[80vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-            <h3 className="text-lg font-bold mb-3">Order #{selectedOrder.orderId || selectedOrder._id.slice(-6)}</h3>
+            <h3 className="text-lg font-bold mb-3">Order #{getOrderDisplayId(selectedOrder)}</h3>
             <div className="space-y-2 text-sm">
               <p><strong>Customer:</strong> {selectedOrder.customerName || 'Guest'}</p>
               <p><strong>Phone:</strong> {selectedOrder.customerPhone || '-'}</p>
               <p><strong>Status:</strong> <span className={`px-2 py-0.5 rounded-full text-xs ${STATUS_COLORS[selectedOrder.status] || 'bg-gray-100 text-gray-600'}`}>{selectedOrder.status}</span></p>
-              <p><strong>Total:</strong> ৳{selectedOrder.total || selectedOrder.grandTotal || 0}</p>
+              <p><strong>Total:</strong> {fc(selectedOrder.total || selectedOrder.grandTotal || 0)}</p>
               <p><strong>Date:</strong> {new Date(selectedOrder.createdAt).toLocaleString()}</p>
               {selectedOrder.items && selectedOrder.items.length > 0 && (
                 <div>
@@ -113,7 +136,7 @@ export default function SalesPage() {
                     {selectedOrder.items.map((item, i) => (
                       <li key={i} className="flex justify-between bg-gray-50 px-2 py-1 rounded text-xs">
                         <span>{item.name} × {item.quantity}</span>
-                        <span>৳{item.price * item.quantity}</span>
+                        <span>{fc(item.price * item.quantity)}</span>
                       </li>
                     ))}
                   </ul>
@@ -152,22 +175,23 @@ export default function SalesPage() {
                 </tr>
               </thead>
               <tbody className="divide-y">
-                {orders.map((order) => (
-                  <tr key={order._id} className="hover:bg-gray-50">
-                    <td className="px-4 py-3 font-medium">#{order.orderId || order._id.slice(-6)}</td>
+                {orders.map((order, index) => (
+                  <tr key={getOrderRowKey(order, index)} className="hover:bg-gray-50">
+                    <td className="px-4 py-3 font-medium">#{getOrderDisplayId(order)}</td>
                     <td className="px-4 py-3">
                       <p className="font-medium">{order.customerName || 'Guest'}</p>
                       <p className="text-xs text-gray-400">{order.customerPhone || ''}</p>
                     </td>
-                    <td className="px-4 py-3 text-right font-medium">৳{order.total || order.grandTotal || 0}</td>
+                    <td className="px-4 py-3 text-right font-medium">{fc(order.total || order.grandTotal || 0)}</td>
                     <td className="px-4 py-3 text-center">
                       <div className="relative inline-block">
                         <select
                           value={order.status}
                           onChange={(e) => handleStatusChange(order, e.target.value)}
+                          disabled={!order._id}
                           className={`appearance-none px-2 py-1 pr-6 rounded-full text-xs font-medium border-0 cursor-pointer ${STATUS_COLORS[order.status] || 'bg-gray-100 text-gray-600'}`}
                         >
-                          {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
+                          {STATUSES_LIST.map(s => <option key={s} value={s}>{s}</option>)}
                         </select>
                         <ChevronDown size={12} className="absolute right-1.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                       </div>

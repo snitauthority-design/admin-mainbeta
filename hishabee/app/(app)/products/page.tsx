@@ -3,11 +3,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { fetchProducts, updateProducts, type Product } from '@/lib/services/products';
+import { formatCurrency } from '@/lib/tenant-config';
 import { Package, Plus, Search, Edit2, Trash2, Save, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function ProductsPage() {
-  const { tenantId } = useAuth();
+  const { tenantId, tenantConfig } = useAuth();
+  const fc = (n: number) => formatCurrency(n, tenantConfig.currency);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -168,6 +170,7 @@ export default function ProductsPage() {
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-gray-100 rounded flex items-center justify-center flex-shrink-0">
                           {product.image || product.images?.[0] ? (
+                            // eslint-disable-next-line @next/next/no-img-element
                             <img src={product.image || product.images?.[0]} alt="" className="w-10 h-10 rounded object-cover" />
                           ) : (
                             <Package size={16} className="text-gray-400" />
@@ -179,8 +182,8 @@ export default function ProductsPage() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-right font-medium">৳{product.price}</td>
-                    <td className="px-4 py-3 text-right text-gray-500">৳{product.cost || 0}</td>
+                    <td className="px-4 py-3 text-right font-medium">{fc(product.price)}</td>
+                    <td className="px-4 py-3 text-right text-gray-500">{fc(product.cost || 0)}</td>
                     <td className="px-4 py-3 text-right">
                       <span className={`font-medium ${(product.stock || product.quantity || 0) <= 0 ? 'text-red-500' : 'text-green-600'}`}>
                         {product.stock || product.quantity || 0}

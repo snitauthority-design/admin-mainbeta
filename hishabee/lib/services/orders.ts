@@ -1,7 +1,7 @@
 import api from '@/lib/api';
 
 export interface Order {
-  _id: string;
+  _id?: string;
   orderId?: string;
   customerName?: string;
   customerPhone?: string;
@@ -15,11 +15,21 @@ export interface Order {
 }
 
 export async function fetchOrders(tenantId: string, params?: Record<string, string>): Promise<{ orders: Order[]; total: number }> {
-  const res = await api.get(`/orders/${tenantId}`, { params });
-  const data = res.data;
+  // Backend expects 'search' not 'query', and 'perPage' not 'pageSize'
+  const mapped: Record<string, string> = {};
+  if (params) {
+    for (const [k, v] of Object.entries(params)) {
+      if (k === 'query') mapped.search = v;
+      else if (k === 'pageSize') mapped.perPage = v;
+      else mapped[k] = v;
+    }
+  }
+  const res = await api.get(`/orders/${tenantId}`, { params: mapped });
+  // Backend returns { data: [...orders] }
+  const orders = Array.isArray(res.data?.data) ? res.data.data : [];
   return {
-    orders: data?.orders || data || [],
-    total: data?.total || data?.totalOrders || 0,
+    orders,
+    total: orders.length,
   };
 }
 

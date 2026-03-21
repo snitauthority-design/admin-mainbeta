@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
+import { DEFAULT_TENANT_CONFIG } from '@/lib/tenant-config';
 import toast from 'react-hot-toast';
 import { LogIn, Eye, EyeOff } from 'lucide-react';
 
@@ -48,10 +49,10 @@ export default function LoginPage() {
           {/* Logo */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl mb-4">
-              <span className="text-2xl font-bold text-white">হি</span>
+              <span className="text-2xl font-bold text-white">{DEFAULT_TENANT_CONFIG.logoChar}</span>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">Hishabee</h1>
-            <p className="text-sm text-gray-500 mt-1">Business Management Platform</p>
+            <h1 className="text-2xl font-bold text-gray-900">{DEFAULT_TENANT_CONFIG.appName}</h1>
+            <p className="text-sm text-gray-500 mt-1">{DEFAULT_TENANT_CONFIG.appDescription}</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">

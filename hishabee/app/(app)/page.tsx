@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { fetchDashboardMetrics, type DashboardMetrics } from '@/lib/services/dashboard';
+import { formatCurrency as fmtCurrency } from '@/lib/tenant-config';
 import {
   ShoppingBag, ShoppingCart, Receipt,
   Package, Wallet, ArrowUpRight,
@@ -13,10 +14,9 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-const formatCurrency = (n: number) => `৳ ${n.toLocaleString('en-BD', { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
-
 export default function DashboardPage() {
-  const { tenantId } = useAuth();
+  const { tenantId, tenantConfig } = useAuth();
+  const formatCurrency = (n: number) => fmtCurrency(n, tenantConfig.currency);
   const router = useRouter();
   const [timeframe, setTimeframe] = useState('Today');
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);

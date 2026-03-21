@@ -4,6 +4,7 @@
 
 import type { Product, User, ProductVariantSelection } from '../types';
 import { slugify } from '../services/slugify';
+import { env } from 'process';
 
 // Reserved subdomains that cannot be used for tenants
 const RESERVED_TENANT_SLUGS = [
@@ -19,10 +20,10 @@ export const FALLBACK_VARIANT: ProductVariantSelection = { color: 'Default', siz
 export const SESSION_STORAGE_KEY = 'admin_auth_user';
 export const ACTIVE_TENANT_STORAGE_KEY = 'seven-days-active-tenant';
 export const CART_STORAGE_KEY = 'seven-days-cart';
-export const PRIMARY_TENANT_DOMAIN = normalizeDomainValue(import.meta.env.VITE_PRIMARY_DOMAIN);
-export const ADDITIONAL_DOMAINS = (import.meta.env.VITE_ADDITIONAL_DOMAINS || '').split(',').map((d: string) => normalizeDomainValue(d)).filter(Boolean);
+export const PRIMARY_TENANT_DOMAIN = normalizeDomainValue(process.env.NEXT_PUBLIC_PRIMARY_DOMAIN);
+export const ADDITIONAL_DOMAINS = (process.env.NEXT_PUBLIC_ADDITIONAL_DOMAINS || '').split(',').map((d: string) => normalizeDomainValue(d)).filter(Boolean);
 export const ALL_KNOWN_DOMAINS = [PRIMARY_TENANT_DOMAIN, ...ADDITIONAL_DOMAINS].filter(Boolean);
-export const DEFAULT_TENANT_SLUG = sanitizeSubdomainSlug(import.meta.env.VITE_DEFAULT_TENANT_SLUG);
+export const DEFAULT_TENANT_SLUG = sanitizeSubdomainSlug(process.env.NEXT_PUBLIC_DEFAULT_TENANT_SLUG);
 
 // --- Domain/Tenant utilities ---
 export function sanitizeSubdomainSlug(value?: string | null): string {
@@ -193,7 +194,7 @@ export function getStoreUrl(subdomain?: string): string {
  * Uses VITE_API_BASE_URL env var, with fallback to deriving from the current hostname.
  */
 export function getApiUrl(): string {
-  const envApi = import.meta.env.VITE_API_BASE_URL;
+  const envApi = process.env.NEXT_PUBLIC_API_BASE_URL;
   if (envApi && /^https?:\/\/.+/.test(envApi)) {
     const base = envApi.replace(/\/$/, '');
     return base.endsWith('/api') ? base : `${base}/api`;

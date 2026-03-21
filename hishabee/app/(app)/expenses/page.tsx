@@ -3,13 +3,21 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { fetchExpenses, createExpense, deleteExpense, type Expense } from '@/lib/services/expenses';
+import { formatCurrency } from '@/lib/tenant-config';
 import { Receipt, Plus, Trash2, Save } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-const CATEGORIES = ['Rent', 'Salary', 'Utilities', 'Transport', 'Food', 'Office Supplies', 'Marketing', 'Other'];
+function getExpenseId(expense: Expense) {
+  return expense._id || expense.id || '';
+}
+
+function getExpenseKey(expense: Expense, index: number) {
+  return getExpenseId(expense) || `${expense.name}-${expense.date}-${index}`;
+}
 
 export default function ExpensesPage() {
-  const { tenantId } = useAuth();
+  const { tenantId, tenantConfig } = useAuth();
+  const fc = (n: number) => formatCurrency(n, tenantConfig.currency);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -33,10 +41,10 @@ export default function ExpensesPage() {
     loadExpenses();
   }, [loadExpenses]);
 
-  const handleAdd = async (title: string, amount: number, category: string, note: string) => {
+  const handleAdd = async (name: string, amount: number, category: string, note: string) => {
     if (!tenantId) return;
     try {
-      await createExpense(tenantId, { title, amount, category, note, date: new Date().toISOString() });
+      await createExpense(tenantId, { name, amount, category, note, date: new Date().toISOString() });
       toast.success('Expense added');
       setShowForm(false);
       loadExpenses();
@@ -46,7 +54,7 @@ export default function ExpensesPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!tenantId || !confirm('Delete this expense?')) return;
+    if (!tenantId || !id || !confirm('Delete this expense?')) return;
     try {
       await deleteExpense(tenantId, id);
       setExpenses(prev => prev.filter(e => e._id !== id));
@@ -64,7 +72,7 @@ export default function ExpensesPage() {
             <Receipt size={24} className="text-orange-500" />
             Expenses
           </h1>
-          <p className="text-sm text-gray-500">Total: ৳{totalAmount.toLocaleString()}</p>
+          <p className="text-sm text-gray-500">Total: {fc(totalAmount)}</p>
         </div>
         <button onClick={() => setShowForm(true)} className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700">
           <Plus size={16} /> Add Expense
@@ -74,7 +82,7 @@ export default function ExpensesPage() {
       {showForm && (
         <div className="bg-white border rounded-lg p-4 mb-4 shadow-sm">
           <h3 className="font-semibold mb-3">New Expense</h3>
-          <ExpenseForm onSave={handleAdd} onCancel={() => setShowForm(false)} />
+          <ExpenseForm categories={tenantConfig.expenseCategories} onSave={handleAdd} onCancel={() => setShowForm(false)} />
         </div>
       )}
 
@@ -99,17 +107,17 @@ export default function ExpensesPage() {
                 </tr>
               </thead>
               <tbody className="divide-y">
-                {expenses.map(e => (
-                  <tr key={e._id} className="hover:bg-gray-50">
+                {expenses.map((e, index) => (
+                  <tr key={getExpenseKey(e, index)} className="hover:bg-gray-50">
                     <td className="px-4 py-3">
-                      <p className="font-medium">{e.title}</p>
+                      <p className="font-medium">{e.name}</p>
                       {e.note && <p className="text-xs text-gray-400">{e.note}</p>}
                     </td>
                     <td className="px-4 py-3"><span className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full text-xs">{e.category || '-'}</span></td>
-                    <td className="px-4 py-3 text-right font-medium text-red-600">৳{e.amount}</td>
+                    <td className="px-4 py-3 text-right font-medium text-red-600">{fc(e.amount)}</td>
                     <td className="px-4 py-3 text-gray-500">{new Date(e.date || e.createdAt).toLocaleDateString()}</td>
                     <td className="px-4 py-3 text-center">
-                      <button onClick={() => handleDelete(e._id)} className="p-1.5 text-red-500 hover:bg-red-50 rounded"><Trash2 size={14} /></button>
+                      <button onClick={() => handleDelete(getExpenseId(e))} disabled={!getExpenseId(e)} className="p-1.5 text-red-500 hover:bg-red-50 rounded disabled:cursor-not-allowed disabled:opacity-50"><Trash2 size={14} /></button>
                     </td>
                   </tr>
                 ))}
@@ -122,26 +130,26 @@ export default function ExpensesPage() {
   );
 }
 
-function ExpenseForm({ onSave, onCancel }: { onSave: (title: string, amount: number, category: string, note: string) => void; onCancel: () => void }) {
-  const [title, setTitle] = useState('');
+function ExpenseForm({ categories, onSave, onCancel }: { categories: string[]; onSave: (name: string, amount: number, category: string, note: string) => void; onCancel: () => void }) {
+  const [name, setName] = useState('');
   const [amount, setAmount] = useState('');
-  const [category, setCategory] = useState('Other');
+  const [category, setCategory] = useState(categories[categories.length - 1] || 'Other');
   const [note, setNote] = useState('');
 
   return (
     <div className="space-y-3">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <input value={title} onChange={e => setTitle(e.target.value)} placeholder="Expense title *" className="border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500" />
+        <input value={name} onChange={e => setName(e.target.value)} placeholder="Expense name *" className="border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500" />
         <input value={amount} onChange={e => setAmount(e.target.value)} type="number" placeholder="Amount *" className="border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500" />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <select value={category} onChange={e => setCategory(e.target.value)} className="border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
-          {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+          {categories.map(c => <option key={c} value={c}>{c}</option>)}
         </select>
         <input value={note} onChange={e => setNote(e.target.value)} placeholder="Note (optional)" className="border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500" />
       </div>
       <div className="flex gap-2">
-        <button onClick={() => { if (!title || !amount) { toast.error('Title and amount required'); return; } onSave(title, Number(amount), category, note); }} className="flex items-center gap-1 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700"><Save size={14} /> Save</button>
+        <button onClick={() => { if (!name || !amount) { toast.error('Name and amount required'); return; } onSave(name, Number(amount), category, note); }} className="flex items-center gap-1 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700"><Save size={14} /> Save</button>
         <button onClick={onCancel} className="border px-4 py-2 rounded-lg text-sm hover:bg-gray-50">Cancel</button>
       </div>
     </div>

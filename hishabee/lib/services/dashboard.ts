@@ -13,7 +13,7 @@ export interface DashboardMetrics {
 export async function fetchDashboardMetrics(tenantId: string, timeframe: string): Promise<DashboardMetrics> {
   const now = new Date();
   let startDate: string;
-  let endDate: string = now.toISOString();
+  const endDate: string = now.toISOString();
 
   switch (timeframe) {
     case 'Today': {
@@ -49,7 +49,8 @@ export async function fetchDashboardMetrics(tenantId: string, timeframe: string)
 
   let todaySell = 0;
   if (ordersRes.status === 'fulfilled') {
-    const orders = ordersRes.value.data?.orders || ordersRes.value.data || [];
+    // Backend returns { data: [...orders] }
+    const orders = ordersRes.value.data?.data || [];
     if (Array.isArray(orders)) {
       todaySell = orders.reduce((sum: number, o: { total?: number; grandTotal?: number }) => sum + (o.total || o.grandTotal || 0), 0);
     }
@@ -57,23 +58,25 @@ export async function fetchDashboardMetrics(tenantId: string, timeframe: string)
 
   let todayExpense = 0;
   if (expensesRes.status === 'fulfilled') {
-    todayExpense = expensesRes.value.data?.totalExpenses || expensesRes.value.data?.total || 0;
+    // Backend returns { totalAmount, categories, totalTransactions }
+    todayExpense = expensesRes.value.data?.totalAmount || 0;
   }
 
   let todayPurchase = 0;
   if (purchasesRes.status === 'fulfilled') {
-    todayPurchase = purchasesRes.value.data?.totalPurchases || purchasesRes.value.data?.total || 0;
+    // Backend returns { totalPurchases, totalAmount, totalItems }
+    todayPurchase = purchasesRes.value.data?.totalAmount || 0;
   }
 
   let youWillGet = 0;
   let youWillGive = 0;
   if (entitiesRes.status === 'fulfilled') {
-    const entities = entitiesRes.value.data?.entities || entitiesRes.value.data || [];
+    // Backend returns plain array of entities
+    const entities = entitiesRes.value.data;
     if (Array.isArray(entities)) {
       for (const e of entities) {
-        const bal = e.balance || 0;
-        if (bal > 0) youWillGet += bal;
-        else youWillGive += Math.abs(bal);
+        youWillGet += e.totalOwedToMe || 0;
+        youWillGive += e.totalIOweThemNumber || 0;
       }
     }
   }
@@ -82,7 +85,8 @@ export async function fetchDashboardMetrics(tenantId: string, timeframe: string)
   let totalStock = 0;
   try {
     const prodRes = await api.get(`/tenant-data/${tenantId}/products`);
-    const products = prodRes.data?.products || prodRes.data || [];
+    // Backend returns { data: <content> }
+    const products = prodRes.data?.data || [];
     if (Array.isArray(products)) {
       totalStock = products.reduce((sum: number, p: { stock?: number; quantity?: number }) => sum + (p.stock || p.quantity || 0), 0);
     }

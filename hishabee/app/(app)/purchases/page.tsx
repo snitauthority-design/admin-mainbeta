@@ -3,11 +3,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { fetchPurchases, createPurchase, deletePurchase, type Purchase } from '@/lib/services/purchases';
+import { formatCurrency } from '@/lib/tenant-config';
 import { ShoppingBag, Plus, Trash2, Save, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function PurchasesPage() {
-  const { tenantId } = useAuth();
+  const { tenantId, tenantConfig } = useAuth();
+  const fc = (n: number) => formatCurrency(n, tenantConfig.currency);
   const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -100,7 +102,7 @@ export default function PurchasesPage() {
                 {purchases.map(p => (
                   <tr key={p._id} className="hover:bg-gray-50">
                     <td className="px-4 py-3 font-medium">{p.supplierName || '-'}</td>
-                    <td className="px-4 py-3 text-right font-medium text-green-600">৳{p.totalAmount}</td>
+                    <td className="px-4 py-3 text-right font-medium text-green-600">{fc(p.totalAmount)}</td>
                     <td className="px-4 py-3 text-gray-500">{p.items?.length || 0} items</td>
                     <td className="px-4 py-3 text-gray-500">{new Date(p.date || p.createdAt).toLocaleDateString()}</td>
                     <td className="px-4 py-3 text-center">

@@ -18,9 +18,12 @@ export interface Product {
 
 export async function fetchProducts(tenantId: string): Promise<Product[]> {
   const res = await api.get(`/tenant-data/${tenantId}/products`);
-  return res.data?.products || res.data || [];
+  // Backend returns { data: <content> }
+  const data = res.data?.data;
+  return Array.isArray(data) ? data : [];
 }
 
 export async function updateProducts(tenantId: string, products: Product[]): Promise<void> {
-  await api.put(`/tenant-data/${tenantId}/products`, { products });
+  // Backend expects { data: <content> }
+  await api.put(`/tenant-data/${tenantId}/products`, { data: products });
 }
