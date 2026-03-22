@@ -1,22 +1,17 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ActivityLogSkeleton } from '../components/SkeletonLoaders';
 import {
   Activity,
-  Calendar,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
   Edit,
-  Filter,
   Package,
   Plus,
-  RefreshCw,
-  Search,
   ShoppingCart,
   Trash2,
   Upload,
   User,
-  X,
   Download,
   Settings,
   Image,
@@ -260,8 +255,8 @@ const createFigmaStyles = (isDark: boolean) => ({
     color: isDark ? '#9ca3af' : '#6a717f',
   },
 });
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
-  ? String(import.meta.env.VITE_API_BASE_URL)
+const API_BASE_URL = process.env.NEXT_PUBLIC_VITE_API_BASE_URL
+  ? String(process.env.NEXT_PUBLIC_VITE_API_BASE_URL)
   : '';
 
 // Helper function to safely get token from localStorage (client-side only)
