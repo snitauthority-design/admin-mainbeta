@@ -46,7 +46,7 @@ export interface FigmaBusinessReportProps {
   initialTab?: string;
 }
 
-export type TabType = 'profit' | 'expense' | 'income' | 'purchase' | 'due' | 'note';
+export type TabType = 'overview' | 'profit' | 'expense' | 'income' | 'purchase' | 'due' | 'note';
 export type DateRangeType = 'day' | 'month' | 'year' | 'all' | 'custom';
 
 export interface SummaryData {
