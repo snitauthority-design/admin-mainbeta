@@ -33,7 +33,7 @@ interface CartItem {
 /* ── Sub-components ────────────────────────────────────────────────────────── */
 function Header({ title, onBack, right }: { title: string; onBack?: () => void; right?: React.ReactNode }) {
   return (
-    <div className="flex items-center justify-between px-4 py-3 text-gray-900 font-semibold" style={{ background: AMBER }}>
+    <div className="flex items-center justify-between px-4 py-3 text-black font-semibold" style={{ background: AMBER }}>
       <div className="flex items-center gap-3">
         {onBack && <button onClick={onBack} aria-label="Go back"><ArrowLeft className="w-5 h-5" /></button>}
         <h1 className="text-lg">{title}</h1>
@@ -160,7 +160,7 @@ export default function PurchasesPage() {
   const grandTotal = useMemo(() => cartTotal - (Number(discount) || 0) + (Number(deliveryCharge) || 0), [cartTotal, discount, deliveryCharge]);
 
   /* ── Payment ───────────────────────────────────────────────────────────── */
-  const genInvoice = () => Array.from({ length: 6 }, () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'[Math.floor(Math.random() * 36)]).join('');
+  const generateInvoiceNumber = () => Array.from({ length: 6 }, () => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'[Math.floor(Math.random() * 36)]).join('');
 
   const openPaymentView = (type: 'cash' | 'due') => {
     if (!cart.length) { toast.error('Add products first'); return; }
@@ -174,7 +174,7 @@ export default function PurchasesPage() {
 
     setIsSubmitting(true);
     try {
-      const invoiceNum = paymentForm.customInvoiceNumber && paymentForm.invoiceNumber ? paymentForm.invoiceNumber : genInvoice();
+      const invoiceNum = paymentForm.customInvoiceNumber && paymentForm.invoiceNumber ? paymentForm.invoiceNumber : generateInvoiceNumber();
       const paid = paymentType === 'cash' ? grandTotal : paymentForm.cashPaid;
       const due = paymentType === 'cash' ? 0 : grandTotal - paymentForm.cashPaid;
 
