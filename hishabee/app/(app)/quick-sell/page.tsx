@@ -87,6 +87,12 @@ export default function QuickSellPage() {
 
     setSaving(true);
     try {
+      const profitVal = parseFloat(profit) || 0;
+      const noteText = [
+        note || 'Quick Sell',
+        profitVal > 0 ? `Profit: ${fc(profitVal)}` : '',
+      ].filter(Boolean).join(' | ');
+
       const data: CreateOrderData = {
         customer: customerName || 'Walk-in Customer',
         phone: mobileNumber || undefined,
@@ -97,7 +103,7 @@ export default function QuickSellPage() {
           price: amt,
         }],
         paymentMethod: payMethod,
-        note: note || 'Quick Sell',
+        note: noteText,
         status: payMethod === 'Cash' ? 'Delivered' : 'Pending',
         source: 'quick-sell',
       };
@@ -198,7 +204,7 @@ export default function QuickSellPage() {
               className="flex-1 flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium border-2 transition-all"
               style={
                 payMethod === m
-                  ? { backgroundColor: m === 'Cash' ? '#f5f5f5' : `${BLUE}10`, borderColor: m === 'Cash' ? '#d1d5db' : BLUE, color: '#1f2937' }
+                  ? { backgroundColor: m === 'Cash' ? '#f5f5f5' : 'rgba(30,144,255,0.06)', borderColor: m === 'Cash' ? '#d1d5db' : BLUE, color: '#1f2937' }
                   : { backgroundColor: '#fff', borderColor: '#e5e7eb', color: '#6b7280' }
               }
             >
