@@ -387,7 +387,7 @@ const AdminPurchase: React.FC<AdminPurchaseProps> = ({ products = [], tenantId, 
       const formData = new FormData();
       formData.append('file', file);
       formData.append('tenantId', tenantId);
-      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || '';
       const response = await fetch(`${API_BASE_URL}/api/upload`, { method: 'POST', body: formData });
       if (response.ok) {
         const data = await response.json();

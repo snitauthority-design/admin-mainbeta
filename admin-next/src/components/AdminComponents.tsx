@@ -127,7 +127,6 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = memo(({ activePage, onN
 		{ id: 'business_report_expense', icon: <FileText size={18} />, label: t('business_report'), resource: 'business_report' },
 		{ id: 'expenses', icon: <TrendingDown size={18} />, label: t('expenses'), resource: 'business_report' },
 		{ id: 'income', icon: <TrendingUp size={18} />, label: t('income'), resource: 'business_report' },
-		{ id: 'purchases', icon: <ShoppingCart size={18} />, label: t('purchases'), resource: 'business_report' },
 		{ id: 'due_book', icon: <BookOpen size={18} />, label: t('due_book'), resource: 'business_report' },
 	];
 

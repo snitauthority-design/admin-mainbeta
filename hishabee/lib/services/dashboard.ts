@@ -41,31 +41,40 @@ export async function fetchDashboardMetrics(tenantId: string, timeframe: string)
   }
 
   const [ordersRes, expensesRes, purchasesRes, entitiesRes] = await Promise.allSettled([
-    api.get(`/orders/${tenantId}`, { params: { startDate, endDate, pageSize: 1000 } }),
-    api.get('/expenses/summary', { params: { startDate, endDate }, headers: { 'X-Tenant-Id': tenantId } }),
-    api.get('/purchases/summary/stats', { params: { startDate, endDate }, headers: { 'X-Tenant-Id': tenantId } }),
+    api.get(`/orders/${tenantId}`, { params: { pageSize: 10000 } }),
+    api.get('/expenses/summary', { params: { from: startDate.slice(0, 10), to: endDate.slice(0, 10) }, headers: { 'X-Tenant-Id': tenantId } }),
+    api.get('/purchases', { params: { startDate: startDate.slice(0, 10), endDate: endDate.slice(0, 10), pageSize: 10000 }, headers: { 'X-Tenant-Id': tenantId } }),
     api.get('/entities', { headers: { 'X-Tenant-Id': tenantId } }),
   ]);
 
   let todaySell = 0;
   if (ordersRes.status === 'fulfilled') {
-    // Backend returns { data: [...orders] }
-    const orders = ordersRes.value.data?.data || [];
-    if (Array.isArray(orders)) {
-      todaySell = orders.reduce((sum: number, o: { total?: number; grandTotal?: number }) => sum + (o.total || o.grandTotal || 0), 0);
+    const allOrders = ordersRes.value.data?.data || [];
+    if (Array.isArray(allOrders)) {
+      // Filter orders by date range client-side (backend doesn't filter by date)
+      const fromMs = new Date(startDate).getTime();
+      const toMs = new Date(endDate).getTime();
+      const validStatuses = new Set(['Pending', 'Confirmed', 'Shipped', 'Delivered', 'Processing', 'Sent to Courier']);
+      const filtered = allOrders.filter((o: { date?: string; createdAt?: string; status?: string }) => {
+        const d = new Date(o.date || o.createdAt || '').getTime();
+        return !isNaN(d) && d >= fromMs && d <= toMs && validStatuses.has(o.status || '');
+      });
+      todaySell = filtered.reduce((sum: number, o: { amount?: number; total?: number; grandTotal?: number }) => sum + (o.amount || o.total || o.grandTotal || 0), 0);
     }
   }
 
   let todayExpense = 0;
   if (expensesRes.status === 'fulfilled') {
-    // Backend returns { totalAmount, categories, totalTransactions }
     todayExpense = expensesRes.value.data?.totalAmount || 0;
   }
 
   let todayPurchase = 0;
   if (purchasesRes.status === 'fulfilled') {
-    // Backend returns { totalPurchases, totalAmount, totalItems }
-    todayPurchase = purchasesRes.value.data?.totalAmount || 0;
+    // /purchases returns { items: [...], total: number }
+    const items = purchasesRes.value.data?.items || [];
+    if (Array.isArray(items)) {
+      todayPurchase = items.reduce((sum: number, p: { totalAmount?: number; amount?: number }) => sum + (p.totalAmount || p.amount || 0), 0);
+    }
   }
 
   let youWillGet = 0;

@@ -41,6 +41,24 @@ const FigmaBusinessReport: React.FC<FigmaBusinessReportProps> = ({
   const [customDateRange, setCustomDateRange] = useState<DateRange>({ startDate: null, endDate: null });
   const [selectedMonth, setSelectedMonth] = useState<Date>(new Date());
 
+  // Map initialTab prop to activeTab
+  useEffect(() => {
+    if (!initialTab) return;
+    const tabMap: Record<string, TabType> = {
+      'purchases': 'purchase',
+      'business_report_purchase': 'purchase',
+      'business_report_expense': 'expense',
+      'expenses': 'expense',
+      'business_report_income': 'income',
+      'income': 'income',
+      'business_report_due': 'due',
+      'due_book': 'due',
+      'business_report_note': 'note',
+    };
+    const mapped = tabMap[initialTab];
+    if (mapped) setActiveTab(mapped);
+  }, [initialTab]);
+
   // Shared data state (used across multiple tabs or in profit/loss summary)
   const [expenses, setExpenses] = useState<ExpenseItem[]>([]);
   const [expenseCategories, setExpenseCategories] = useState<CategoryDTO[]>([]);

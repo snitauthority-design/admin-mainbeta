@@ -9,12 +9,46 @@ export const profitLossRouter = Router();
 const getProfitLossCacheKey = (tenantId: string, from?: string, to?: string) => 
   `profitloss:${tenantId}:summary:f=${from || ''}&t=${to || ''}`;
 
+// Convert period string to date range
+function periodToDateRange(period?: string): { from: string; to: string } {
+  const now = new Date();
+  const to = now.toISOString();
+  let fromDate: Date;
+
+  switch (period) {
+    case 'daily':
+      fromDate = new Date(now); fromDate.setHours(0, 0, 0, 0);
+      break;
+    case 'weekly':
+      fromDate = new Date(now); fromDate.setDate(fromDate.getDate() - 7);
+      break;
+    case 'yearly':
+      fromDate = new Date(now); fromDate.setFullYear(fromDate.getFullYear() - 1);
+      break;
+    case 'monthly':
+    default:
+      fromDate = new Date(now); fromDate.setMonth(fromDate.getMonth() - 1);
+      break;
+  }
+
+  return { from: fromDate.toISOString(), to };
+}
+
 // Get profit/loss summary (with caching)
 profitLossRouter.get('/summary', async (req, res, next) => {
   try {
     const db = await getDatabase();
-    const { from, to, tenantId: queryTenantId } = req.query as any;
+    const { from: qFrom, to: qTo, period, tenantId: queryTenantId } = req.query as any;
     const tenantId = queryTenantId || req.headers['x-tenant-id'] || 'global';
+
+    // Support both from/to and period params
+    let from = qFrom;
+    let to = qTo;
+    if (!from && !to && period) {
+      const range = periodToDateRange(period);
+      from = range.from;
+      to = range.to;
+    }
 
     // Check cache first
     const cacheKey = getProfitLossCacheKey(tenantId, from, to);
@@ -23,90 +57,105 @@ profitLossRouter.get('/summary', async (req, res, next) => {
       return res.json(cached);
     }
 
-    // Build date filter
-    const dateFilter: any = {};
+    // Helper to check if a date string falls within range
+    const isInRange = (dateStr: string | undefined): boolean => {
+      if (!dateStr) return false;
+      if (!from && !to) return true;
+      const d = new Date(dateStr).getTime();
+      if (isNaN(d)) return false;
+      if (from && d < new Date(from).getTime()) return false;
+      if (to && d > new Date(to).getTime()) return false;
+      return true;
+    };
+
+    // Build date filters for each collection using their actual field names/types
+    // Expenses/Incomes store date as string (e.g. "2026-03-21" or ISO)
+    // Purchases store createdAt as Date object
+    const expenseDateFilter: any = {};
     if (from || to) {
-      dateFilter.date = {};
-      if (from) dateFilter.date.$gte = from;
-      if (to) dateFilter.date.$lte = to;
+      expenseDateFilter.date = {};
+      if (from) expenseDateFilter.date.$gte = from.slice(0, 10); // "2026-03-21" format
+      if (to) expenseDateFilter.date.$lte = to.slice(0, 10) + '\uffff'; // ensure end of day
     }
 
-    // Build filters
-    const orderFilter: any = { 
-      ...dateFilter,
-      status: { $in: ['Pending', 'Confirmed', 'Shipped', 'Delivered'] }
-    };
-    if (tenantId && tenantId !== 'global') orderFilter.tenantId = tenantId;
-    
-    const expenseFilter: any = { ...dateFilter, status: 'Published' };
+    const purchaseDateFilter: any = {};
+    if (from || to) {
+      purchaseDateFilter.createdAt = {};
+      if (from) purchaseDateFilter.createdAt.$gte = new Date(from);
+      if (to) purchaseDateFilter.createdAt.$lte = new Date(to);
+    }
+
+    const expenseFilter: any = { ...expenseDateFilter };
     if (tenantId && tenantId !== 'global') expenseFilter.tenantId = tenantId;
     
-    const incomeFilter: any = { ...dateFilter, status: 'Published' };
+    const incomeFilter: any = { ...expenseDateFilter };
     if (tenantId && tenantId !== 'global') incomeFilter.tenantId = tenantId;
 
+    const purchaseFilter: any = { ...purchaseDateFilter };
+    if (tenantId && tenantId !== 'global') purchaseFilter.tenantId = tenantId;
+
     // Run all queries in parallel for speed
-    const [orders, expenses, incomes, tenantProducts] = await Promise.all([
-      db.collection('orders').find(orderFilter).toArray(),
+    // Orders are stored via tenantDataService (tenant_data collection), NOT a separate orders collection
+    const [allOrders, expenses, incomes, purchaseDocs, tenantProducts] = await Promise.all([
+      getTenantData<any[]>(tenantId, 'orders').catch(() => []),
       db.collection('expenses').find(expenseFilter).toArray(),
       db.collection('incomes').find(incomeFilter).toArray().catch(() => []),
-      // Get products from tenant_data collection (where products are actually stored)
+      db.collection('purchases').find(purchaseFilter).toArray().catch(() => []),
       getTenantData<any[]>(tenantId, 'products').catch(() => [])
     ]);
+
+    // Filter orders by date range and valid status (in-memory since they're stored as array)
+    const validStatuses = new Set(['Pending', 'Confirmed', 'Shipped', 'Delivered', 'Processing', 'Sent to Courier']);
+    const orders = (Array.isArray(allOrders) ? allOrders : []).filter(
+      (o: any) => validStatuses.has(o.status) && isInRange(o.date || o.createdAt)
+    );
 
     // Ensure products is an array
     const products = Array.isArray(tenantProducts) ? tenantProducts : [];
     const productMap = new Map(products.map((p: any) => [p.id?.toString(), p]));
 
-    // Calculate selling price (order amount minus delivery)
-    const sellingPrice = orders.reduce(
-      (sum, o: any) => sum + ((o.amount || 0) - (o.deliveryCharge || 0)),
+    // Calculate total revenue from orders (selling price = amount - deliveryCharge)
+    const totalRevenue = orders.reduce(
+      (sum: number, o: any) => sum + (o.amount || o.total || o.grandTotal || 0),
       0
     );
 
-    // Calculate purchase price (cost of goods)
-    let purchasePrice = 0;
-    orders.forEach((order: any) => {
-      const product = order.productId ? productMap.get(order.productId.toString()) : null;
-      const quantity = order.quantity || 1;
-      if (product) {
-        // Use costPrice if available, else estimate as 60% of price
-        const costPerUnit = (product as any).costPrice || 
-          ((product as any).originalPrice ? (product as any).originalPrice * 0.6 : (product as any).price * 0.6);
-        purchasePrice += costPerUnit * quantity;
-      } else {
-        // Estimate cost as 60% of selling price for this order
-        purchasePrice += ((order.amount || 0) - (order.deliveryCharge || 0)) * 0.6;
-      }
-    });
+    // Calculate total purchases from purchases collection
+    const totalPurchases = (Array.isArray(purchaseDocs) ? purchaseDocs : []).reduce(
+      (sum: number, p: any) => sum + (p.totalAmount || p.amount || 0),
+      0
+    );
 
-    // Calculate delivery charges collected
-    const deliveryPrice = orders.reduce((sum, o: any) => sum + (o.deliveryCharge || 0), 0);
+    // Calculate total expenses
+    const totalExpenses = expenses.reduce((sum, e: any) => sum + (Number(e.amount) || 0), 0);
 
-    // Profit from sale
-    const profitFromSale = sellingPrice - purchasePrice;
+    // Calculate other income
+    const totalIncome = incomes.reduce((sum, i: any) => sum + (Number(i.amount) || 0), 0);
 
-    // Other expenses
-    const otherExpense = expenses.reduce((sum, e: any) => sum + (e.amount || 0), 0);
-
-    // Other income
-    const otherIncome = incomes.reduce((sum, i: any) => sum + (i.amount || 0), 0);
-
-    // Total profit/loss
-    const totalProfitLoss = profitFromSale + otherIncome - otherExpense;
+    // Net profit = revenue + other income - expenses - purchases
+    const netProfit = totalRevenue + totalIncome - totalExpenses - totalPurchases;
 
     const result = {
-      profitFromSale: {
-        sellingPrice,
-        purchasePrice,
-        deliveryPrice,
-        profit: profitFromSale,
-      },
-      otherIncome,
-      otherExpense,
-      totalProfitLoss,
+      // Flat fields for easy frontend consumption
+      totalRevenue,
+      totalExpenses,
+      totalPurchases,
+      totalIncome,
+      netProfit,
       orderCount: orders.length,
       expenseCount: expenses.length,
       incomeCount: incomes.length,
+      purchaseCount: (Array.isArray(purchaseDocs) ? purchaseDocs : []).length,
+      // Detailed breakdown for advanced views
+      profitFromSale: {
+        sellingPrice: totalRevenue,
+        purchasePrice: totalPurchases,
+        deliveryPrice: orders.reduce((sum: number, o: any) => sum + (o.deliveryCharge || 0), 0),
+        profit: totalRevenue - totalPurchases,
+      },
+      otherIncome: totalIncome,
+      otherExpense: totalExpenses,
+      totalProfitLoss: netProfit,
     };
 
     // Cache for 2 minutes
@@ -122,35 +171,56 @@ profitLossRouter.get('/summary', async (req, res, next) => {
 profitLossRouter.get('/details', async (req, res, next) => {
   try {
     const db = await getDatabase();
-    const { from, to, type, tenantId, page = 1, pageSize = 20 } = req.query as any;
+    const { from: qFrom, to: qTo, period, type, tenantId: queryTenantId, page = 1, pageSize = 20 } = req.query as any;
+    const tenantId = queryTenantId || req.headers['x-tenant-id'] || 'global';
     const pageNum = Number(page);
     const pageSizeNum = Number(pageSize);
 
-    // Build date filter
-    const dateFilter: any = {};
+    // Support both from/to and period params
+    let from = qFrom;
+    let to = qTo;
+    if (!from && !to && period) {
+      const range = periodToDateRange(period);
+      from = range.from;
+      to = range.to;
+    }
+
+    // Helper to check date range for in-memory filtering
+    const isInRange = (dateStr: string | undefined): boolean => {
+      if (!dateStr) return false;
+      if (!from && !to) return true;
+      const d = new Date(dateStr).getTime();
+      if (isNaN(d)) return false;
+      if (from && d < new Date(from).getTime()) return false;
+      if (to && d > new Date(to).getTime()) return false;
+      return true;
+    };
+
+    // Build date filters for each collection
+    const expenseDateFilter: any = {};
     if (from || to) {
-      dateFilter.date = {};
-      if (from) dateFilter.date.$gte = from;
-      if (to) dateFilter.date.$lte = to;
+      expenseDateFilter.date = {};
+      if (from) expenseDateFilter.date.$gte = from.slice(0, 10);
+      if (to) expenseDateFilter.date.$lte = to.slice(0, 10) + '\uffff';
     }
 
     const items: any[] = [];
 
     // Get sales if requested or no type filter
+    // Orders are stored via tenantDataService, not in a separate collection
     if (!type || type === 'sale') {
-      const ordersCol = db.collection('orders');
-      const orderFilter: any = { ...dateFilter };
-      if (tenantId) orderFilter.tenantId = tenantId;
-      orderFilter.status = { $in: ['Pending', 'Confirmed', 'Shipped', 'Delivered'] };
-      
-      const orders = await ordersCol.find(orderFilter).toArray();
+      const allOrders = await getTenantData<any[]>(tenantId, 'orders').catch(() => []);
+      const validStatuses = new Set(['Pending', 'Confirmed', 'Shipped', 'Delivered', 'Processing', 'Sent to Courier']);
+      const orders = (Array.isArray(allOrders) ? allOrders : []).filter(
+        (o: any) => validStatuses.has(o.status) && isInRange(o.date || o.createdAt)
+      );
       orders.forEach((o: any) => {
         items.push({
           id: o._id?.toString() || o.id,
-          date: o.date,
+          date: o.date || o.createdAt,
           type: 'sale',
           description: `Order #${o.id || o._id} - ${o.productName || 'Product'}`,
-          amount: (o.amount || 0) - (o.deliveryCharge || 0),
+          amount: o.amount || o.total || o.grandTotal || 0,
           category: 'Sales',
         });
       });
@@ -159,9 +229,8 @@ profitLossRouter.get('/details', async (req, res, next) => {
     // Get expenses if requested or no type filter
     if (!type || type === 'expense') {
       const expensesCol = db.collection('expenses');
-      const expenseFilter: any = { ...dateFilter };
-      if (tenantId) expenseFilter.tenantId = tenantId;
-      expenseFilter.status = 'Published';
+      const expenseFilter: any = { ...expenseDateFilter };
+      if (tenantId && tenantId !== 'global') expenseFilter.tenantId = tenantId;
       
       const expenses = await expensesCol.find(expenseFilter).toArray();
       expenses.forEach((e: any) => {
@@ -180,9 +249,8 @@ profitLossRouter.get('/details', async (req, res, next) => {
     if (!type || type === 'income') {
       try {
         const incomesCol = db.collection('incomes');
-        const incomeFilter: any = { ...dateFilter };
-        if (tenantId) incomeFilter.tenantId = tenantId;
-        incomeFilter.status = 'Published';
+        const incomeFilter: any = { ...expenseDateFilter };
+        if (tenantId && tenantId !== 'global') incomeFilter.tenantId = tenantId;
         
         const incomes = await incomesCol.find(incomeFilter).toArray();
         incomes.forEach((i: any) => {
