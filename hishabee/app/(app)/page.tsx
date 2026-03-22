@@ -138,7 +138,7 @@ export default function DashboardPage() {
         {[
           { name: 'Purchase', color: 'bg-orange-50 text-orange-600', icon: <ShoppingBag size={28} />, href: '/purchases' },
           { name: 'Sell', color: 'bg-yellow-50 text-yellow-600', icon: <ShoppingCart size={28} />, href: '/sell' },
-          { name: 'Quick Sell', color: 'bg-blue-50 text-blue-600', icon: <div className="relative"><ShoppingCart size={28} /><div className="absolute -top-1 -right-1 bg-blue-600 text-white rounded-full p-0.5"><ArrowUpRight size={10} /></div></div>, href: '/sell' },
+          { name: 'Quick Sell', color: 'bg-blue-50 text-blue-600', icon: <div className="relative"><ShoppingCart size={28} /><div className="absolute -top-1 -right-1 bg-blue-600 text-white rounded-full p-0.5"><ArrowUpRight size={10} /></div></div>, href: '/quick-sell' },
         ].map((action, idx) => (
           <button
             key={idx}
