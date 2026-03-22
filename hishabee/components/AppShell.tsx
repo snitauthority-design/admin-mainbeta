@@ -6,7 +6,7 @@ import { useAuth } from '@/context/AuthContext';
 import {
   LayoutGrid, ShoppingBag, ShoppingCart, Receipt,
   Package, Wallet, BookOpen, Users, BarChart3,
-  LogOut, Menu, X, ChevronRight, User, Tag, Banknote, Zap
+  LogOut, Menu, X, ChevronRight, User, Tag, Banknote, Zap, Shield
 } from 'lucide-react';
 
 interface NavItem {
@@ -27,6 +27,7 @@ const navItems: NavItem[] = [
   { name: 'Due Book', href: '/due-book', icon: <ShoppingCart size={20} /> },
   { name: 'Contacts', href: '/contacts', icon: <Users size={20} /> },
   { name: 'Reports', href: '/reports', icon: <BarChart3 size={20} /> },
+  { name: 'Access', href: '/access', icon: <Shield size={20} /> },
 ];
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
