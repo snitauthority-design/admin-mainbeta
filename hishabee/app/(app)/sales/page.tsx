@@ -194,7 +194,7 @@ export default function SaleBookPage() {
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-gray-900 truncate">{item.name}</p>
                           <p className="text-xs text-gray-500">
-                            Quantity : <span className="font-bold">{item.quantity?.toFixed(2) || '1.00'}</span>
+                            Quantity : <span className="font-bold">{(item.quantity || 1).toFixed(2)}</span>
                             &nbsp;&nbsp;Price : <span className="font-bold">{fc(item.price)}</span>
                             &nbsp;&nbsp;Total : <span className="font-bold" style={{ color: ORANGE }}>{fc(item.price * (item.quantity || 1))}</span>
                           </p>
