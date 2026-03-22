@@ -141,6 +141,10 @@ export const CacheKeys = {
   incomesList: (tenantId: string, params: string) => `incomes:${tenantId}:list:${params}`,
   incomesSummary: (tenantId: string, params: string) => `incomes:${tenantId}:summary:${params}`,
   incomesCategories: (tenantId: string) => `incomes:${tenantId}:categories`,
+
+  // Cashbox
+  cashboxList: (tenantId: string, params: string) => `cashbox:${tenantId}:list:${params}`,
+  cashboxSummary: (tenantId: string, params: string) => `cashbox:${tenantId}:summary:${params}`,
 };
 
 // L1: In-memory cache (instant, no network)

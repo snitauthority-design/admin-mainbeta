@@ -6,7 +6,7 @@ import { useAuth } from '@/context/AuthContext';
 import {
   LayoutGrid, ShoppingBag, ShoppingCart, Receipt,
   Package, Wallet, BookOpen, Users, BarChart3,
-  LogOut, Menu, X, ChevronRight, User, Tag
+  LogOut, Menu, X, ChevronRight, User, Tag, Banknote
 } from 'lucide-react';
 
 interface NavItem {
@@ -22,6 +22,7 @@ const navItems: NavItem[] = [
   { name: 'Sale Book', href: '/sales', icon: <BookOpen size={20} /> },
   { name: 'Purchases', href: '/purchases', icon: <ShoppingBag size={20} /> },
   { name: 'Expenses', href: '/expenses', icon: <Receipt size={20} /> },
+  { name: 'Cashbox', href: '/cashbox', icon: <Banknote size={20} /> },
   { name: 'Due Book', href: '/due-book', icon: <ShoppingCart size={20} /> },
   { name: 'Contacts', href: '/contacts', icon: <Users size={20} /> },
   { name: 'Reports', href: '/reports', icon: <BarChart3 size={20} /> },
