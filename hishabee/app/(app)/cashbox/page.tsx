@@ -58,7 +58,7 @@ export default function CashboxPage() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [filterType, setFilterType] = useState('all');
   const [filterSource, setFilterSource] = useState('all');
-  const [dateRange] = useState(getMonthRange);
+  const [dateRange] = useState(() => getMonthRange());
 
   /* fetch */
   const loadData = useCallback(async () => {

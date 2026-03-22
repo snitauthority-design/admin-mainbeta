@@ -25,7 +25,7 @@ cashboxRouter.get('/', async (req, res, next) => {
     const page = Number(req.query.page ?? 1);
     const pageSize = Number(req.query.pageSize ?? 50);
 
-    const cacheParams = `t=${type || ''}&s=${source || ''}&f=${from || ''}&t2=${to || ''}&q=${query || ''}&p=${page}&ps=${pageSize}`;
+    const cacheParams = `type=${type || ''}&source=${source || ''}&from=${from || ''}&to=${to || ''}&q=${query || ''}&p=${page}&ps=${pageSize}`;
     const cacheKey = CacheKeys.cashboxList(tenantId, cacheParams);
 
     const cached = await getCached<{ items: any[]; total: number; summary: any }>(cacheKey);
@@ -106,7 +106,7 @@ cashboxRouter.get('/summary', async (req, res, next) => {
 
     const { from, to } = req.query as any;
 
-    const cacheParams = `f=${from || ''}&t=${to || ''}`;
+    const cacheParams = `from=${from || ''}&to=${to || ''}`;
     const cacheKey = CacheKeys.cashboxSummary(tenantId, cacheParams);
 
     const cached = await getCached<any>(cacheKey);
