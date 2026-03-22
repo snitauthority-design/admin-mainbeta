@@ -223,7 +223,7 @@ const DueBookTab: React.FC<DueBookTabProps> = ({
                 className={`px-[22px] py-3 text-[16px] font-medium border-b-2 transition-colors ${
                   dueTabType === type
                     ? 'text-transparent bg-clip-text bg-gradient-to-r from-[#38bdf8] to-[#1e90ff] border-[#38bdf8]'
-                    : 'text-black border-transparent hover:text-[#333]'
+                    : 'text-slate-700 border-transparent hover:text-slate-900'
                 }`}
               >
                 {type}
@@ -234,13 +234,13 @@ const DueBookTab: React.FC<DueBookTabProps> = ({
           {/* Search */}
           <div className="px-5 py-3">
             <div className="bg-[#f9f9f9] h-[34px] rounded-lg flex items-center px-2">
-              <Search size={20} className="text-black mr-2" />
+              <Search size={20} className="text-slate-400 mr-2" />
               <input
                 type="text"
                 placeholder="Search"
                 value={dueSearch}
                 onChange={(e) => setDueSearch(e.target.value)}
-                className="bg-transparent border-none outline-none flex-1 text-[12px] text-black placeholder:text-black"
+                className="bg-transparent border-none outline-none flex-1 text-[12px] text-slate-700 placeholder:text-slate-400"
               />
             </div>
           </div>
@@ -295,7 +295,7 @@ const DueBookTab: React.FC<DueBookTabProps> = ({
           <div className="flex items-center justify-end gap-4 px-5 py-3">
             <button
               onClick={() => setShowDueHistoryModal(true)}
-              className="flex items-center gap-2 bg-[#f9f9f9] text-black px-4 h-[48px] rounded-lg text-[15px] font-bold tracking-[-0.3px]"
+              className="flex items-center gap-2 bg-[#f9f9f9] text-slate-900 px-4 h-[48px] rounded-lg text-[15px] font-bold tracking-[-0.3px]"
             >
               <RefreshCw size={20} />
               Due History

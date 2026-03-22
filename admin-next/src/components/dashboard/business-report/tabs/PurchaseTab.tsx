@@ -197,7 +197,7 @@ const PurchaseTab: React.FC<PurchaseTabProps> = ({
               placeholder="Search Customers"
               className="bg-transparent text-[12px] text-gray-700 font-['Roboto'] outline-none flex-1"
             />
-            <span className="text-[12px] text-black font-['Roboto']">Search</span>
+            <span className="text-[12px] text-slate-900 font-['Roboto']">Search</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-[12px] text-[#7b7b7b] font-['Roboto']">Sort by</span>
@@ -205,7 +205,7 @@ const PurchaseTab: React.FC<PurchaseTabProps> = ({
               <select
                 value={purchaseSortBy}
                 onChange={(e) => setPurchaseSortBy(e.target.value as 'newest' | 'oldest' | 'amount')}
-                className="bg-transparent text-[12px] text-black font-['Roboto'] outline-none cursor-pointer"
+                className="bg-transparent text-[12px] text-slate-900 font-['Roboto'] outline-none cursor-pointer"
               >
                 <option value="newest">Newest</option>
                 <option value="oldest">Oldest</option>
@@ -249,21 +249,21 @@ const PurchaseTab: React.FC<PurchaseTabProps> = ({
             <div className="flex items-center gap-2">
               <button onClick={() => setIsPurchaseCategoryModalOpen(true)} className="bg-white flex items-center gap-1 px-[6px] py-[6px] rounded">
                 <AddSquareSmallIcon />
-                <span className="text-[12px] text-black font-['Roboto']">Add Category</span>
+                <span className="text-[12px] text-slate-900 font-['Roboto']">Add Category</span>
               </button>
               <button onClick={handlePrintPurchases} className="bg-white flex items-center gap-1 px-[6px] py-[6px] rounded">
                 <PrinterIcon />
-                <span className="text-[12px] text-black font-['Roboto']">Print</span>
+                <span className="text-[12px] text-slate-900 font-['Roboto']">Print</span>
               </button>
             </div>
           </div>
           <div className="flex items-center gap-[7px] mt-3">
-            <span className="text-[12px] text-black font-['Roboto']">Filter by:</span>
+            <span className="text-[12px] text-slate-900 font-['Roboto']">Filter by:</span>
             <div className="bg-white flex-1 flex items-center justify-between px-3 py-[11px] rounded">
               <select
                 value={purchaseFilterCategory}
                 onChange={(e) => setPurchaseFilterCategory(e.target.value)}
-                className="text-[12px] text-black font-['Roboto'] bg-transparent border-none outline-none flex-1 cursor-pointer"
+                className="text-[12px] text-slate-900 font-['Roboto'] bg-transparent border-none outline-none flex-1 cursor-pointer"
               >
                 <option value="">Category</option>
                 {expenseCategories.map(cat => (
@@ -301,14 +301,14 @@ const PurchaseTab: React.FC<PurchaseTabProps> = ({
               </button>
             </div>
           )}
-          <div className="w-14 flex-shrink-0"><p className="text-[16px] font-medium text-black font-['Roboto']">SL</p></div>
-          <div className="w-16 flex-shrink-0"><p className="text-[16px] font-medium text-black font-['Roboto']">Doc</p></div>
-          <div className="flex-1 min-w-[120px]"><p className="text-[16px] font-medium text-black font-['Roboto']">Name</p></div>
-          <div className="w-28 flex-shrink-0"><p className="text-[16px] font-medium text-black font-['Roboto']">Number</p></div>
-          <div className="w-28 flex-shrink-0"><p className="text-[16px] font-medium text-black font-['Roboto']">Category</p></div>
-          <div className="w-28 flex-shrink-0"><p className="text-[16px] font-medium text-black font-['Roboto']">Date</p></div>
-          <div className="w-24 flex-shrink-0 text-center"><p className="text-[16px] font-medium text-black font-['Roboto']">Amount</p></div>
-          <div className="w-16 flex-shrink-0 text-center"><p className="text-[16px] font-medium text-black font-['Roboto']">Action</p></div>
+          <div className="w-14 flex-shrink-0"><p className="text-[16px] font-medium text-slate-900 font-['Roboto']">SL</p></div>
+          <div className="w-16 flex-shrink-0"><p className="text-[16px] font-medium text-slate-900 font-['Roboto']">Doc</p></div>
+          <div className="flex-1 min-w-[120px]"><p className="text-[16px] font-medium text-slate-900 font-['Roboto']">Name</p></div>
+          <div className="w-28 flex-shrink-0"><p className="text-[16px] font-medium text-slate-900 font-['Roboto']">Number</p></div>
+          <div className="w-28 flex-shrink-0"><p className="text-[16px] font-medium text-slate-900 font-['Roboto']">Category</p></div>
+          <div className="w-28 flex-shrink-0"><p className="text-[16px] font-medium text-slate-900 font-['Roboto']">Date</p></div>
+          <div className="w-24 flex-shrink-0 text-center"><p className="text-[16px] font-medium text-slate-900 font-['Roboto']">Amount</p></div>
+          <div className="w-16 flex-shrink-0 text-center"><p className="text-[16px] font-medium text-slate-900 font-['Roboto']">Action</p></div>
         </div>
 
         {purchaseLoading ? (
@@ -394,7 +394,7 @@ const PurchaseTab: React.FC<PurchaseTabProps> = ({
             className="bg-white flex items-center gap-1 h-[42px] pl-2 pr-3 py-[10px] rounded-lg shadow-[0px_1px_3px_0px_rgba(0,0,0,0.2)] disabled:opacity-50"
           >
             <ArrowLeftIcon />
-            <span className="text-[15px] font-medium text-black font-['Roboto']">Previous</span>
+            <span className="text-[15px] font-medium text-slate-900 font-['Roboto']">Previous</span>
           </button>
           <div className="flex items-center gap-3">
             {Array.from({ length: Math.min(5, totalPurchasePages) }, (_, i) => i + 1).map(page => (
@@ -420,7 +420,7 @@ const PurchaseTab: React.FC<PurchaseTabProps> = ({
             disabled={purchasePage === totalPurchasePages}
             className="bg-white flex items-center gap-1 h-[42px] pl-3 pr-2 py-[10px] rounded-lg shadow-[0px_1px_3px_0px_rgba(0,0,0,0.2)] disabled:opacity-50"
           >
-            <span className="text-[15px] font-medium text-black font-['Roboto']">Next</span>
+            <span className="text-[15px] font-medium text-slate-900 font-['Roboto']">Next</span>
             <ArrowRightIcon />
           </button>
         </div>

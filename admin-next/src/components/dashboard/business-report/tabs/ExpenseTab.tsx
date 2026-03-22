@@ -329,7 +329,7 @@ const ExpenseTab: React.FC<ExpenseTabProps> = ({
                       className="w-full h-[48px] flex items-center gap-2 px-4 hover:bg-gray-50"
                     >
                       <Edit2 size={18} />
-                      <span className="text-[16px] font-semibold text-black font-['Roboto']">Edit</span>
+                      <span className="text-[16px] font-semibold text-slate-900 font-['Roboto']">Edit</span>
                     </button>
                     <button
                       onClick={() => handleDeleteExpense(expense.id)}
@@ -392,7 +392,7 @@ const ExpenseTab: React.FC<ExpenseTabProps> = ({
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-[8px] p-5 w-full max-w-[548px] overflow-y-auto max-h-[90vh]">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 mb-4 sm:mb-5">
-              <h3 className="text-[16px] font-semibold text-black text-center font-['Roboto']">
+              <h3 className="text-[16px] font-semibold text-slate-900 text-center font-['Roboto']">
                 {editingExpenseId ? 'Edit Expense' : 'Add Expense'}
               </h3>
               <button onClick={() => { setIsAddExpenseOpen(false); setEditingExpenseId(null); }} className="text-gray-500 hover:text-gray-700">
@@ -577,33 +577,33 @@ const ExpenseTab: React.FC<ExpenseTabProps> = ({
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-[8px] p-5 w-full max-w-[548px] max-h-[90vh] overflow-y-auto">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 mb-4 sm:mb-5">
-              <h3 className="text-[16px] font-semibold text-black text-center font-['Roboto']">Expense Details</h3>
+              <h3 className="text-[16px] font-semibold text-slate-900 text-center font-['Roboto']">Expense Details</h3>
               <button onClick={() => setExpenseDetailsOpen(null)} className="text-gray-500 hover:text-gray-700"><X size={20} /></button>
             </div>
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-2">
                 <label className="text-[15px] font-bold text-slate-900 font-['Roboto']">Expense Name</label>
                 <div className="w-full h-[48px] px-3 py-2.5 bg-[#f9fafb] border border-[#e5e7eb] rounded-[8px] flex items-center">
-                  <span className="text-[15px] font-['Roboto'] text-black">{expenseDetailsOpen.name}</span>
+                  <span className="text-[15px] font-['Roboto'] text-slate-900">{expenseDetailsOpen.name}</span>
                 </div>
               </div>
               <div className="flex flex-col gap-2">
                 <label className="text-[15px] font-bold text-slate-900 font-['Roboto']">Category</label>
                 <div className="w-full h-[48px] px-3 py-2.5 bg-[#f9fafb] border border-[#e5e7eb] rounded-[8px] flex items-center">
-                  <span className="text-[15px] font-['Roboto'] text-black">{expenseDetailsOpen.category}</span>
+                  <span className="text-[15px] font-['Roboto'] text-slate-900">{expenseDetailsOpen.category}</span>
                 </div>
               </div>
               <div className="flex gap-4">
                 <div className="flex-1 flex flex-col gap-2">
                   <label className="text-[15px] font-bold text-slate-900 font-['Roboto']">Amount</label>
                   <div className="w-full h-[48px] px-3 py-2.5 bg-[#f9fafb] border border-[#e5e7eb] rounded-[8px] flex items-center">
-                    <span className="text-[15px] font-['Roboto'] text-black">৳{expenseDetailsOpen.amount.toLocaleString('en-IN')}</span>
+                    <span className="text-[15px] font-['Roboto'] text-slate-900">৳{expenseDetailsOpen.amount.toLocaleString('en-IN')}</span>
                   </div>
                 </div>
                 <div className="flex-1 flex flex-col gap-2">
                   <label className="text-[15px] font-bold text-slate-900 font-['Roboto']">Date</label>
                   <div className="w-full h-[48px] px-3 py-2.5 bg-[#f9fafb] border border-[#e5e7eb] rounded-[8px] flex items-center">
-                    <span className="text-[15px] font-['Roboto'] text-black">
+                    <span className="text-[15px] font-['Roboto'] text-slate-900">
                       {new Date(expenseDetailsOpen.date).toLocaleDateString('en-GB').replace(/\//g, '-')}
                     </span>
                   </div>
@@ -621,7 +621,7 @@ const ExpenseTab: React.FC<ExpenseTabProps> = ({
                 <div className="flex flex-col gap-2">
                   <label className="text-[15px] font-bold text-slate-900 font-['Roboto']">Note</label>
                   <div className="w-full min-h-[48px] px-3 py-2.5 bg-[#f9fafb] border border-[#e5e7eb] rounded-[8px] flex items-center">
-                    <span className="text-[15px] font-['Roboto'] text-black">{expenseDetailsOpen.note}</span>
+                    <span className="text-[15px] font-['Roboto'] text-slate-900">{expenseDetailsOpen.note}</span>
                   </div>
                 </div>
               )}
