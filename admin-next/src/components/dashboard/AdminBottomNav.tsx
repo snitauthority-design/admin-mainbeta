@@ -14,6 +14,7 @@ const SEARCHABLE_MENU_ITEMS: SearchMenuItem[] = [
   { id: 'products', label: 'All Products', keywords: ['product', 'item', 'listing', 'merchandise'], category: 'Products' },
   { id: 'product-upload', label: 'Add New Product', keywords: ['add product', 'upload', 'new product', 'create product'], category: 'Products' },
   { id: 'inventory', label: 'Inventory', keywords: ['stock', 'warehouse', 'quantity'], category: 'Main Menu' },
+  { id: 'purchases', label: 'Purchase', keywords: ['purchase', 'buy', 'supplier', 'purchase book', 'procurement'], category: 'Main Menu' },
   { id: 'customers_reviews', label: 'Customers & Reviews', keywords: ['customer', 'review', 'feedback', 'user'], category: 'Main Menu' },
   { id: 'catalog_categories', label: 'Categories', keywords: ['category', 'product category'], category: 'Catalog' },
   { id: 'catalog_subcategories', label: 'Sub Categories', keywords: ['subcategory', 'sub category'], category: 'Catalog' },
