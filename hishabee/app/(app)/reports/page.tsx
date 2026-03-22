@@ -22,12 +22,43 @@ interface ProfitLossData {
   incomeCount: number;
 }
 
+// Per-tenant localStorage cache helpers
+const REPORT_CACHE_PREFIX = 'hishabee_report_';
+
+function getCacheKey(tenantId: string, period: string) {
+  return `${REPORT_CACHE_PREFIX}${tenantId}_${period}`;
+}
+
+function getCachedReport(tenantId: string, period: string): ProfitLossData | null {
+  try {
+    const raw = localStorage.getItem(getCacheKey(tenantId, period));
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    return parsed?.data ?? null;
+  } catch {
+    return null;
+  }
+}
+
+function setCachedReport(tenantId: string, period: string, data: ProfitLossData) {
+  try {
+    localStorage.setItem(getCacheKey(tenantId, period), JSON.stringify({ data, ts: Date.now() }));
+  } catch { /* quota exceeded — ignore */ }
+}
+
 export default function ReportsPage() {
   const { tenantId, tenantConfig } = useAuth();
   const fc = (n: number) => formatCurrency(n, tenantConfig.currency);
   const [data, setData] = useState<ProfitLossData | null>(null);
   const [loading, setLoading] = useState(true);
   const [period, setPeriod] = useState('Monthly');
+
+  // Restore cached data for current tenant+period on mount and period change
+  useEffect(() => {
+    if (!tenantId) return;
+    const cached = getCachedReport(tenantId, period);
+    if (cached) setData(cached);
+  }, [tenantId, period]);
 
   const loadReport = useCallback(async () => {
     if (!tenantId) return;
@@ -42,7 +73,7 @@ export default function ReportsPage() {
         headers: { 'X-Tenant-Id': tenantId },
       });
       const d = res.data;
-      setData({
+      const report: ProfitLossData = {
         totalRevenue: d.totalRevenue ?? 0,
         totalExpenses: d.totalExpenses ?? d.otherExpense ?? 0,
         totalPurchases: d.totalPurchases ?? 0,
@@ -52,13 +83,24 @@ export default function ReportsPage() {
         expenseCount: d.expenseCount ?? 0,
         purchaseCount: d.purchaseCount ?? 0,
         incomeCount: d.incomeCount ?? 0,
-      });
+      };
+      setData(report);
+      setCachedReport(tenantId, period, report);
     } catch {
-      setData({ totalRevenue: 0, totalExpenses: 0, totalPurchases: 0, totalIncome: 0, netProfit: 0, orderCount: 0, expenseCount: 0, purchaseCount: 0, incomeCount: 0 });
+      // On failure, keep showing cached data if available
+      if (!data) {
+        const cached = getCachedReport(tenantId, period);
+        if (cached) {
+          setData(cached);
+        } else {
+          setData({ totalRevenue: 0, totalExpenses: 0, totalPurchases: 0, totalIncome: 0, netProfit: 0, orderCount: 0, expenseCount: 0, purchaseCount: 0, incomeCount: 0 });
+        }
+      }
       toast.error('Report data unavailable');
     } finally {
       setLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tenantId, period]);
 
   useEffect(() => { loadReport(); }, [loadReport]);
