@@ -47,6 +47,7 @@ import { subscriptionRouter } from './routes/subscription';
 import ragChatRouter from './routes/ragChat';
 import unfilteredImagesRouter from './routes/unfilteredImages';
 import { tenantConfigRouter } from './routes/tenantConfig';
+import { cashboxRouter } from './routes/cashbox';
 
 const app = express();
 const httpServer = createServer(app);
@@ -255,6 +256,7 @@ app.use('/api/image-search', imageSearchRouter);
 app.use('/api/subscription', subscriptionRouter);
 app.use('/api/chat', ragChatRouter);
 app.use('/api/tenant-config', tenantConfigRouter);
+app.use('/api/cashbox', cashboxRouter);
 app.use('/api', dueListRoutes);
 
 // Visitors tracking (import at top of file)
