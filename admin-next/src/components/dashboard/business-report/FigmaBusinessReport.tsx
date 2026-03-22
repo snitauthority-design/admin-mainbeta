@@ -12,7 +12,7 @@ import { DueEntity } from '../../../types';
 import CustomDateRangePicker, { DateRange } from '../CustomDateRangePicker';
 
 import {
-  WaterfallIcon, InvoiceIcon, MoneyReceiveIcon,
+  OverviewIcon, WaterfallIcon, InvoiceIcon, MoneyReceiveIcon,
   ShoppingBagIcon, BookIcon, NoteIcon,
 } from './icons';
 import {
@@ -20,6 +20,7 @@ import {
   TabType, DateRangeType, SummaryData, DueSummaryData, DueGraphData,
 } from './types';
 
+import BusinessOverviewTab from './tabs/BusinessOverviewTab';
 import ProfitLossTab from './tabs/ProfitLossTab';
 import ExpenseTab from './tabs/ExpenseTab';
 import IncomeTab from './tabs/IncomeTab';
@@ -34,7 +35,7 @@ const FigmaBusinessReport: React.FC<FigmaBusinessReportProps> = ({
   tenantId,
   initialTab,
 }) => {
-  const [activeTab, setActiveTab] = useState<TabType>('profit');
+  const [activeTab, setActiveTab] = useState<TabType>('overview');
   const [dateRange, setDateRange] = useState<DateRangeType>('all');
   const [chartAnimated, setChartAnimated] = useState(false);
   const [showCustomDatePicker, setShowCustomDatePicker] = useState(false);
@@ -45,6 +46,7 @@ const FigmaBusinessReport: React.FC<FigmaBusinessReportProps> = ({
   useEffect(() => {
     if (!initialTab) return;
     const tabMap: Record<string, TabType> = {
+      'business_report': 'overview',
       'purchases': 'purchase',
       'business_report_purchase': 'purchase',
       'business_report_expense': 'expense',
@@ -54,6 +56,7 @@ const FigmaBusinessReport: React.FC<FigmaBusinessReportProps> = ({
       'business_report_due': 'due',
       'due_book': 'due',
       'business_report_note': 'note',
+      'business_report_profit_loss': 'profit',
     };
     const mapped = tabMap[initialTab];
     if (mapped) setActiveTab(mapped);
@@ -213,7 +216,20 @@ const FigmaBusinessReport: React.FC<FigmaBusinessReportProps> = ({
   // Refresh handler for current tab
   const handleRefreshData = async () => {
     const { start, end } = getDateRangeBoundaries;
-    if (activeTab === 'expense') {
+    if (activeTab === 'overview') {
+      // Refresh all data sources for the overview
+      Promise.all([
+        ExpenseService.list({ page: 1, pageSize: 500, from: start.toISOString(), to: end.toISOString() }),
+        IncomeService.list({ page: 1, pageSize: 500, from: start.toISOString(), to: end.toISOString() }),
+        dueListService.getEntities('Customer'),
+        dueListService.getEntities('Supplier'),
+        dueListService.getEntities('Employee'),
+      ]).then(([expenseRes, incomeRes, customers, suppliers, employees]) => {
+        setExpenses(expenseRes.items as any);
+        setIncomes(incomeRes.items as any);
+        setAllDueEntities([...customers, ...suppliers, ...employees]);
+      }).catch(console.error);
+    } else if (activeTab === 'expense') {
       ExpenseService.list({ page: 1, pageSize: 500, from: start.toISOString(), to: end.toISOString() })
         .then(res => setExpenses(res.items as any))
         .catch(console.error);
@@ -232,6 +248,7 @@ const FigmaBusinessReport: React.FC<FigmaBusinessReportProps> = ({
   };
 
   const tabs = [
+    { id: 'overview' as TabType, label: 'Overview', icon: OverviewIcon },
     { id: 'profit' as TabType, label: 'Profit/Loss', icon: WaterfallIcon },
     { id: 'expense' as TabType, label: 'Expense', icon: InvoiceIcon },
     { id: 'income' as TabType, label: 'Income', icon: MoneyReceiveIcon },
@@ -358,6 +375,16 @@ const FigmaBusinessReport: React.FC<FigmaBusinessReportProps> = ({
         </div>
 
         {/* Tab Content */}
+        {activeTab === 'overview' && (
+          <BusinessOverviewTab
+            summary={summary}
+            dueSummary={dueSummary}
+            tenantId={tenantId}
+            getDateRangeDisplayText={getDateRangeDisplayText}
+            onNavigateTab={setActiveTab}
+            onRefresh={handleRefreshData}
+          />
+        )}
         {activeTab === 'profit' && (
           <ProfitLossTab
             summary={summary}
