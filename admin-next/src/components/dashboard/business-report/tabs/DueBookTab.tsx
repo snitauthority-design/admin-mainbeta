@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import { RefreshCw, Plus, Search, Package, Printer, MoreHorizontal, Calendar } from 'lucide-react';
 import { dueListService } from '../../../../services/DueListService';
 import { DueEntity, DueTransaction, EntityType, CreateDueTransactionPayload } from '../../../../types';
@@ -166,7 +166,7 @@ const DueBookTab: React.FC<DueBookTabProps> = ({
     <div className="bg-white rounded-lg overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between px-5 pt-5 pb-2">
-        <h2 className="text-[18px] font-bold text-[#023337] tracking-[0.09px]">Due List</h2>
+        <h2 className="text-[18px] font-bold text-slate-900 tracking-tight font-['Roboto']">Due List</h2>
         <button
           onClick={handlePrintDueList}
           className="flex items-center gap-2 bg-gradient-to-r from-[#38bdf8] to-[#1e90ff] text-white px-4 h-[48px] rounded-lg text-[15px] font-bold tracking-[-0.3px]"
@@ -179,16 +179,16 @@ const DueBookTab: React.FC<DueBookTabProps> = ({
       {/* Summary Cards */}
       <div className="flex gap-4 px-5 py-4">
         <div className="flex-1 bg-[#f9f9f9] rounded-lg h-[80px] px-[18px] py-5 flex flex-col justify-center">
-          <p className="text-xl sm:text-2xl lg:text-[32px] font-bold text-[#008c09] tracking-[0.16px]">
+          <p className="text-xl sm:text-2xl lg:text-[32px] font-bold text-[#008c09] tracking-tight tabular-nums font-['Roboto']">
             ৳{dueSummary.totalWillGet.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </p>
-          <p className="text-[12px] text-black">You will Get (Total)</p>
+          <p className="text-[12px] text-slate-500 font-['Roboto']">You will Get (Total)</p>
         </div>
         <div className="flex-1 bg-[#f9f9f9] rounded-lg h-[80px] px-[18px] py-5 flex flex-col justify-center">
-          <p className="text-xl sm:text-2xl lg:text-[32px] font-bold text-[#da0000] tracking-[0.16px]">
+          <p className="text-xl sm:text-2xl lg:text-[32px] font-bold text-[#da0000] tracking-tight tabular-nums font-['Roboto']">
             ৳{dueSummary.totalWillGive.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </p>
-          <p className="text-[12px] text-black">You will Give (Total)</p>
+          <p className="text-[12px] text-slate-500 font-['Roboto']">You will Give (Total)</p>
         </div>
       </div>
 
@@ -197,14 +197,14 @@ const DueBookTab: React.FC<DueBookTabProps> = ({
         <div className="bg-blue-50 border border-blue-200 rounded-lg px-4 py-2 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Calendar size={16} className="text-blue-600" />
-            <span className="text-sm text-blue-700">
+            <span className="text-sm text-blue-700 font-['Roboto']">
               Showing transactions: <span className="font-semibold">{getDateRangeDisplayText()}</span>
             </span>
           </div>
           {selectedEntity && filteredDueTransactions.length > 0 && (
             <div className="flex items-center gap-4 text-sm">
-              <span className="text-[#008c09]">Get: ৳{filteredDueSummary.totalWillGet.toLocaleString('en-IN')}</span>
-              <span className="text-[#da0000]">Give: ৳{filteredDueSummary.totalWillGive.toLocaleString('en-IN')}</span>
+              <span className="text-[#008c09] font-['Roboto'] tabular-nums">Get: ৳{filteredDueSummary.totalWillGet.toLocaleString('en-IN')}</span>
+              <span className="text-[#da0000] font-['Roboto'] tabular-nums">Give: ৳{filteredDueSummary.totalWillGive.toLocaleString('en-IN')}</span>
             </div>
           )}
         </div>
@@ -269,17 +269,17 @@ const DueBookTab: React.FC<DueBookTabProps> = ({
                     <div className={`w-[2px] h-[46px] rounded-full ${entity.totalOwedToMe > entity.totalIOweThemNumber ? 'bg-[#008c09]' : 'bg-[#da0000]'}`} />
                     <div className="flex-1 flex justify-between items-center">
                       <div className="flex flex-col">
-                        <span className="text-[16px] font-semibold text-black">{entity.name}</span>
-                        <span className="text-[12px] text-black">{entity.phone || 'No phone'}</span>
+                        <span className="text-[16px] font-semibold text-slate-900 font-['Roboto']">{entity.name}</span>
+                        <span className="text-[12px] text-slate-500 font-['Roboto']">{entity.phone || 'No phone'}</span>
                       </div>
                       <div className="flex flex-col items-end gap-[2px] text-[12px]">
                         <p>
-                          <span className="text-black">Give: </span>
-                          <span className="font-semibold text-[#da0000]">৳{(entity.totalIOweThemNumber || 0).toLocaleString('en-IN')}</span>
+                          <span className="text-slate-500 font-['Roboto']">Give: </span>
+                          <span className="font-semibold text-[#da0000] tabular-nums font-['Roboto']">৳{(entity.totalIOweThemNumber || 0).toLocaleString('en-IN')}</span>
                         </p>
                         <p>
-                          <span className="text-black">Get: </span>
-                          <span className="font-semibold text-[#008c09]">৳{(entity.totalOwedToMe || 0).toLocaleString('en-IN')}</span>
+                          <span className="text-slate-500 font-['Roboto']">Get: </span>
+                          <span className="font-semibold text-[#008c09] tabular-nums font-['Roboto']">৳{(entity.totalOwedToMe || 0).toLocaleString('en-IN')}</span>
                         </p>
                       </div>
                     </div>
@@ -324,18 +324,18 @@ const DueBookTab: React.FC<DueBookTabProps> = ({
                       className={`flex items-center justify-between py-3 ${idx !== filteredDueTransactions.length - 1 ? 'border-b border-[#e5e5e5]' : ''}`}
                     >
                       <div className="flex flex-col gap-[2px] w-[145px]">
-                        <span className="text-[14px] font-medium text-black">
+                        <span className="text-[14px] font-medium text-slate-900 font-['Roboto']">
                           {tx.transactionType || tx.items || 'Product purchase'}
                         </span>
-                        <span className="text-[12px] text-black">
+                        <span className="text-[12px] text-slate-500 font-['Roboto']">
                           {new Date(tx.transactionDate).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })}
                         </span>
                       </div>
-                      <p className="text-[10px] text-[#b0b0b0] leading-[12px] w-[277px] line-clamp-3">
+                        <p className="text-[10px] text-slate-400 leading-[12px] w-[277px] line-clamp-3 font-['Roboto']">
                         {tx.notes || 'No notes'}
                       </p>
                       <div className="flex items-center gap-4 justify-end w-[224px]">
-                        <span className={`text-[16px] font-semibold w-[106px] ${tx.direction === 'INCOME' ? 'text-[#008c09]' : 'text-[#da0000]'}`}>
+                          <span className={`text-[16px] font-semibold w-[106px] tabular-nums font-['Roboto'] ${tx.direction === 'INCOME' ? 'text-[#008c09]' : 'text-[#da0000]'}`}>
                           {tx.direction === 'INCOME' ? '+ ' : '- '}৳{tx.amount.toLocaleString('en-IN')}
                         </span>
                         <span className={`px-[9px] py-[2px] rounded-[30px] text-[12px] font-medium w-[62px] text-center ${

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import { ChevronDown, RefreshCw, X, Trash2, Search, Package } from 'lucide-react';
 import { CategoryService, CategoryDTO } from '../../../../services/CategoryService';
 import { PurchaseRecord } from '../types';
@@ -184,8 +184,8 @@ const PurchaseTab: React.FC<PurchaseTabProps> = ({
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 px-3 sm:px-5 pt-3 pb-3">
         <div className="flex flex-col gap-1">
-          <h2 className="text-[18px] font-bold text-[#023337] tracking-[0.09px] font-['Lato']">Purchase information</h2>
-          <p className="text-[12px] text-black font-['Poppins']">View all purchase report</p>
+          <h2 className="text-[18px] font-bold text-slate-900 tracking-tight font-['Roboto']">Purchase information</h2>
+          <p className="text-[12px] text-slate-500 font-['Roboto']">View all purchase report</p>
         </div>
         <div className="flex flex-wrap items-center gap-2 sm:gap-3 lg:gap-6">
           <div className="bg-[#f9f9f9] h-[34px] rounded-lg flex items-center px-2 w-full sm:w-[200px] lg:w-[300px]">
@@ -195,17 +195,17 @@ const PurchaseTab: React.FC<PurchaseTabProps> = ({
               value={purchaseSearch}
               onChange={(e) => setPurchaseSearch(e.target.value)}
               placeholder="Search Customers"
-              className="bg-transparent text-[12px] text-gray-700 font-['Poppins'] outline-none flex-1"
+              className="bg-transparent text-[12px] text-gray-700 font-['Roboto'] outline-none flex-1"
             />
-            <span className="text-[12px] text-black font-['Poppins']">Search</span>
+            <span className="text-[12px] text-black font-['Roboto']">Search</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-[12px] text-[#7b7b7b] font-['Poppins']">Sort by</span>
+            <span className="text-[12px] text-[#7b7b7b] font-['Roboto']">Sort by</span>
             <div className="bg-[#f9f9f9] rounded-lg px-2 py-2">
               <select
                 value={purchaseSortBy}
                 onChange={(e) => setPurchaseSortBy(e.target.value as 'newest' | 'oldest' | 'amount')}
-                className="bg-transparent text-[12px] text-black font-['Poppins'] outline-none cursor-pointer"
+                className="bg-transparent text-[12px] text-black font-['Roboto'] outline-none cursor-pointer"
               >
                 <option value="newest">Newest</option>
                 <option value="oldest">Oldest</option>
@@ -218,7 +218,7 @@ const PurchaseTab: React.FC<PurchaseTabProps> = ({
             className="bg-gradient-to-r from-[#38bdf8] to-[#1e90ff] flex items-center gap-1 h-[48px] pl-3 pr-4 py-[6px] rounded-lg"
           >
             <AddSquareIcon />
-            <span className="text-[15px] font-bold text-white tracking-[-0.3px] font-['Lato']">Add Purchase</span>
+            <span className="text-[15px] font-bold text-white tracking-[-0.3px] font-['Roboto']">Add Purchase</span>
           </button>
         </div>
       </div>
@@ -226,44 +226,44 @@ const PurchaseTab: React.FC<PurchaseTabProps> = ({
       {/* Summary Cards */}
       <div className="flex flex-wrap gap-3 sm:gap-4 px-3 sm:px-5 mt-4">
         <div className="bg-[#f9f9f9] rounded-lg h-auto min-h-[80px] sm:h-[100px] w-full sm:w-[396px] overflow-hidden px-[18px] py-5">
-          <p className="text-xl sm:text-2xl lg:text-[32px] font-bold text-[#da3e00] tracking-[0.16px] font-['Lato']">
+          <p className="text-xl sm:text-2xl lg:text-[32px] font-bold text-[#da3e00] tracking-tight font-['Roboto']">
             ৳{purchaseStats.totalAmount.toLocaleString('en-IN')}.00
           </p>
-          <p className="text-[12px] text-black font-['Poppins'] mt-2">Total purchase value</p>
+          <p className="text-[12px] text-slate-500 font-['Roboto'] mt-2">Total purchase value</p>
         </div>
         <div className="bg-[#f9f9f9] rounded-lg h-auto min-h-[80px] sm:h-[100px] w-[calc(50%-6px)] sm:w-[148px] overflow-hidden px-[18px] py-5">
-          <p className="text-xl sm:text-2xl lg:text-[32px] font-bold text-[#022f37] tracking-[0.16px] font-['Lato']">
+          <p className="text-xl sm:text-2xl lg:text-[32px] font-bold text-[#022f37] tracking-tight font-['Roboto']">
             {purchaseStats.totalPurchases}
           </p>
-          <p className="text-[12px] text-black font-['Poppins'] mt-2">Total Purchase</p>
+          <p className="text-[12px] text-slate-500 font-['Roboto'] mt-2">Total Purchase</p>
         </div>
         <div className="bg-[#f9f9f9] rounded-lg h-auto min-h-[80px] sm:h-[100px] w-[calc(50%-6px)] sm:w-[148px] overflow-hidden px-[18px] py-5">
-          <p className="text-xl sm:text-2xl lg:text-[32px] font-bold text-[#022f37] tracking-[0.16px] font-['Lato']">
+          <p className="text-xl sm:text-2xl lg:text-[32px] font-bold text-[#022f37] tracking-tight font-['Roboto']">
             {purchaseStats.categories}
           </p>
-          <p className="text-[12px] text-black font-['Poppins'] mt-2">Categories</p>
+          <p className="text-[12px] text-slate-500 font-['Roboto'] mt-2">Categories</p>
         </div>
         <div className="bg-[#f9f9f9] rounded-lg h-auto min-h-[100px] w-full sm:flex-1 overflow-hidden px-[18px] py-3">
           <div className="flex items-center justify-between">
-            <p className="text-[12px] text-black font-['Poppins']">Actions</p>
+            <p className="text-[12px] text-slate-500 font-['Roboto']">Actions</p>
             <div className="flex items-center gap-2">
               <button onClick={() => setIsPurchaseCategoryModalOpen(true)} className="bg-white flex items-center gap-1 px-[6px] py-[6px] rounded">
                 <AddSquareSmallIcon />
-                <span className="text-[12px] text-black font-['Poppins']">Add Category</span>
+                <span className="text-[12px] text-black font-['Roboto']">Add Category</span>
               </button>
               <button onClick={handlePrintPurchases} className="bg-white flex items-center gap-1 px-[6px] py-[6px] rounded">
                 <PrinterIcon />
-                <span className="text-[12px] text-black font-['Poppins']">Print</span>
+                <span className="text-[12px] text-black font-['Roboto']">Print</span>
               </button>
             </div>
           </div>
           <div className="flex items-center gap-[7px] mt-3">
-            <span className="text-[12px] text-black font-['Poppins']">Filter by:</span>
+            <span className="text-[12px] text-black font-['Roboto']">Filter by:</span>
             <div className="bg-white flex-1 flex items-center justify-between px-3 py-[11px] rounded">
               <select
                 value={purchaseFilterCategory}
                 onChange={(e) => setPurchaseFilterCategory(e.target.value)}
-                className="text-[12px] text-black font-['Poppins'] bg-transparent border-none outline-none flex-1 cursor-pointer"
+                className="text-[12px] text-black font-['Roboto'] bg-transparent border-none outline-none flex-1 cursor-pointer"
               >
                 <option value="">Category</option>
                 {expenseCategories.map(cat => (
@@ -301,14 +301,14 @@ const PurchaseTab: React.FC<PurchaseTabProps> = ({
               </button>
             </div>
           )}
-          <div className="w-14 flex-shrink-0"><p className="text-[16px] font-medium text-black font-['Poppins']">SL</p></div>
-          <div className="w-16 flex-shrink-0"><p className="text-[16px] font-medium text-black font-['Poppins']">Doc</p></div>
-          <div className="flex-1 min-w-[120px]"><p className="text-[16px] font-medium text-black font-['Poppins']">Name</p></div>
-          <div className="w-28 flex-shrink-0"><p className="text-[16px] font-medium text-black font-['Poppins']">Number</p></div>
-          <div className="w-28 flex-shrink-0"><p className="text-[16px] font-medium text-black font-['Poppins']">Category</p></div>
-          <div className="w-28 flex-shrink-0"><p className="text-[16px] font-medium text-black font-['Poppins']">Date</p></div>
-          <div className="w-24 flex-shrink-0 text-center"><p className="text-[16px] font-medium text-black font-['Poppins']">Amount</p></div>
-          <div className="w-16 flex-shrink-0 text-center"><p className="text-[16px] font-medium text-black font-['Poppins']">Action</p></div>
+          <div className="w-14 flex-shrink-0"><p className="text-[16px] font-medium text-black font-['Roboto']">SL</p></div>
+          <div className="w-16 flex-shrink-0"><p className="text-[16px] font-medium text-black font-['Roboto']">Doc</p></div>
+          <div className="flex-1 min-w-[120px]"><p className="text-[16px] font-medium text-black font-['Roboto']">Name</p></div>
+          <div className="w-28 flex-shrink-0"><p className="text-[16px] font-medium text-black font-['Roboto']">Number</p></div>
+          <div className="w-28 flex-shrink-0"><p className="text-[16px] font-medium text-black font-['Roboto']">Category</p></div>
+          <div className="w-28 flex-shrink-0"><p className="text-[16px] font-medium text-black font-['Roboto']">Date</p></div>
+          <div className="w-24 flex-shrink-0 text-center"><p className="text-[16px] font-medium text-black font-['Roboto']">Amount</p></div>
+          <div className="w-16 flex-shrink-0 text-center"><p className="text-[16px] font-medium text-black font-['Roboto']">Action</p></div>
         </div>
 
         {purchaseLoading ? (
@@ -332,7 +332,7 @@ const PurchaseTab: React.FC<PurchaseTabProps> = ({
                 />
               </div>
               <div className="w-14 flex-shrink-0">
-                <p className="text-[12px] text-[#1d1a1a] font-['Poppins']">
+                <p className="text-[12px] text-slate-900 font-['Roboto']">
                   {filteredPurchases.length - ((purchasePage - 1) * PAGE_SIZE) - index}
                 </p>
               </div>
@@ -346,21 +346,21 @@ const PurchaseTab: React.FC<PurchaseTabProps> = ({
                 </div>
               </div>
               <div className="flex-1 min-w-[120px]">
-                <p className="text-[12px] text-[#1d1a1a] font-['Poppins'] truncate">{purchase.supplierName || 'N/A'}</p>
+                <p className="text-[12px] text-slate-900 font-['Roboto'] truncate">{purchase.supplierName || 'N/A'}</p>
               </div>
               <div className="w-28 flex-shrink-0">
-                <p className="text-[12px] text-[#1d1a1a] font-['Poppins']">{purchase.mobileNumber || '-'}</p>
+                <p className="text-[12px] text-slate-900 font-['Roboto']">{purchase.mobileNumber || '-'}</p>
               </div>
               <div className="w-28 flex-shrink-0">
-                <p className="text-[12px] text-[#1d1a1a] font-['Poppins']">Product Buy</p>
+                <p className="text-[12px] text-slate-900 font-['Roboto']">Product Buy</p>
               </div>
               <div className="w-28 flex-shrink-0">
-                <p className="text-[12px] text-[#1d1a1a] font-['Poppins']">
+                <p className="text-[12px] text-slate-900 font-['Roboto']">
                   {new Date(purchase.createdAt).toLocaleDateString('en-GB').replace(/\//g, '-')}
                 </p>
               </div>
               <div className="w-24 flex-shrink-0 text-center">
-                <p className="text-[12px] text-[#da0000] font-['Poppins']">৳{purchase.totalAmount?.toLocaleString('en-IN') || 0}</p>
+                <p className="text-[12px] text-[#da0000] font-['Roboto']">৳{purchase.totalAmount?.toLocaleString('en-IN') || 0}</p>
               </div>
               <div className="w-16 flex-shrink-0 flex justify-center relative">
                 <button
@@ -394,22 +394,22 @@ const PurchaseTab: React.FC<PurchaseTabProps> = ({
             className="bg-white flex items-center gap-1 h-[42px] pl-2 pr-3 py-[10px] rounded-lg shadow-[0px_1px_3px_0px_rgba(0,0,0,0.2)] disabled:opacity-50"
           >
             <ArrowLeftIcon />
-            <span className="text-[15px] font-medium text-black font-['Lato']">Previous</span>
+            <span className="text-[15px] font-medium text-black font-['Roboto']">Previous</span>
           </button>
           <div className="flex items-center gap-3">
             {Array.from({ length: Math.min(5, totalPurchasePages) }, (_, i) => i + 1).map(page => (
               <button
                 key={page}
                 onClick={() => setPurchasePage(page)}
-                className={`w-9 h-9 flex items-center justify-center rounded ${purchasePage === page ? 'bg-[#dff5ff] text-[#1e90ff]' : 'border border-[#d1d5db] text-[#023337]'} text-[15px] font-medium font-['Lato']`}
+                className={`w-9 h-9 flex items-center justify-center rounded ${purchasePage === page ? 'bg-[#dff5ff] text-[#1e90ff]' : 'border border-[#d1d5db] text-slate-900'} text-[15px] font-medium font-['Roboto']`}
               >
                 {page}
               </button>
             ))}
             {totalPurchasePages > 5 && (
               <>
-                <button className="w-9 h-9 flex items-center justify-center border border-[#d1d5db] rounded text-[15px] font-bold text-[#023337] font-['Lato']">....</button>
-                <button onClick={() => setPurchasePage(totalPurchasePages)} className="w-9 h-9 flex items-center justify-center border border-[#d1d5db] rounded text-[15px] font-medium text-[#023337] font-['Lato']">
+                <button className="w-9 h-9 flex items-center justify-center border border-[#d1d5db] rounded text-[15px] font-bold text-slate-900 font-['Roboto']">....</button>
+                <button onClick={() => setPurchasePage(totalPurchasePages)} className="w-9 h-9 flex items-center justify-center border border-[#d1d5db] rounded text-[15px] font-medium text-slate-900 font-['Roboto']">
                   {totalPurchasePages}
                 </button>
               </>
@@ -420,7 +420,7 @@ const PurchaseTab: React.FC<PurchaseTabProps> = ({
             disabled={purchasePage === totalPurchasePages}
             className="bg-white flex items-center gap-1 h-[42px] pl-3 pr-2 py-[10px] rounded-lg shadow-[0px_1px_3px_0px_rgba(0,0,0,0.2)] disabled:opacity-50"
           >
-            <span className="text-[15px] font-medium text-black font-['Lato']">Next</span>
+            <span className="text-[15px] font-medium text-black font-['Roboto']">Next</span>
             <ArrowRightIcon />
           </button>
         </div>
@@ -431,7 +431,7 @@ const PurchaseTab: React.FC<PurchaseTabProps> = ({
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl p-4 sm:p-6 w-full max-w-sm">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-[18px] font-bold text-[#023337] font-['Lato']">Add Category</h3>
+              <h3 className="text-[18px] font-bold text-slate-900 font-['Roboto']">Add Category</h3>
               <button onClick={() => setIsPurchaseCategoryModalOpen(false)} className="text-gray-500 hover:text-gray-700">
                 <X size={20} />
               </button>
@@ -441,12 +441,12 @@ const PurchaseTab: React.FC<PurchaseTabProps> = ({
                 type="text"
                 value={newPurchaseCategoryName}
                 onChange={(e) => setNewPurchaseCategoryName(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-[14px] font-['Poppins']"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-[14px] font-['Roboto']"
                 placeholder="Enter category name"
               />
               <button
                 onClick={handleAddPurchaseCategory}
-                className="bg-gradient-to-r from-[#38bdf8] to-[#1e90ff] text-white py-3 rounded-lg text-[15px] font-bold font-['Lato']"
+                className="bg-gradient-to-r from-[#38bdf8] to-[#1e90ff] text-white py-3 rounded-lg text-[15px] font-bold font-['Roboto']"
               >
                 Add Category
               </button>

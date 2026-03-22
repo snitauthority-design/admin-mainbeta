@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { RefreshCw, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -265,11 +265,11 @@ const FigmaBusinessReport: React.FC<FigmaBusinessReportProps> = ({
   ];
 
   return (
-    <div className="bg-[#f9f9f9] min-h-screen font-['Poppins']">
+    <div className="bg-[#f9f9f9] min-h-screen font-['Roboto']">
       <div className="bg-white rounded-lg mx-2 sm:mx-5 my-2 sm:my-5 p-2 sm:p-5">
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 mb-4 sm:mb-5">
-          <h1 className="text-lg sm:text-xl lg:text-[22px] font-bold text-[#023337] tracking-[0.11px] font-['Lato']">
+          <h1 className="text-lg sm:text-xl lg:text-[22px] font-bold text-slate-900 tracking-tight font-['Roboto']">
             Business Report
           </h1>
           <div className="flex flex-wrap items-center gap-2 sm:gap-3 lg:gap-6">
@@ -277,7 +277,7 @@ const FigmaBusinessReport: React.FC<FigmaBusinessReportProps> = ({
               onClick={handleRefreshData}
               className="flex items-center gap-2 px-2 py-2 hover:bg-gray-100 rounded-lg transition-colors"
             >
-              <span className="text-[12px] text-black font-['Poppins']">Refresh</span>
+              <span className="text-[12px] text-slate-500 font-['Roboto']">Refresh</span>
               <RefreshCw size={16} className="text-gray-600" />
             </button>
 
@@ -286,10 +286,10 @@ const FigmaBusinessReport: React.FC<FigmaBusinessReportProps> = ({
                 <button
                   key={option.id}
                   onClick={() => { setDateRange(option.id); setShowCustomDatePicker(false); }}
-                  className={`px-2 py-1 rounded-lg font-medium font-['Poppins'] min-w-[56px] sm:min-w-[72px] flex items-center justify-center gap-1 sm:gap-2 text-[12px] sm:text-[14px] ${
+                  className={`px-2 py-1 rounded-lg font-medium font-['Roboto'] min-w-[56px] sm:min-w-[72px] flex items-center justify-center gap-1 sm:gap-2 text-[12px] sm:text-[14px] ${
                     dateRange === option.id
                       ? 'bg-gradient-to-b from-[#ff6a00] to-[#ff9f1c] text-white'
-                      : 'bg-[#f9f9f9] text-[#a7a7a7]'
+                      : 'bg-[#f9f9f9] text-slate-500'
                   }`}
                 >
                   {option.label}
@@ -297,11 +297,11 @@ const FigmaBusinessReport: React.FC<FigmaBusinessReportProps> = ({
               ))}
 
               {dateRange === 'month' && (
-                <div className="flex items-center gap-1 px-3 py-1 border border-[#38bdf8] rounded-lg text-[14px] font-medium text-[#1e90ff] font-['Poppins']">
+                <div className="flex items-center gap-1 px-3 py-1 border border-[#38bdf8] rounded-lg text-[14px] font-medium text-[#1e90ff] font-['Roboto']">
                   <button onClick={() => setSelectedMonth(new Date(selectedMonth.getFullYear(), selectedMonth.getMonth() - 1))} className="p-0.5 hover:bg-gray-100 rounded">
                     <ChevronLeft size={14} />
                   </button>
-                  <span className="min-w-[90px] sm:min-w-[110px] text-center text-[12px] sm:text-[14px]">
+                    <span className="min-w-[90px] sm:min-w-[110px] text-center text-[12px] sm:text-[14px] font-['Roboto']">
                     {selectedMonth.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
                   </span>
                   <button onClick={() => setSelectedMonth(new Date(selectedMonth.getFullYear(), selectedMonth.getMonth() + 1))} className="p-0.5 hover:bg-gray-100 rounded">
@@ -311,7 +311,7 @@ const FigmaBusinessReport: React.FC<FigmaBusinessReportProps> = ({
               )}
 
               {dateRange === 'custom' && customDateRange.startDate && customDateRange.endDate && (
-                <div className="px-3 py-1 border border-[#38bdf8] rounded-lg text-[14px] font-medium text-[#1e90ff] font-['Poppins']">
+                <div className="px-3 py-1 border border-[#38bdf8] rounded-lg text-[14px] font-medium text-[#1e90ff] font-['Roboto']">
                   {getDateRangeDisplayText()}
                 </div>
               )}
@@ -326,10 +326,10 @@ const FigmaBusinessReport: React.FC<FigmaBusinessReportProps> = ({
                       setShowCustomDatePicker(true);
                     }
                   }}
-                  className={`px-2 py-1 rounded-lg font-medium font-['Poppins'] min-w-[56px] sm:min-w-[72px] flex items-center justify-center gap-1 sm:gap-2 text-[12px] sm:text-[14px] ${
+                  className={`px-2 py-1 rounded-lg font-medium font-['Roboto'] min-w-[56px] sm:min-w-[72px] flex items-center justify-center gap-1 sm:gap-2 text-[12px] sm:text-[14px] ${
                     dateRange === 'custom'
                       ? 'bg-gradient-to-b from-[#ff6a00] to-[#ff9f1c] text-white'
-                      : 'bg-[#f9f9f9] text-[#a7a7a7]'
+                      : 'bg-[#f9f9f9] text-slate-500'
                   }`}
                 >
                   Custom
@@ -364,8 +364,8 @@ const FigmaBusinessReport: React.FC<FigmaBusinessReportProps> = ({
                 }`}
               >
                 <Icon />
-                <span className={`text-[13px] sm:text-[16px] font-medium font-['Poppins'] ${
-                  isActive ? 'bg-gradient-to-r from-[#38bdf8] to-[#1e90ff] bg-clip-text text-transparent' : 'text-black'
+                <span className={`text-[13px] sm:text-[16px] font-medium font-['Roboto'] ${
+                  isActive ? 'bg-gradient-to-r from-[#38bdf8] to-[#1e90ff] bg-clip-text text-transparent' : 'text-slate-900'
                 }`}>
                   {tab.label}
                 </span>

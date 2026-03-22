@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Plus, Printer, RotateCcw } from 'lucide-react';
 import { SummaryData, DueSummaryData, TabType } from '../types';
 
@@ -100,10 +100,10 @@ const BusinessOverviewTab: React.FC<BusinessOverviewTabProps> = ({
     <div className="bg-white p-3 border border-gray-100 rounded-lg shadow-sm">
       <div className="flex justify-between items-start gap-1">
         <div className="flex-1">
-          <p className="font-bold text-slate-600 text-[13px]">{label}</p>
-          {sub && <p className="text-[10px] text-slate-400 leading-tight mt-0.5">{sub}</p>}
+          <p className="font-medium text-slate-900 text-[13px] font-['Roboto']">{label}</p>
+          {sub && <p className="text-[10px] text-slate-500 leading-tight mt-0.5 font-['Roboto']">{sub}</p>}
         </div>
-        <p className={`font-bold text-[14px] whitespace-nowrap ${color === 'green' ? 'text-emerald-600' : 'text-rose-500'}`}>
+        <p className={`font-bold text-[14px] whitespace-nowrap tabular-nums font-['Roboto'] ${color === 'green' ? 'text-emerald-600' : 'text-rose-500'}`}>
           ৳ {value}
         </p>
       </div>
@@ -121,7 +121,7 @@ const BusinessOverviewTab: React.FC<BusinessOverviewTabProps> = ({
       className="bg-white rounded-lg border border-gray-100 aspect-square flex flex-col items-center justify-center p-1 shadow-sm active:scale-95 transition-all hover:shadow-md"
     >
       <div className="text-3xl mb-1">{icon}</div>
-      <p className="text-[10px] font-bold text-slate-500 text-center leading-tight">{label}</p>
+      <p className="text-[10px] font-medium text-slate-500 text-center leading-tight font-['Roboto']">{label}</p>
     </button>
   );
 
@@ -131,7 +131,7 @@ const BusinessOverviewTab: React.FC<BusinessOverviewTabProps> = ({
     <div className="bg-[#F4F7F9] rounded-xl pb-6">
       {/* Top Action Bar */}
       <div className="flex items-center justify-between px-4 py-3">
-        <h2 className="text-lg font-bold text-[#023337] font-['Lato']">Business Overview</h2>
+        <h2 className="text-lg font-bold text-slate-900 tracking-tight font-['Roboto']">Business Overview</h2>
         <div className="flex items-center gap-2">
           <button
             onClick={onRefresh}
@@ -150,7 +150,7 @@ const BusinessOverviewTab: React.FC<BusinessOverviewTabProps> = ({
 
       {/* Date Display */}
       <div className="px-4 mb-3">
-        <div className="bg-white border border-gray-200 rounded-lg h-10 flex items-center px-3 gap-2 text-[13px] text-slate-600">
+          <div className="bg-white border border-gray-200 rounded-lg h-10 flex items-center px-3 gap-2 text-[13px] text-slate-500 font-['Roboto']">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400">
             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
             <line x1="16" y1="2" x2="16" y2="6"></line>
@@ -163,7 +163,7 @@ const BusinessOverviewTab: React.FC<BusinessOverviewTabProps> = ({
 
       {/* General Sales Report */}
       <div className="px-4">
-        <h3 className="text-[13px] font-bold text-slate-500 mb-2 mt-1 uppercase tracking-wide">General Sales Report</h3>
+        <h3 className="text-[13px] font-semibold text-slate-500 mb-2 mt-1 uppercase tracking-widest font-['Roboto']">General Sales Report</h3>
 
         <div className="space-y-2">
           <ReportCard label="Total Sell" value={fmt(summary.totalRevenue)} color="green" />
@@ -196,15 +196,15 @@ const BusinessOverviewTab: React.FC<BusinessOverviewTabProps> = ({
             onClick={() => onNavigateTab('income')}
             className="bg-white p-3 rounded-lg border border-gray-100 text-center hover:shadow-md transition-shadow"
           >
-            <p className="text-[11px] text-slate-500">Other Income</p>
-            <p className="font-bold text-emerald-600 text-sm">৳ {fmt(summary.otherIncome)}</p>
+            <p className="text-[11px] text-slate-500 font-['Roboto']">Other Income</p>
+            <p className="font-bold text-emerald-600 text-sm tabular-nums font-['Roboto']">৳ {fmt(summary.otherIncome)}</p>
           </button>
           <button
             onClick={() => onNavigateTab('expense')}
             className="bg-white p-3 rounded-lg border border-gray-100 text-center hover:shadow-md transition-shadow"
           >
-            <p className="text-[11px] text-slate-500">Other Expense</p>
-            <p className="font-bold text-rose-500 text-sm">৳ {fmt(summary.otherExpenses)}</p>
+            <p className="text-[11px] text-slate-500 font-['Roboto']">Other Expense</p>
+            <p className="font-bold text-rose-500 text-sm tabular-nums font-['Roboto']">৳ {fmt(summary.otherExpenses)}</p>
           </button>
         </div>
 
@@ -227,29 +227,29 @@ const BusinessOverviewTab: React.FC<BusinessOverviewTabProps> = ({
         {/* Total Due Section */}
         <div className="bg-white mt-4 p-3 rounded-lg border border-gray-100">
           <div className="flex justify-between items-center mb-3">
-            <p className="text-xs font-bold text-slate-600 uppercase">Total Due</p>
-            <p className="text-rose-500 font-bold">৳ {fmt(totalDue)}</p>
+            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider font-['Roboto']">Total Due</p>
+            <p className="text-rose-500 font-bold tabular-nums font-['Roboto']">৳ {fmt(totalDue)}</p>
           </div>
           <div className="grid grid-cols-2 gap-2 h-20">
             <button
               onClick={() => onNavigateTab('due')}
               className="bg-emerald-500 rounded-lg flex flex-col items-center justify-center text-white p-1 hover:bg-emerald-600 transition-colors"
             >
-              <p className="text-[10px] text-center">Due to Supplier</p>
-              <p className="font-bold text-sm">৳ {fmt(dueSummary.totalWillGive)}</p>
+              <p className="text-[10px] text-center font-['Roboto']">Due to Supplier</p>
+              <p className="font-bold text-sm tabular-nums font-['Roboto']">৳ {fmt(dueSummary.totalWillGive)}</p>
             </button>
             <button
               onClick={() => onNavigateTab('due')}
               className="bg-rose-400 rounded-lg flex flex-col items-center justify-center text-white p-1 hover:bg-rose-500 transition-colors"
             >
-              <p className="text-[10px] text-center">Due from Customer</p>
-              <p className="font-bold text-sm text-center leading-none">৳ {fmt(dueSummary.totalWillGet)}</p>
+              <p className="text-[10px] text-center font-['Roboto']">Due from Customer</p>
+              <p className="font-bold text-sm text-center leading-none tabular-nums font-['Roboto']">৳ {fmt(dueSummary.totalWillGet)}</p>
             </button>
           </div>
         </div>
 
         {/* All Business Reports Grid */}
-        <h3 className="text-[15px] font-bold text-slate-600 mt-6 mb-3">All Business Reports</h3>
+        <h3 className="text-[15px] font-semibold text-slate-900 tracking-tight mt-6 mb-3 font-['Roboto']">All Business Reports</h3>
         <div className="grid grid-cols-3 gap-2">
           <GridIcon label="Sales Report" onClick={() => onNavigateTab('profit')} icon="📊" />
           <GridIcon label="Purchase Report" onClick={() => onNavigateTab('purchase')} icon="🛍️" />

@@ -67,7 +67,7 @@ const itemResourceMap: Record<string, string> = {
   'catalog_brands': 'catalog',
   'catalog_tags': 'catalog',
   'inventory': 'inventory',
-  'purchases': 'business_report',
+  // 'purchases': 'business_report',
   'customers_reviews': 'customers',
   'customization': 'customization',
   'website_content': 'customization',
@@ -126,7 +126,7 @@ const menuItems: SidebarItem[] = [
     ]
   },
   { id: 'inventory', label: 'Inventory', icon: <img src="https://hdnfltv.com/image/nitimages/note.webp" alt="Inventory" className="w-5 h-5 object-contain" /> },
-  { id: 'purchases', label: 'Purchase', icon: <ShoppingCart className="w-5 h-5" /> },
+  // { id: 'purchases', label: 'Purchase', icon: <ShoppingCart className="w-5 h-5" /> },
   { id: 'customers_reviews', label: 'Customers & review', icon: <img src="https://hdnfltv.com/image/nitimages/user-group.webp" alt="Customers & review" className="w-5 h-5 object-contain" /> },
   
   // Configuration
@@ -240,7 +240,7 @@ export const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
       ]
     },
     { id: 'inventory', label: t('inventory'), icon: <img src="https://hdnfltv.com/image/nitimages/note.webp" alt="Inventory" className="w-5 h-5 object-contain" /> },
-    { id: 'purchases', label: t('purchase') || 'Purchase', icon: <ShoppingCart className="w-5 h-5" /> },
+    // { id: 'purchases', label: t('purchase') || 'Purchase', icon: <ShoppingCart className="w-5 h-5" /> },
     { id: 'customers_reviews', label: t('customers_reviews'), icon: <img src="https://hdnfltv.com/image/nitimages/user-group.webp" alt="Customers & review" className="w-5 h-5 object-contain" /> },
     { id: 'customization', label: t('customization'), icon: <img src="https://hdnfltv.com/image/nitimages/arcticons_galaxy-themes.webp" alt="Customization" className="w-5 h-5 object-contain" /> },
     { 

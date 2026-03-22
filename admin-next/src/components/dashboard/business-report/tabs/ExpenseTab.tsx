@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { ChevronDown, RefreshCw, X, Edit2, Trash2 } from 'lucide-react';
 import { ExpenseService, ExpenseDTO, setExpenseTenantId } from '../../../../services/ExpenseService';
 import { CategoryService, CategoryDTO, setCategoryTenantId } from '../../../../services/CategoryService';
@@ -175,59 +175,59 @@ const ExpenseTab: React.FC<ExpenseTabProps> = ({
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 px-3 sm:px-5 pt-3 pb-3">
         <div className="flex flex-col gap-1">
-          <h2 className="text-[18px] font-bold text-[#023337] tracking-[0.09px] font-['Lato']">Expense Summary</h2>
-          <p className="text-[12px] text-black font-['Poppins']">Total expenses overview for the selected period.</p>
+          <h2 className="text-[18px] font-bold text-slate-900 tracking-tight font-['Roboto']">Expense Summary</h2>
+          <p className="text-[12px] text-slate-500 font-['Roboto']">Total expenses overview for the selected period.</p>
         </div>
         <button
           onClick={() => { setNewExpense({ status: 'Published' }); setEditingExpenseId(null); setIsAddExpenseOpen(true); }}
           className="bg-gradient-to-r from-[#38bdf8] to-[#1e90ff] flex items-center gap-1 h-[48px] pl-3 pr-4 py-[6px] rounded-lg"
         >
           <AddSquareIcon />
-          <span className="text-[15px] font-bold text-white tracking-[-0.3px] font-['Lato']">Add Expense</span>
+          <span className="text-[15px] font-bold text-white tracking-[-0.3px] font-['Roboto']">Add Expense</span>
         </button>
       </div>
 
       {/* Summary Cards */}
       <div className="flex flex-wrap gap-3 sm:gap-4 px-3 sm:px-5 mt-4">
         <div className="bg-[#f9f9f9] rounded-lg h-auto min-h-[80px] sm:h-[100px] w-full sm:w-[396px] overflow-hidden px-[18px] py-5">
-          <p className="text-xl sm:text-2xl lg:text-[32px] font-bold text-[#da3e00] tracking-[0.16px] font-['Lato']">
+          <p className="text-xl sm:text-2xl lg:text-[32px] font-bold text-[#da3e00] tracking-tight tabular-nums font-['Roboto']">
             ৳{expenseStats.totalAmount.toLocaleString('en-IN')}.00
           </p>
-          <p className="text-[12px] text-black font-['Poppins'] mt-2">Total expenses with product cost</p>
+          <p className="text-[12px] text-slate-500 font-['Roboto'] mt-2">Total expenses with product cost</p>
         </div>
         <div className="bg-[#f9f9f9] rounded-lg h-auto min-h-[80px] sm:h-[100px] w-[calc(50%-6px)] sm:w-[148px] overflow-hidden px-[18px] py-5">
-          <p className="text-xl sm:text-2xl lg:text-[32px] font-bold text-[#022f37] tracking-[0.16px] font-['Lato']">
+          <p className="text-xl sm:text-2xl lg:text-[32px] font-bold text-[#022f37] tracking-tight tabular-nums font-['Roboto']">
             {expenseStats.totalTransactions}
           </p>
-          <p className="text-[12px] text-black font-['Poppins'] mt-2">Total Transactions</p>
+          <p className="text-[12px] text-slate-500 font-['Roboto'] mt-2">Total Transactions</p>
         </div>
         <div className="bg-[#f9f9f9] rounded-lg h-auto min-h-[80px] sm:h-[100px] w-[calc(50%-6px)] sm:w-[148px] overflow-hidden px-[18px] py-5">
-          <p className="text-xl sm:text-2xl lg:text-[32px] font-bold text-[#022f37] tracking-[0.16px] font-['Lato']">
+          <p className="text-xl sm:text-2xl lg:text-[32px] font-bold text-[#022f37] tracking-tight tabular-nums font-['Roboto']">
             {expenseStats.categories}
           </p>
-          <p className="text-[12px] text-black font-['Poppins'] mt-2">Categories</p>
+          <p className="text-[12px] text-slate-500 font-['Roboto'] mt-2">Categories</p>
         </div>
         <div className="bg-[#f9f9f9] rounded-lg h-auto min-h-[100px] w-full sm:flex-1 overflow-hidden px-[18px] py-3">
           <div className="flex items-center justify-between">
-            <p className="text-[12px] text-black font-['Poppins']">Actions</p>
+            <p className="text-[12px] text-slate-500 font-['Roboto']">Actions</p>
             <div className="flex items-center gap-2">
               <button onClick={() => setIsCategoryModalOpen(true)} className="bg-white flex items-center gap-1 px-[6px] py-[6px] rounded">
                 <AddSquareSmallIcon />
-                <span className="text-[12px] text-black font-['Poppins']">Add Category</span>
+                <span className="text-[12px] text-slate-900 font-['Roboto']">Add Category</span>
               </button>
               <button onClick={handlePrintExpenses} className="bg-white flex items-center gap-1 px-[6px] py-[6px] rounded">
                 <PrinterIcon />
-                <span className="text-[12px] text-black font-['Poppins']">Print</span>
+                <span className="text-[12px] text-slate-900 font-['Roboto']">Print</span>
               </button>
             </div>
           </div>
           <div className="flex items-center gap-[7px] mt-3">
-            <span className="text-[12px] text-black font-['Poppins']">Filter by:</span>
+            <span className="text-[12px] text-slate-500 font-['Roboto']">Filter by:</span>
             <div className="bg-white flex-1 flex items-center justify-between px-3 py-[11px] rounded">
               <select
                 value={selectedExpenseCategory}
                 onChange={(e) => setSelectedExpenseCategory(e.target.value)}
-                className="text-[12px] text-black font-['Poppins'] bg-transparent border-none outline-none flex-1 cursor-pointer"
+                className="text-[12px] text-slate-900 font-['Roboto'] bg-transparent border-none outline-none flex-1 cursor-pointer"
               >
                 <option value="">All Categories</option>
                 {expenseCategories.map(cat => (
@@ -265,12 +265,12 @@ const ExpenseTab: React.FC<ExpenseTabProps> = ({
               </button>
             </div>
           )}
-          <div className={`w-[80px] ${selectedExpenses.size === 0 ? '' : 'ml-auto'}`}><p className="text-[16px] font-medium text-black font-['Poppins']">SL</p></div>
-          <div className="flex-1"><p className="text-[16px] font-medium text-black font-['Poppins']">Name</p></div>
-          <div className="w-[150px]"><p className="text-[16px] font-medium text-black font-['Poppins']">Category</p></div>
-          <div className="w-[120px] text-center"><p className="text-[16px] font-medium text-black font-['Poppins']">Amount</p></div>
-          <div className="w-[120px]"><p className="text-[16px] font-medium text-black font-['Poppins']">Date</p></div>
-          <div className="w-[80px] text-center"><p className="text-[16px] font-medium text-black font-['Poppins']">Action</p></div>
+          <div className={`w-[80px] ${selectedExpenses.size === 0 ? '' : 'ml-auto'}`}><p className="text-[16px] font-medium text-slate-900 font-['Roboto']">SL</p></div>
+          <div className="flex-1"><p className="text-[16px] font-medium text-slate-900 font-['Roboto']">Name</p></div>
+          <div className="w-[150px]"><p className="text-[16px] font-medium text-slate-900 font-['Roboto']">Category</p></div>
+          <div className="w-[120px] text-center"><p className="text-[16px] font-medium text-slate-900 font-['Roboto']">Amount</p></div>
+          <div className="w-[120px]"><p className="text-[16px] font-medium text-slate-900 font-['Roboto']">Date</p></div>
+          <div className="w-[80px] text-center"><p className="text-[16px] font-medium text-slate-900 font-['Roboto']">Action</p></div>
         </div>
 
         {expenseLoading && expenses.length === 0 ? (
@@ -294,15 +294,15 @@ const ExpenseTab: React.FC<ExpenseTabProps> = ({
                 />
               </div>
               <div className="w-[80px]">
-                <p className="text-[12px] text-[#1d1a1a] font-['Poppins']">{expenses.length - ((expensePage - 1) * PAGE_SIZE) - index}</p>
+                <p className="text-[12px] text-slate-500 font-mono tabular-nums font-['Roboto']">{expenses.length - ((expensePage - 1) * PAGE_SIZE) - index}</p>
               </div>
-              <div className="flex-1"><p className="text-[12px] text-[#1d1a1a] font-['Poppins']">{expense.name}</p></div>
-              <div className="w-[150px]"><p className="text-[12px] text-[#1d1a1a] font-['Poppins']">{expense.category}</p></div>
+              <div className="flex-1"><p className="text-[12px] text-slate-900 font-['Roboto']">{expense.name}</p></div>
+              <div className="w-[150px]"><p className="text-[12px] text-slate-500 font-['Roboto']">{expense.category}</p></div>
               <div className="w-[120px] text-center">
-                <p className="text-[12px] text-[#da0000] font-['Poppins']">৳{expense.amount.toLocaleString('en-IN')}</p>
+                <p className="text-[12px] text-[#da0000] tabular-nums font-mono font-['Roboto']">৳{expense.amount.toLocaleString('en-IN')}</p>
               </div>
               <div className="w-[120px]">
-                <p className="text-[12px] text-[#1d1a1a] font-['Poppins']">
+                <p className="text-[12px] text-slate-500 font-['Roboto']">
                   {new Date(expense.date).toLocaleDateString('en-GB').replace(/\//g, '-')}
                 </p>
               </div>
@@ -322,21 +322,21 @@ const ExpenseTab: React.FC<ExpenseTabProps> = ({
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
                       </svg>
-                      <span className="text-[16px] font-semibold text-black font-['Lato']">Details</span>
+                      <span className="text-[16px] font-semibold text-slate-900 font-['Roboto']">Details</span>
                     </button>
                     <button
                       onClick={() => { setNewExpense(expense); setEditingExpenseId(expense.id); setIsAddExpenseOpen(true); setActionMenuOpen(null); }}
                       className="w-full h-[48px] flex items-center gap-2 px-4 hover:bg-gray-50"
                     >
                       <Edit2 size={18} />
-                      <span className="text-[16px] font-semibold text-black font-['Lato']">Edit</span>
+                      <span className="text-[16px] font-semibold text-black font-['Roboto']">Edit</span>
                     </button>
                     <button
                       onClick={() => handleDeleteExpense(expense.id)}
                       className="w-full h-[48px] flex items-center gap-2 px-4 hover:bg-gray-50"
                     >
                       <Trash2 size={18} className="text-[#da0000]" />
-                      <span className="text-[16px] font-semibold text-[#da0000] font-['Lato']">Delete</span>
+                      <span className="text-[16px] font-semibold text-[#da0000] font-['Roboto']">Delete</span>
                     </button>
                   </div>
                 )}
@@ -355,22 +355,22 @@ const ExpenseTab: React.FC<ExpenseTabProps> = ({
             className="bg-white flex items-center gap-1 h-[42px] pl-2 pr-3 py-[10px] rounded-lg shadow-[0px_1px_3px_0px_rgba(0,0,0,0.2)] disabled:opacity-50"
           >
             <ArrowLeftIcon />
-            <span className="text-[15px] font-medium text-black font-['Lato']">Previous</span>
+            <span className="text-[15px] font-medium text-slate-900 font-['Roboto']">Previous</span>
           </button>
           <div className="flex items-center gap-3">
             {Array.from({ length: Math.min(5, totalExpensePages) }, (_, i) => i + 1).map(page => (
               <button
                 key={page}
                 onClick={() => setExpensePage(page)}
-                className={`w-9 h-9 flex items-center justify-center rounded ${expensePage === page ? 'bg-[#dff5ff] text-[#1e90ff]' : 'border border-[#d1d5db] text-[#023337]'} text-[15px] font-medium font-['Lato']`}
+                className={`w-9 h-9 flex items-center justify-center rounded ${expensePage === page ? 'bg-[#dff5ff] text-[#1e90ff]' : 'border border-[#d1d5db] text-slate-900'} text-[15px] font-medium font-['Roboto']`}
               >
                 {page}
               </button>
             ))}
             {totalExpensePages > 5 && (
               <>
-                <button className="w-9 h-9 flex items-center justify-center border border-[#d1d5db] rounded text-[15px] font-bold text-[#023337] font-['Lato']">.....</button>
-                <button onClick={() => setExpensePage(totalExpensePages)} className="w-9 h-9 flex items-center justify-center border border-[#d1d5db] rounded text-[15px] font-medium text-[#023337] font-['Lato']">
+                <button className="w-9 h-9 flex items-center justify-center border border-[#d1d5db] rounded text-[15px] font-bold text-slate-900 font-['Roboto']">.....</button>
+                <button onClick={() => setExpensePage(totalExpensePages)} className="w-9 h-9 flex items-center justify-center border border-[#d1d5db] rounded text-[15px] font-medium text-slate-900 font-['Roboto']">
                   {totalExpensePages}
                 </button>
               </>
@@ -381,7 +381,7 @@ const ExpenseTab: React.FC<ExpenseTabProps> = ({
             disabled={expensePage === totalExpensePages}
             className="bg-white flex items-center gap-1 h-[42px] pl-3 pr-2 py-[10px] rounded-lg shadow-[0px_1px_3px_0px_rgba(0,0,0,0.2)] disabled:opacity-50"
           >
-            <span className="text-[15px] font-medium text-black font-['Lato']">Next</span>
+            <span className="text-[15px] font-medium text-slate-900 font-['Roboto']">Next</span>
             <ArrowRightIcon />
           </button>
         </div>
@@ -392,7 +392,7 @@ const ExpenseTab: React.FC<ExpenseTabProps> = ({
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-[8px] p-5 w-full max-w-[548px] overflow-y-auto max-h-[90vh]">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 mb-4 sm:mb-5">
-              <h3 className="text-[16px] font-semibold text-black text-center font-['Poppins']">
+              <h3 className="text-[16px] font-semibold text-black text-center font-['Roboto']">
                 {editingExpenseId ? 'Edit Expense' : 'Add Expense'}
               </h3>
               <button onClick={() => { setIsAddExpenseOpen(false); setEditingExpenseId(null); }} className="text-gray-500 hover:text-gray-700">
@@ -401,25 +401,25 @@ const ExpenseTab: React.FC<ExpenseTabProps> = ({
             </div>
             <div className="flex flex-col gap-3">
               <div className="flex flex-col gap-3">
-                <label className="text-[15px] font-bold text-[#023337] font-['Lato']">Expense Name<span className="text-[#da0000]">*</span></label>
+                <label className="text-[15px] font-semibold text-slate-900 font-['Roboto']">Expense Name<span className="text-[#da0000]">*</span></label>
                 <input
                   type="text"
                   value={newExpense.name || ''}
                   onChange={(e) => setNewExpense(prev => ({ ...prev, name: e.target.value }))}
-                  className="w-full h-[48px] px-3 py-2.5 bg-[#f9fafb] border border-[#e5e7eb] rounded-[8px] text-[15px] font-['Lato'] text-[#023337] placeholder-[#aeaeae]"
+                  className="w-full h-[48px] px-3 py-2.5 bg-[#f9fafb] border border-[#e5e7eb] rounded-[8px] text-[15px] font-['Roboto'] text-slate-900 placeholder-[#aeaeae]"
                   placeholder="Enter expense name"
                 />
               </div>
               <div className="flex flex-col gap-3 relative">
-                <label className="text-[15px] font-bold text-[#023337] font-['Lato']">Category<span className="text-[#da0000]">*</span></label>
+                <label className="text-[15px] font-semibold text-slate-900 font-['Roboto']">Category<span className="text-[#da0000]">*</span></label>
                 <div
                   onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}
-                  className="w-full h-[48px] px-3 py-2.5 bg-[#f9fafb] border border-[#e5e7eb] rounded-[8px] text-[15px] font-['Lato'] text-[#023337] cursor-pointer flex items-center justify-between"
+                  className="w-full h-[48px] px-3 py-2.5 bg-[#f9fafb] border border-[#e5e7eb] rounded-[8px] text-[15px] font-['Roboto'] text-slate-900 cursor-pointer flex items-center justify-between"
                 >
-                  <span className={newExpense.category ? 'text-[#023337]' : 'text-[#aeaeae]'}>
+                  <span className={newExpense.category ? 'text-slate-900' : 'text-[#aeaeae]'}>
                     {newExpense.category || 'Select Category'}
                   </span>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#023337" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`transition-transform ${isCategoryDropdownOpen ? 'rotate-180' : ''}`}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`text-slate-700 transition-transform ${isCategoryDropdownOpen ? 'rotate-180' : ''}`}>
                     <polyline points="6 9 12 15 18 9"></polyline>
                   </svg>
                 </div>
@@ -439,7 +439,7 @@ const ExpenseTab: React.FC<ExpenseTabProps> = ({
                               </svg>
                             )}
                           </div>
-                          <span className="text-[15px] font-medium text-black font-['Poppins']">{cat.name}</span>
+                          <span className="text-[15px] font-medium text-slate-900 font-['Roboto']">{cat.name}</span>
                         </div>
                       ))}
                     </div>
@@ -453,7 +453,7 @@ const ExpenseTab: React.FC<ExpenseTabProps> = ({
                           <line x1="12" y1="8" x2="12" y2="16"></line>
                           <line x1="8" y1="12" x2="16" y2="12"></line>
                         </svg>
-                        <span className="text-[15px] font-medium font-['Poppins']">Add New Category</span>
+                        <span className="text-[15px] font-medium font-['Roboto']">Add New Category</span>
                       </button>
                     </div>
                   </div>
@@ -461,27 +461,27 @@ const ExpenseTab: React.FC<ExpenseTabProps> = ({
               </div>
               <div className="flex gap-4">
                 <div className="flex-1 flex flex-col gap-3">
-                  <label className="text-[15px] font-bold text-[#023337] font-['Lato']">Amount<span className="text-[#da0000]">*</span></label>
+                  <label className="text-[15px] font-semibold text-slate-900 font-['Roboto']">Amount<span className="text-[#da0000]">*</span></label>
                   <input
                     type="number"
                     value={newExpense.amount || ''}
                     onChange={(e) => setNewExpense(prev => ({ ...prev, amount: Number(e.target.value) }))}
-                    className="w-full h-[48px] px-3 py-2.5 bg-[#f9fafb] border border-[#e5e7eb] rounded-[8px] text-[15px] font-['Lato'] text-[#023337] placeholder-[#aeaeae]"
+                    className="w-full h-[48px] px-3 py-2.5 bg-[#f9fafb] border border-[#e5e7eb] rounded-[8px] text-[15px] font-['Roboto'] text-slate-900 placeholder-[#aeaeae] tabular-nums"
                     placeholder="0.00"
                   />
                 </div>
                 <div className="flex-1 flex flex-col gap-3">
-                  <label className="text-[15px] font-bold text-[#023337] font-['Lato']">Date<span className="text-[#da0000]">*</span></label>
+                  <label className="text-[15px] font-semibold text-slate-900 font-['Roboto']">Date<span className="text-[#da0000]">*</span></label>
                   <input
                     type="date"
                     value={newExpense.date || ''}
                     onChange={(e) => setNewExpense(prev => ({ ...prev, date: e.target.value }))}
-                    className="w-full h-[48px] px-3 py-2.5 bg-[#f9fafb] border border-[#e5e7eb] rounded-[8px] text-[15px] font-['Lato'] text-[#023337]"
+                    className="w-full h-[48px] px-3 py-2.5 bg-[#f9fafb] border border-[#e5e7eb] rounded-[8px] text-[15px] font-['Roboto'] text-slate-900"
                   />
                 </div>
               </div>
               <div className="flex flex-col gap-3">
-                <label className="text-[15px] font-bold text-[#023337] font-['Lato']">Image Upload</label>
+                <label className="text-[15px] font-bold text-slate-900 font-['Roboto']">Image Upload</label>
                 <div
                   className="w-full h-[153px] bg-[#f9fafb] border border-[#e5e7eb] rounded-[8px] flex flex-col items-center justify-center gap-4 cursor-pointer hover:bg-[#f3f4f6] transition-colors"
                   onClick={() => document.getElementById('expense-image-upload')?.click()}
@@ -498,7 +498,7 @@ const ExpenseTab: React.FC<ExpenseTabProps> = ({
                     </div>
                   ) : (
                     <>
-                      <p className="text-[15px] text-[#aeaeae] font-['Lato']">Upload Doc</p>
+                      <p className="text-[15px] text-[#aeaeae] font-['Roboto']">Upload Doc</p>
                       <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#aeaeae" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                         <polyline points="17 8 12 3 7 8" />
@@ -520,25 +520,25 @@ const ExpenseTab: React.FC<ExpenseTabProps> = ({
                 />
               </div>
               <div className="flex flex-col gap-3">
-                <label className="text-[15px] font-bold text-[#023337] font-['Lato']">Note</label>
+                <label className="text-[15px] font-bold text-slate-900 font-['Roboto']">Note</label>
                 <input
                   type="text"
                   value={newExpense.note || ''}
                   onChange={(e) => setNewExpense(prev => ({ ...prev, note: e.target.value }))}
-                  className="w-full h-[48px] px-3 py-2.5 bg-[#f9fafb] border border-[#e5e7eb] rounded-[8px] text-[15px] font-['Lato'] text-[#023337] placeholder-[#aeaeae]"
+                  className="w-full h-[48px] px-3 py-2.5 bg-[#f9fafb] border border-[#e5e7eb] rounded-[8px] text-[15px] font-['Roboto'] text-slate-900 placeholder-[#aeaeae]"
                   placeholder="Add any notes..."
                 />
               </div>
               <div className="flex items-center justify-end gap-3 mt-4">
                 <button
                   onClick={() => { setIsAddExpenseOpen(false); setEditingExpenseId(null); }}
-                  className="h-[40px] px-4 py-2 bg-white border border-[#e5e7eb] rounded-[8px] text-[15px] font-bold text-[#023337] font-['Lato'] tracking-[-0.3px] min-w-[111px]"
+                  className="h-[40px] px-4 py-2 bg-white border border-[#e5e7eb] rounded-[8px] text-[15px] font-bold text-slate-900 font-['Roboto'] tracking-[-0.3px] min-w-[111px]"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleAddExpense}
-                  className="h-[40px] px-4 py-2 bg-gradient-to-r from-[#38bdf8] to-[#1e90ff] rounded-[8px] text-[15px] font-bold text-white font-['Lato'] tracking-[-0.3px]"
+                  className="h-[40px] px-4 py-2 bg-gradient-to-r from-[#38bdf8] to-[#1e90ff] rounded-[8px] text-[15px] font-bold text-white font-['Roboto'] tracking-[-0.3px]"
                 >
                   {editingExpenseId ? 'Update Expense' : 'Save Expense'}
                 </button>
@@ -553,7 +553,7 @@ const ExpenseTab: React.FC<ExpenseTabProps> = ({
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl p-4 sm:p-6 w-full max-w-sm">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-[18px] font-bold text-[#023337] font-['Lato']">Add Category</h3>
+              <h3 className="text-[18px] font-bold text-slate-900 font-['Roboto']">Add Category</h3>
               <button onClick={() => setIsCategoryModalOpen(false)} className="text-gray-500 hover:text-gray-700"><X size={20} /></button>
             </div>
             <div className="flex flex-col gap-4">
@@ -561,10 +561,10 @@ const ExpenseTab: React.FC<ExpenseTabProps> = ({
                 type="text"
                 value={newCategoryName}
                 onChange={(e) => setNewCategoryName(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-[14px] font-['Poppins']"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-[14px] font-['Roboto']"
                 placeholder="Enter category name"
               />
-              <button onClick={handleAddCategory} className="bg-gradient-to-r from-[#38bdf8] to-[#1e90ff] text-white py-3 rounded-lg text-[15px] font-bold font-['Lato']">
+              <button onClick={handleAddCategory} className="bg-gradient-to-r from-[#38bdf8] to-[#1e90ff] text-white py-3 rounded-lg text-[15px] font-bold font-['Roboto']">
                 Add Category
               </button>
             </div>
@@ -577,33 +577,33 @@ const ExpenseTab: React.FC<ExpenseTabProps> = ({
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-[8px] p-5 w-full max-w-[548px] max-h-[90vh] overflow-y-auto">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 mb-4 sm:mb-5">
-              <h3 className="text-[16px] font-semibold text-black text-center font-['Poppins']">Expense Details</h3>
+              <h3 className="text-[16px] font-semibold text-black text-center font-['Roboto']">Expense Details</h3>
               <button onClick={() => setExpenseDetailsOpen(null)} className="text-gray-500 hover:text-gray-700"><X size={20} /></button>
             </div>
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-2">
-                <label className="text-[15px] font-bold text-[#023337] font-['Lato']">Expense Name</label>
+                <label className="text-[15px] font-bold text-slate-900 font-['Roboto']">Expense Name</label>
                 <div className="w-full h-[48px] px-3 py-2.5 bg-[#f9fafb] border border-[#e5e7eb] rounded-[8px] flex items-center">
-                  <span className="text-[15px] font-['Lato'] text-black">{expenseDetailsOpen.name}</span>
+                  <span className="text-[15px] font-['Roboto'] text-black">{expenseDetailsOpen.name}</span>
                 </div>
               </div>
               <div className="flex flex-col gap-2">
-                <label className="text-[15px] font-bold text-[#023337] font-['Lato']">Category</label>
+                <label className="text-[15px] font-bold text-slate-900 font-['Roboto']">Category</label>
                 <div className="w-full h-[48px] px-3 py-2.5 bg-[#f9fafb] border border-[#e5e7eb] rounded-[8px] flex items-center">
-                  <span className="text-[15px] font-['Lato'] text-black">{expenseDetailsOpen.category}</span>
+                  <span className="text-[15px] font-['Roboto'] text-black">{expenseDetailsOpen.category}</span>
                 </div>
               </div>
               <div className="flex gap-4">
                 <div className="flex-1 flex flex-col gap-2">
-                  <label className="text-[15px] font-bold text-[#023337] font-['Lato']">Amount</label>
+                  <label className="text-[15px] font-bold text-slate-900 font-['Roboto']">Amount</label>
                   <div className="w-full h-[48px] px-3 py-2.5 bg-[#f9fafb] border border-[#e5e7eb] rounded-[8px] flex items-center">
-                    <span className="text-[15px] font-['Lato'] text-black">৳{expenseDetailsOpen.amount.toLocaleString('en-IN')}</span>
+                    <span className="text-[15px] font-['Roboto'] text-black">৳{expenseDetailsOpen.amount.toLocaleString('en-IN')}</span>
                   </div>
                 </div>
                 <div className="flex-1 flex flex-col gap-2">
-                  <label className="text-[15px] font-bold text-[#023337] font-['Lato']">Date</label>
+                  <label className="text-[15px] font-bold text-slate-900 font-['Roboto']">Date</label>
                   <div className="w-full h-[48px] px-3 py-2.5 bg-[#f9fafb] border border-[#e5e7eb] rounded-[8px] flex items-center">
-                    <span className="text-[15px] font-['Lato'] text-black">
+                    <span className="text-[15px] font-['Roboto'] text-black">
                       {new Date(expenseDetailsOpen.date).toLocaleDateString('en-GB').replace(/\//g, '-')}
                     </span>
                   </div>
@@ -611,7 +611,7 @@ const ExpenseTab: React.FC<ExpenseTabProps> = ({
               </div>
               {expenseDetailsOpen.imageUrl && (
                 <div className="flex flex-col gap-2">
-                  <label className="text-[15px] font-bold text-[#023337] font-['Lato']">Image</label>
+                  <label className="text-[15px] font-bold text-slate-900 font-['Roboto']">Image</label>
                   <div className="w-full h-[153px] bg-[#f9fafb] border border-[#e5e7eb] rounded-[8px] flex items-center justify-center overflow-hidden">
                     <img src={expenseDetailsOpen.imageUrl} alt="Expense" className="max-w-full max-h-full object-contain" />
                   </div>
@@ -619,22 +619,22 @@ const ExpenseTab: React.FC<ExpenseTabProps> = ({
               )}
               {expenseDetailsOpen.note && (
                 <div className="flex flex-col gap-2">
-                  <label className="text-[15px] font-bold text-[#023337] font-['Lato']">Note</label>
+                  <label className="text-[15px] font-bold text-slate-900 font-['Roboto']">Note</label>
                   <div className="w-full min-h-[48px] px-3 py-2.5 bg-[#f9fafb] border border-[#e5e7eb] rounded-[8px] flex items-center">
-                    <span className="text-[15px] font-['Lato'] text-black">{expenseDetailsOpen.note}</span>
+                    <span className="text-[15px] font-['Roboto'] text-black">{expenseDetailsOpen.note}</span>
                   </div>
                 </div>
               )}
               <div className="flex items-center justify-end gap-3 mt-4">
                 <button
                   onClick={() => setExpenseDetailsOpen(null)}
-                  className="h-[40px] px-4 py-2 bg-white border border-[#e5e7eb] rounded-[8px] text-[15px] font-bold text-[#023337] font-['Lato'] tracking-[-0.3px] min-w-[111px]"
+                  className="h-[40px] px-4 py-2 bg-white border border-[#e5e7eb] rounded-[8px] text-[15px] font-bold text-slate-900 font-['Roboto'] tracking-[-0.3px] min-w-[111px]"
                 >
                   Close
                 </button>
                 <button
                   onClick={() => { setNewExpense(expenseDetailsOpen); setEditingExpenseId(expenseDetailsOpen.id); setExpenseDetailsOpen(null); setIsAddExpenseOpen(true); }}
-                  className="h-[40px] px-4 py-2 bg-gradient-to-r from-[#38bdf8] to-[#1e90ff] rounded-[8px] text-[15px] font-bold text-white font-['Lato'] tracking-[-0.3px]"
+                  className="h-[40px] px-4 py-2 bg-gradient-to-r from-[#38bdf8] to-[#1e90ff] rounded-[8px] text-[15px] font-bold text-white font-['Roboto'] tracking-[-0.3px]"
                 >
                   Edit Expense
                 </button>

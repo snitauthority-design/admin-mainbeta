@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { ChevronDown, RefreshCw, X, Edit2, Trash2 } from 'lucide-react';
 import { IncomeService, IncomeDTO, setIncomeTenantId } from '../../../../services/IncomeService';
 import { CategoryDTO } from '../../../../services/CategoryService';
@@ -163,59 +163,59 @@ const IncomeTab: React.FC<IncomeTabProps> = ({
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 px-3 sm:px-5 pt-3 pb-3">
         <div className="flex flex-col gap-1">
-          <h2 className="text-[18px] font-bold text-[#023337] tracking-[0.09px] font-['Lato']">Income</h2>
-          <p className="text-[12px] text-black font-['Poppins']">Track your other income sources</p>
+          <h2 className="text-[18px] font-bold text-slate-900 tracking-tight font-['Roboto']">Income</h2>
+          <p className="text-[12px] text-slate-500 font-['Roboto']">Track your other income sources</p>
         </div>
         <button
           onClick={() => { setNewIncome({ status: 'Published' }); setEditingIncomeId(null); setIsAddIncomeOpen(true); }}
           className="bg-gradient-to-r from-[#38bdf8] to-[#1e90ff] flex items-center gap-1 h-[48px] pl-3 pr-4 py-[6px] rounded-lg"
         >
           <AddSquareIcon />
-          <span className="text-[15px] font-bold text-white tracking-[-0.3px] font-['Lato']">Add Income</span>
+          <span className="text-[15px] font-bold text-white tracking-[-0.3px] font-['Roboto']">Add Income</span>
         </button>
       </div>
 
       {/* Summary Cards */}
       <div className="flex flex-wrap gap-3 sm:gap-4 px-3 sm:px-5 mt-4">
         <div className="bg-[#f9f9f9] rounded-lg h-auto min-h-[80px] sm:h-[100px] w-full sm:w-[396px] overflow-hidden px-[18px] py-5">
-          <p className="text-xl sm:text-2xl lg:text-[32px] font-bold text-[#008c09] tracking-[0.16px] font-['Lato']">
+          <p className="text-xl sm:text-2xl lg:text-[32px] font-bold text-[#008c09] tracking-tight tabular-nums font-['Roboto']">
             ৳{incomeStats.totalAmount.toLocaleString('en-IN')}.00
           </p>
-          <p className="text-[12px] text-black font-['Poppins'] mt-2">Total income</p>
+          <p className="text-[12px] text-slate-500 font-['Roboto'] mt-2">Total income</p>
         </div>
         <div className="bg-[#f9f9f9] rounded-lg h-auto min-h-[80px] sm:h-[100px] w-[calc(50%-6px)] sm:w-[148px] overflow-hidden px-[18px] py-5">
-          <p className="text-xl sm:text-2xl lg:text-[32px] font-bold text-[#022f37] tracking-[0.16px] font-['Lato']">
+          <p className="text-xl sm:text-2xl lg:text-[32px] font-bold text-[#022f37] tracking-tight tabular-nums font-['Roboto']">
             {incomeStats.totalTransactions}
           </p>
-          <p className="text-[12px] text-black font-['Poppins'] mt-2">Total Transactions</p>
+          <p className="text-[12px] text-slate-500 font-['Roboto'] mt-2">Total Transactions</p>
         </div>
         <div className="bg-[#f9f9f9] rounded-lg h-auto min-h-[80px] sm:h-[100px] w-[calc(50%-6px)] sm:w-[148px] overflow-hidden px-[18px] py-5">
-          <p className="text-xl sm:text-2xl lg:text-[32px] font-bold text-[#022f37] tracking-[0.16px] font-['Lato']">
+          <p className="text-xl sm:text-2xl lg:text-[32px] font-bold text-[#022f37] tracking-tight tabular-nums font-['Roboto']">
             {incomeStats.categories}
           </p>
-          <p className="text-[12px] text-black font-['Poppins'] mt-2">Categories</p>
+          <p className="text-[12px] text-slate-500 font-['Roboto'] mt-2">Categories</p>
         </div>
         <div className="bg-[#f9f9f9] rounded-lg h-auto min-h-[100px] w-full sm:flex-1 overflow-hidden px-[18px] py-3">
           <div className="flex items-center justify-between">
-            <p className="text-[12px] text-black font-['Poppins']">Actions</p>
+            <p className="text-[12px] text-slate-500 font-['Roboto']">Actions</p>
             <div className="flex items-center gap-2">
               <button onClick={() => setIsIncomeCategoryModalOpen(true)} className="bg-white flex items-center gap-1 px-[6px] py-[6px] rounded">
                 <AddSquareSmallIcon />
-                <span className="text-[12px] text-black font-['Poppins']">Add Category</span>
+            <span className="text-[12px] text-slate-900 font-['Roboto']">Add Category</span>
               </button>
               <button onClick={handlePrintIncomes} className="bg-white flex items-center gap-1 px-[6px] py-[6px] rounded">
                 <PrinterIcon />
-                <span className="text-[12px] text-black font-['Poppins']">Print</span>
+            <span className="text-[12px] text-slate-900 font-['Roboto']">Print</span>
               </button>
             </div>
           </div>
           <div className="flex items-center gap-[7px] mt-3">
-            <span className="text-[12px] text-black font-['Poppins']">Filter by:</span>
+            <span className="text-[12px] text-slate-500 font-['Roboto']">Filter by:</span>
             <div className="bg-white flex-1 flex items-center justify-between px-3 py-[11px] rounded">
               <select
                 value={selectedIncomeCategory}
                 onChange={(e) => setSelectedIncomeCategory(e.target.value)}
-                className="text-[12px] text-black font-['Poppins'] bg-transparent border-none outline-none flex-1 cursor-pointer"
+                className="text-[12px] text-slate-900 font-['Roboto'] bg-transparent border-none outline-none flex-1 cursor-pointer"
               >
                 <option value="">All Categories</option>
                 {incomeCategories.map(cat => (
@@ -253,12 +253,12 @@ const IncomeTab: React.FC<IncomeTabProps> = ({
               </button>
             </div>
           )}
-          <div className={`w-[80px] ${selectedIncomes.size === 0 ? '' : 'ml-auto'}`}><p className="text-[16px] font-medium text-black font-['Poppins']">SL</p></div>
-          <div className="flex-1"><p className="text-[16px] font-medium text-black font-['Poppins']">Name</p></div>
-          <div className="w-[150px]"><p className="text-[16px] font-medium text-black font-['Poppins']">Category</p></div>
-          <div className="w-[120px] text-center"><p className="text-[16px] font-medium text-black font-['Poppins']">Amount</p></div>
-          <div className="w-[120px]"><p className="text-[16px] font-medium text-black font-['Poppins']">Date</p></div>
-          <div className="w-[80px] text-center"><p className="text-[16px] font-medium text-black font-['Poppins']">Action</p></div>
+          <div className={`w-[80px] ${selectedIncomes.size === 0 ? '' : 'ml-auto'}`}><p className="text-[16px] font-medium text-slate-900 font-['Roboto']">SL</p></div>
+          <div className="flex-1"><p className="text-[16px] font-medium text-slate-900 font-['Roboto']">Name</p></div>
+          <div className="w-[150px]"><p className="text-[16px] font-medium text-slate-900 font-['Roboto']">Category</p></div>
+          <div className="w-[120px] text-center"><p className="text-[16px] font-medium text-slate-900 font-['Roboto']">Amount</p></div>
+          <div className="w-[120px]"><p className="text-[16px] font-medium text-slate-900 font-['Roboto']">Date</p></div>
+          <div className="w-[80px] text-center"><p className="text-[16px] font-medium text-slate-900 font-['Roboto']">Action</p></div>
         </div>
 
         {incomeLoading && incomes.length === 0 ? (
@@ -282,15 +282,15 @@ const IncomeTab: React.FC<IncomeTabProps> = ({
                 />
               </div>
               <div className="w-[80px]">
-                <p className="text-[12px] text-[#1d1a1a] font-['Poppins']">{incomes.length - ((incomePage - 1) * PAGE_SIZE) - index}</p>
+                <p className="text-[12px] text-slate-500 font-mono tabular-nums font-['Roboto']">{incomes.length - ((incomePage - 1) * PAGE_SIZE) - index}</p>
               </div>
-              <div className="flex-1"><p className="text-[12px] text-[#1d1a1a] font-['Poppins']">{income.name}</p></div>
-              <div className="w-[150px]"><p className="text-[12px] text-[#1d1a1a] font-['Poppins']">{income.category}</p></div>
+              <div className="flex-1"><p className="text-[12px] text-slate-900 font-['Roboto']">{income.name}</p></div>
+              <div className="w-[150px]"><p className="text-[12px] text-slate-500 font-['Roboto']">{income.category}</p></div>
               <div className="w-[120px] text-center">
-                <p className="text-[12px] text-[#008c09] font-['Poppins']">৳{income.amount.toLocaleString('en-IN')}</p>
+                <p className="text-[12px] text-[#008c09] tabular-nums font-mono font-['Roboto']">৳{income.amount.toLocaleString('en-IN')}</p>
               </div>
               <div className="w-[120px]">
-                <p className="text-[12px] text-[#1d1a1a] font-['Poppins']">
+                <p className="text-[12px] text-slate-500 font-['Roboto']">
                   {new Date(income.date).toLocaleDateString('en-GB').replace(/\//g, '-')}
                 </p>
               </div>
@@ -332,22 +332,22 @@ const IncomeTab: React.FC<IncomeTabProps> = ({
             className="bg-white flex items-center gap-1 h-[42px] pl-2 pr-3 py-[10px] rounded-lg shadow-[0px_1px_3px_0px_rgba(0,0,0,0.2)] disabled:opacity-50"
           >
             <ArrowLeftIcon />
-            <span className="text-[15px] font-medium text-black font-['Lato']">Previous</span>
+            <span className="text-[15px] font-medium text-slate-900 font-['Roboto']">Previous</span>
           </button>
           <div className="flex items-center gap-3">
             {Array.from({ length: Math.min(5, totalIncomePages) }, (_, i) => i + 1).map(page => (
               <button
                 key={page}
                 onClick={() => setIncomePage(page)}
-                className={`w-9 h-9 flex items-center justify-center rounded ${incomePage === page ? 'bg-[#dff5ff] text-[#1e90ff]' : 'border border-[#d1d5db] text-[#023337]'} text-[15px] font-medium font-['Lato']`}
+                className={`w-9 h-9 flex items-center justify-center rounded ${incomePage === page ? 'bg-[#dff5ff] text-[#1e90ff]' : 'border border-[#d1d5db] text-slate-900'} text-[15px] font-medium font-['Roboto']`}
               >
                 {page}
               </button>
             ))}
             {totalIncomePages > 5 && (
               <>
-                <button className="w-9 h-9 flex items-center justify-center border border-[#d1d5db] rounded text-[15px] font-bold text-[#023337] font-['Lato']">.....</button>
-                <button onClick={() => setIncomePage(totalIncomePages)} className="w-9 h-9 flex items-center justify-center border border-[#d1d5db] rounded text-[15px] font-medium text-[#023337] font-['Lato']">
+                <button className="w-9 h-9 flex items-center justify-center border border-[#d1d5db] rounded text-[15px] font-bold text-slate-900 font-['Roboto']">.....</button>
+                <button onClick={() => setIncomePage(totalIncomePages)} className="w-9 h-9 flex items-center justify-center border border-[#d1d5db] rounded text-[15px] font-medium text-slate-900 font-['Roboto']">
                   {totalIncomePages}
                 </button>
               </>
@@ -358,7 +358,7 @@ const IncomeTab: React.FC<IncomeTabProps> = ({
             disabled={incomePage === totalIncomePages}
             className="bg-white flex items-center gap-1 h-[42px] pl-3 pr-2 py-[10px] rounded-lg shadow-[0px_1px_3px_0px_rgba(0,0,0,0.2)] disabled:opacity-50"
           >
-            <span className="text-[15px] font-medium text-black font-['Lato']">Next</span>
+            <span className="text-[15px] font-medium text-slate-900 font-['Roboto']">Next</span>
             <ArrowRightIcon />
           </button>
         </div>
@@ -369,59 +369,59 @@ const IncomeTab: React.FC<IncomeTabProps> = ({
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-[8px] p-5 w-full max-w-[548px] overflow-y-auto max-h-[90vh]">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 mb-4 sm:mb-5">
-              <h3 className="text-[16px] font-semibold text-black font-['Poppins']">{editingIncomeId ? 'Edit Income' : 'Add Income'}</h3>
+              <h3 className="text-[16px] font-semibold text-slate-900 font-['Roboto']">{editingIncomeId ? 'Edit Income' : 'Add Income'}</h3>
               <button onClick={() => { setIsAddIncomeOpen(false); setEditingIncomeId(null); }} className="text-gray-500 hover:text-gray-700"><X size={20} /></button>
             </div>
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-3">
-                <label className="text-[15px] font-bold text-[#023337] font-['Lato']">Income Name<span className="text-[#da0000]">*</span></label>
+                <label className="text-[15px] font-semibold text-slate-900 font-['Roboto']">Income Name<span className="text-[#da0000]">*</span></label>
                 <input
                   type="text"
                   value={newIncome.name || ''}
                   onChange={(e) => setNewIncome(prev => ({ ...prev, name: e.target.value }))}
-                  className="w-full h-[48px] px-3 py-[10px] bg-[#f9fafb] border border-[#e5e7eb] rounded-[8px] text-[15px] text-[#023337] font-['Lato'] placeholder:text-[#aeaeae] outline-none focus:border-[#38bdf8]"
+                  className="w-full h-[48px] px-3 py-[10px] bg-[#f9fafb] border border-[#e5e7eb] rounded-[8px] text-[15px] text-slate-900 font-['Roboto'] placeholder:text-[#aeaeae] outline-none focus:border-[#38bdf8]"
                   placeholder="Enter income name"
                 />
               </div>
               <div className="flex flex-col gap-3">
-                <label className="text-[15px] font-bold text-[#023337] font-['Lato']">Category<span className="text-[#da0000]">*</span></label>
+                <label className="text-[15px] font-semibold text-slate-900 font-['Roboto']">Category<span className="text-[#da0000]">*</span></label>
                 <div className="relative">
                   <select
                     value={newIncome.category || ''}
                     onChange={(e) => setNewIncome(prev => ({ ...prev, category: e.target.value }))}
-                    className="w-full h-[48px] px-3 py-[10px] bg-[#f9fafb] border border-[#e5e7eb] rounded-[8px] text-[15px] text-[#023337] font-['Lato'] appearance-none cursor-pointer outline-none focus:border-[#38bdf8]"
+                    className="w-full h-[48px] px-3 py-[10px] bg-[#f9fafb] border border-[#e5e7eb] rounded-[8px] text-[15px] text-slate-900 font-['Roboto'] appearance-none cursor-pointer outline-none focus:border-[#38bdf8]"
                   >
                     <option value="" className="text-[#aeaeae]">Select Category</option>
                     {incomeCategories.map(cat => (
                       <option key={cat.id || cat.name} value={cat.name}>{cat.name}</option>
                     ))}
                   </select>
-                  <ChevronDown size={20} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#023337] pointer-events-none" />
+                  <ChevronDown size={20} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-900 pointer-events-none" />
                 </div>
               </div>
               <div className="flex gap-4">
                 <div className="flex-1 flex flex-col gap-3">
-                  <label className="text-[15px] font-bold text-[#023337] font-['Lato']">Amount<span className="text-[#da0000]">*</span></label>
+                  <label className="text-[15px] font-bold text-slate-900 font-['Roboto']">Amount<span className="text-[#da0000]">*</span></label>
                   <input
                     type="number"
                     value={newIncome.amount || ''}
                     onChange={(e) => setNewIncome(prev => ({ ...prev, amount: Number(e.target.value) }))}
-                    className="w-full h-[48px] px-3 py-[10px] bg-[#f9fafb] border border-[#e5e7eb] rounded-[8px] text-[15px] text-[#023337] font-['Lato'] placeholder:text-[#aeaeae] outline-none focus:border-[#38bdf8]"
+                    className="w-full h-[48px] px-3 py-[10px] bg-[#f9fafb] border border-[#e5e7eb] rounded-[8px] text-[15px] text-slate-900 font-['Roboto'] placeholder:text-[#aeaeae] outline-none focus:border-[#38bdf8]"
                     placeholder="0.00"
                   />
                 </div>
                 <div className="flex-1 flex flex-col gap-3">
-                  <label className="text-[15px] font-bold text-[#023337] font-['Lato']">Date<span className="text-[#da0000]">*</span></label>
+                  <label className="text-[15px] font-bold text-slate-900 font-['Roboto']">Date<span className="text-[#da0000]">*</span></label>
                   <input
                     type="date"
                     value={newIncome.date || ''}
                     onChange={(e) => setNewIncome(prev => ({ ...prev, date: e.target.value }))}
-                    className="w-full h-[48px] px-3 py-[10px] bg-[#f9fafb] border border-[#e5e7eb] rounded-[8px] text-[15px] text-[#023337] font-['Lato'] placeholder:text-[#aeaeae] outline-none focus:border-[#38bdf8]"
+                    className="w-full h-[48px] px-3 py-[10px] bg-[#f9fafb] border border-[#e5e7eb] rounded-[8px] text-[15px] text-slate-900 font-['Roboto'] placeholder:text-[#aeaeae] outline-none focus:border-[#38bdf8]"
                   />
                 </div>
               </div>
               <div className="flex flex-col gap-3">
-                <label className="text-[15px] font-bold text-[#023337] font-['Lato']">Image Upload</label>
+                <label className="text-[15px] font-bold text-slate-900 font-['Roboto']">Image Upload</label>
                 <div
                   className="w-full h-[153px] bg-[#f9fafb] border border-[#e5e7eb] rounded-[8px] flex flex-col items-center justify-center gap-4 cursor-pointer hover:border-[#38bdf8] transition-colors"
                   onClick={() => document.getElementById('income-image-upload')?.click()}
@@ -438,7 +438,7 @@ const IncomeTab: React.FC<IncomeTabProps> = ({
                     </div>
                   ) : (
                     <>
-                      <p className="text-[15px] text-[#aeaeae] font-['Lato']">Upload Doc</p>
+                      <p className="text-[15px] text-[#aeaeae] font-['Roboto']">Upload Doc</p>
                       <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#aeaeae" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                         <polyline points="17 8 12 3 7 8" />
@@ -460,25 +460,25 @@ const IncomeTab: React.FC<IncomeTabProps> = ({
                 />
               </div>
               <div className="flex flex-col gap-3">
-                <label className="text-[15px] font-bold text-[#023337] font-['Lato']">Note</label>
+                <label className="text-[15px] font-bold text-slate-900 font-['Roboto']">Note</label>
                 <input
                   type="text"
                   value={newIncome.note || ''}
                   onChange={(e) => setNewIncome(prev => ({ ...prev, note: e.target.value }))}
-                  className="w-full h-[48px] px-3 py-[10px] bg-[#f9fafb] border border-[#e5e7eb] rounded-[8px] text-[15px] text-[#023337] font-['Lato'] placeholder:text-[#aeaeae] outline-none focus:border-[#38bdf8]"
+                  className="w-full h-[48px] px-3 py-[10px] bg-[#f9fafb] border border-[#e5e7eb] rounded-[8px] text-[15px] text-slate-900 font-['Roboto'] placeholder:text-[#aeaeae] outline-none focus:border-[#38bdf8]"
                   placeholder="Add any notes..."
                 />
               </div>
               <div className="flex items-center justify-end gap-3 mt-2">
                 <button
                   onClick={() => { setIsAddIncomeOpen(false); setEditingIncomeId(null); }}
-                  className="h-[40px] px-4 py-2 bg-white border border-[#e5e7eb] rounded-[8px] text-[15px] font-bold text-[#023337] font-['Lato'] tracking-[-0.3px] hover:bg-gray-50"
+                  className="h-[40px] px-4 py-2 bg-white border border-[#e5e7eb] rounded-[8px] text-[15px] font-bold text-slate-900 font-['Roboto'] tracking-[-0.3px] hover:bg-gray-50"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleAddIncome}
-                  className="h-[40px] px-4 py-2 bg-gradient-to-r from-[#38bdf8] to-[#1e90ff] rounded-[8px] text-[15px] font-bold text-white font-['Lato'] tracking-[-0.3px] hover:opacity-90"
+                  className="h-[40px] px-4 py-2 bg-gradient-to-r from-[#38bdf8] to-[#1e90ff] rounded-[8px] text-[15px] font-bold text-white font-['Roboto'] tracking-[-0.3px] hover:opacity-90"
                 >
                   {editingIncomeId ? 'Update Income' : 'Save Income'}
                 </button>
@@ -493,7 +493,7 @@ const IncomeTab: React.FC<IncomeTabProps> = ({
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl p-4 sm:p-6 w-full max-w-sm">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-[18px] font-bold text-[#023337] font-['Lato']">Add Category</h3>
+              <h3 className="text-[18px] font-bold text-slate-900 font-['Roboto']">Add Category</h3>
               <button onClick={() => setIsIncomeCategoryModalOpen(false)} className="text-gray-500 hover:text-gray-700"><X size={20} /></button>
             </div>
             <div className="flex flex-col gap-4">
@@ -501,10 +501,10 @@ const IncomeTab: React.FC<IncomeTabProps> = ({
                 type="text"
                 value={newIncomeCategoryName}
                 onChange={(e) => setNewIncomeCategoryName(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-[14px] font-['Poppins']"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-[14px] font-['Roboto']"
                 placeholder="Enter category name"
               />
-              <button onClick={handleAddIncomeCategory} className="bg-gradient-to-r from-[#38bdf8] to-[#1e90ff] text-white py-3 rounded-lg text-[15px] font-bold font-['Lato']">
+              <button onClick={handleAddIncomeCategory} className="bg-gradient-to-r from-[#38bdf8] to-[#1e90ff] text-white py-3 rounded-lg text-[15px] font-bold font-['Roboto']">
                 Add Category
               </button>
             </div>

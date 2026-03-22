@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 import { SummaryData, DueGraphData, DueSummaryData } from '../types';
 import { DueEntity } from '../../../../types';
@@ -135,10 +135,10 @@ const ProfitLossTab: React.FC<ProfitLossTabProps> = ({
       {/* Header */}
       <div className="flex items-center justify-between px-5 pt-4 pb-3">
         <div className="flex flex-col gap-1">
-          <h2 className="text-[18px] font-bold text-[#023337] tracking-[0.09px] font-['Lato']">
+          <h2 className="text-[18px] font-bold text-slate-900 tracking-tight font-['Roboto']">
             Profit/Loss Report
           </h2>
-          <p className="text-[12px] text-black font-['Poppins']">
+          <p className="text-[12px] text-slate-500 font-['Roboto']">
             Track your business performance and financial health
           </p>
         </div>
@@ -157,13 +157,13 @@ const ProfitLossTab: React.FC<ProfitLossTabProps> = ({
           <div className="flex flex-col lg:flex-row gap-5">
             {/* Revenue & Costs Chart */}
             <div className="flex-1 bg-white border border-[#f9f9f9] rounded-[10px] p-[10px]">
-              <p className="text-[14px] font-medium text-black font-['Poppins'] mb-2">Revenue & Costs</p>
+              <p className="text-[14px] font-medium text-slate-900 font-['Roboto'] mb-2">Revenue & Costs</p>
               <div className="flex gap-3 sm:gap-4 lg:gap-6 mb-3">
-                <span className="text-[14px] font-medium text-[#00c80d] font-['Poppins']">Selling Price</span>
-                <span className="text-[14px] font-bold text-[#f59f0a] font-['Poppins']">Cost Price</span>
+                <span className="text-[14px] font-medium text-[#00c80d] font-['Roboto']">Selling Price</span>
+                <span className="text-[14px] font-bold text-[#f59f0a] font-['Roboto']">Cost Price</span>
               </div>
               <div className="h-[120px] relative">
-                <div className="absolute left-0 top-0 w-[50px] flex flex-col justify-between h-full text-right text-[10px] text-[#131313]/50 font-['Poppins']">
+                <div className="absolute left-0 top-0 w-[50px] flex flex-col justify-between h-full text-right text-[10px] text-[#131313]/50 font-['Roboto']">
                   <span>$80K</span><span>$60K</span><span>$40K</span><span>$20K</span><span>$0</span>
                 </div>
                 <div className="absolute left-[55px] right-0 top-0 bottom-[20px]">
@@ -186,7 +186,7 @@ const ProfitLossTab: React.FC<ProfitLossTabProps> = ({
                     />
                   </svg>
                 </div>
-                <div className="absolute left-[55px] right-0 bottom-0 flex justify-between text-[10px] text-[#131313]/50 font-['Poppins']">
+                <div className="absolute left-[55px] right-0 bottom-0 flex justify-between text-[10px] text-[#131313]/50 font-['Roboto']">
                   <span>Dec 1</span><span>Dec 8</span><span>Dec 15</span><span>Dec 22</span><span>Dec 31</span>
                 </div>
               </div>
@@ -194,12 +194,12 @@ const ProfitLossTab: React.FC<ProfitLossTabProps> = ({
 
             {/* Total Profit Chart */}
             <div className="flex-1 bg-white border border-[#f9f9f9] rounded-[10px] p-[10px]">
-              <p className="text-[14px] font-medium text-black font-['Poppins'] mb-2">Total Profit</p>
-              <span className="text-[14px] font-bold bg-gradient-to-r from-[#38bdf8] to-[#1e90ff] bg-clip-text text-transparent font-['Poppins']">
+              <p className="text-[14px] font-medium text-slate-900 font-['Roboto'] mb-2">Total Profit</p>
+              <span className="text-[14px] font-bold bg-gradient-to-r from-[#38bdf8] to-[#1e90ff] bg-clip-text text-transparent font-['Roboto']">
                 Profit
               </span>
               <div className="h-[120px] relative mt-3">
-                <div className="absolute left-0 top-0 w-[40px] flex flex-col justify-between h-full text-right text-[10px] text-[#131313]/50 font-['Poppins']">
+                <div className="absolute left-0 top-0 w-[40px] flex flex-col justify-between h-full text-right text-[10px] text-[#131313]/50 font-['Roboto']">
                   <span>$80K</span><span>$60K</span><span>$40K</span><span>$20K</span><span>$0</span>
                 </div>
                 <div className="absolute left-[45px] right-0 top-0 bottom-[20px]">
@@ -230,7 +230,7 @@ const ProfitLossTab: React.FC<ProfitLossTabProps> = ({
                     />
                   </svg>
                 </div>
-                <div className="absolute left-[45px] right-0 bottom-0 flex justify-between text-[10px] text-[#131313]/50 font-['Poppins']">
+                <div className="absolute left-[45px] right-0 bottom-0 flex justify-between text-[10px] text-[#131313]/50 font-['Roboto']">
                   <span>Dec 1</span><span>Dec 8</span><span>Dec 15</span><span>Dec 22</span><span>Dec 31</span>
                 </div>
               </div>
@@ -242,40 +242,40 @@ const ProfitLossTab: React.FC<ProfitLossTabProps> = ({
             <div className="bg-[#f9f9f9] rounded-lg py-3 px-4">
               <div className="flex items-center justify-between py-2">
                 <div className="flex flex-col gap-0.5">
-                  <span className="text-[14px] font-medium text-black font-['Lato']">Product Selling Price</span>
-                  <span className="text-[10px] text-[#bababa] font-['Poppins']">Total revenue from sales</span>
+                  <span className="text-[14px] font-medium text-slate-900 font-['Roboto']">Product Selling Price</span>
+                  <span className="text-[10px] text-slate-500 font-['Roboto']">Total revenue from sales</span>
                 </div>
                 <div className="flex flex-col items-end gap-0.5">
-                  <span className="text-[16px] font-semibold text-[#008c09] font-['Lato']">
+                  <span className="text-[16px] font-semibold text-[#008c09] tabular-nums font-['Roboto]">
                     ৳{summary.totalRevenue.toLocaleString('en-IN')}
                   </span>
-                  <span className="text-[12px] text-[#a1a1a1] font-['Lato']">See Details &gt;</span>
+                  <span className="text-[12px] text-slate-500 font-['Roboto']">See Details &gt;</span>
                 </div>
               </div>
               <div className="h-px bg-[#e5e5e5] my-2" />
               <div className="flex items-center justify-between py-2">
                 <div className="flex flex-col gap-0.5">
-                  <span className="text-[14px] font-medium text-black font-['Lato']">Purchase Cost</span>
-                  <span className="text-[10px] text-[#bababa] font-['Poppins']">Cost of goods sold</span>
+                  <span className="text-[14px] font-medium text-slate-900 font-['Roboto']">Purchase Cost</span>
+                  <span className="text-[10px] text-slate-500 font-['Roboto']">Cost of goods sold</span>
                 </div>
                 <div className="flex flex-col items-end gap-0.5">
-                  <span className="text-[16px] font-semibold text-[#f59f0a] font-['Lato']">
+                  <span className="text-[16px] font-semibold text-[#f59f0a] tabular-nums font-['Roboto']">
                     ৳{summary.purchaseCost.toLocaleString('en-IN')}
                   </span>
-                  <span className="text-[12px] text-[#a1a1a1] font-['Lato']">See Details &gt;</span>
+                  <span className="text-[12px] text-slate-500 font-['Roboto']">See Details &gt;</span>
                 </div>
               </div>
               <div className="h-px bg-[#e5e5e5] my-2" />
               <div className="flex items-center justify-between py-2">
                 <div className="flex flex-col gap-0.5">
-                  <span className="text-[14px] font-medium text-black font-['Lato']">Profit From Sell</span>
-                  <span className="text-[10px] text-[#bababa] font-['Poppins']">Selling Price - Purchase Cost</span>
+                  <span className="text-[14px] font-medium text-slate-900 font-['Roboto']">Profit From Sell</span>
+                  <span className="text-[10px] text-slate-500 font-['Roboto']">Selling Price - Purchase Cost</span>
                 </div>
                 <div className="flex flex-col items-end gap-0.5">
-                  <span className={`text-[16px] font-semibold font-['Lato'] ${summary.profitFromSell >= 0 ? 'bg-gradient-to-r from-[#38bdf8] to-[#1e90ff] bg-clip-text text-transparent' : 'text-[#da0000]'}`}>
+                  <span className={`text-[16px] font-semibold tabular-nums font-['Roboto'] ${summary.profitFromSell >= 0 ? 'bg-gradient-to-r from-[#38bdf8] to-[#1e90ff] bg-clip-text text-transparent' : 'text-[#da0000]'}`}>
                     ৳{summary.profitFromSell.toLocaleString('en-IN')}
                   </span>
-                  <span className="text-[12px] text-[#a1a1a1] font-['Lato']">See Details &gt;</span>
+                  <span className="text-[12px] text-slate-500 font-['Roboto']">See Details &gt;</span>
                 </div>
               </div>
             </div>
@@ -283,14 +283,14 @@ const ProfitLossTab: React.FC<ProfitLossTabProps> = ({
             <div className="bg-[#f9f9f9] rounded-lg py-3 px-4">
               <div className="flex items-center justify-between">
                 <div className="flex flex-col gap-0.5">
-                  <span className="text-[14px] font-medium text-black font-['Lato']">Income</span>
-                  <span className="text-[10px] text-[#bababa] font-['Poppins']">Adds to profit (+)</span>
+                  <span className="text-[14px] font-medium text-slate-900 font-['Roboto']">Income</span>
+                  <span className="text-[10px] text-slate-500 font-['Roboto']">Adds to profit (+)</span>
                 </div>
                 <div className="flex flex-col items-end gap-0.5">
-                  <span className="text-[16px] font-semibold text-[#008c09] font-['Lato']">
+                  <span className="text-[16px] font-semibold text-[#008c09] tabular-nums font-['Roboto']">
                     ৳{summary.otherIncome.toLocaleString('en-IN')}
                   </span>
-                  <span className="text-[12px] text-[#a1a1a1] font-['Lato']">See Details &gt;</span>
+                  <span className="text-[12px] text-slate-500 font-['Roboto']">See Details &gt;</span>
                 </div>
               </div>
             </div>
@@ -298,14 +298,14 @@ const ProfitLossTab: React.FC<ProfitLossTabProps> = ({
             <div className="bg-[#f9f9f9] rounded-lg py-3 px-4">
               <div className="flex items-center justify-between">
                 <div className="flex flex-col gap-0.5">
-                  <span className="text-[14px] font-medium text-black font-['Lato']">Expense</span>
-                  <span className="text-[10px] text-[#bababa] font-['Poppins']">Subtracts from profit (-)</span>
+                  <span className="text-[14px] font-medium text-slate-900 font-['Roboto']">Expense</span>
+                  <span className="text-[10px] text-slate-500 font-['Roboto']">Subtracts from profit (-)</span>
                 </div>
                 <div className="flex flex-col items-end gap-0.5">
-                  <span className="text-[16px] font-semibold text-[#da0000] font-['Lato']">
+                  <span className="text-[16px] font-semibold text-[#da0000] tabular-nums font-['Roboto']">
                     ৳{summary.otherExpenses.toLocaleString('en-IN')}
                   </span>
-                  <span className="text-[12px] text-[#a1a1a1] font-['Lato']">See Details &gt;</span>
+                  <span className="text-[12px] text-slate-500 font-['Roboto']">See Details &gt;</span>
                 </div>
               </div>
             </div>
@@ -313,8 +313,8 @@ const ProfitLossTab: React.FC<ProfitLossTabProps> = ({
             <div className="bg-[#f9f9f9] border border-[#38bdf8] rounded-lg py-3 px-4">
               <div className="flex items-center justify-between">
                 <div className="flex flex-col gap-0.5">
-                  <span className="text-[14px] font-medium text-black font-['Lato']">Net Profit</span>
-                  <span className="text-[10px] text-[#bababa] font-['Poppins']">Profit + Income - Expense</span>
+                  <span className="text-[14px] font-medium text-slate-900 font-['Roboto']">Net Profit</span>
+                  <span className="text-[10px] text-slate-500 font-['Roboto']">Profit + Income - Expense</span>
                 </div>
                 <div className="flex flex-col items-end gap-0.5">
                   <div className="flex items-center gap-1">
@@ -323,14 +323,14 @@ const ProfitLossTab: React.FC<ProfitLossTabProps> = ({
                     ) : (
                       <TrendingDown size={18} className="text-[#da0000]" />
                     )}
-                    <span className={`text-[16px] font-semibold font-['Lato'] ${summary.isProfit ? 'text-[#21c45d]' : 'text-[#da0000]'}`}>
+                    <span className={`text-[16px] font-semibold tabular-nums font-['Roboto'] ${summary.isProfit ? 'text-[#21c45d]' : 'text-[#da0000]'}`}>
                       ৳{Math.abs(summary.netProfit).toLocaleString('en-IN')}
                     </span>
-                    <span className={`text-[12px] font-medium font-['Lato'] ${summary.isProfit ? 'text-[#21c45d]' : 'text-[#da0000]'}`}>
+                    <span className={`text-[12px] font-medium font-['Roboto'] ${summary.isProfit ? 'text-[#21c45d]' : 'text-[#da0000]'}`}>
                       ({summary.netProfitPercent.toFixed(1)}%)
                     </span>
                   </div>
-                  <span className="text-[12px] text-[#a1a1a1] font-['Lato']">See Details &gt;</span>
+                  <span className="text-[12px] text-slate-500 font-['Roboto']">See Details &gt;</span>
                 </div>
               </div>
             </div>
@@ -343,8 +343,8 @@ const ProfitLossTab: React.FC<ProfitLossTabProps> = ({
           <div className="bg-[#f9f9f9] rounded-lg p-3">
             <div className="flex items-start justify-between mb-2">
               <div className="flex flex-col gap-0.5">
-                <span className="text-[14px] font-medium text-black font-['Lato']">Business Value</span>
-                <span className="text-[10px] text-[#bababa] font-['Poppins']">Including Dues and Inventory Value</span>
+                <span className="text-[14px] font-medium text-slate-900 font-['Roboto']">Business Value</span>
+                <span className="text-[10px] text-slate-500 font-['Roboto']">Including Dues and Inventory Value</span>
               </div>
               <div className="flex items-center">
                 {summary.isProfit ? (
@@ -352,13 +352,13 @@ const ProfitLossTab: React.FC<ProfitLossTabProps> = ({
                 ) : (
                   <TrendingDown size={16} className="text-[#da0000]" />
                 )}
-                <span className={`text-[14px] font-medium font-['Lato'] ml-0.5 ${summary.isProfit ? 'text-[#21c45d]' : 'text-[#da0000]'}`}>
+                <span className={`text-[14px] font-medium font-['Roboto'] ml-0.5 ${summary.isProfit ? 'text-[#21c45d]' : 'text-[#da0000]'}`}>
                   {summary.netProfitPercent.toFixed(1)}%
                 </span>
               </div>
             </div>
             <div className="bg-white rounded-lg px-2 py-3 mt-2">
-              <span className="text-xl sm:text-2xl lg:text-[32px] font-semibold text-[#085e00] font-['Lato']">
+              <span className="text-xl sm:text-2xl lg:text-[32px] font-bold text-[#085e00] tabular-nums font-['Roboto']">
                 ৳{summary.businessValue.toLocaleString('en-IN')}
               </span>
             </div>
@@ -366,7 +366,7 @@ const ProfitLossTab: React.FC<ProfitLossTabProps> = ({
 
           {/* Due Graph Card */}
           <div style={{ background: 'white', border: '1px solid #eee', borderRadius: '10px', padding: '10px 28px', display: 'flex', flexDirection: 'column', gap: '25px', alignItems: 'center', justifyContent: 'center' }}>
-            <p style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 500, fontSize: '14px', color: '#777', margin: 0 }}>
+            <p style={{ fontFamily: "'Roboto', sans-serif", fontWeight: 500, fontSize: '14px', color: '#64748b', margin: 0 }}>
               Due graph
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', alignItems: 'center', width: '100%' }}>
@@ -374,10 +374,10 @@ const ProfitLossTab: React.FC<ProfitLossTabProps> = ({
               <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', width: '100%' }}>
                 <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                   <div style={{ width: '15px', height: '15px', borderRadius: '50%', background: '#E31B23' }} />
-                  <span style={{ fontFamily: "'Poppins', sans-serif", fontSize: '12px', color: '#131313', fontWeight: 400 }}>You will Give</span>
+                  <span style={{ fontFamily: "'Roboto', sans-serif", fontSize: '12px', color: '#334155', fontWeight: 400 }}>You will Give</span>
                 </div>
                 <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                  <span style={{ fontFamily: "'Poppins', sans-serif", fontSize: '12px', color: '#131313', fontWeight: 400 }}>You will Get</span>
+                  <span style={{ fontFamily: "'Roboto', sans-serif", fontSize: '12px', color: '#334155', fontWeight: 400 }}>You will Get</span>
                   <div style={{ width: '15px', height: '15px', borderRadius: '50%', background: '#00A651' }} />
                 </div>
               </div>
@@ -416,10 +416,10 @@ const ProfitLossTab: React.FC<ProfitLossTabProps> = ({
                     />
                   ) : null}
                   {dueGraphData.givePercent > 5 && (
-                    <text x="25" y="90" fill="white" fontSize="11" fontFamily="Lato, sans-serif" fontWeight="500">{dueGraphData.givePercent}%</text>
+                    <text x="25" y="90" fill="white" fontSize="11" fontFamily="Roboto, sans-serif" fontWeight="500">{dueGraphData.givePercent}%</text>
                   )}
                   {dueGraphData.getPercent > 5 && (
-                    <text x="200" y="50" fill="white" fontSize="11" fontFamily="Lato, sans-serif" fontWeight="500">{dueGraphData.getPercent}%</text>
+                    <text x="200" y="50" fill="white" fontSize="11" fontFamily="Roboto, sans-serif" fontWeight="500">{dueGraphData.getPercent}%</text>
                   )}
                 </svg>
               </div>
@@ -428,14 +428,14 @@ const ProfitLossTab: React.FC<ProfitLossTabProps> = ({
             {/* Values Row */}
             <div style={{ background: 'white', borderRadius: '8px', display: 'flex', gap: '138px', alignItems: 'center', justifyContent: 'center' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', alignItems: 'flex-start', width: '61px' }}>
-                <span style={{ fontFamily: "'Lato', sans-serif", fontSize: '10px', color: '#131313', fontWeight: 400 }}>You will Give</span>
-                <span style={{ fontFamily: "'Lato', 'Noto Sans Bengali', sans-serif", fontSize: '16px', fontWeight: 700, color: '#da0000' }}>
+                <span style={{ fontFamily: "'Roboto', sans-serif", fontSize: '10px', color: '#334155', fontWeight: 400 }}>You will Give</span>
+                <span style={{ fontFamily: "'Roboto', 'Noto Sans Bengali', sans-serif", fontSize: '16px', fontWeight: 700, color: '#da0000', fontVariantNumeric: 'tabular-nums' }}>
                   ৳{dueGraphData.youWillGive.toLocaleString('en-IN')}
                 </span>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', alignItems: 'flex-end', justifyContent: 'center', width: '61px' }}>
-                <span style={{ fontFamily: "'Lato', sans-serif", fontSize: '10px', color: '#131313', fontWeight: 400 }}>You will Get</span>
-                <span style={{ fontFamily: "'Lato', 'Noto Sans Bengali', sans-serif", fontSize: '16px', fontWeight: 700, color: '#008c09' }}>
+                <span style={{ fontFamily: "'Roboto', sans-serif", fontSize: '10px', color: '#334155', fontWeight: 400 }}>You will Get</span>
+                <span style={{ fontFamily: "'Roboto', 'Noto Sans Bengali', sans-serif", fontSize: '16px', fontWeight: 700, color: '#008c09', fontVariantNumeric: 'tabular-nums' }}>
                   ৳{dueGraphData.youWillGet.toLocaleString('en-IN')}
                 </span>
               </div>
