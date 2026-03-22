@@ -15,8 +15,10 @@ import toast from 'react-hot-toast';
 
 type View = 'users' | 'roles' | 'addUser' | 'editUser' | 'addRole' | 'editRole';
 
+const MIN_PASSWORD_LENGTH = 6;
+
 function getInitials(name: string) {
-  return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+  return name.split(' ').filter(w => w.length > 0).map(w => w[0]).join('').toUpperCase().slice(0, 2) || '?';
 }
 
 function getRoleName(u: AccessUser, roles: AccessRole[]): string {
@@ -421,7 +423,7 @@ function UserForm({
   const handleSubmit = () => {
     if (!name.trim()) { toast.error('Name is required'); return; }
     if (!isEdit && !email.trim()) { toast.error('Email is required'); return; }
-    if (!isEdit && password.length < 6) { toast.error('Password must be at least 6 characters'); return; }
+    if (!isEdit && password.length < MIN_PASSWORD_LENGTH) { toast.error(`Password must be at least ${MIN_PASSWORD_LENGTH} characters`); return; }
 
     if (isEdit) {
       const data: Record<string, unknown> = { name: name.trim(), phone: phone.trim() || undefined, isActive };
@@ -471,7 +473,7 @@ function UserForm({
             <label className="text-xs font-medium text-gray-600 mb-1 block">Password *</label>
             <div className="relative">
               <input value={password} onChange={e => setPassword(e.target.value)}
-                type={showPass ? 'text' : 'password'} placeholder="Min 6 characters"
+                type={showPass ? 'text' : 'password'} placeholder={`Min ${MIN_PASSWORD_LENGTH} characters`}
                 className="w-full border rounded-lg px-3 py-2 pr-10 text-sm outline-none focus:ring-2 focus:ring-blue-500" />
               <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
                 {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
